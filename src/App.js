@@ -1,14 +1,18 @@
+import { ThemeProvider } from "@mui/material/styles";
 import "./styles.css";
-import Navbar from "./Navbar";
-import Content from "./Content"
-import Footer from "./Footer";
+import AppBar from "./AppBar";
+import Content from "./Content";
+import Drawer from "./Drawer";
+import theme from "./Theme";
 
 export default function App() {
   return (
     <div className="App">
-    <Navbar />
-    <Content />
-    <Footer />
-  </div>
+      <ThemeProvider theme={theme}>
+        <AppBar />
+        <Drawer />
+        <Content />
+      </ThemeProvider>
+    </div>
   );
 }

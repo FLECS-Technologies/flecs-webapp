@@ -1,10 +1,9 @@
-//Content.js
 import React from "react";
-import "./content.scss";
-const Content = () => {
+
+const System = () => {
   const data = (
     <div className="box">
-      <h2>My div content </h2>
+      <h2>System Setting</h2>
     </div>
   );
   return (
@@ -17,4 +16,5 @@ const Content = () => {
     </main>
   );
 };
-export default Content;
+
+export default System;

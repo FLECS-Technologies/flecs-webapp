@@ -4,8 +4,9 @@ import "./styles.css";
 import AppBar from "./AppBar";
 import Drawer from "./Drawer";
 import theme from "./Theme";
-import Apps from "./Apps";
+import Apps from "./DeviceApps";
 import Marketplace from "./Marketplace";
+import System from "./System";
 
 export default function App() {
   return (
@@ -19,6 +20,11 @@ export default function App() {
             exact
             path="/Marketplace"
             render={(props) => <Marketplace {...props} />}
+          />
+          <Route
+            exact
+            path="/System"
+            render={(props) => <System {...props} />}
           />
         </Switch>
       </ThemeProvider>

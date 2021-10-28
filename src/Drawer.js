@@ -16,8 +16,6 @@ import MarketplaceIcon from "@mui/icons-material/Store";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { withRouter } from "react-router-dom";
 
-import Apps from "./Apps";
-
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -79,6 +77,20 @@ const MiniDrawer = (props) => {
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    switch (index) {
+      case 0:
+        history.push("/");
+        break;
+      case 1:
+        history.push("/Marketplace");
+        break;
+      case 2:
+        history.push("/System");
+        break;
+      default:
+        history.push("/");
+        break;
+    }
   };
 
   return (

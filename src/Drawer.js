@@ -14,6 +14,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import WidgetIcon from "@mui/icons-material/Widgets";
 import MarketplaceIcon from "@mui/icons-material/Store";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { withRouter } from "react-router-dom";
+
+import Apps from "./Apps";
 
 const drawerWidth = 240;
 
@@ -64,7 +67,8 @@ const Drawer = styled(MuiDrawer, {
   })
 }));
 
-export default function MiniDrawer() {
+const MiniDrawer = (props) => {
+  const { history } = props;
   const [open, setOpen] = React.useState(true);
 
   const handleDrawerMove = () => {
@@ -121,4 +125,6 @@ export default function MiniDrawer() {
       </Drawer>
     </Box>
   );
-}
+};
+
+export default withRouter(MiniDrawer);

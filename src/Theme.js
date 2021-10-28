@@ -15,15 +15,6 @@ const theme = createTheme({
 
   typography: {
     fontFamily: "Quicksand"
-  },
-
-  overrides: {
-    AppBar: {
-      root: {
-        color: "#FFFFFF",
-        height: "36px"
-      }
-    }
   }
 });
 

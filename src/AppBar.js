@@ -9,7 +9,7 @@ import Menu from "@mui/material/Menu";
 import CssBaseline from "@mui/material/CssBaseline";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import PropTypes from "prop-types";
-import Logo from "./FLECS-Logo.png";
+import Logo from "./img/FLECS-Logo.png";
 
 function ElevationScroll(props) {
   const { children, window } = props;

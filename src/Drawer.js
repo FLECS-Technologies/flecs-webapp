@@ -73,7 +73,7 @@ const MiniDrawer = (props) => {
     setOpen(!open);
   };
 
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);

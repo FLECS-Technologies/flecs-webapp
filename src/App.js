@@ -7,10 +7,19 @@ import theme from "./Theme";
 import Apps from "./DeviceApps";
 import Marketplace from "./Marketplace";
 import System from "./System";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  container: {
+    display: "flex"
+  }
+});
 
 export default function App() {
+  const classes = useStyles();
+
   return (
-    <div className="App">
+    <div className={classes.container}>
       <ThemeProvider theme={theme}>
         <AppBar />
         <Drawer />

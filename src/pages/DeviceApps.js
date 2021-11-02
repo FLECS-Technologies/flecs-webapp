@@ -20,10 +20,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 
-import Delete from "@material-ui/icons/Delete";
-import Refresh from "@material-ui/icons/Refresh";
-import Save from "@material-ui/icons/Save";
-
 function createData(status, app, manufacturer, version, actions) {
   return {
     status,

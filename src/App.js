@@ -1,12 +1,12 @@
 import { ThemeProvider } from "@mui/material/styles";
 import { Route, Switch } from "react-router-dom";
 import "./styles.css";
-import AppBar from "./AppBar";
-import Drawer from "./Drawer";
-import theme from "./Theme";
-import Apps from "./DeviceApps";
-import Marketplace from "./Marketplace";
-import System from "./System";
+import AppBar from "./components/AppBar";
+import Drawer from "./components/Drawer";
+import theme from "./components/Theme";
+import Apps from "./pages/DeviceApps";
+import Marketplace from "./pages/Marketplace";
+import System from "./pages/System";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({

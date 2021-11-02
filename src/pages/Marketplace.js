@@ -8,7 +8,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import CODESYSIcon from "./img/Codesys_Logo.svg.png";
+import CODESYSIcon from "../img/Codesys_Logo.svg.png";
 
 export default function BasicCard() {
   return (

@@ -98,7 +98,7 @@ const MiniDrawer = (props) => {
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader></DrawerHeader>
-        <List component="nav" aria-label="FLECS" align="right">
+        <List component="nav" aria-label="FLECS-Drawer" align="right">
           <IconButton onClick={handleDrawerMove}>
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>

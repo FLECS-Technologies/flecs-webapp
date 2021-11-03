@@ -62,6 +62,7 @@ export default function ElevateAppBar(props) {
             {auth && (
               <div>
                 <IconButton
+                  id="user-avatar"
                   size="large"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"

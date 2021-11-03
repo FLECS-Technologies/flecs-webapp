@@ -7,7 +7,7 @@ const System = () => {
     </div>
   );
   return (
-    <main className="content">
+    <main className="content" aria-label="System-Page">
       {data}
       {data}
       {data}

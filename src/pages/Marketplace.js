@@ -12,7 +12,7 @@ import CODESYSIcon from "../img/Codesys_Logo.svg.png";
 
 export default function BasicCard() {
   return (
-    <Box sx={{ mt: 10, mr: 5 }}>
+    <Box sx={{ mt: 10, mr: 5 }} aria-label="Marketplace-Page">
       <Grid
         container
         spacing={2}

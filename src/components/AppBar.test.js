@@ -1,19 +1,11 @@
 import React from "react";
-import {
-  render,
-  screen,
-  act,
-  fireEvent,
-  waitFor
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AppBar from "./AppBar";
 
 describe("AppBar", () => {
   test("renders AppBar component", () => {
     render(<AppBar />);
-
-    expect();
 
     screen.debug();
   });

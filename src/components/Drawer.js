@@ -99,13 +99,14 @@ const MiniDrawer = (props) => {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader></DrawerHeader>
         <List component="nav" aria-label="FLECS-Drawer" align="right">
-          <IconButton onClick={handleDrawerMove}>
+          <IconButton onClick={handleDrawerMove} aria-label="Minimize-Drawer">
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
           <Divider />
           <ListItemButton
             selected={selectedIndex === 0}
             onClick={(event) => handleListItemClick(event, 0)}
+            aria-label="Apps"
           >
             <ListItemIcon>
               <WidgetIcon />
@@ -115,6 +116,7 @@ const MiniDrawer = (props) => {
           <ListItemButton
             selected={selectedIndex === 1}
             onClick={(event) => handleListItemClick(event, 1)}
+            aria-label="Marketplace"
           >
             <ListItemIcon>
               <MarketplaceIcon />

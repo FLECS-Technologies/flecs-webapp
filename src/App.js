@@ -1,9 +1,11 @@
-import { ThemeProvider } from "@mui/material/styles";
+import React from "react";
 import { Route, Switch } from "react-router-dom";
-import "./styles.css";
 import AppBar from "./components/AppBar";
 import Drawer from "./components/Drawer";
-import theme from "./components/Theme";
+
+import Layout from "./components/Layout";
+import { DarkModeState } from "./components/ThemeHandler";
+
 import Apps from "./pages/DeviceApps";
 import Marketplace from "./pages/Marketplace";
 import System from "./pages/System";
@@ -20,23 +22,25 @@ export default function App() {
 
   return (
     <div className={classes.container}>
-      <ThemeProvider theme={theme}>
-        <AppBar />
-        <Drawer />
-        <Switch>
-          <Route exact from="/" render={(props) => <Apps {...props} />} />
-          <Route
-            exact
-            path="/Marketplace"
-            render={(props) => <Marketplace {...props} />}
-          />
-          <Route
-            exact
-            path="/System"
-            render={(props) => <System {...props} />}
-          />
-        </Switch>
-      </ThemeProvider>
+      <DarkModeState>
+        <Layout>
+          <AppBar />
+          <Drawer />
+          <Switch>
+            <Route exact from="/" render={(props) => <Apps {...props} />} />
+            <Route
+              exact
+              path="/Marketplace"
+              render={(props) => <Marketplace {...props} />}
+            />
+            <Route
+              exact
+              path="/System"
+              render={(props) => <System {...props} />}
+            />
+          </Switch>
+        </Layout>
+      </DarkModeState>
     </div>
   );
 }

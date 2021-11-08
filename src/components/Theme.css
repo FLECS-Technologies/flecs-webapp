@@ -1,16 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&display=swap");
 
 .MuiListItemButton-root.Mui-selected {
-  background-color: #eaeaea;
+  /*background-color: #eaeaea;*/
   color: #ff2e63;
 }
 
 .MuiListItemButton-root:hover {
-  background-color: #eaeaea;
+  /*background-color: #eaeaea;*/
   color: #08d9d6;
 }
 
 .MuiListItemButton-root.Mui-selected:hover {
-  background-color: #eaeaea;
+  /*background-color: #eaeaea;*/
   color: #08d9d6;
 }

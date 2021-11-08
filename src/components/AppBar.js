@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -9,7 +9,9 @@ import Menu from "@mui/material/Menu";
 import CssBaseline from "@mui/material/CssBaseline";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import PropTypes from "prop-types";
-import Logo from "../img/FLECS-Logo.png";
+import { darkModeContext } from "./ThemeHandler";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -47,6 +49,19 @@ export default function ElevateAppBar(props) {
     setAnchorEl(null);
   };
 
+  const DarkModeContext = useContext(darkModeContext);
+  const { darkMode, setDarkMode } = DarkModeContext;
+
+  const handleThemeChange = () => {
+    if (darkMode) {
+      localStorage.setItem("preferred-theme", "light");
+      setDarkMode(false);
+    } else {
+      localStorage.setItem("preferred-theme", "dark");
+      setDarkMode(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -59,6 +74,9 @@ export default function ElevateAppBar(props) {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               FLECS
             </Typography>
+            <IconButton onClick={handleThemeChange}>
+              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
             {auth && (
               <div>
                 <IconButton

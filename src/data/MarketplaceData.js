@@ -16,7 +16,7 @@ export let appData = [
     title: "CODESYS Edge Gateway",
     vendor: "CODESYS GmbH",
     version: "4.1.0",
-    description: "Edge gateway to connect to CODESYS Runtime.",
+    description: "Gateway to connect to CODESYS RTS.",
     status: "uninstalled"
   }
 ];

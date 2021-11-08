@@ -6,6 +6,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import ConfirmDialog from "./ConfirmDialog";
 
 function installApp(props) {}
 
@@ -16,6 +17,7 @@ export default function OutlinedCard(props) {
   const [uninstalled, setUninstalled] = useState(
     props.status === "uninstalled"
   );
+  const [open, setConfirmOpen] = useState(false);
   return (
     <Card sx={{ minWidth: 300, maxWidth: 300, m: 1 }}>
       <CardHeader
@@ -40,10 +42,18 @@ export default function OutlinedCard(props) {
           size="small"
           disabled={uninstalled}
           color="error"
-          onClick={uninstallApp(props)}
+          onClick={() => setConfirmOpen(true)}
         >
           Uninstall
         </Button>
+        <ConfirmDialog
+          title={"Uninstall " + props.title + "?"}
+          open={open}
+          setOpen={setConfirmOpen}
+          onConfirm={() => uninstallApp(props)}
+        >
+          Are you sure you want to uninstall {props.title}?
+        </ConfirmDialog>
       </CardActions>
     </Card>
   );

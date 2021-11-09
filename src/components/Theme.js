@@ -1,10 +1,38 @@
 import { createTheme } from "@mui/material/styles";
-import "./Theme.css";
+//import "./Theme.css";
 
 const baseTheme = createTheme({
   typography: {
     fontFamily: "'Quicksand'"
     //fontFamilySecondary: "'Roboto Condensed', sans-serif"
+  },
+
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {
+            color: "#ff2e63",
+            "& .MuiListItemIcon-root": {
+              color: "#08D9D6"
+            }
+          },
+          "&$selected:hover": {
+            color: "ff2e63",
+            "& .MuiListItemIcon-root": {
+              color: "#08D9D6"
+            }
+          },
+          "&:hover": {
+            color: "#08D9D6",
+            "& .MuiListItemIcon-root": {
+              color: "#08D9D6"
+            }
+          }
+        },
+        selected: {}
+      }
+    }
   },
 
   container: {

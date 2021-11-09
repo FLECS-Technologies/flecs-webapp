@@ -21,8 +21,8 @@ export default function App() {
   const classes = useStyles();
 
   return (
-    <div className={classes.container}>
-      <DarkModeState>
+    <DarkModeState>
+      <div className={classes.container}>
         <Layout>
           <AppBar />
           <Drawer />
@@ -40,7 +40,7 @@ export default function App() {
             />
           </Switch>
         </Layout>
-      </DarkModeState>
-    </div>
+      </div>
+    </DarkModeState>
   );
 }

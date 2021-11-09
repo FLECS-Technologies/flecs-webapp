@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import PropTypes from "prop-types";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -31,6 +32,10 @@ const Layout = ({ children }) => {
       {children}
     </ThemeProvider>
   );
+};
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 export default Layout;

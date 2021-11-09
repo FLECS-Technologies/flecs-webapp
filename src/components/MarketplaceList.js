@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@material-ui/core/Grid";
 
 export default function MarketplaceList(props) {
   var appList = [];

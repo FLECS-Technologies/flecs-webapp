@@ -1,5 +1,5 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
+import Box from "@material-ui/core/Box";
 import MarketplaceList from "../components/MarketplaceList";
 import { appData } from "../data/MarketplaceData";
 

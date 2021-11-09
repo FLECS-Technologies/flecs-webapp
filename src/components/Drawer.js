@@ -1,16 +1,18 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
+import { styled } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import MuiDrawer from "@material-ui/core/Drawer";
+import List from "@material-ui/core/List";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Divider from "@material-ui/core/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import ListItemText from "@material-ui/core/ListItemText";
+
 import ListItemButton from "@mui/material/ListItemButton";
+
 import WidgetIcon from "@mui/icons-material/Widgets";
 import MarketplaceIcon from "@mui/icons-material/Store";
 import SettingsIcon from "@mui/icons-material/Settings";

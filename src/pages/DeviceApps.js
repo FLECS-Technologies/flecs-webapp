@@ -322,25 +322,37 @@ export default function EnhancedTable() {
                         padding="none"
                         align="left"
                       >
-                        {row.status === "running" ? (
-                          <CircleIcon color="success" />
-                        ) : (
-                          <ErrorIcon color="warning" />
-                        )}
+                        <Tooltip title={"App " + row.status}>
+                          {row.status === "running" ? (
+                            <CircleIcon color="success" />
+                          ) : (
+                            <ErrorIcon color="warning" />
+                          )}
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="left">{row.app}</TableCell>
                       <TableCell align="left">{row.manufacturer}</TableCell>
                       <TableCell align="left">{row.version}</TableCell>
                       <TableCell align="left">
-                        <IconButton disabled={row.status === "running"}>
-                          <PlayCircleIcon />
-                        </IconButton>
-                        <IconButton disabled={row.status === "stopped"}>
-                          <PauseCircleFilledIcon />
-                        </IconButton>
-                        <IconButton>
-                          <AddTaskIcon />
-                        </IconButton>
+                        <Tooltip title="Start app">
+                          <span>
+                            <IconButton disabled={row.status === "running"}>
+                              <PlayCircleIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        <Tooltip title="Stop app">
+                          <span>
+                            <IconButton disabled={row.status === "stopped"}>
+                              <PauseCircleFilledIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        <Tooltip title="Start new app instance">
+                          <IconButton>
+                            <AddTaskIcon />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   );

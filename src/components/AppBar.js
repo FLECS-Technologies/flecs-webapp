@@ -1,18 +1,17 @@
 import React, { useContext } from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import PropTypes from "prop-types";
-import { darkModeContext } from "./ThemeHandler";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import CssBaseline from "@mui/material/CssBaseline";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { useTheme } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { darkModeContext } from "./ThemeHandler";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -37,7 +36,6 @@ ElevationScroll.propTypes = {
 export default function ElevateAppBar(props) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const theme = useTheme();
 
   const handleChange = (event) => {
     setAuth(event.target.checked);

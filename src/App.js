@@ -9,38 +9,36 @@ import { DarkModeState } from "./components/ThemeHandler";
 import Apps from "./pages/DeviceApps";
 import Marketplace from "./pages/Marketplace";
 import System from "./pages/System";
-import { makeStyles } from "@material-ui/core/styles";
-
+//import { makeStyles } from "@mui/material/styles";
+/*
 const useStyles = makeStyles({
   container: {
     display: "flex"
   }
-});
+}); */
 
 export default function App() {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   return (
     <DarkModeState>
-      <div className={classes.container}>
-        <Layout>
-          <AppBar />
-          <Drawer />
-          <Switch>
-            <Route exact from="/" render={(props) => <Apps {...props} />} />
-            <Route
-              exact
-              path="/Marketplace"
-              render={(props) => <Marketplace {...props} />}
-            />
-            <Route
-              exact
-              path="/System"
-              render={(props) => <System {...props} />}
-            />
-          </Switch>
-        </Layout>
-      </div>
+      <Layout>
+        <AppBar />
+        <Drawer />
+        <Switch>
+          <Route exact from="/" render={(props) => <Apps {...props} />} />
+          <Route
+            exact
+            path="/Marketplace"
+            render={(props) => <Marketplace {...props} />}
+          />
+          <Route
+            exact
+            path="/System"
+            render={(props) => <System {...props} />}
+          />
+        </Switch>
+      </Layout>
     </DarkModeState>
   );
 }

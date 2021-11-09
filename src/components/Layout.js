@@ -1,14 +1,22 @@
 import React, { useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { ThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
 import { darkTheme, lightTheme } from "./Theme";
 import { darkModeContext } from "./ThemeHandler";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  container: {
+    display: "flex"
+  }
+});
 
 const Layout = ({ children }) => {
   const DarkModeContext = useContext(darkModeContext);
   const { darkMode, setDarkMode } = DarkModeContext;
+  const classes = useStyles();
 
   useEffect(() => {
     const theme = localStorage.getItem("preferred-theme");

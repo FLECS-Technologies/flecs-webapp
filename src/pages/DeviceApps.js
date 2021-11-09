@@ -20,21 +20,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 
-function createData(status, app, manufacturer, version, actions) {
-  return {
-    status,
-    app,
-    manufacturer,
-    version,
-    actions
-  };
-}
+import { deviceAppsData } from "../data/DeviceAppsData.js";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
+import CircleIcon from "@mui/icons-material/Circle";
+import ErrorIcon from "@mui/icons-material/Error";
+import AddTaskIcon from "@mui/icons-material/AddTask";
 
-const rows = [
-  createData("Running", "CODESYS Control", "CODESYS GmbH", "4.3.0", "Stop"),
-  createData("Running", "CODESYS Gateway", "CODESYS GmbH", "4.1.0", "Stop"),
-  createData("Stopped", "Grafana", "Grafana Labs", "8.0.6", "Start")
-];
+const rows = deviceAppsData;
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -305,7 +298,7 @@ export default function EnhancedTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.app)}
+                      //onClick={(event) => handleClick(event, row.app)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -316,6 +309,7 @@ export default function EnhancedTable() {
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
+                          onClick={(event) => handleClick(event, row.app)}
                           inputProps={{
                             "aria-labelledby": labelId
                           }}
@@ -326,13 +320,28 @@ export default function EnhancedTable() {
                         id={labelId}
                         scope="row"
                         padding="none"
+                        align="left"
                       >
-                        {row.status}
+                        {row.status === "running" ? (
+                          <CircleIcon color="success" />
+                        ) : (
+                          <ErrorIcon color="warning" />
+                        )}
                       </TableCell>
                       <TableCell align="left">{row.app}</TableCell>
                       <TableCell align="left">{row.manufacturer}</TableCell>
                       <TableCell align="left">{row.version}</TableCell>
-                      <TableCell align="left">{row.actions}</TableCell>
+                      <TableCell align="left">
+                        <IconButton disabled={row.status === "running"}>
+                          <PlayCircleIcon />
+                        </IconButton>
+                        <IconButton disabled={row.status === "stopped"}>
+                          <PauseCircleFilledIcon />
+                        </IconButton>
+                        <IconButton>
+                          <AddTaskIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

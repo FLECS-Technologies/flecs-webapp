@@ -12,6 +12,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import PropTypes from "prop-types";
 import { darkModeContext } from "./ThemeHandler";
+import { ReactComponent as Logo } from "../img/Flecs.svg";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -71,6 +72,9 @@ export default function ElevateAppBar(props) {
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
           <Toolbar>
+            <IconButton disabled="true">
+              <Logo width="24" height="24" />
+            </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               FLECS
             </Typography>
@@ -106,7 +110,7 @@ export default function ElevateAppBar(props) {
                   onClose={handleClose}
                 >
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                  <MenuItem onClick={handleClose}>Sign out</MenuItem>
                 </Menu>
               </div>
             )}

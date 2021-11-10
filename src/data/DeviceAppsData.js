@@ -1,16 +1,25 @@
 export let deviceAppsData = [
   {
-    id: "com.codesys.codesyscontrol",
-    status: "running",
+    appId: "com.codesys.codesyscontrol",
+    status: "installed",
     app: "CODESYS Control",
     manufacturer: "CODESYS GmbH",
-    version: "4.2.0"
+    version: "4.2.0",
+    instances: [
+      {
+        instanceId: "com.codesys.codesyscontrol.12345678",
+        instancename: "Smarthome",
+        status: "started",
+        version: "4.2.0"
+      }
+    ]
   },
   {
-    id: "com.eclipse.mosquitto",
-    status: "stopped",
+    appId: "com.eclipse.mosquitto",
+    status: "installed",
     app: "Mosquitto MQTT",
     manufacturer: "Eclipse Foundation",
-    version: "2.0.13"
+    version: "2.0.13",
+    instances: []
   }
 ];

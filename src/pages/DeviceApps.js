@@ -323,7 +323,7 @@ export default function EnhancedTable() {
                         align="left"
                       >
                         <Tooltip title={"App " + row.status}>
-                          {row.status === "running" ? (
+                          {row.status === "installed" ? (
                             <CircleIcon color="success" />
                           ) : (
                             <ErrorIcon color="warning" />

@@ -8,7 +8,12 @@ import Typography from "@mui/material/Typography";
 import ConfirmDialog from "./ConfirmDialog";
 import Avatar from "@mui/material/Avatar";
 
-function installApp(props) {}
+import PostInstallAppAPI from "../api/InstallAppAPI";
+
+function installApp(props) {
+  var installAPI = new PostInstallAppAPI();
+  var returnStatus = installAPI.installApp(props.appId, props.version);
+}
 
 function uninstallApp(props) {}
 

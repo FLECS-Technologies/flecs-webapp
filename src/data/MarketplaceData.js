@@ -28,5 +28,35 @@ export let appData = [
     version: "2.0.13",
     description: "MQTT broker.",
     status: "uninstalled"
+  },
+  {
+    appId: "com.frankaemika.world",
+    avatar:
+      "https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1483446240/aybpyqz0difmnojadxfi.png",
+    title: "FRANKA WORLD",
+    vendor: "Franka Emika GmbH",
+    version: "3.21.11",
+    description: "Franka Emika Robot.",
+    status: "uninstalled"
+  },
+  {
+    appId: "com.wago.kbusdeamon",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Wago-logo.png/800px-Wago-logo.png",
+    title: "WAGO K-Bus Deamon",
+    vendor: "Jesse Cox & Kurt Braun",
+    version: "3.21.11",
+    description: "Access WAGO K-Bus.",
+    status: "uninstalled"
+  },
+  {
+    appId: "com.mirasoft.cloudadapter",
+    avatar:
+      "https://www.anyviz.io/wp-content/uploads/2021/06/AnyViz-Logo-Compact.svg",
+    title: "AnyViz Cloud Adapter",
+    vendor: "Mirasoft GmbH & Co. KG",
+    version: "6.3.9",
+    description: "Adapter to the AnyViz Cloud.",
+    status: "uninstalled"
   }
 ];

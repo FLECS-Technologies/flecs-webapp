@@ -7,7 +7,7 @@ export let appData = [
     vendor: "CODESYS GmbH",
     version: "4.2.0",
     description: "IEC61131-3 Runtime.",
-    status: "installed"
+    status: "uninstalled"
   },
   {
     appId: "com.codesys.codesysgateway",
@@ -17,7 +17,7 @@ export let appData = [
     vendor: "CODESYS GmbH",
     version: "4.1.0",
     description: "Gateway to connect to CODESYS RTS.",
-    status: "installed"
+    status: "uninstalled"
   },
   {
     appId: "com.eclipse.mosquitto",
@@ -66,7 +66,7 @@ export let appData = [
     vendor: "OpenJS Foundation",
     version: "2.1.3",
     description: "Low code programming.",
-    status: "unavailable"
+    status: "uninstalled"
   },
   {
     appId: "com.honeywell.matriconopcua",
@@ -76,7 +76,7 @@ export let appData = [
     vendor: "Honeywell International Inc.",
     version: "2.1.3",
     description: "OPC UA Stack.",
-    status: "unavailable"
+    status: "uninstalled"
   },
   {
     appId: "com.influxdata.influxdb",
@@ -86,7 +86,7 @@ export let appData = [
     vendor: "InfluxData Inc.",
     version: "2.1.0",
     description: "Time series data platform.",
-    status: "unavailable"
+    status: "uninstalled"
   },
   {
     appId: "com.teamviewer.teamvieweriot",
@@ -96,7 +96,7 @@ export let appData = [
     vendor: "TeamViewer Germany GmbH",
     version: "5.8.0",
     description: "Easy fleet management.",
-    status: "unavailable"
+    status: "uninstalled"
   },
   {
     appId: "com.inductiveautomation.ignition",
@@ -106,6 +106,6 @@ export let appData = [
     vendor: "Inductive Automation Inc.",
     version: "8.1.11",
     description: "The Unlimited Platform for SCADA.",
-    status: "unavailable"
+    status: "uninstalled"
   }
 ];

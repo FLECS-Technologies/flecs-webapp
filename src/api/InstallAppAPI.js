@@ -19,9 +19,7 @@ export default class PostInstallAppAPI extends React.Component {
       body: JSON.stringify({ appId: { appId }, version: { appVersion } })
     };
 
-    var api = new DeviceAPIConfiguration();
-
-    fetch(api.PostInstallAppAPI, requestOptions)
+    fetch(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)
       .then(async (response) => {
         const isJson = response.headers
           .get("content-type")

@@ -11,8 +11,10 @@ import Avatar from "@mui/material/Avatar";
 import PostInstallAppAPI from "../api/InstallAppAPI";
 
 function installApp(props) {
+  console.info("entering install app..." + props.title);
   var installAPI = new PostInstallAppAPI();
   var returnStatus = installAPI.installApp(props.appId, props.version);
+  console.info("exiting install app..." + returnStatus);
 }
 
 function uninstallApp(props) {}
@@ -56,7 +58,7 @@ export default function OutlinedCard(props) {
           size="small"
           aria-label="install-app-button"
           disabled={installed}
-          onClick={installApp(props)}
+          onClick={() => installApp(props)}
         >
           Install
         </Button>

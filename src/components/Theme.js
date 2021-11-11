@@ -82,6 +82,7 @@ const lightTheme = createTheme({
   ...baseTheme,
   palette: {
     type: "light",
+
     primary: {
       // cyan
       main: "#08D9D6"
@@ -89,6 +90,11 @@ const lightTheme = createTheme({
     // pink
     secondary: {
       main: "#FF2E63"
+    },
+
+    background: {
+      default: "#FAFAFA",
+      paper: "#fff"
     }
   }
 });

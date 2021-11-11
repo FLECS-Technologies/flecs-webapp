@@ -11,7 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import PostInstallAppAPI from "../api/InstallAppAPI";
 
 function installApp(props) {
-  console.info("entering install app..." + props.title);
+  console.info("entering install app..." + props.appId);
   var installAPI = new PostInstallAppAPI();
   var returnStatus = installAPI.installApp(props.appId, props.version);
   console.info("exiting install app..." + returnStatus);

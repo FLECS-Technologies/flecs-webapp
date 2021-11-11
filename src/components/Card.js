@@ -22,6 +22,9 @@ export default function OutlinedCard(props) {
   const [uninstalled, setUninstalled] = useState(
     props.status === "uninstalled"
   );
+  const [unavailable, setUnavailable] = useState(
+    props.status === "unavailable"
+  );
   const [open, setConfirmOpen] = useState(false);
   const [snOpen, setSNOpen] = useState(false);
 
@@ -41,8 +44,13 @@ export default function OutlinedCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" aria-label="app-details-button">
-          Details
+        <Button
+          size="small"
+          aria-label="app-request-button"
+          color="info"
+          disabled={!unavailable}
+        >
+          Request
         </Button>
         <Button
           size="small"

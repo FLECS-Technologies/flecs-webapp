@@ -1,7 +1,7 @@
 export let deviceAppsData = [
   {
     appId: "com.codesys.codesyscontrol",
-    status: "installed",
+    status: "uninstalled",
     app: "CODESYS Control",
     manufacturer: "CODESYS GmbH",
     version: "4.2.0",
@@ -16,7 +16,7 @@ export let deviceAppsData = [
   },
   {
     appId: "com.codesys.codesysgateway",
-    status: "installed",
+    status: "uninstalled",
     app: "CODESYS Edge Gateway",
     manufacturer: "CODESYS GmbH",
     version: "4.1.0",
@@ -24,7 +24,7 @@ export let deviceAppsData = [
   },
   {
     appId: "com.eclipse.mosquitto",
-    status: "uninstalled",
+    status: "installed",
     app: "Mosquitto MQTT",
     manufacturer: "Eclipse Foundation",
     version: "2.0.13",

@@ -7,7 +7,8 @@ export let appData = [
     vendor: "CODESYS GmbH",
     version: "4.2.0",
     description: "IEC61131-3 Runtime.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "available"
   },
   {
     appId: "com.codesys.codesysgateway",
@@ -17,7 +18,8 @@ export let appData = [
     vendor: "CODESYS GmbH",
     version: "4.1.0",
     description: "Gateway to connect to CODESYS RTS.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "available"
   },
   {
     appId: "com.eclipse.mosquitto",
@@ -27,7 +29,8 @@ export let appData = [
     vendor: "Eclipse Foundation",
     version: "2.0.13",
     description: "MQTT broker.",
-    status: "installed"
+    status: "installed",
+    availability: "available"
   },
   {
     appId: "com.frankaemika.world",
@@ -37,7 +40,8 @@ export let appData = [
     vendor: "Franka Emika GmbH",
     version: "3.21.11",
     description: "Franka Emika Robot.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "available"
   },
   {
     appId: "com.wago.kbusdeamon",
@@ -47,7 +51,8 @@ export let appData = [
     vendor: "Jesse Cox & Kurt Braun",
     version: "3.21.11",
     description: "Access WAGO K-Bus.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "available"
   },
   {
     appId: "com.mirasoft.cloudadapter",
@@ -57,7 +62,8 @@ export let appData = [
     vendor: "Mirasoft GmbH & Co. KG",
     version: "6.3.9",
     description: "Adapter to the AnyViz Cloud.",
-    status: "installed"
+    status: "installed",
+    availability: "available"
   },
   {
     appId: "com.openjsfoundation.nodered",
@@ -66,7 +72,8 @@ export let appData = [
     vendor: "OpenJS Foundation",
     version: "2.1.3",
     description: "Low code programming.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "unavailable"
   },
   {
     appId: "com.honeywell.matriconopcua",
@@ -76,7 +83,8 @@ export let appData = [
     vendor: "Honeywell International Inc.",
     version: "2.1.3",
     description: "OPC UA Stack.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "unavailable"
   },
   {
     appId: "com.influxdata.influxdb",
@@ -86,7 +94,8 @@ export let appData = [
     vendor: "InfluxData Inc.",
     version: "2.1.0",
     description: "Time series data platform.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "unavailable"
   },
   {
     appId: "com.teamviewer.teamvieweriot",
@@ -96,7 +105,8 @@ export let appData = [
     vendor: "TeamViewer Germany GmbH",
     version: "5.8.0",
     description: "Easy fleet management.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "unavailable"
   },
   {
     appId: "com.inductiveautomation.ignition",
@@ -106,6 +116,7 @@ export let appData = [
     vendor: "Inductive Automation Inc.",
     version: "8.1.11",
     description: "The Unlimited Platform for SCADA.",
-    status: "uninstalled"
+    status: "uninstalled",
+    availability: "unavailable"
   }
 ];

@@ -14,6 +14,7 @@ export default function MarketplaceList(props) {
         version={app.version}
         description={app.description}
         status={app.status}
+        availability={app.availability}
       />
     ));
   }

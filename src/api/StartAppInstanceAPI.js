@@ -2,15 +2,6 @@ import BaseAPI from "./BaseAPI";
 import DeviceAPIConfiguration from "./api-config";
 
 export default class StartAppInstanceAPI extends BaseAPI {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      status: null,
-      additionalInfo: null
-    };
-  }
-
   startAppInstance(appId, instanceId) {
     // POST request using fetch with error handling
     var requestOptions = {

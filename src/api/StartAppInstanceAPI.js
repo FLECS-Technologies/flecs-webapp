@@ -21,8 +21,8 @@ export default class StartAppInstanceAPI extends BaseAPI {
 
     var apiURL = new DeviceAPIConfiguration();
 
-    this.callAPI(apiURL.POST_START_INSTANCE_URL, requestOptions);
+    var response = this.callAPI(apiURL.POST_START_INSTANCE_URL, requestOptions);
 
-    return this.state;
+    return response;
   }
 }

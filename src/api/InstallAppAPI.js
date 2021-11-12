@@ -21,8 +21,8 @@ export default class PostInstallAppAPI extends BaseAPI {
 
     var apiURL = new DeviceAPIConfiguration();
 
-    this.callAPI(apiURL.POST_INSTALL_APP_URL, requestOptions);
+    var response = this.callAPI(apiURL.POST_INSTALL_APP_URL, requestOptions);
 
-    return this.state.status;
+    return response;
   }
 }

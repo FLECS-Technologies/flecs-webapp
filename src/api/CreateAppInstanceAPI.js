@@ -4,13 +4,6 @@ import DeviceAPIConfiguration from "./api-config";
 export default class CreateAppInstanceAPI extends BaseAPI {
   constructor(props) {
     super(props);
-
-    this.state = {
-      status: null,
-      additionalInfo: null,
-      appId: null,
-      instanceId: null
-    };
   }
 
   createAppInstance(appId, appVersion, instanceName) {
@@ -23,8 +16,11 @@ export default class CreateAppInstanceAPI extends BaseAPI {
 
     var apiURL = new DeviceAPIConfiguration();
 
-    this.callAPI(apiURL.POST_CREATE_APP_INSTANCE_URL, requestOptions);
+    var response = this.callAPI(
+      apiURL.POST_CREATE_APP_INSTANCE_URL,
+      requestOptions
+    );
 
-    return this.state;
+    return response;
   }
 }

@@ -5,8 +5,7 @@ export default class BaseAPI extends React.Component {
     super(props);
 
     this.state = {
-      status: null,
-      additionalInfo: null
+      responseData: null
     };
   }
 
@@ -25,7 +24,8 @@ export default class BaseAPI extends React.Component {
           return Promise.reject(error);
         }
 
-        this.setState({ status: data.status });
+        this.setState({ responseData: data });
+        return response.ok;
       })
       .catch((error) => {
         this.setState({ errorMessage: error });

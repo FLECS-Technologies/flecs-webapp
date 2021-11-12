@@ -7,31 +7,11 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ConfirmDialog from "./ConfirmDialog";
 import Avatar from "@mui/material/Avatar";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
-import PostInstallAppAPI from "../api/InstallAppAPI";
-import PostCreateAppInstanceAPI from "../api/CreateAppInstanceAPI";
-import PostStartAppInstanceAPI from "../api/StartAppInstanceAPI";
 import PostUninstallAppAPI from "../api/UninstallAppAPI";
-
-function installApp(props) {
-  var installAPI = new PostInstallAppAPI();
-  installAPI.installApp(props.appId, props.version);
-
-  var createInstanceAPI = new PostCreateAppInstanceAPI();
-  createInstanceAPI.createAppInstance(props.appId, props.version, props.title);
-
-  var startInstanceAPI = new PostStartAppInstanceAPI();
-  startInstanceAPI.startAppInstance(props.appId, "01234567");
-}
-
-function uninstallApp(props) {
-  var uninstallAPI = new PostUninstallAppAPI();
-  uninstallAPI.uninstallApp(props.appId, props.version);
-}
-
-function requestApp(props) {
-  console.info("Request " + props.title);
-}
+import AppAPI from "../api/AppAPI";
 
 export default function OutlinedCard(props) {
   const [installed, setInstalled] = useState(props.status === "installed");
@@ -46,6 +26,55 @@ export default function OutlinedCard(props) {
 
   const [open, setConfirmOpen] = useState(false);
   const [requestOpen, setRequestOpen] = useState(false);
+  const [snackbarState, setSnackbarState] = useState({
+    snackbarOpen: false,
+    snackbarText: "Info",
+    alertSeverity: "success"
+  });
+
+  const { alertSeverity, snackbarText, snackbarOpen } = snackbarState;
+
+  function installApp(props) {
+    var appAPI = new AppAPI(props);
+    var success = appAPI.installFromMarketplace();
+    var alertSeverity = success ? "success" : "error";
+    var snackbarText;
+    console.log(alertSeverity);
+    if (success) {
+      setInstalled(true);
+      setUninstalled(false);
+      snackbarText = props.title + " successfully installed.";
+    } else {
+      snackbarText = "Failed to install " + props.title + ".";
+    }
+
+    setSnackbarState({
+      snackbarOpen: true,
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText
+    });
+  }
+
+  function uninstallApp(props) {
+    var uninstallAPI = new PostUninstallAppAPI();
+    uninstallAPI.uninstallApp(props.appId, props.version);
+  }
+
+  function requestApp(props) {
+    console.info("Request " + props.title);
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarState({
+      snackbarOpen: false,
+      snackbarText: snackbarText,
+      alertSeverity: alertSeverity
+    });
+  };
 
   return (
     <Card sx={{ minWidth: 300, maxWidth: 300, m: 1 }}>
@@ -109,6 +138,20 @@ export default function OutlinedCard(props) {
           Are you sure you want to send us a request for a {props.title} app
           from {props.vendor}?
         </ConfirmDialog>
+        <Snackbar
+          anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={alertSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarText}
+          </Alert>
+        </Snackbar>
       </CardActions>
     </Card>
   );

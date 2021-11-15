@@ -82,7 +82,19 @@ export default function OutlinedCard(props) {
   }
 
   function requestApp(props) {
+
+    var success = true; // call send e-mail api
+    
+    var alertSeverity = success ? "success" : "error";
+    var snackbarText = "Successfully requested " + props.title + " as a new app from " + props.vendor + ".";
+
     console.info("Request " + props.title);
+
+    setSnackbarState({
+      snackbarOpen: true,
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText
+    });
   }
 
   const handleSnackbarClose = (event, reason) => {

@@ -6,7 +6,7 @@ import Drawer from "./components/Drawer";
 import Layout from "./components/Layout";
 import { DarkModeState } from "./components/ThemeHandler";
 
-import Apps from "./pages/DeviceApps";
+import InstalledApps from "./pages/InstalledApps";
 import Marketplace from "./pages/Marketplace";
 import System from "./pages/System";
 //import { makeStyles } from "@mui/material/styles";
@@ -26,7 +26,7 @@ export default function App() {
         <AppBar />
         <Drawer />
         <Switch>
-          <Route exact from="/" render={(props) => <Apps {...props} />} />
+          <Route exact from="/" render={(props) => <InstalledApps {...props} />} />
           <Route
             exact
             path="/Marketplace"

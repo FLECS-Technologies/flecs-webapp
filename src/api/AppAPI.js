@@ -65,7 +65,13 @@ export default class AppAPI extends React.Component {
   uninstall(){
     var returnValue = false;
     if(this.app){
-
+      var uninstallAPI = new PostUninstallAppAPI();
+      if (uninstallAPI.uninstallApp(this.app.appId, this.app.version)){
+        returnValue = true;
+      }
+      else{
+        // catch response of uninstall app was not OK
+      }
     }
     return returnValue;
   }

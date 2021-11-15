@@ -61,4 +61,12 @@ export default class AppAPI extends React.Component {
       return returnValue;
     }
   }
+
+  uninstall(){
+    var returnValue = false;
+    if(this.app){
+
+    }
+    return returnValue;
+  }
 }

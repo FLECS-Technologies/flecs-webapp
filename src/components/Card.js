@@ -5,12 +5,11 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import ConfirmDialog from "./ConfirmDialog";
 import Avatar from "@mui/material/Avatar";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
-import PostUninstallAppAPI from "../api/UninstallAppAPI";
+import ConfirmDialog from "./ConfirmDialog";
 import AppAPI from "../api/AppAPI";
 
 export default function OutlinedCard(props) {
@@ -36,10 +35,12 @@ export default function OutlinedCard(props) {
 
   function installApp(props) {
     var appAPI = new AppAPI(props);
+
     var success = appAPI.installFromMarketplace();
+    
     var alertSeverity = success ? "success" : "error";
     var snackbarText;
-    console.log(alertSeverity);
+    
     if (success) {
       setInstalled(true);
       setUninstalled(false);
@@ -56,8 +57,28 @@ export default function OutlinedCard(props) {
   }
 
   function uninstallApp(props) {
-    var uninstallAPI = new PostUninstallAppAPI();
-    uninstallAPI.uninstallApp(props.appId, props.version);
+    
+    var appAPI = new AppAPI(props);
+    
+    var success = appAPI.uninstall();
+    
+    var alertSeverity = success ? "success" : "error";
+    var snackbarText;
+    
+    if(success){
+      setInstalled(false);
+      setUninstalled(true);
+      snackbarText = props.title + " successfully uninstalled.";
+    }
+    else{
+      snackbarText = "Failed to uninstall " + props.title + ".";
+    }
+
+    setSnackbarState({
+      snackbarOpen: true,
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText
+    });
   }
 
   function requestApp(props) {

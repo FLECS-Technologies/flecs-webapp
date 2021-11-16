@@ -8,7 +8,7 @@ export let marketPlaceAppsList = [
     version: "4.2.0",
     description: "IEC61131-3 Runtime.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -20,7 +20,7 @@ export let marketPlaceAppsList = [
     version: "4.1.0",
     description: "Gateway to connect to CODESYS RTS.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -32,7 +32,7 @@ export let marketPlaceAppsList = [
     version: "2.0.13",
     description: "MQTT broker.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -44,7 +44,7 @@ export let marketPlaceAppsList = [
     version: "3.21.11",
     description: "Franka Emika Robot.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -56,7 +56,7 @@ export let marketPlaceAppsList = [
     version: "3.21.11",
     description: "Access WAGO K-Bus.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -68,7 +68,7 @@ export let marketPlaceAppsList = [
     version: "6.3.9",
     description: "Adapter to the AnyViz Cloud.",
     availability: "available",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -79,7 +79,7 @@ export let marketPlaceAppsList = [
     version: "2.1.3",
     description: "Low code programming.",
     availability: "unavailable",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -91,7 +91,7 @@ export let marketPlaceAppsList = [
     version: "2.1.3",
     description: "OPC UA Stack.",
     availability: "unavailable",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -103,7 +103,7 @@ export let marketPlaceAppsList = [
     version: "2.1.0",
     description: "Time series data platform.",
     availability: "unavailable",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -115,7 +115,7 @@ export let marketPlaceAppsList = [
     version: "5.8.0",
     description: "Easy fleet management.",
     availability: "unavailable",
-    status:"",
+    status:"uninstalled",
     instances: []
   },
   {
@@ -127,7 +127,7 @@ export let marketPlaceAppsList = [
     version: "8.1.11",
     description: "The Unlimited Platform for SCADA.",
     availability: "unavailable",
-    status:"",
+    status:"uninstalled",
     instances: []
   }
 ];

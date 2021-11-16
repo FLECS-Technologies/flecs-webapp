@@ -17,6 +17,7 @@ import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
 import CircleIcon from "@mui/icons-material/Circle";
 import ErrorIcon from "@mui/icons-material/Error";
 import AddTaskIcon from "@mui/icons-material/AddTask";
+import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import Avatar from "@mui/material/Avatar";
@@ -98,6 +99,13 @@ export default function Row(props) {
                           <span>
                             <IconButton color="warning" disabled={appInstance.status === "stopped"}>
                               <PauseCircleFilledIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        <Tooltip title="Delete instance">
+                          <span>
+                            <IconButton>
+                              <DeleteIcon />
                             </IconButton>
                           </span>
                         </Tooltip>

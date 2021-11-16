@@ -1,4 +1,4 @@
-export let appData = [
+export let installedAppsList = [
   {
     appId: "com.codesys.codesyscontrol",
     avatar:

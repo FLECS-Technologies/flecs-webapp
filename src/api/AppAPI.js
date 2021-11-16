@@ -16,9 +16,9 @@ export default class AppAPI extends React.Component {
       version: props.version,
       description: props.description,
       status: props.status,
-      availability: props.availability
+      availability: props.availability,
+      instances: props.instances
     };
-    this.instances = [];
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
@@ -37,14 +37,14 @@ export default class AppAPI extends React.Component {
             this.app.title
           )
         ) {
-          var length = this.instances.push(
+          var length = this.app.instances.push(
             createInstanceAPI.state.responseData.instanceId
           );
 
           if (
             startInstanceAPI.startAppInstance(
               this.app.appId,
-              this.instances[length - 1]
+              this.app.instances[length - 1]
             )
           ) {
             returnValue = true;
@@ -74,5 +74,21 @@ export default class AppAPI extends React.Component {
       }
     }
     return returnValue;
+  }
+
+  createInstance(instanceName){
+
+  }
+
+  startInstance(instanceId){
+
+  }
+
+  stopInstance(instanceId){
+
+  }
+
+  deleteInstance(instanceId){
+
   }
 }

@@ -18,7 +18,7 @@ export default class BaseAPI extends React.Component {
         const data = isJson && (await response.json());
 
         // check for error response
-        if (!response.ok) {
+        if (response.headers.status !== 200) {
           // get error message from body or default to response status
           const error = (data && data.additionalInfo) || response.status;
           return Promise.reject(error);

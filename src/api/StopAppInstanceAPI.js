@@ -1,19 +1,19 @@
-import BaseAPI from "./BaseAPI";
-import DeviceAPIConfiguration from "./api-config";
+import BaseAPI from './BaseAPI'
+import DeviceAPIConfiguration from './api-config'
 
 export default class StopAppInstanceAPI extends BaseAPI {
-  stopAppInstance(appId, instanceId) {
+  stopAppInstance (appId, instanceId) {
     // POST request using fetch with error handling
-    var requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ appId, instanceId })
-    };
+    }
 
-    var apiURL = new DeviceAPIConfiguration();
+    const apiURL = new DeviceAPIConfiguration()
 
-    var response = this.callAPI(apiURL.POST_STOP_INSTANCE_URL, requestOptions);
+    const response = this.callAPI(apiURL.POST_STOP_INSTANCE_URL, requestOptions)
 
-    return response;
+    return response
   }
 }

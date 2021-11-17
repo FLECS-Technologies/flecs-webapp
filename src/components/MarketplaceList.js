@@ -1,9 +1,10 @@
-import React from "react";
-import Card from "./Card";
-import Grid from "@mui/material/Grid";
+import React from 'react'
+import PropTypes from 'prop-types'
+import Card from './Card'
+import Grid from '@mui/material/Grid'
 
-export default function MarketplaceList(props) {
-  var appList = [];
+export default function MarketplaceList (props) {
+  let appList = []
   if (props.appData) {
     appList = props.appData.map((app) => (
       <Card
@@ -17,7 +18,7 @@ export default function MarketplaceList(props) {
         status={app.status}
         availability={app.availability}
       />
-    ));
+    ))
   }
 
   return (
@@ -30,5 +31,18 @@ export default function MarketplaceList(props) {
     >
       {appList}
     </Grid>
-  );
+  )
+}
+
+MarketplaceList.propTypes = {
+  appData: PropTypes.any,
+  appId: PropTypes.string,
+  avatar: PropTypes.string,
+  title: PropTypes.string,
+  vendor: PropTypes.string,
+  version: PropTypes.string,
+  description: PropTypes.string,
+  status: PropTypes.string,
+  availability: PropTypes.string,
+  instances: PropTypes.array
 }

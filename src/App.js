@@ -1,19 +1,19 @@
-import { useContext, React } from "react";
-import { Route, Switch } from "react-router-dom";
-import AppBar from "./components/AppBar";
-import Drawer from "./components/Drawer";
+import { /* useContext, */ React } from 'react'
+import { Route, Switch } from 'react-router-dom'
+import AppBar from './components/AppBar'
+import Drawer from './components/Drawer'
 
-import Layout from "./components/Layout";
-import { DarkModeState } from "./components/ThemeHandler";
+import Layout from './components/Layout'
+import { DarkModeState } from './components/ThemeHandler'
 
-import { ReferenceDataContext, ReferenceDataContextProvider } from "./data/ReferenceDataContext"
+import { /* ReferenceDataContext , */ ReferenceDataContextProvider } from './data/ReferenceDataContext'
 
-import InstalledApps from "./pages/InstalledApps";
-import Marketplace from "./pages/Marketplace";
-import System from "./pages/System";
-import AppList from "./data/AppList";
+import InstalledApps from './pages/InstalledApps'
+import Marketplace from './pages/Marketplace'
+import System from './pages/System'
+import AppList from './data/AppList'
 
-//import { makeStyles } from "@mui/material/styles";
+// import { makeStyles } from "@mui/material/styles";
 /*
 const useStyles = makeStyles({
   container: {
@@ -21,9 +21,9 @@ const useStyles = makeStyles({
   }
 }); */
 
-export default function App() {
+export default function App () {
   // const classes = useStyles();
-  const { appList } = useContext(ReferenceDataContext);
+  // const { appList } = useContext(ReferenceDataContext)
 
   return (
     <DarkModeState>
@@ -48,5 +48,5 @@ export default function App() {
         </ReferenceDataContextProvider>
       </Layout>
     </DarkModeState>
-  );
+  )
 }

@@ -1,7 +1,8 @@
-import React, { createContext, useReducer } from "react";
-let SET_THEME;
+import React, { createContext, useReducer } from 'react'
+import PropTypes from 'prop-types'
+let SET_THEME
 
-export const darkModeContext = createContext();
+export const darkModeContext = createContext()
 
 export const darkModeReducer = (state, action) => {
   switch (action.type) {
@@ -9,24 +10,24 @@ export const darkModeReducer = (state, action) => {
       return {
         ...state,
         darkMode: action.payload
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
 export const DarkModeState = (props) => {
   const initialState = {
-    darkMode: "false"
-  };
-  const [state, dispatch] = useReducer(darkModeReducer, initialState);
+    darkMode: 'false'
+  }
+  const [state, dispatch] = useReducer(darkModeReducer, initialState)
 
   const setDarkMode = async (bool) => {
     dispatch({
       type: SET_THEME,
       payload: bool
-    });
-  };
+    })
+  }
 
   return (
     <darkModeContext.Provider
@@ -37,5 +38,9 @@ export const DarkModeState = (props) => {
     >
       {props.children}
     </darkModeContext.Provider>
-  );
-};
+  )
+}
+
+DarkModeState.propTypes = {
+  children: PropTypes.any
+}

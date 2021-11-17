@@ -18,4 +18,5 @@ export class MarketplaceAPIConfiguration {
   GET_APP_LIST_URL = "http://marketplace.flecs.tech/AppList";
 
   // post requests
+  
 }

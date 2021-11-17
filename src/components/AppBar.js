@@ -1,21 +1,21 @@
-import React, { useContext } from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import CssBaseline from "@mui/material/CssBaseline";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import PropTypes from "prop-types";
-import { darkModeContext } from "./ThemeHandler";
-import { ReactComponent as Logo } from "../img/Flecs.svg";
+import React, { useContext } from 'react'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
+import CssBaseline from '@mui/material/CssBaseline'
+import useScrollTrigger from '@mui/material/useScrollTrigger'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
+import PropTypes from 'prop-types'
+import { darkModeContext } from './ThemeHandler'
+import { ReactComponent as Logo } from '../img/Flecs.svg'
 
-function ElevationScroll(props) {
-  const { children, window } = props;
+function ElevationScroll (props) {
+  const { children, window } = props
   // Note that you normally won't need to set the window ref as useScrollTrigger
   // will default to window.
   // This is only being set here because the demo is in an iframe.
@@ -23,45 +23,40 @@ function ElevationScroll(props) {
     disableHysteresis: true,
     threshold: 0,
     target: window ? window() : undefined
-  });
+  })
 
   return React.cloneElement(children, {
     elevation: trigger ? 4 : 0
-  });
+  })
 }
 
 ElevationScroll.propTypes = {
   children: PropTypes.element.isRequired
-};
+}
 
-export default function ElevateAppBar(props) {
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
+export default function ElevateAppBar (props) {
+  const [anchorEl, setAnchorEl] = React.useState(null)
 
   const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const DarkModeContext = useContext(darkModeContext);
-  const { darkMode, setDarkMode } = DarkModeContext;
+  const DarkModeContext = useContext(darkModeContext)
+  const { darkMode, setDarkMode } = DarkModeContext
 
   const handleThemeChange = () => {
     if (darkMode) {
-      localStorage.setItem("preferred-theme", "light");
-      setDarkMode(false);
+      localStorage.setItem('preferred-theme', 'light')
+      setDarkMode(false)
     } else {
-      localStorage.setItem("preferred-theme", "dark");
-      setDarkMode(true);
+      localStorage.setItem('preferred-theme', 'dark')
+      setDarkMode(true)
     }
-  };
+  }
 
   return (
     <React.Fragment>
@@ -81,7 +76,6 @@ export default function ElevateAppBar(props) {
             <IconButton onClick={handleThemeChange}>
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
-            {auth && (
               <div>
                 <IconButton
                   id="user-avatar"
@@ -97,13 +91,13 @@ export default function ElevateAppBar(props) {
                   id="menu-appbar"
                   anchorEl={anchorEl}
                   anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
+                    vertical: 'top',
+                    horizontal: 'right'
                   }}
                   keepMounted
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
+                    vertical: 'top',
+                    horizontal: 'right'
                   }}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
@@ -112,11 +106,10 @@ export default function ElevateAppBar(props) {
                   <MenuItem onClick={handleClose}>Sign out</MenuItem>
                 </Menu>
               </div>
-            )}
           </Toolbar>
         </AppBar>
       </ElevationScroll>
       <Toolbar />
     </React.Fragment>
-  );
+  )
 }

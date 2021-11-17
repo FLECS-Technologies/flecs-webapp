@@ -144,7 +144,9 @@ export default function DeviceAppsList(props) {
    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   if (props.appData) {
-    appList = stableSort(props.appData, getComparator(order, orderBy))
+    // filter on only installed apps
+    appList = props.appData.filter(app => app.status === "installed")
+    appList = stableSort(appList, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
         

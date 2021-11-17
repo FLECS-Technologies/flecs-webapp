@@ -158,8 +158,8 @@ export default function Row(props) {
 
   return (
     <Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'none' } }}>
-        <TableCell>
+      <TableRow /*sx={{ '& > *': { borderBottom: 'none' } }}*/ >
+        <TableCell style={{borderBottom:"none"}}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -168,13 +168,13 @@ export default function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell style={{borderBottom:"none"}} component="th" scope="row">
           <Avatar src={row.avatar}></Avatar>
         </TableCell>
-        <TableCell>{row.title}</TableCell>
-        <TableCell>{row.vendor}</TableCell>
-        <TableCell>{row.version}</TableCell>
-        <TableCell>
+        <TableCell style={{borderBottom:"none"}}>{row.title}</TableCell>
+        <TableCell style={{borderBottom:"none"}}>{row.vendor}</TableCell>
+        <TableCell style={{borderBottom:"none"}}>{row.version}</TableCell>
+        <TableCell style={{borderBottom:"none"}}>
           <Tooltip title="Start new app instance">
             <IconButton 
               color="primary"

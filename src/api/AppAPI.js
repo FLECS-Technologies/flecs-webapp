@@ -2,7 +2,9 @@ import React from "react";
 import PostInstallAppAPI from "../api/InstallAppAPI";
 import PostCreateAppInstanceAPI from "../api/CreateAppInstanceAPI";
 import PostStartAppInstanceAPI from "../api/StartAppInstanceAPI";
+import PostStopAppInstanceAPI from "../api/StopAppInstanceAPI";
 import PostUninstallAppAPI from "../api/UninstallAppAPI";
+import PostDeleteAppInstanceAPI from "../api/DeleteAppInstanceAPI";
 
 export default class AppAPI extends React.Component {
   constructor(props) {
@@ -42,22 +44,10 @@ export default class AppAPI extends React.Component {
 
     if (this.app) {
       var installAPI = new PostInstallAppAPI();
-      var createInstanceAPI = new PostCreateAppInstanceAPI();
       var startInstanceAPI = new PostStartAppInstanceAPI();
 
       if (installAPI.installApp(this.app.appId, this.app.version)) {
-        if (
-          createInstanceAPI.createAppInstance(
-            this.app.appId,
-            this.app.version,
-            this.app.title
-          )
-        ) {
-          var length = this.app.instances.push(
-            createInstanceAPI.state.responseData.instanceId
-          );
-          this.app.instances[length - 1].status = "stopped";
-
+        if (this.createInstance(this.app.title + this.app.instances.length)) {
           if (
             startInstanceAPI.startAppInstance(
               this.app.appId,
@@ -80,6 +70,7 @@ export default class AppAPI extends React.Component {
     }
   }
 
+
   uninstall(){
     var returnValue = false;
     if(this.app){
@@ -95,18 +86,97 @@ export default class AppAPI extends React.Component {
   }
 
   createInstance(instanceName){
-
+    var returnValue = false;
+    if(this.app){
+      var createInstanceAPI = new PostCreateAppInstanceAPI();
+      if(createInstanceAPI.createAppInstance(this.app.appId, this.app.version, instanceName))
+      {
+        var length = this.app.instances.push(
+          {
+            instanceId: createInstanceAPI.state.responseData.instanceId,
+            instanceName : instanceName,
+            status: "stopped"
+          }
+        );
+        returnValue = true;
+      }
+    }
+    return returnValue;
   }
 
   startInstance(instanceId){
+    var returnValue = false;
 
+    if(this.app){
+      var startInstanceAPI = new PostStartAppInstanceAPI();
+      if (
+        startInstanceAPI.startAppInstance(
+          this.app.appId,
+          instanceId
+        )
+      ) {
+        this.app.instances.map(item => 
+          item.instanceId === instanceId 
+          ? {...item, status : "started"} 
+          : item );
+        
+        returnValue = true;
+      } else {
+        // catch response of start app instance was not OK
+      }
+    
+    }
+
+    return returnValue;
   }
 
   stopInstance(instanceId){
+    var returnValue = false;
 
+    if(this.app){
+      var stopInstanceAPI = new PostStopAppInstanceAPI();
+      if (
+        stopInstanceAPI.stopAppInstance(
+          this.app.appId,
+          instanceId
+        )
+      ) {
+        this.app.instances.map(item => 
+          item.instanceId === instanceId 
+          ? {...item, status : "stopped"} 
+          : item );
+        
+        returnValue = true;
+      } else {
+        // catch response of start app instance was not OK
+      }
+    
+    }
+
+    return returnValue;
   }
 
   deleteInstance(instanceId){
+    var returnValue = false;
 
+    if(this.app){
+      var deleteInstanceAPI = new PostDeleteAppInstanceAPI();
+      if (
+        deleteInstanceAPI.deleteAppInstance(
+          this.app.appId,
+          instanceId
+        )
+      ) {
+        // remove instance from array
+        this.app.instances = this.app.instances.filter(instance => instance.instanceId == instanceId);
+                
+        returnValue = true;
+      } else {
+        // catch response of start app instance was not OK
+      }
+    
+    }
+
+    return returnValue;
   }
 }

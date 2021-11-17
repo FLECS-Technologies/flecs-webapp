@@ -11,7 +11,7 @@ import Alert from "@mui/material/Alert";
 
 import ConfirmDialog from "./ConfirmDialog";
 import AppAPI from "../api/AppAPI";
-import { ReferenceDataContext } from "../data/ReferenceDataContext"
+import { ReferenceDataContext } from "../data/ReferenceDataContext";
 
 export default function OutlinedCard(props) {
   const { appList, setAppList } = useContext(ReferenceDataContext);

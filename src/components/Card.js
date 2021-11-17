@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -11,8 +11,10 @@ import Alert from "@mui/material/Alert";
 
 import ConfirmDialog from "./ConfirmDialog";
 import AppAPI from "../api/AppAPI";
+import { ReferenceDataContext } from "../data/ReferenceDataContext"
 
 export default function OutlinedCard(props) {
+  const { appList, setAppList } = useContext(ReferenceDataContext);
   const [installed, setInstalled] = useState(props.status === "installed");
   const [uninstalled, setUninstalled] = useState(
     props.status === "uninstalled"
@@ -33,17 +35,37 @@ export default function OutlinedCard(props) {
 
   const { alertSeverity, snackbarText, snackbarOpen } = snackbarState;
 
+  function loadReferenceData(props){
+    
+    var tmpApp = appList.find(obj => {
+      return obj.appId === props.appId
+    });
+     
+    return tmpApp;
+  }
+
+  function updateReferenceDataStatus(props){
+    setAppList(
+      appList.map(item => 
+        item.appId === props.appId 
+        ? {...item, status : props.status} 
+        : item )
+    );
+  }
+
   function installApp(props) {
     var appAPI = new AppAPI(props);
-
+    appAPI.setAppData(loadReferenceData(props));
     var success = appAPI.installFromMarketplace();
     
     var alertSeverity = success ? "success" : "error";
     var snackbarText;
-    
+
     if (success) {
       setInstalled(true);
       setUninstalled(false);
+      updateReferenceDataStatus(appAPI.app);
+
       snackbarText = props.title + " successfully installed.";
     } else {
       snackbarText = "Failed to install " + props.title + ".";
@@ -59,7 +81,7 @@ export default function OutlinedCard(props) {
   function uninstallApp(props) {
     
     var appAPI = new AppAPI(props);
-    
+    appAPI.setAppData(loadReferenceData(props));
     var success = appAPI.uninstall();
     
     var alertSeverity = success ? "success" : "error";
@@ -68,6 +90,8 @@ export default function OutlinedCard(props) {
     if(success){
       setInstalled(false);
       setUninstalled(true);
+      updateReferenceDataStatus(appAPI.app);
+
       snackbarText = props.title + " successfully uninstalled.";
     }
     else{

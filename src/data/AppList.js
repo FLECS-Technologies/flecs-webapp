@@ -4,10 +4,10 @@ import { marketPlaceAppsList } from './MarketplaceAppsList'
 import { installedAppsList } from './InstalledAppsList'
 
 const AppList = () => {
-  const { appList, setAppList } = useContext(ReferenceDataContext)
+  const { setAppList } = useContext(ReferenceDataContext)
 
-  const [marketplaceAppList, setMarketPlaceList] = useState([...marketPlaceAppsList])
-  const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
+  const [marketplaceAppList] = useState([...marketPlaceAppsList])
+  const [installedAppList] = useState([...installedAppsList])
 
   // todo: call api from the marketplace to get all apps
   //   useEffect(() => {

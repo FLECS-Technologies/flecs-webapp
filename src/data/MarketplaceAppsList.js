@@ -42,8 +42,8 @@ export const marketPlaceAppsList = [
     title: 'FRANKA WORLD',
     vendor: 'Franka Emika GmbH',
     version: '3.21.11',
-    description: 'Franka Emika Robot.',
-    availability: 'available',
+    description: 'CONFIRMED: Franka Emika Robot.',
+    availability: 'unavailable',
     status: 'uninstalled',
     instances: []
   },
@@ -54,8 +54,8 @@ export const marketPlaceAppsList = [
     title: 'WAGO K-Bus Deamon',
     vendor: 'Jesse Cox & Kurt Braun',
     version: '3.21.11',
-    description: 'Access WAGO K-Bus.',
-    availability: 'available',
+    description: 'CONFIRMED: Access WAGO K-Bus.',
+    availability: 'unavailable',
     status: 'uninstalled',
     instances: []
   },
@@ -66,8 +66,8 @@ export const marketPlaceAppsList = [
     title: 'AnyViz Cloud Adapter',
     vendor: 'Mirasoft GmbH & Co. KG',
     version: '6.3.9',
-    description: 'Adapter to the AnyViz Cloud.',
-    availability: 'available',
+    description: 'CONFIRMED: Adapter to AnyViz Cloud.',
+    availability: 'unavailable',
     status: 'uninstalled',
     instances: []
   },
@@ -77,7 +77,7 @@ export const marketPlaceAppsList = [
     title: 'Node-Red',
     vendor: 'OpenJS Foundation',
     version: '2.1.3',
-    description: 'Low code programming.',
+    description: 'CONFIRMED: Low code programming.',
     availability: 'unavailable',
     status: 'uninstalled',
     instances: []

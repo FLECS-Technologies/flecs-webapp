@@ -66,7 +66,7 @@ export default function ElevateAppBar (props) {
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
-          <Toolbar>
+          <Toolbar variant="dense">
             <IconButton disabled="true">
               <Logo width="24" height="24" />
             </IconButton>

@@ -147,6 +147,7 @@ export default function OutlinedCard (props) {
       </CardContent>
       <CardActions>
         <Button
+          variant="outlined"
           size="small"
           aria-label="app-request-button"
           color="info"
@@ -157,6 +158,8 @@ export default function OutlinedCard (props) {
           Request
         </Button>
         <Button
+          variant="contained"
+          color="success"
           size="small"
           aria-label="install-app-button"
           disabled={installed}
@@ -166,6 +169,7 @@ export default function OutlinedCard (props) {
           Install
         </Button>
         <Button
+          variant="outlined"
           size="small"
           aria-label="uninstall-app-button"
           disabled={uninstalled}

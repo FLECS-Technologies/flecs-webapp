@@ -190,6 +190,7 @@ export default function Row (props) {
                   App instances
                 </Typography>
                 <Button
+                  variant="contained"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
                 >

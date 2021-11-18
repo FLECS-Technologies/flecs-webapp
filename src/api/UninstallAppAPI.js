@@ -10,9 +10,7 @@ export default class PostUninstallAppAPI extends BaseAPI {
       body: JSON.stringify({ appId, appVersion })
     }
 
-    const apiURL = new DeviceAPIConfiguration()
-
-    const response = this.callAPI(apiURL.POST_UNINSTALL_APP_URL, requestOptions)
+    const response = this.callAPI(DeviceAPIConfiguration.POST_UNINSTALL_APP_URL, requestOptions)
 
     return response
   }

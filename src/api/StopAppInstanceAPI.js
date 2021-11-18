@@ -10,9 +10,7 @@ export default class StopAppInstanceAPI extends BaseAPI {
       body: JSON.stringify({ appId, instanceId })
     }
 
-    const apiURL = new DeviceAPIConfiguration()
-
-    const response = this.callAPI(apiURL.POST_STOP_INSTANCE_URL, requestOptions)
+    const response = this.callAPI(DeviceAPIConfiguration.POST_STOP_INSTANCE_URL, requestOptions)
 
     return response
   }

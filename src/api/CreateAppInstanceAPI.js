@@ -10,10 +10,8 @@ export default class CreateAppInstanceAPI extends BaseAPI {
       body: JSON.stringify({ appId, appVersion, instanceName })
     }
 
-    const apiURL = new DeviceAPIConfiguration()
-
     const response = this.callAPI(
-      apiURL.POST_CREATE_APP_INSTANCE_URL,
+      DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL,
       requestOptions
     )
 

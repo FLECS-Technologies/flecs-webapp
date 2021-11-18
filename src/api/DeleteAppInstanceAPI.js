@@ -10,10 +10,8 @@ export default class DeleteAppInstanceAPI extends BaseAPI {
       body: JSON.stringify({ appId, appVersion, instanceName })
     }
 
-    const apiURL = new DeviceAPIConfiguration()
-
     const response = this.callAPI(
-      apiURL.POST_DELETE_APP_INSTANCE_URL,
+      DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL,
       requestOptions
     )
 

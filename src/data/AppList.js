@@ -2,22 +2,26 @@ import { useContext, useEffect, useState, React } from 'react'
 import { ReferenceDataContext } from './ReferenceDataContext'
 import { marketPlaceAppsList } from './MarketplaceAppsList'
 import { installedAppsList } from './InstalledAppsList'
+import DeviceAPI from '../api/DeviceAPI'
 
 const AppList = () => {
   const { setAppList } = useContext(ReferenceDataContext)
 
   const [marketplaceAppList] = useState([...marketPlaceAppsList])
-  const [installedAppList] = useState([...installedAppsList])
+  const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
 
   // todo: call api from the marketplace to get all apps
   //   useEffect(() => {
   //       setMarketPlaceList(marketplaceAppList => [...marketplaceAppList, ...marketPlaceAppsList]);
   //   }, []);
 
-  // todo: call api from the device to get all installed apps
-  // useEffect(() => {
-  //     setInstalledAppList([installedAppsList]);
-  // }, []);
+  // call api from the device to get all installed apps
+  useEffect(() => {
+    const deviceAPI = new DeviceAPI()
+    if (deviceAPI.getInstalledApps()) {
+      setInstalledAppList([deviceAPI.appList])
+    }
+  }, [])
 
   const mergedList = Object.values([...marketplaceAppList, ...installedAppList]
     .reduce((r, o) => {

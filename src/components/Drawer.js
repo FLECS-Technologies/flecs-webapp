@@ -1,20 +1,21 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { styled } from '@mui/material/styles'
-import Box from '@mui/material/Box'
+// import Box from '@mui/material/Box'
 import MuiDrawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
-import CssBaseline from '@mui/material/CssBaseline'
+// import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-
+import IconButton from '@mui/material/IconButton'
 import ListItemButton from '@mui/material/ListItemButton'
-
 import WidgetIcon from '@mui/icons-material/Widgets'
 import MarketplaceIcon from '@mui/icons-material/Store'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { withRouter } from 'react-router-dom'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
 const drawerWidth = 240
 
@@ -43,7 +44,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
+  padding: '0',
+  minHeight: '48', // if minHeight is not set to 48 (or any other value), a minHeight of 64px is used, which makes the menu move down.
+  // padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar
 }))
@@ -67,7 +70,11 @@ const Drawer = styled(MuiDrawer, {
 
 const MiniDrawer = (props) => {
   const { history } = props
-  const [open] = React.useState(true)
+  const [open, setOpen] = React.useState(true)
+
+  const handleDrawerMove = () => {
+    setOpen(!open)
+  }
 
   const [selectedIndex, setSelectedIndex] = React.useState(0)
 
@@ -89,20 +96,14 @@ const MiniDrawer = (props) => {
     }
   }
 
-  /*
-insert as first entry of the List component:
-<IconButton onClick={handleDrawerMove} aria-label="Minimize-Drawer">
-  {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-</IconButton>
-<Divider />
- */
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader></DrawerHeader>
-        <List component="nav" aria-label="FLECS-Drawer" align="right">
+      <Drawer aria-label="FLECS-Drawer" variant="permanent" open={open}>
+        <DrawerHeader aria-label="FLECS-Drawer-Header"/>
+        <List component="nav" aria-label="Drawer-List-FLECS" align="right">
+          <IconButton onClick={handleDrawerMove} aria-label="Minimize-Drawer">
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+          <Divider />
           <ListItemButton
             selected={selectedIndex === 0}
             onClick={(event) => handleListItemClick(event, 0)}
@@ -125,7 +126,7 @@ insert as first entry of the List component:
           </ListItemButton>
         </List>
         <Divider />
-        <List component="nav" aria-label="System">
+        <List component="nav" aria-label="Drawer-List-System">
           <ListItemButton
             selected={selectedIndex === 2}
             onClick={(event) => handleListItemClick(event, 2)}
@@ -137,7 +138,6 @@ insert as first entry of the List component:
           </ListItemButton>
         </List>
       </Drawer>
-    </Box>
   )
 }
 

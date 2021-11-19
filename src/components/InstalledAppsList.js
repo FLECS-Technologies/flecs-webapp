@@ -157,7 +157,7 @@ export default function DeviceAppsList (props) {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - appList.length) : 0
   return (
     <Box
-      sx={{ width: '85%', mt: 10, mr: 10, ml: 32 }}
+     // sx={{ width: '100%' /*, mt: 10, mr: 10, ml: 32 */ }}
       aria-label="installed-apps-list"
     >
       <Paper>

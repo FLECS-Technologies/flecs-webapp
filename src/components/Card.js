@@ -131,7 +131,7 @@ export default function OutlinedCard (props) {
   }
 
   return (
-    <Card sx={{ minWidth: 300, maxWidth: 300, m: 1 }}>
+    <Card sx={{ minWidth: 300, maxWidth: 300, mr: 2, mb: 2 }}>
       <CardHeader
         avatar={<Avatar src={props.avatar} />}
         title={props.title}

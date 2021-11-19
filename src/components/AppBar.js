@@ -66,7 +66,7 @@ export default function ElevateAppBar (props) {
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
-          <Toolbar variant="dense">
+          <Toolbar >
             <IconButton disabled="true">
               <Logo width="24" height="24" />
             </IconButton>
@@ -109,7 +109,6 @@ export default function ElevateAppBar (props) {
           </Toolbar>
         </AppBar>
       </ElevationScroll>
-      <Toolbar />
     </React.Fragment>
   )
 }

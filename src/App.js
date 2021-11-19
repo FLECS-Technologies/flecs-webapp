@@ -1,10 +1,11 @@
 import { /* useContext, */ React } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import AppBar from './components/AppBar'
-import Drawer from './components/Drawer'
+// import AppBar from './components/AppBar'
+// import Drawer from './components/Drawer'
 
-import Layout from './components/Layout'
+// import Layout from './components/Layout'
 import { DarkModeState } from './components/ThemeHandler'
+import Frame from './components/Frame'
 
 import { /* ReferenceDataContext , */ ReferenceDataContextProvider } from './data/ReferenceDataContext'
 
@@ -27,9 +28,7 @@ export default function App () {
 
   return (
     <DarkModeState>
-      <Layout>
-        <AppBar />
-        <Drawer />
+      <Frame>
         <ReferenceDataContextProvider>
           <AppList/>
           <Switch>
@@ -46,7 +45,7 @@ export default function App () {
             />
           </Switch>
         </ReferenceDataContextProvider>
-      </Layout>
+      </Frame>
     </DarkModeState>
   )
 }

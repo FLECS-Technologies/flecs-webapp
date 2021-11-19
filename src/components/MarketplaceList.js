@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
 
 export default function MarketplaceList (props) {
   let appList = []
@@ -22,15 +23,16 @@ export default function MarketplaceList (props) {
   }
 
   return (
-    <Grid
-      container
-      spacing={2}
-      direction="row"
-      justify="flex-start"
-      alignItems="flex-start"
-    >
-      {appList}
-    </Grid>
+  <Box display="flex">
+      <Grid
+        container
+        direction="row"
+        justify="flex-start"
+        alignItems="flex-start"
+      >
+        {appList}
+      </Grid>
+    </Box>
   )
 }
 

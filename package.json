@@ -47,5 +47,17 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "jest": {
+    "roots": [
+      "<rootDir>"
+    ],
+    "modulePaths": [
+      "<rootDir>",
+      "<rootDir>/src"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ]
+  }
 }

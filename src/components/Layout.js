@@ -27,10 +27,12 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+
   )
 }
 

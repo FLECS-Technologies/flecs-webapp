@@ -46,7 +46,7 @@ export default function ElevateAppBar (props) {
   }
 
   const DarkModeContext = useContext(darkModeContext)
-  const { darkMode, setDarkMode } = DarkModeContext
+  const { darkMode, setDarkMode } = DarkModeContext || {}
 
   const handleThemeChange = () => {
     if (darkMode) {
@@ -67,7 +67,7 @@ export default function ElevateAppBar (props) {
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
           <Toolbar >
-            <IconButton disabled="true">
+            <IconButton aria-label='FLECS-Logo' disabled={true}>
               <Logo width="24" height="24" />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

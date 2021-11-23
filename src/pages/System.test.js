@@ -1,14 +1,14 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import System from "./System";
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import System from './System'
 
-describe("System", () => {
-  test("renders System page", () => {
-    render(<System />);
+describe('System', () => {
+  test('renders System page', () => {
+    render(<System />)
 
-    expect(screen.getByLabelText("System-Page")).toBeVisible();
+    expect(screen.getByLabelText('system-page')).toBeVisible()
 
-    screen.debug();
-  });
-});
+    // screen.debug()
+  })
+})

@@ -23,7 +23,7 @@ export default function MarketplaceList (props) {
   }
 
   return (
-  <Box display="flex">
+  <Box aria-label="marketplace-apps-list" display="flex">
       <Grid
         container
         direction="row"

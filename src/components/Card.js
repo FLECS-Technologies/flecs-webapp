@@ -37,11 +37,13 @@ export default function OutlinedCard (props) {
   const { alertSeverity, snackbarText, snackbarOpen } = snackbarState
 
   function loadReferenceData (props) {
-    const tmpApp = appList.find(obj => {
-      return obj.appId === props.appId
-    })
+    if (appList) {
+      const tmpApp = appList.find(obj => {
+        return obj.appId === props.appId
+      })
 
-    return tmpApp
+      return tmpApp
+    }
   }
 
   function updateReferenceDataStatus (props) {

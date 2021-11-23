@@ -35,7 +35,6 @@ describe('Card', () => {
 
     fireEvent.click(screen.getByLabelText('install-app-button'))
 
-    // todo: add what to expect
     // expect(screen.getByText("Profile")).toBeVisible();
 
     // screen.debug()

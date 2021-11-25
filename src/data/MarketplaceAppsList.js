@@ -36,6 +36,18 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
+    appId: 'com.logicals.logiCAD',
+    avatar:
+      'https://scontent-frx5-1.xx.fbcdn.net/v/t1.18169-9/25151847_10155541197772740_1125669131781020098_n.png?_nc_cat=111&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeEy-bQEuZHVP5muz5lp_3Lg3ofMdJjQqwjeh8x0mNCrCDpaYIFTEgbzZnU8vMmb0PMagz5dBQCQ-ie1TQav3QhY&_nc_ohc=Vg1dVWVczQIAX-Yfala&_nc_ht=scontent-frx5-1.xx&oh=b06873d98231b3a5e598f2c608593e85&oe=61C50C21',
+    title: 'logi.CAD',
+    vendor: 'logi.cals GmbH',
+    version: '1.104.0',
+    description: 'CONFIRMED: IEC61131-3 Runtime.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
     appId: 'com.frankaemika.world',
     avatar:
       'https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1483446240/aybpyqz0difmnojadxfi.png',

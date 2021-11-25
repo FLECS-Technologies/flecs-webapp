@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert'
 
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/AppAPI'
+import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 export default function OutlinedCard (props) {
@@ -105,13 +106,14 @@ export default function OutlinedCard (props) {
     })
   }
 
-  function requestApp (props) {
-    const success = true // call send e-mail api
-
+  function requestApp (props, success) {
     const alertSeverity = success ? 'success' : 'error'
-    const snackbarText = 'Successfully requested ' + props.title + ' as a new app from ' + props.vendor + '.'
-
-    console.info('Request ' + props.title)
+    let snackbarText = ''
+    if (success) {
+      snackbarText = 'Successfully requested ' + props.title + ' as a new app from ' + props.vendor + '.'
+    } else {
+      snackbarText = 'Failed to send us the request. Please try again later.'
+    }
 
     setSnackbarState({
       snackbarOpen: true,
@@ -189,15 +191,14 @@ export default function OutlinedCard (props) {
         >
           Are you sure you want to uninstall {props.title}?
         </ConfirmDialog>
-        <ConfirmDialog
-          title={'Send request for ' + props.title + ' app?'}
+        <RequestAppDialog
+          appTitle={props.title}
+          appVendor={props.vendor}
           open={requestOpen}
           setOpen={setRequestOpen}
-          onConfirm={() => requestApp(props)}
+          onConfirm={(success) => requestApp(props, success)}
         >
-          Are you sure you want to send us a request for a {props.title} app
-          from {props.vendor}?
-        </ConfirmDialog>
+        </RequestAppDialog>
         <Snackbar
           anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
           open={snackbarOpen}

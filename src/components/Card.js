@@ -9,6 +9,9 @@ import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
+import IconButton from '@mui/material/IconButton'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import CloseIcon from '@mui/icons-material/Close'
 
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/AppAPI'
@@ -32,10 +35,12 @@ export default function OutlinedCard (props) {
   const [snackbarState, setSnackbarState] = useState({
     snackbarOpen: false,
     snackbarText: 'Info',
-    alertSeverity: 'success'
+    alertSeverity: 'success',
+    displayCopyState: 'none',
+    clipBoardContent: ''
   })
 
-  const { alertSeverity, snackbarText, snackbarOpen } = snackbarState
+  const { alertSeverity, snackbarText, snackbarOpen, displayCopyState, clipBoardContent } = snackbarState
 
   function loadReferenceData (props) {
     if (appList) {
@@ -62,7 +67,8 @@ export default function OutlinedCard (props) {
     const success = appAPI.installFromMarketplace()
 
     const alertSeverity = success ? 'success' : 'error'
-    let snackbarText
+    const displayCopyIcon = success ? 'none' : 'block'
+    let snackbarText, errorMessage
 
     if (success) {
       setInstalled(true)
@@ -72,12 +78,15 @@ export default function OutlinedCard (props) {
       snackbarText = props.title + ' successfully installed.'
     } else {
       snackbarText = 'Failed to install ' + props.title + '.'
+      errorMessage = 'Error during the installation of ' + appAPI.app.title
     }
 
     setSnackbarState({
       snackbarOpen: true,
       alertSeverity: alertSeverity,
-      snackbarText: snackbarText
+      snackbarText: snackbarText,
+      displayCopyState: displayCopyIcon,
+      clipBoardContent: errorMessage
     })
   }
 
@@ -87,6 +96,7 @@ export default function OutlinedCard (props) {
     const success = appAPI.uninstall()
 
     const alertSeverity = success ? 'success' : 'error'
+    const displayCopyIcon = success ? 'none' : 'block'
     let snackbarText
 
     if (success) {
@@ -102,12 +112,14 @@ export default function OutlinedCard (props) {
     setSnackbarState({
       snackbarOpen: true,
       alertSeverity: alertSeverity,
-      snackbarText: snackbarText
+      snackbarText: snackbarText,
+      displayCopyState: displayCopyIcon
     })
   }
 
   function requestApp (props, success) {
     const alertSeverity = success ? 'success' : 'error'
+    const displayCopyIcon = success ? 'none' : 'block'
     let snackbarText = ''
     if (success) {
       snackbarText = 'Successfully requested ' + props.title + ' as a new app from ' + props.vendor + '.'
@@ -118,7 +130,8 @@ export default function OutlinedCard (props) {
     setSnackbarState({
       snackbarOpen: true,
       alertSeverity: alertSeverity,
-      snackbarText: snackbarText
+      snackbarText: snackbarText,
+      displayCopyState: displayCopyIcon
     })
   }
 
@@ -130,8 +143,13 @@ export default function OutlinedCard (props) {
     setSnackbarState({
       snackbarOpen: false,
       snackbarText: snackbarText,
-      alertSeverity: alertSeverity
+      alertSeverity: alertSeverity,
+      displayCopyState: displayCopyState
     })
+  }
+
+  function copyErrorToClipboard () {
+    navigator.clipboard.writeText(clipBoardContent)
   }
 
   return (
@@ -203,12 +221,28 @@ export default function OutlinedCard (props) {
           anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
           open={snackbarOpen}
           autoHideDuration={6000}
-          onClose={handleSnackbarClose}
         >
           <Alert
             onClose={handleSnackbarClose}
             severity={alertSeverity}
             sx={{ width: '100%' }}
+            action={[
+              <IconButton
+                key='snackbar-copy-button'
+                onClick={() => copyErrorToClipboard()}
+                style={{ display: displayCopyState }}
+                color='inherit'
+              >
+                <ContentCopyIcon />
+              </IconButton>,
+              <IconButton
+                key='snackbar-close-button'
+                onClick={handleSnackbarClose}
+                color='inherit'
+              >
+                <CloseIcon/>
+              </IconButton>
+            ]}
           >
             {snackbarText}
           </Alert>

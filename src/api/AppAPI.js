@@ -41,138 +41,176 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  installFromMarketplace () {
-    let returnValue = false
+  async installFromMarketplace () {
+    let returnValue
 
-    if (this.app) {
-      const installAPI = new PostInstallAppAPI()
-      const startInstanceAPI = new PostStartAppInstanceAPI()
+    try {
+      if (this.app) {
+        const installAPI = new PostInstallAppAPI()
+        const startInstanceAPI = new PostStartAppInstanceAPI()
 
-      if (installAPI.installApp(this.app.appId, this.app.version)) {
-        if (this.createInstance(this.app.title + this.app.instances.length)) {
-          if (
-            startInstanceAPI.startAppInstance(
-              this.app.appId,
-              this.app.instances[length - 1]
-            )
-          ) {
-            this.app.instances[length - 1].status = 'started'
-            returnValue = true
-          } else {
-            // catch response of start app instance was not OK
-          }
-        } else {
-          // catch response of create app inscance was not OK
+        const installOK = await fetch(installAPI.installApp(this.app.appId, this.app.version)).then(response => response.json)
+        if (!installOK.ok) {
+          returnValue = installOK
+          throw Error('InstallApp(): Failed to install app')
         }
-      } else {
-        // catch response of install app api was not OK
-      }
 
-      return returnValue
+        const createOK = await fetch(this.createInstance(this.app.title + this.app.instances.length)).then(response => response.json)
+        if (!createOK.ok) {
+          returnValue = createOK
+          throw Error('InstallApp(): Failed to create instance')
+        }
+
+        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.appId, this.app.instances[length - 1])).then(response => response.json)
+        if (!startOK) {
+          returnValue = startOK
+          throw Error('InstallApp(): Failed to start instance')
+        } else {
+          this.app.instances[length - 1].status = 'started'
+          returnValue = true
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
+
+    return returnValue
   }
 
-  uninstall () {
-    let returnValue = false
-    if (this.app) {
-      const uninstallAPI = new PostUninstallAppAPI()
-      if (uninstallAPI.uninstallApp(this.app.appId, this.app.version)) {
-        returnValue = true
-      } else {
+  async uninstall () {
+    let returnValue
+    try {
+      if (this.app) {
+        const uninstallAPI = new PostUninstallAppAPI()
+        const uninstallOK = await fetch(uninstallAPI.uninstallApp(this.app.appId, this.app.version)).then(response => response.json)
+        if (uninstallOK.ok) {
+          returnValue = uninstallOK
+        } else {
         // catch response of uninstall app was not OK
+          returnValue = uninstallOK
+          throw Error('failed to uninstalled app')
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
     return returnValue
   }
 
-  createInstance (instanceName) {
-    let returnValue = false
-    if (this.app) {
-      const createInstanceAPI = new PostCreateAppInstanceAPI()
-      if (createInstanceAPI.createAppInstance(this.app.appId, this.app.version, instanceName)) {
-        this.app.instances.push(
-          {
-            instanceId: createInstanceAPI.state.responseData.instanceId,
-            instanceName: instanceName,
-            status: 'stopped'
-          }
-        )
-        returnValue = true
+  async createInstance (instanceName) {
+    let returnValue
+    try {
+      if (this.app) {
+        const createInstanceAPI = new PostCreateAppInstanceAPI()
+        const createOK = await fetch(createInstanceAPI.createAppInstance(this.app.appId, this.app.version, instanceName)).then(response => response.json)
+        if (createOK.ok) {
+          this.app.instances.push(
+            {
+              instanceId: createInstanceAPI.state.responseData.instanceId,
+              instanceName: instanceName,
+              status: 'stopped'
+            }
+          )
+          returnValue = createOK
+        } else {
+          returnValue = createOK
+          throw Error('failed to create instance')
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
     return returnValue
   }
 
-  startInstance (instanceId) {
-    let returnValue = false
+  async startInstance (instanceId) {
+    let returnValue
 
-    if (this.app) {
-      const startInstanceAPI = new PostStartAppInstanceAPI()
-      if (
-        startInstanceAPI.startAppInstance(
-          this.app.appId,
-          instanceId
-        )
-      ) {
-        this.app.instances.map(item =>
-          item.instanceId === instanceId
-            ? { ...item, status: 'started' }
-            : item)
+    try {
+      if (this.app) {
+        const startInstanceAPI = new PostStartAppInstanceAPI()
+        const startOK = await fetch(
+          startInstanceAPI.startAppInstance(
+            this.app.appId,
+            instanceId
+          )
+        ).then(response => response.json)
+        if (startOK.ok) {
+          this.app.instances.map(item =>
+            item.instanceId === instanceId
+              ? { ...item, status: 'started' }
+              : item)
 
-        returnValue = true
-      } else {
+          returnValue = startOK
+        } else {
         // catch response of start app instance was not OK
+          returnValue = startOK
+          throw Error('failed to start instance')
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
-
     return returnValue
   }
 
-  stopInstance (instanceId) {
-    let returnValue = false
+  async stopInstance (instanceId) {
+    let returnValue
 
-    if (this.app) {
-      const stopInstanceAPI = new PostStopAppInstanceAPI()
-      if (
-        stopInstanceAPI.stopAppInstance(
-          this.app.appId,
-          instanceId
-        )
-      ) {
-        this.app.instances.map(item =>
-          item.instanceId === instanceId
-            ? { ...item, status: 'stopped' }
-            : item)
+    try {
+      if (this.app) {
+        const stopInstanceAPI = new PostStopAppInstanceAPI()
+        const stopOK = await fetch(
+          stopInstanceAPI.stopAppInstance(
+            this.app.appId,
+            instanceId
+          )
+        ).then(response => response.json)
+        if (stopOK.ok) {
+          this.app.instances.map(item =>
+            item.instanceId === instanceId
+              ? { ...item, status: 'stopped' }
+              : item)
 
-        returnValue = true
-      } else {
-        // catch response of start app instance was not OK
+          returnValue = stopOK
+        } else {
+        // catch response of stop app instance was not OK
+          returnValue = stopOK
+          throw Error('failed to stop instance')
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
-
     return returnValue
   }
 
-  deleteInstance (instanceId) {
-    let returnValue = false
+  async deleteInstance (instanceId) {
+    let returnValue
 
-    if (this.app) {
-      const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
-      if (
-        deleteInstanceAPI.deleteAppInstance(
-          this.app.appId,
-          instanceId
-        )
-      ) {
+    try {
+      if (this.app) {
+        const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
+        const deleteOK = await fetch(
+          deleteInstanceAPI.deleteAppInstance(
+            this.app.appId,
+            instanceId
+          )
+        ).then(response => response.json)
+        if (deleteOK.ok) {
         // remove instance from array
-        this.app.instances = this.app.instances.filter(instance => instance.instanceId === instanceId)
+          this.app.instances = this.app.instances.filter(instance => instance.instanceId === instanceId)
 
-        returnValue = true
-      } else {
-        // catch response of start app instance was not OK
+          returnValue = deleteOK
+        } else {
+        // catch response of delete instance was not OK
+          returnValue = deleteOK
+          throw Error('failed to delete instance')
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
-
     return returnValue
   }
 

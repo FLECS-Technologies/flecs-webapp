@@ -2,7 +2,7 @@ import BaseAPI from './BaseAPI'
 import DeviceAPIConfiguration from './api-config'
 
 export default class PostInstallAppAPI extends BaseAPI {
-  installApp (appId, appVersion) {
+  async installApp (appId, appVersion) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
@@ -10,8 +10,15 @@ export default class PostInstallAppAPI extends BaseAPI {
       body: JSON.stringify({ appId, appVersion })
     }
 
-    const response = this.callAPI(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)
-
-    return response
+    try {
+      const response = await fetch(this.callAPI(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)).then(response => response.json)
+      if (response.ok) {
+        return response
+      } else {
+        throw Error('Failed to perform PostInstallAppAPI.installApp()')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

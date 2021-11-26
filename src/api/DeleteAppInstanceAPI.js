@@ -2,19 +2,28 @@ import BaseAPI from './BaseAPI'
 import DeviceAPIConfiguration from './api-config'
 
 export default class DeleteAppInstanceAPI extends BaseAPI {
-  deleteAppInstance (appId, appVersion, instanceName) {
+  async deleteAppInstance (appId, instanceId) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ appId, appVersion, instanceName })
+      body: JSON.stringify({ appId, instanceId })
     }
 
-    const response = this.callAPI(
-      DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL,
-      requestOptions
-    )
+    try {
+      const response = await fetch(this.callAPI(
+        DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL,
+        requestOptions
+      )).then(response => response.json)
+      if (response.ok) {
+        return response
+      } else {
+        throw Error('Failed to perfom DeleteAppInstanceAPI.deleteAppInstance()')
+      }
+    } catch (error) {
+      console.log(error)
+    }
 
-    return response
+    return false
   }
 }

@@ -61,16 +61,16 @@ export default function OutlinedCard (props) {
     )
   }
 
-  function installApp (props) {
+  const installApp = async (props) => {
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
-    const success = appAPI.installFromMarketplace()
+    const success = await fetch(appAPI.installFromMarketplace()).then(response => response.json)
 
-    const alertSeverity = success ? 'success' : 'error'
-    const displayCopyIcon = success ? 'none' : 'block'
+    const alertSeverity = success.ok ? 'success' : 'error'
+    const displayCopyIcon = success.ok ? 'none' : 'block'
     let snackbarText, errorMessage
 
-    if (success) {
+    if (success.ok) {
       setInstalled(true)
       setUninstalled(false)
       updateReferenceDataStatus(appAPI.app)
@@ -90,16 +90,16 @@ export default function OutlinedCard (props) {
     })
   }
 
-  function uninstallApp (props) {
+  const uninstallApp = async (props) => {
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
-    const success = appAPI.uninstall()
+    const success = await fetch(appAPI.uninstall()).then(response => response.json)
 
-    const alertSeverity = success ? 'success' : 'error'
-    const displayCopyIcon = success ? 'none' : 'block'
+    const alertSeverity = success.ok ? 'success' : 'error'
+    const displayCopyIcon = success.ok ? 'none' : 'block'
     let snackbarText
 
-    if (success) {
+    if (success.ok) {
       setInstalled(false)
       setUninstalled(true)
       updateReferenceDataStatus(appAPI.app)

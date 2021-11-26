@@ -9,6 +9,7 @@ const AppList = () => {
 
   const [marketplaceAppList] = useState([...marketPlaceAppsList])
   const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
+  let mergedList
 
   // todo: call api from the marketplace to get all apps
   //   useEffect(() => {
@@ -20,17 +21,17 @@ const AppList = () => {
     const deviceAPI = new DeviceAPI()
     if (deviceAPI.getInstalledApps()) {
       setInstalledAppList([deviceAPI.appList])
+
+      mergedList = Object.values([...marketplaceAppList, ...installedAppList]
+        .reduce((r, o) => {
+          r[o.appId] = r[o.appId]
+            ? { ...r[o.appId], instances: [...r[o.appId].instances, ...o.instances], status: o.status }
+            : o
+
+          return r
+        }, {}))
     }
   }, [])
-
-  const mergedList = Object.values([...marketplaceAppList, ...installedAppList]
-    .reduce((r, o) => {
-      r[o.appId] = r[o.appId]
-        ? { ...r[o.appId], instances: [...r[o.appId].instances, ...o.instances], status: o.status }
-        : o
-
-      return r
-    }, {}))
 
   useEffect(() => {
     setAppList(appList => [...mergedList])

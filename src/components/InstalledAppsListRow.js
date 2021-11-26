@@ -55,14 +55,14 @@ export default function Row (props) {
     )
   }
 
-  function startNewInstance (props) {
+  const startNewInstance = async (props) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(props.row)
     appAPI.setAppData(loadReferenceData(props.row))
-    const success = appAPI.createInstance(appAPI.app.title + appAPI.app.instances.length)
+    const success = await fetch(appAPI.createInstance(appAPI.app.title + appAPI.app.instances.length)).then(response => response.json)
 
-    if (success) {
+    if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
       startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
     } else {
@@ -77,14 +77,14 @@ export default function Row (props) {
     }
   }
 
-  function stopInstance (app, instanceId) {
+  const stopInstance = async (app, instanceId) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = appAPI.stopInstance(instanceId)
+    const success = await fetch(appAPI.stopInstance(instanceId)).then(response => response.json)
 
-    if (success) {
+    if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
@@ -98,14 +98,14 @@ export default function Row (props) {
     }
   }
 
-  function startInstance (app, instanceId) {
+  const startInstance = async (app, instanceId) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = appAPI.startInstance(instanceId)
+    const success = await fetch(appAPI.startInstance(instanceId)).then(response => response.json)
 
-    if (success) {
+    if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
@@ -119,14 +119,14 @@ export default function Row (props) {
     }
   }
 
-  function deleteInstance (app, instanceId) {
+  const deleteInstance = async (app, instanceId) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = appAPI.deleteInstance(instanceId)
+    const success = await fetch(appAPI.deleteInstance(instanceId)).then(response => response.json)
 
-    if (success) {
+    if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar

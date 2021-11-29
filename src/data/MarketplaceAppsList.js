@@ -48,6 +48,18 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
+    appId: 'com.openplc.openplc',
+    avatar:
+      'https://www.openplcproject.com/assets/img/openplc-white.png',
+    title: 'OPENPLC',
+    vendor: 'Thiago Alves',
+    version: '1.26.0',
+    description: 'CONFIRMED: IEC61131-3 Runtime.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
     appId: 'com.frankaemika.world',
     avatar:
       'https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1483446240/aybpyqz0difmnojadxfi.png',
@@ -138,6 +150,258 @@ export const marketPlaceAppsList = [
     vendor: 'Inductive Automation Inc.',
     version: '8.1.11',
     description: 'The Unlimited Platform for SCADA.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.ininet.spidercontrol',
+    avatar:
+      'https://spidercontrol.net/wp-content/uploads/2017/05/header_01.png',
+    title: 'SpiderControl',
+    vendor: 'iniNet Solutions GmbH',
+    version: '2.06.0',
+    description: 'Visu and SCADA Framework.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.selmotechnology.selmo',
+    avatar:
+      'https://app.selmo.at/fileadmin/introduction/images/MA_B_Logo_SELMO.png',
+    title: 'SELMO',
+    vendor: 'SELMO Technology GmbH',
+    version: '2.06.0',
+    description: 'PLC code generator.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.triomotion.robotics',
+    avatar:
+      'http://www.triomotion.uk/images/layout/logoColour.png',
+    title: 'Robotics',
+    vendor: 'Trio Motion Technology',
+    version: '5.9.0',
+    description: 'Robotics Firmware.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.wandelbots.teaching',
+    avatar:
+      'https://cdn.startbase.com/images/company/wandelbots/4c5dadd15a/',
+    title: 'Wandelbots Teaching',
+    vendor: 'Wandelbots GmbH',
+    version: '3.0.0',
+    description: 'No-Code robotic platform.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.energyrobotics.teaching',
+    avatar:
+      'https://uploads-ssl.webflow.com/60f98fd6b8e7d653f38541b3/60faa24f6bfbf382fc5d8ca7_logo.svg',
+    title: 'Robot Control',
+    vendor: 'Energy Robotics GmbH',
+    version: '6.10.0',
+    description: 'Autonomous mobile robot control.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.isac.iliumpac',
+    avatar:
+      'http://www.isacsrl.eu/wp-content/themes/isac-2016/dist/images/logo-isac.svg',
+    title: 'Ilium PAC',
+    vendor: 'Isac S.r.l.',
+    version: '4.42',
+    description: 'Programmable Automation Controller.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.openrobotics.ros',
+    avatar:
+      'https://www.ros.org/imgs/logo-white.png',
+    title: 'ROS',
+    vendor: 'Open Robotics',
+    version: '2.10',
+    description: 'Robotic Operating System.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.linmot.servo',
+    avatar:
+      'https://linmot.com/de/wp-content/themes/linmot/img/logo.png',
+    title: 'Servo Drive',
+    vendor: 'NTI AG LinMot & MagSpring',
+    version: '9.3.2',
+    description: 'LinMot Servo Drive.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.acontis.ethercat',
+    avatar:
+      'https://www.acontis.com/files/img/acontislogo.png',
+    title: 'EtherCAT Master',
+    vendor: 'acontis technologies GmbH',
+    version: '3.4.1',
+    description: 'EtherCAT Master stack.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.beeond.opcua',
+    avatar:
+      'https://beeond.net/wp-content/uploads/2021/02/beeond-303.jpg',
+    title: 'EdgeXConnect',
+    vendor: 'Beeond, Inc.',
+    version: '1.1',
+    description: 'No code OPC UA Server.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.hilscher.cifx',
+    avatar:
+      'https://www.hilscher.com/fileadmin/templates/doctima_2013/resources/Images/logo_hilscher.png',
+    title: 'netX Profinet Device',
+    vendor: 'Hilscher GmbH',
+    version: '6.1.3',
+    description: 'Profinet Device Stack.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.litmus.edge',
+    avatar:
+      'https://s3.amazonaws.com/company-photo.theladders.com/1065/5b7c142b-ff34-410a-9008-d388c5ef6fdc.png',
+    title: 'Litmus Edge',
+    vendor: 'Litmus Automation Inc.',
+    version: '7.2.8',
+    description: 'Data collection, and analytics platform.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.universalautomation.1499',
+    avatar:
+      'https://universalautomation.org/app/themes/UniversalAutomation/build/images/logo.svg?id=a1a2950c226477a79ca2',
+    title: '1499',
+    vendor: 'UniversalAutomation.org AISBL',
+    version: '7.2.8',
+    description: '1499 Runtime.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.eclipse.4diac',
+    avatar:
+      'https://www.eclipse.org/4diac/img/4diac.png',
+    title: '1499',
+    vendor: 'Eclipse Foundation',
+    version: '2.0.0',
+    description: '1499 Runtime.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.fraunhofer.stationconnector',
+    avatar:
+      'https://avatars.githubusercontent.com/u/155854?s=280&v=4',
+    title: 'StationConnector',
+    vendor: 'Fraunhofer IPA',
+    version: '12.5.0',
+    description: 'Highspeed machine data collection.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.visualys.stationconnector',
+    avatar:
+      'https://www.visualys.net/wp-content/uploads/2019/08/VISUALYS-grau-gruen.png',
+    title: 'Visualys Connector',
+    vendor: 'VISUALYS GmbH',
+    version: '6.23.0',
+    description: 'Centralized maschine monitoring.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.synostik.synostik',
+    avatar:
+      'https://www.synostik.de/images/design/logo/Logo_dunkel.svg',
+    title: 'Synostik Connector',
+    vendor: 'Synostik GmbH',
+    version: '1.12.5',
+    description: 'Machine diagnostics.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.pragmaticindustries.oemhub',
+    avatar:
+      'https://pragmaticindustries.com/wp-content/uploads//2021/09/pi-web_white.svg',
+    title: 'OEM Hub',
+    vendor: 'Pragmatic Industries GmbH',
+    version: '4.8.9',
+    description: 'Machine digitalization.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.anydesk.remote',
+    avatar:
+      'https://anydesk.com/_static/img/logos/anydesk-logo-40fe6c.svg',
+    title: 'AnyDesk Remote',
+    vendor: 'AnyDesk Software  GmbH',
+    version: '7.0.4',
+    description: 'Remote access.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.atvise.hmi',
+    avatar:
+      'https://www.atvise.com/images/atvise/logos/atvise-dark.svg',
+    title: 'atvise hmi',
+    vendor: 'Bachmann Visutec GmbH',
+    version: '2.2.4',
+    description: 'HMI',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    instances: []
+  },
+  {
+    appId: 'com.wibu.codemeter',
+    avatar:
+      'https://upload.wikimedia.org/wikipedia/commons/d/d2/Wibu-Systems_logo.png',
+    title: 'CodeMeter',
+    vendor: 'WIBU-SYSTEMS AG',
+    version: '2.6.0',
+    description: 'Licensing software.',
     availability: 'unavailable',
     status: 'uninstalled',
     instances: []

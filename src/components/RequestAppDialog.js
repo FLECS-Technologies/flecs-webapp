@@ -56,10 +56,10 @@ const RequestAppDialog = (props) => {
             <br/>
         </Typography>
         <div>
-          <TextField name="user_name" label="Name" variant="standard" helperText="Optional" />
-          <TextField name="user_email" label="E-Mail" variant="standard" helperText="Optional"/>
-          <TextField name="app_title" label="App" variant="standard" defaultValue={appTitle} style={{ display: 'none' }}/>
-          <TextField name="app_vendor" label="Vendor" variant="standard" defaultValue={appVendor} style={{ display: 'none' }}/>
+          <TextField aria-label="Name" name="user_name" label="Name" variant="standard" helperText="Optional" />
+          <TextField aria-label="E-Mail" name="user_email" label="E-Mail" variant="standard" helperText="Optional"/>
+          <TextField aria-label="App" name="app_title" label="App" variant="standard" defaultValue={appTitle} style={{ display: 'none' }}/>
+          <TextField aria-label="Vendor" name="app_vendor" label="Vendor" variant="standard" defaultValue={appVendor} style={{ display: 'none' }}/>
         </div>
       </Box>
       </DialogContent>
@@ -68,13 +68,13 @@ const RequestAppDialog = (props) => {
           variant="outlined"
           onClick={() => setOpen(false)}
         >
-          No
+          Cancel
         </Button>
         <Button
           variant="contained"
           onClick={sendEmail}
         >
-          Yes
+          Send Request
         </Button>
       </DialogActions>
     </Dialog>

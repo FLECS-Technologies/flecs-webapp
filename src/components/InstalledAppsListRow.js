@@ -171,7 +171,7 @@ export default function Row (props) {
         <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>
-          <Tooltip title="Start new app instance">
+          <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
             <span>
               <IconButton
                 color="primary"

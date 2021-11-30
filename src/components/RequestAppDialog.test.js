@@ -8,8 +8,8 @@ describe('RequestAppDialog', () => {
     render(
         <RequestAppDialog
             open={true}
-            appTitle = 'Testapp'
-            appVendor = 'Test-vendor'
+            appName = 'Testapp'
+            appauthor = 'Test-author'
         />
     )
     expect(screen.getByText('Cancel')).toBeVisible()

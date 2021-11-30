@@ -12,8 +12,8 @@ export default function MarketplaceList (props) {
         key={app.app}
         app={app.app}
         avatar={app.avatar}
-        title={app.title}
-        vendor={app.vendor}
+        name={app.name}
+        author={app.author}
         version={app.version}
         description={app.description}
         status={app.status}
@@ -40,8 +40,8 @@ MarketplaceList.propTypes = {
   appData: PropTypes.any,
   app: PropTypes.string,
   avatar: PropTypes.string,
-  title: PropTypes.string,
-  vendor: PropTypes.string,
+  name: PropTypes.string,
+  author: PropTypes.string,
   version: PropTypes.string,
   description: PropTypes.string,
   status: PropTypes.string,

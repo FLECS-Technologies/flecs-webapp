@@ -22,16 +22,16 @@ import FileOpen from './FileOpen'
 const headCells = [
 
   {
-    id: 'title',
+    id: 'name',
     numeric: false,
     disablePadding: false,
     label: 'App'
   },
   {
-    id: 'vendor',
+    id: 'author',
     numeric: false,
     disablePadding: false,
-    label: 'Vendor'
+    label: 'Author'
   },
   {
     id: 'version',

@@ -11,7 +11,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 const RequestAppDialog = (props) => {
-  const { appTitle, appVendor, open, setOpen, onConfirm } = props
+  const { appName, appauthor, open, setOpen, onConfirm } = props
   const form = useRef()
   let success = true
 
@@ -36,7 +36,7 @@ const RequestAppDialog = (props) => {
       onClose={() => setOpen(false)}
       aria-labelledby="request-app-dialog"
     >
-      <DialogTitle>Request {appTitle} app</DialogTitle>
+      <DialogTitle>Request {appName} app</DialogTitle>
       <DialogContent>
       <Box
         component="form"
@@ -51,15 +51,15 @@ const RequestAppDialog = (props) => {
         <Typography name="message">
           <br/>
             Hi FLECS-Team, <br/>
-            Can you please ask {appVendor} to support {appTitle} as an app for FLECS?<br/><br/>
+            Can you please ask {appauthor} to support {appName} as an app for FLECS?<br/><br/>
             Cheers!
             <br/>
         </Typography>
         <div>
           <TextField aria-label="Name" name="user_name" label="Name" variant="standard" helperText="Optional" />
           <TextField aria-label="E-Mail" name="user_email" label="E-Mail" variant="standard" helperText="Optional"/>
-          <TextField aria-label="App" name="app_title" label="App" variant="standard" defaultValue={appTitle} style={{ display: 'none' }}/>
-          <TextField aria-label="Vendor" name="app_vendor" label="Vendor" variant="standard" defaultValue={appVendor} style={{ display: 'none' }}/>
+          <TextField aria-label="App" name="app_title" label="App" variant="standard" defaultValue={appName} style={{ display: 'none' }}/>
+          <TextField aria-label="author" name="app_author" label="author" variant="standard" defaultValue={appauthor} style={{ display: 'none' }}/>
         </div>
       </Box>
       </DialogContent>
@@ -81,8 +81,8 @@ const RequestAppDialog = (props) => {
   )
 }
 RequestAppDialog.propTypes = {
-  appTitle: PropTypes.string,
-  appVendor: PropTypes.string,
+  appName: PropTypes.string,
+  appauthor: PropTypes.string,
   open: PropTypes.bool,
   setOpen: PropTypes.func,
   onConfirm: PropTypes.func

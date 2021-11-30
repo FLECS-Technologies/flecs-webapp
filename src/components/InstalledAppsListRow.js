@@ -60,14 +60,14 @@ export default function Row (props) {
     let alertSeverity
     const appAPI = new AppAPI(props.row)
     appAPI.setAppData(loadReferenceData(props.row))
-    const success = await fetch(appAPI.createInstance(appAPI.app.title + appAPI.app.instances.length)).then(response => response.json)
+    const success = await fetch(appAPI.createInstance(appAPI.app.name + appAPI.app.instances.length)).then(response => response.json)
 
     if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
       startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
     } else {
       // error snackbar
-      snackbarText = 'Failed to start a new instance of ' + appAPI.app.title + '.'
+      snackbarText = 'Failed to start a new instance of ' + appAPI.app.name + '.'
       alertSeverity = 'error'
       setSnackbarState({
         snackbarOpen: true,
@@ -167,14 +167,15 @@ export default function Row (props) {
         <TableCell style={{ borderBottom: 'none' }} component="th" scope="row">
           <Avatar src={row.avatar}></Avatar>
         </TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.title}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.vendor}</TableCell>
+        <TableCell style={{ borderBottom: 'none' }}>{row.name}</TableCell>
+        <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>
           <Tooltip title="Start new app instance">
             <IconButton
               color="primary"
               onClick={() => startNewInstance(props)}
+              disabled={!row.multiInstance}
             >
               <AddTaskIcon />
             </IconButton>
@@ -193,6 +194,7 @@ export default function Row (props) {
                   variant="contained"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
+                  disabled={!row.multiInstance}
                 >
                   start new instance
                 </Button>

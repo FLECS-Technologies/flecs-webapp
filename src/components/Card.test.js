@@ -25,8 +25,8 @@ describe('Card', () => {
     render(<Card
       app= 'Testapp'
       avatar= ''
-      title= 'Test App Title'
-      vendor= 'Test App Vendor'
+      name= 'Test App Name'
+      author= 'Test App author'
       version= 'Test App Version'
       description= 'Test App Description'
       status= 'uninstalled'

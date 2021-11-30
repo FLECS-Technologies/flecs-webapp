@@ -15,8 +15,8 @@ export default class AppAPI extends React.Component {
     this.app = {
       app: props.app,
       avatar: props.avatar,
-      title: props.title,
-      vendor: props.vendor,
+      name: props.name,
+      author: props.author,
       version: props.version,
       description: props.description,
       status: props.status,
@@ -30,8 +30,8 @@ export default class AppAPI extends React.Component {
       this.app = {
         app: props.app,
         avatar: props.avatar,
-        title: props.title,
-        vendor: props.vendor,
+        name: props.name,
+        author: props.author,
         version: props.version,
         description: props.description,
         status: props.status,
@@ -56,7 +56,7 @@ export default class AppAPI extends React.Component {
           throw Error('InstallApp(): Failed to install app')
         }
 
-        const createOK = await fetch(this.createInstance(this.app.title + this.app.instances.length)).then(response => response.json)
+        const createOK = await fetch(this.createInstance(this.app.name + this.app.instances.length)).then(response => response.json)
         if (!createOK.ok) {
           returnValue = createOK
           throw Error('InstallApp(): Failed to create instance')
@@ -239,8 +239,8 @@ export default class AppAPI extends React.Component {
     return {
       app: PropTypes.string,
       avatar: PropTypes.string,
-      title: PropTypes.string,
-      vendor: PropTypes.string,
+      name: PropTypes.string,
+      author: PropTypes.string,
       version: PropTypes.string,
       description: PropTypes.string,
       status: PropTypes.string,

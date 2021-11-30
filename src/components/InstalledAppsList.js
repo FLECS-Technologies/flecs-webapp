@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import GetAppIcon from '@mui/icons-material/GetApp'
 import { visuallyHidden } from '@mui/utils'
-// import loadYamlFile from 'load-yaml-file'
+import Yaml from 'js-yaml'
 import Row from './InstalledAppsListRow'
 import FileOpen from './FileOpen'
 
@@ -126,7 +126,7 @@ export default function DeviceAppsList (props) {
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('apps')
   const [page, setPage] = React.useState(0)
-  const [sideloadFile, setSideloadFile] = React.useState()
+  // const [setSideloadFile] = React.useState()
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
   let appList = []
 
@@ -145,10 +145,10 @@ export default function DeviceAppsList (props) {
     setPage(0)
   }
 
-  const handleOnSideloadConfirm = async () => {
-    // const data = '' // await loadYamlFile(sideloadFile)
+  const handleOnSideloadConfirm = async (text) => {
+    const doc = Yaml.load(text)
 
-    console.log(sideloadFile)
+    console.log(doc)
   }
 
   if (props.appData) {
@@ -190,7 +190,7 @@ export default function DeviceAppsList (props) {
               buttonText="Sideload App"
               buttonIcon={<GetAppIcon/>}
               accept='.yml'
-              setFile={setSideloadFile}
+              // setFile={setSideloadFile}
               onConfirm={handleOnSideloadConfirm}
             ></FileOpen>
           </Tooltip>

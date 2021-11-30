@@ -172,13 +172,15 @@ export default function Row (props) {
         <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>
           <Tooltip title="Start new app instance">
-            <IconButton
-              color="primary"
-              onClick={() => startNewInstance(props)}
-              disabled={!row.multiInstance}
-            >
-              <AddTaskIcon />
-            </IconButton>
+            <span>
+              <IconButton
+                color="primary"
+                onClick={() => startNewInstance(props)}
+                disabled={!row.multiInstance}
+              >
+                <AddTaskIcon />
+              </IconButton>
+            </span>
           </Tooltip>
         </TableCell>
       </TableRow>

@@ -3,20 +3,18 @@ import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 
 const FileOpen = (props) => {
-  const { buttonText, buttonIcon, accept, setFile, onConfirm } = props
+  const { buttonText, buttonIcon, accept, /* setFile , */ onConfirm } = props
   const inputFile = useRef(null)
 
   const handleFileOpen = e => {
     const { files } = e.target
     if (files && files.length) {
-      const filename = files[0].name
-
-      const parts = filename.split('.')
-      const fileType = parts[parts.length - 1]
-      console.log('fileType', fileType) // ex: zip, rar, jpg, svg etc.
-
-      setFile(files[0])
-      onConfirm()
+      e.preventDefault()
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        onConfirm(e.target.result)
+      }
+      reader.readAsText(files[0])
     }
   }
 
@@ -30,7 +28,7 @@ const FileOpen = (props) => {
         style={{ display: 'none' }}
         accept={accept}
         ref={inputFile}
-        onChange={handleFileOpen}
+        onChange={(e) => handleFileOpen(e)}
         type="file"
       />
       <Button

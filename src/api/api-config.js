@@ -11,6 +11,8 @@ const POST_STOP_INSTANCE_URL = 'http://localhost:80/StopInstance'
 const POST_CREATE_APP_INSTANCE_URL = 'http://localhost:80/CreateAppInstance'
 const POST_DELETE_APP_INSTANCE_URL = 'http://localhost:80/DeleteAppInstance'
 
+const PUT_SIDELOAD_APP = 'http://localhost:80/SideloadApp'
+
 const GET_APP_LIST_URL = 'http://marketplace.flecs.tech/AppList'
 
 export default class DeviceAPIConfiguration extends Component {
@@ -50,6 +52,11 @@ export default class DeviceAPIConfiguration extends Component {
 
   static get GET_INSTANTIATED_APP_LIST_URL () {
     return GET_INSTANTIATED_APP_LIST_URL
+  }
+
+  // put requests
+  static get PUT_SIDELOAD_APP () {
+    return PUT_SIDELOAD_APP
   }
 }
 

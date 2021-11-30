@@ -45,7 +45,7 @@ export default function OutlinedCard (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return obj.appId === props.appId
+        return obj.app === props.app
       })
 
       return tmpApp
@@ -55,7 +55,7 @@ export default function OutlinedCard (props) {
   function updateReferenceDataStatus (props) {
     setAppList(
       appList.map(item =>
-        item.appId === props.appId
+        item.app === props.app
           ? { ...item, status: props.status }
           : item)
     )
@@ -253,7 +253,7 @@ export default function OutlinedCard (props) {
 }
 
 OutlinedCard.propTypes = {
-  appId: PropTypes.string,
+  app: PropTypes.string,
   avatar: PropTypes.string,
   title: PropTypes.string,
   vendor: PropTypes.string,

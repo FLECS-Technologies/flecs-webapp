@@ -12,9 +12,12 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
+import GetAppIcon from '@mui/icons-material/GetApp'
 import { visuallyHidden } from '@mui/utils'
-
+// import loadYamlFile from 'load-yaml-file'
 import Row from './InstalledAppsListRow'
+import FileOpen from './FileOpen'
 
 const headCells = [
 
@@ -123,6 +126,7 @@ export default function DeviceAppsList (props) {
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('apps')
   const [page, setPage] = React.useState(0)
+  const [sideloadFile, setSideloadFile] = React.useState()
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
   let appList = []
 
@@ -141,6 +145,12 @@ export default function DeviceAppsList (props) {
     setPage(0)
   }
 
+  const handleOnSideloadConfirm = async () => {
+    // const data = '' // await loadYamlFile(sideloadFile)
+
+    console.log(sideloadFile)
+  }
+
   if (props.appData) {
     // filter on only installed apps
     appList = props.appData.filter(app => app.status === 'installed')
@@ -148,7 +158,7 @@ export default function DeviceAppsList (props) {
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
         return (<Row
-          key={app.appId}
+          key={app.app}
           row={app}
         />)
       })
@@ -161,20 +171,29 @@ export default function DeviceAppsList (props) {
       aria-label="installed-apps-list"
     >
       <Paper>
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 }
-        }}
-      >
-        <Typography
-            sx={{ flex: '1 1 100%' }}
+        <Toolbar
+          sx={{
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 }
+          }}
+        >
+          <Typography
+            sx={{ flex: '0.1 0.1 10%' }}
             variant="h6"
             id="tableTitle"
             component="div"
           >
             Installed Apps
           </Typography>
+          <Tooltip title="Install your own app on this device">
+            <FileOpen
+              buttonText="Sideload App"
+              buttonIcon={<GetAppIcon/>}
+              accept='.yml'
+              setFile={setSideloadFile}
+              onConfirm={handleOnSideloadConfirm}
+            ></FileOpen>
+          </Tooltip>
         </Toolbar>
         <TableContainer >
           <Table aria-label="installed-apps-table">

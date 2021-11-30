@@ -24,8 +24,8 @@ const AppList = () => {
 
       mergedList = Object.values([...marketplaceAppList, ...installedAppList]
         .reduce((r, o) => {
-          r[o.appId] = r[o.appId]
-            ? { ...r[o.appId], instances: [...r[o.appId].instances, ...o.instances], status: o.status }
+          r[o.app] = r[o.app]
+            ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
             : o
 
           return r

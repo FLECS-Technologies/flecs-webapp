@@ -6,7 +6,7 @@ import Row from './InstalledAppsListRow'
 describe('Test Installed Apps List row', () => {
   test('renders installed apps list row component', () => {
     const app = {
-      appId: 'com.codesys.codesyscontrol',
+      app: 'com.codesys.codesyscontrol',
       status: 'installed',
       version: '4.2.0',
       instances: [
@@ -25,7 +25,7 @@ describe('Test Installed Apps List row', () => {
       ]
     }
     render(<Row
-        key = {app.appId}
+        key = {app.app}
         row = {app}
    />)
 

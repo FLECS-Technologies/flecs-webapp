@@ -6,13 +6,14 @@ import PostStartAppInstanceAPI from '../api/StartAppInstanceAPI'
 import PostStopAppInstanceAPI from '../api/StopAppInstanceAPI'
 import PostUninstallAppAPI from '../api/UninstallAppAPI'
 import PostDeleteAppInstanceAPI from '../api/DeleteAppInstanceAPI'
+import PutSideloadAppAPI from '../api/SideloadAppAPI'
 
 export default class AppAPI extends React.Component {
   constructor (props) {
     super(props)
 
     this.app = {
-      appId: props.appId,
+      app: props.app,
       avatar: props.avatar,
       title: props.title,
       vendor: props.vendor,
@@ -27,7 +28,7 @@ export default class AppAPI extends React.Component {
   setAppData (props) {
     if (props) {
       this.app = {
-        appId: props.appId,
+        app: props.app,
         avatar: props.avatar,
         title: props.title,
         vendor: props.vendor,
@@ -49,7 +50,7 @@ export default class AppAPI extends React.Component {
         const installAPI = new PostInstallAppAPI()
         const startInstanceAPI = new PostStartAppInstanceAPI()
 
-        const installOK = await fetch(installAPI.installApp(this.app.appId, this.app.version)).then(response => response.json)
+        const installOK = await fetch(installAPI.installApp(this.app.app, this.app.version)).then(response => response.json)
         if (!installOK.ok) {
           returnValue = installOK
           throw Error('InstallApp(): Failed to install app')
@@ -61,7 +62,7 @@ export default class AppAPI extends React.Component {
           throw Error('InstallApp(): Failed to create instance')
         }
 
-        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.appId, this.app.instances[length - 1])).then(response => response.json)
+        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.app, this.app.instances[length - 1])).then(response => response.json)
         if (!startOK) {
           returnValue = startOK
           throw Error('InstallApp(): Failed to start instance')
@@ -71,7 +72,7 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
 
     return returnValue
@@ -82,7 +83,7 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const uninstallAPI = new PostUninstallAppAPI()
-        const uninstallOK = await fetch(uninstallAPI.uninstallApp(this.app.appId, this.app.version)).then(response => response.json)
+        const uninstallOK = await fetch(uninstallAPI.uninstallApp(this.app.app, this.app.version)).then(response => response.json)
         if (uninstallOK.ok) {
           returnValue = uninstallOK
         } else {
@@ -92,7 +93,7 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     return returnValue
   }
@@ -102,7 +103,7 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
-        const createOK = await fetch(createInstanceAPI.createAppInstance(this.app.appId, this.app.version, instanceName)).then(response => response.json)
+        const createOK = await fetch(createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)).then(response => response.json)
         if (createOK.ok) {
           this.app.instances.push(
             {
@@ -118,7 +119,7 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     return returnValue
   }
@@ -131,7 +132,7 @@ export default class AppAPI extends React.Component {
         const startInstanceAPI = new PostStartAppInstanceAPI()
         const startOK = await fetch(
           startInstanceAPI.startAppInstance(
-            this.app.appId,
+            this.app.app,
             instanceId
           )
         ).then(response => response.json)
@@ -149,7 +150,7 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     return returnValue
   }
@@ -162,7 +163,7 @@ export default class AppAPI extends React.Component {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
         const stopOK = await fetch(
           stopInstanceAPI.stopAppInstance(
-            this.app.appId,
+            this.app.app,
             instanceId
           )
         ).then(response => response.json)
@@ -180,7 +181,7 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     return returnValue
   }
@@ -193,7 +194,7 @@ export default class AppAPI extends React.Component {
         const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
         const deleteOK = await fetch(
           deleteInstanceAPI.deleteAppInstance(
-            this.app.appId,
+            this.app.app,
             instanceId
           )
         ).then(response => response.json)
@@ -209,14 +210,34 @@ export default class AppAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
+    return returnValue
+  }
+
+  async sideloadApp (appYaml) {
+    let returnValue
+
+    try {
+      const sideload = new PutSideloadAppAPI()
+      const sideloadOK = await fetch(sideload.sideloadApp(appYaml)).then(response => response.json)
+
+      if (sideloadOK.ok) {
+        returnValue = sideloadOK
+      } else {
+        returnValue = sideloadOK
+        throw Error('failed to sideload app')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
     return returnValue
   }
 
   static get propTypes () {
     return {
-      appId: PropTypes.string,
+      app: PropTypes.string,
       avatar: PropTypes.string,
       title: PropTypes.string,
       vendor: PropTypes.string,

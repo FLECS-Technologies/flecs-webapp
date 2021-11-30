@@ -1,6 +1,6 @@
 export const installedAppsList = [
   {
-    appId: 'com.codesys.codesyscontrol',
+    app: 'com.codesys.codesyscontrol',
     status: 'installed',
     version: '4.2.0',
     instances: [
@@ -19,7 +19,7 @@ export const installedAppsList = [
     ]
   },
   {
-    appId: 'com.codesys.codesysgateway',
+    app: 'com.codesys.codesysgateway',
     status: 'installed',
     version: '4.1.0',
     instances: [

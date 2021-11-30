@@ -1,6 +1,6 @@
 export const marketPlaceAppsList = [
   {
-    appId: 'com.codesys.codesyscontrol',
+    app: 'com.codesys.codesyscontrol',
     avatar:
       'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     title: 'CODESYS Control',
@@ -12,7 +12,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.codesys.codesysgateway',
+    app: 'com.codesys.codesysgateway',
     avatar:
       'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     title: 'CODESYS Edge Gateway',
@@ -24,7 +24,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.eclipse.mosquitto',
+    app: 'com.eclipse.mosquitto',
     avatar:
       'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
     title: 'Mosquitto MQTT',
@@ -36,7 +36,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.logicals.logiCAD',
+    app: 'com.logicals.logiCAD',
     avatar:
       'https://scontent-frx5-1.xx.fbcdn.net/v/t1.18169-9/25151847_10155541197772740_1125669131781020098_n.png?_nc_cat=111&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeEy-bQEuZHVP5muz5lp_3Lg3ofMdJjQqwjeh8x0mNCrCDpaYIFTEgbzZnU8vMmb0PMagz5dBQCQ-ie1TQav3QhY&_nc_ohc=Vg1dVWVczQIAX-Yfala&_nc_ht=scontent-frx5-1.xx&oh=b06873d98231b3a5e598f2c608593e85&oe=61C50C21',
     title: 'logi.CAD',
@@ -48,7 +48,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.openplc.openplc',
+    app: 'com.openplc.openplc',
     avatar:
       'https://www.openplcproject.com/assets/img/openplc-white.png',
     title: 'OPENPLC',
@@ -60,7 +60,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.frankaemika.world',
+    app: 'com.frankaemika.world',
     avatar:
       'https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1483446240/aybpyqz0difmnojadxfi.png',
     title: 'FRANKA WORLD',
@@ -72,7 +72,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.wago.kbusdeamon',
+    app: 'com.wago.kbusdeamon',
     avatar:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Wago-logo.png/800px-Wago-logo.png',
     title: 'WAGO K-Bus Deamon',
@@ -84,7 +84,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.mirasoft.cloudadapter',
+    app: 'com.mirasoft.cloudadapter',
     avatar:
       'https://www.anyviz.io/wp-content/uploads/2021/06/AnyViz-Logo-Compact.svg',
     title: 'AnyViz Cloud Adapter',
@@ -96,7 +96,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.openjsfoundation.nodered',
+    app: 'com.openjsfoundation.nodered',
     avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
     title: 'Node-Red',
     vendor: 'OpenJS Foundation',
@@ -107,7 +107,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.honeywell.matriconopcua',
+    app: 'com.honeywell.matriconopcua',
     avatar:
       'https://pbs.twimg.com/profile_images/1133980019/squiggle_icon_400x400.png',
     title: 'Matricon OPC UA',
@@ -119,7 +119,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.influxdata.influxdb',
+    app: 'com.influxdata.influxdb',
     avatar:
       'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
     title: 'InfluxDB',
@@ -131,7 +131,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.teamviewer.teamvieweriot',
+    app: 'com.teamviewer.teamvieweriot',
     avatar:
       'https://static.teamviewer.com/resources/2019/07/TeamViewer_Logo_512x512.png',
     title: 'TeamViewer IoT',
@@ -143,7 +143,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.inductiveautomation.ignition',
+    app: 'com.inductiveautomation.ignition',
     avatar:
       'https://store-images.s-microsoft.com/image/apps.42258.faa5b89b-233a-4809-85c3-0859706a9831.65aa2a1c-12c2-40d4-b65f-a3ac1cf5ef3f.c95e2301-35cb-4723-9421-9a5eb903cf86',
     title: 'Ignition',
@@ -155,7 +155,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.ininet.spidercontrol',
+    app: 'com.ininet.spidercontrol',
     avatar:
       'https://spidercontrol.net/wp-content/uploads/2017/05/header_01.png',
     title: 'SpiderControl',
@@ -167,7 +167,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.selmotechnology.selmo',
+    app: 'com.selmotechnology.selmo',
     avatar:
       'https://app.selmo.at/fileadmin/introduction/images/MA_B_Logo_SELMO.png',
     title: 'SELMO',
@@ -179,7 +179,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.triomotion.robotics',
+    app: 'com.triomotion.robotics',
     avatar:
       'http://www.triomotion.uk/images/layout/logoColour.png',
     title: 'Robotics',
@@ -191,7 +191,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.wandelbots.teaching',
+    app: 'com.wandelbots.teaching',
     avatar:
       'https://cdn.startbase.com/images/company/wandelbots/4c5dadd15a/',
     title: 'Wandelbots Teaching',
@@ -203,7 +203,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.energyrobotics.teaching',
+    app: 'com.energyrobotics.teaching',
     avatar:
       'https://uploads-ssl.webflow.com/60f98fd6b8e7d653f38541b3/60faa24f6bfbf382fc5d8ca7_logo.svg',
     title: 'Robot Control',
@@ -215,7 +215,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.isac.iliumpac',
+    app: 'com.isac.iliumpac',
     avatar:
       'http://www.isacsrl.eu/wp-content/themes/isac-2016/dist/images/logo-isac.svg',
     title: 'Ilium PAC',
@@ -227,7 +227,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.openrobotics.ros',
+    app: 'com.openrobotics.ros',
     avatar:
       'https://www.ros.org/imgs/logo-white.png',
     title: 'ROS',
@@ -239,7 +239,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.linmot.servo',
+    app: 'com.linmot.servo',
     avatar:
       'https://linmot.com/de/wp-content/themes/linmot/img/logo.png',
     title: 'Servo Drive',
@@ -251,7 +251,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.acontis.ethercat',
+    app: 'com.acontis.ethercat',
     avatar:
       'https://www.acontis.com/files/img/acontislogo.png',
     title: 'EtherCAT Master',
@@ -263,7 +263,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.beeond.opcua',
+    app: 'com.beeond.opcua',
     avatar:
       'https://beeond.net/wp-content/uploads/2021/02/beeond-303.jpg',
     title: 'EdgeXConnect',
@@ -275,7 +275,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.hilscher.cifx',
+    app: 'com.hilscher.cifx',
     avatar:
       'https://www.hilscher.com/fileadmin/templates/doctima_2013/resources/Images/logo_hilscher.png',
     title: 'netX Profinet Device',
@@ -287,7 +287,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.litmus.edge',
+    app: 'com.litmus.edge',
     avatar:
       'https://s3.amazonaws.com/company-photo.theladders.com/1065/5b7c142b-ff34-410a-9008-d388c5ef6fdc.png',
     title: 'Litmus Edge',
@@ -299,7 +299,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.universalautomation.1499',
+    app: 'com.universalautomation.1499',
     avatar:
       'https://universalautomation.org/app/themes/UniversalAutomation/build/images/logo.svg?id=a1a2950c226477a79ca2',
     title: '1499',
@@ -311,7 +311,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.eclipse.4diac',
+    app: 'com.eclipse.4diac',
     avatar:
       'https://www.eclipse.org/4diac/img/4diac.png',
     title: '1499',
@@ -323,7 +323,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.fraunhofer.stationconnector',
+    app: 'com.fraunhofer.stationconnector',
     avatar:
       'https://avatars.githubusercontent.com/u/155854?s=280&v=4',
     title: 'StationConnector',
@@ -335,7 +335,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.visualys.stationconnector',
+    app: 'com.visualys.stationconnector',
     avatar:
       'https://www.visualys.net/wp-content/uploads/2019/08/VISUALYS-grau-gruen.png',
     title: 'Visualys Connector',
@@ -347,7 +347,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.synostik.synostik',
+    app: 'com.synostik.synostik',
     avatar:
       'https://www.synostik.de/images/design/logo/Logo_dunkel.svg',
     title: 'Synostik Connector',
@@ -359,7 +359,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.pragmaticindustries.oemhub',
+    app: 'com.pragmaticindustries.oemhub',
     avatar:
       'https://pragmaticindustries.com/wp-content/uploads//2021/09/pi-web_white.svg',
     title: 'OEM Hub',
@@ -371,7 +371,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.anydesk.remote',
+    app: 'com.anydesk.remote',
     avatar:
       'https://anydesk.com/_static/img/logos/anydesk-logo-40fe6c.svg',
     title: 'AnyDesk Remote',
@@ -383,7 +383,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.atvise.hmi',
+    app: 'com.atvise.hmi',
     avatar:
       'https://www.atvise.com/images/atvise/logos/atvise-dark.svg',
     title: 'atvise hmi',
@@ -395,7 +395,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    appId: 'com.wibu.codemeter',
+    app: 'com.wibu.codemeter',
     avatar:
       'https://upload.wikimedia.org/wikipedia/commons/d/d2/Wibu-Systems_logo.png',
     title: 'CodeMeter',

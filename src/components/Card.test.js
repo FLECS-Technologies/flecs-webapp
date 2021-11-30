@@ -23,7 +23,7 @@ describe('Card', () => {
 
   test('Click install', async () => {
     render(<Card
-      appId= 'TestAppId'
+      app= 'Testapp'
       avatar= ''
       title= 'Test App Title'
       vendor= 'Test App Vendor'

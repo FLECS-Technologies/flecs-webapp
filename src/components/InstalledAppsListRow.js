@@ -40,7 +40,7 @@ export default function Row (props) {
 
   function loadReferenceData (props) {
     const tmpApp = appList.find(obj => {
-      return obj.appId === props.appId
+      return obj.app === props.app
     })
 
     return tmpApp
@@ -49,7 +49,7 @@ export default function Row (props) {
   function updateReferenceDataInstances (props) {
     setAppList(
       appList.map(item =>
-        item.appId === props.appId
+        item.app === props.app
           ? { ...item, instances: props.instances }
           : item)
     )
@@ -283,7 +283,7 @@ export default function Row (props) {
 
 Row.propTypes = {
   row: PropTypes.any,
-  appId: PropTypes.string,
+  app: PropTypes.string,
   instanceId: PropTypes.string,
   instances: PropTypes.array
 }

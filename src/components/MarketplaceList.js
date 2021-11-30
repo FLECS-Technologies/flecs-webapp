@@ -9,8 +9,8 @@ export default function MarketplaceList (props) {
   if (props.appData) {
     appList = props.appData.map((app) => (
       <Card
-        key={app.appId}
-        appId={app.appId}
+        key={app.app}
+        app={app.app}
         avatar={app.avatar}
         title={app.title}
         vendor={app.vendor}
@@ -38,7 +38,7 @@ export default function MarketplaceList (props) {
 
 MarketplaceList.propTypes = {
   appData: PropTypes.any,
-  appId: PropTypes.string,
+  app: PropTypes.string,
   avatar: PropTypes.string,
   title: PropTypes.string,
   vendor: PropTypes.string,

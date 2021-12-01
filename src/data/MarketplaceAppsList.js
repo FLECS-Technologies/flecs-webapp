@@ -44,12 +44,12 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    app: 'com.eclipse.mosquitto',
+    app: 'org.mosquitto.broker',
     avatar:
       'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
     name: 'Mosquitto MQTT',
     author: 'Eclipse Foundation',
-    version: '2.0.13',
+    version: '2.0.14-openssl',
     description: 'MQTT broker.',
     availability: 'available',
     status: 'uninstalled',

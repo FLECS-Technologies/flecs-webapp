@@ -20,12 +20,12 @@ import BaseAPI from './BaseAPI'
 import DeviceAPIConfiguration from './api-config'
 
 export default class PostUninstallAppAPI extends BaseAPI {
-  async uninstallApp (app, appVersion) {
+  async uninstallApp (app, version) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, appVersion })
+      body: JSON.stringify({ app, version })
     }
 
     try {

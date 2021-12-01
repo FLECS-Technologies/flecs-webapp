@@ -20,12 +20,12 @@ import BaseAPI from './BaseAPI'
 import DeviceAPIConfiguration from './api-config'
 
 export default class CreateAppInstanceAPI extends BaseAPI {
-  async createAppInstance (app, appVersion, instanceName) {
+  async createAppInstance (app, version, instanceName) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, appVersion, instanceName })
+      body: JSON.stringify({ app, version, instanceName })
     }
 
     try {

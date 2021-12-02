@@ -78,9 +78,9 @@ export default function Row (props) {
     let alertSeverity
     const appAPI = new AppAPI(props.row)
     appAPI.setAppData(loadReferenceData(props.row))
-    const success = await fetch(appAPI.createInstance(appAPI.app.name + appAPI.app.instances.length)).then(response => response.json)
+    await appAPI.createInstance(appAPI.app.name + appAPI.app.instances.length)
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
       startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
     } else {
@@ -100,9 +100,9 @@ export default function Row (props) {
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = await fetch(appAPI.stopInstance(instanceId)).then(response => response.json)
+    await appAPI.stopInstance(instanceId)
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
@@ -121,9 +121,9 @@ export default function Row (props) {
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = await fetch(appAPI.startInstance(version, instanceId)).then(response => response.json)
+    await appAPI.startInstance(version, instanceId)
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
@@ -137,14 +137,14 @@ export default function Row (props) {
     }
   }
 
-  const deleteInstance = async (app, instanceId) => {
+  const deleteInstance = async (app, version, instanceId) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = await fetch(appAPI.deleteInstance(instanceId)).then(response => response.json)
+    await appAPI.deleteInstance(version, instanceId)
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
@@ -270,7 +270,7 @@ export default function Row (props) {
                         <Tooltip title="Delete instance">
                           <span>
                             <IconButton
-                              onClick={() => deleteInstance(row, appInstance.instanceId)}
+                              onClick={() => deleteInstance(row, appInstance.version, appInstance.instanceId)}
                             >
                               <DeleteIcon />
                             </IconButton>

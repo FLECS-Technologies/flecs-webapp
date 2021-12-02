@@ -41,6 +41,9 @@ export default class AppAPI extends React.Component {
       availability: props.availability,
       instances: props.instances
     }
+
+    this.lastAPICallSuccessfull = false
+    this.lastAPIError = null
   }
 
   setAppData (props) {
@@ -61,68 +64,57 @@ export default class AppAPI extends React.Component {
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
   async installFromMarketplace () {
-    let returnValue
-
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
         const startInstanceAPI = new PostStartAppInstanceAPI()
 
-        const installOK = await fetch(installAPI.installApp(this.app.app, this.app.version)).then(response => response.json)
-        if (!installOK.ok) {
-          returnValue = installOK
-          throw Error('InstallApp(): Failed to install app')
+        await installAPI.installApp(this.app.app, this.app.version)
+        if (!installAPI.state.success) {
+          this.lastAPICallSuccessfull = false
+          throw Error('failed to install app.')
         }
 
-        const createOK = await fetch(this.createInstance(this.app.name + this.app.instances.length)).then(response => response.json)
-        if (!createOK.ok) {
-          returnValue = createOK
-          throw Error('InstallApp(): Failed to create instance')
+        await this.createInstance(this.app.name + this.app.instances.length)
+        if (!this.lastAPICallSuccessfull) {
+          throw Error('failed to create instance after installing the app.')
         }
 
-        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[length - 1])).then(response => response.json)
-        if (!startOK) {
-          returnValue = startOK
-          throw Error('InstallApp(): Failed to start instance')
-        } else {
+        await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[length - 1])
+        if (this.lastAPICallSuccessfull) {
           this.app.instances[length - 1].status = 'started'
-          returnValue = true
+        } else {
+          throw Error('failed to start instance after installing the app.')
         }
       }
     } catch (error) {
       console.error(error)
     }
-
-    return returnValue
   }
 
   async uninstall () {
-    let returnValue
     try {
       if (this.app) {
         const uninstallAPI = new PostUninstallAppAPI()
-        const uninstallOK = await fetch(uninstallAPI.uninstallApp(this.app.app, this.app.version)).then(response => response.json)
-        if (uninstallOK.ok) {
-          returnValue = uninstallOK
-        } else {
-        // catch response of uninstall app was not OK
-          returnValue = uninstallOK
-          throw Error('failed to uninstalled app')
+        await uninstallAPI.uninstallApp(this.app.app, this.app.version)
+        this.lastAPICallSuccessfull = uninstallAPI.state.success
+        if (!this.lastAPICallSuccessfull) {
+          this.lastAPIError = uninstallAPI.state.errorMessage
         }
       }
     } catch (error) {
       console.error(error)
+      this.lastAPICallSuccessfull = false
+      this.lastAPIError = error
     }
-    return returnValue
   }
 
   async createInstance (instanceName) {
-    let returnValue
     try {
       if (this.app) {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
-        const createOK = await fetch(createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)).then(response => response.json)
-        if (createOK.ok) {
+        await createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)
+        if (createInstanceAPI.lastAPICallSuccessfull) {
           this.app.instances.push(
             {
               instanceId: createInstanceAPI.state.responseData.instanceId,
@@ -130,128 +122,100 @@ export default class AppAPI extends React.Component {
               status: 'stopped'
             }
           )
-          returnValue = createOK
+          this.lastAPICallSuccessfull = true
         } else {
-          returnValue = createOK
           throw Error('failed to create instance')
         }
       }
     } catch (error) {
       console.error(error)
+      this.lastAPICallSuccessfull = false
     }
-    return returnValue
   }
 
   async startInstance (version, instanceId) {
-    let returnValue
-
     try {
       if (this.app) {
         const startInstanceAPI = new PostStartAppInstanceAPI()
-        const startOK = await fetch(
-          startInstanceAPI.startAppInstance(
-            this.app.app,
-            version,
-            instanceId
-          )
-        ).then(response => response.json)
-        if (startOK.ok) {
+        await startInstanceAPI.startAppInstance(this.app.app, version, instanceId)
+
+        if (startInstanceAPI.lastAPICallSuccessfull) {
           this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'started' }
               : item)
 
-          returnValue = startOK
+          this.lastAPICallSuccessfull = true
         } else {
         // catch response of start app instance was not OK
-          returnValue = startOK
           throw Error('failed to start instance')
         }
       }
     } catch (error) {
       console.error(error)
+      this.lastAPICallSuccessfull = false
     }
-    return returnValue
   }
 
-  async stopInstance (instanceId) {
-    let returnValue
-
+  async stopInstance (version, instanceId) {
     try {
       if (this.app) {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
-        const stopOK = await fetch(
-          stopInstanceAPI.stopAppInstance(
-            this.app.app,
-            instanceId
-          )
-        ).then(response => response.json)
-        if (stopOK.ok) {
+        await stopInstanceAPI.stopAppInstance(this.app.app, version, instanceId)
+
+        if (stopInstanceAPI.lastAPICallSuccessfull) {
           this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'stopped' }
               : item)
 
-          returnValue = stopOK
+          this.lastAPICallSuccessfull = true
         } else {
         // catch response of stop app instance was not OK
-          returnValue = stopOK
           throw Error('failed to stop instance')
         }
       }
     } catch (error) {
       console.error(error)
+      this.lastAPICallSuccessfull = false
     }
-    return returnValue
   }
 
-  async deleteInstance (instanceId) {
-    let returnValue
-
+  async deleteInstance (version, instanceId) {
     try {
       if (this.app) {
         const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
-        const deleteOK = await fetch(
-          deleteInstanceAPI.deleteAppInstance(
-            this.app.app,
-            instanceId
-          )
-        ).then(response => response.json)
-        if (deleteOK.ok) {
-        // remove instance from array
+        await deleteInstanceAPI.deleteAppInstance(this.app.app, version, instanceId)
+        if (deleteInstanceAPI.lastAPICallSuccessfull) {
+          // remove instance from array
           this.app.instances = this.app.instances.filter(instance => instance.instanceId === instanceId)
 
-          returnValue = deleteOK
+          this.lastAPICallSuccessfull = true
         } else {
         // catch response of delete instance was not OK
-          returnValue = deleteOK
           throw Error('failed to delete instance')
         }
       }
     } catch (error) {
       console.error(error)
+      this.lastAPICallSuccessfull = false
     }
-    return returnValue
   }
 
   async sideloadApp (appYaml) {
-    let returnValue
-
     try {
       const sideload = new PutSideloadAppAPI()
-      const sideloadOK = await fetch(sideload.sideloadApp(appYaml)).then(response => response.json)
+      await sideload.sideloadApp(appYaml)
 
-      if (sideloadOK.ok) {
-        returnValue = sideloadOK
-      } else {
-        returnValue = sideloadOK
+      this.lastAPICallSuccessfull = sideload.lastAPICallSuccessfull
+      if (!this.lastAPICallSuccessfull) {
         throw Error('failed to sideload app')
       }
+
+      // todo: continue here with creating an instance starting the sideloaded app
     } catch (error) {
       console.error(error)
     }
-
-    return returnValue
   }
 
   static get propTypes () {

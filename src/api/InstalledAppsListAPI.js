@@ -28,12 +28,7 @@ export default class GetInstalledAppsListAPI extends BaseAPI {
     }
 
     try {
-      const response = await fetch(this.callAPI(DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL, requestOptions)).then(response => response.json)
-      if (response.ok) {
-        return response
-      } else {
-        throw Error('Failed to perform GetInstalledAppsListAPI.getAppList()')
-      }
+      await this.callAPI(DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL, requestOptions)
     } catch (error) {
       console.log(error)
     }

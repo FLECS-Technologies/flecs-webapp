@@ -29,12 +29,7 @@ export default class PutSideloadAppAPI extends BaseAPI {
     }
 
     try {
-      const response = await fetch(this.callAPI(DeviceAPIConfiguration.PUT_SIDELOAD_APP, requestOptions)).then(response => response.json)
-      if (response.ok) {
-        return response
-      } else {
-        throw Error('Failed to perform PutSideloadAppAPI.sideloadApp()')
-      }
+      await this.callAPI(DeviceAPIConfiguration.PUT_SIDELOAD_APP, requestOptions)
     } catch (error) {
       console.log(error)
     }

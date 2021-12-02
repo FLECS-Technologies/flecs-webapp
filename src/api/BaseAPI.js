@@ -24,31 +24,27 @@ export default class BaseAPI extends React.Component {
 
     this.state = {
       responseData: null,
+      success: false,
       errorMessage: null
     }
   }
 
   async callAPI (apiURL, requestOptions) {
-    fetch(apiURL, requestOptions)
-      .then(async (response) => {
-        const isJson = response.headers
-          .get('content-type')
-          ?.includes('application/json')
-        const data = isJson && (await response.json())
+    try {
+      const response = await fetch(apiURL, requestOptions)
 
-        // check for error response
-        if (!response.ok /* response.headers.status !== 200 */) {
-          // get error message from body or default to response status
-          const error = (data && data.additionalInfo) || response.status
-          return Promise.reject(error)
-        }
+      const data = await response.json()
 
-        this.setState({ responseData: data })
-        return response.ok
-      })
-      .catch((error) => {
-        this.setState({ errorMessage: error })
-        console.error('There was an error!', error)
-      })
+      if (response.ok) {
+        this.state.responseData = data
+        this.success = true
+      } else {
+        const error = 'HTTP status: ' + response.status + ' additional info: ' + (data && data.additionalInfo)
+        throw Error(error)
+      }
+    } catch (error) {
+      this.state.success = false
+      this.state.errorMessage = error
+    }
   }
 }

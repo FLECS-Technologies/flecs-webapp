@@ -21,21 +21,23 @@ import PropTypes from 'prop-types'
 import GetInstalledAppsListAPI from '../api/InstalledAppsListAPI'
 
 export default class DeviceAPI extends React.Component {
-  async getInstalledApps () {
-    let returnValue = false
+  constructor (props) {
+    super(props)
+    this.appList = null
+  }
 
+  async getInstalledApps () {
     try {
       const getAppListAPI = new GetInstalledAppsListAPI()
-      const response = await fetch(getAppListAPI.getAppList())
-      if (response) {
+      await fetch(getAppListAPI.getAppList())
+      if (getAppListAPI.success) {
         this.appList = await getAppListAPI.state.responseData.appList
-        returnValue = true
+      } else {
+        throw Error('failed to perform DeviceAPI.getInstalledApps()')
       }
     } catch (error) {
-      console.log('failed to perform DeviceAPI.getInstalledApps()')
+      console.log(error)
     }
-
-    return returnValue
   }
 }
 

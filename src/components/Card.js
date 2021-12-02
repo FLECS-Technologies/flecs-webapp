@@ -82,13 +82,13 @@ export default function OutlinedCard (props) {
   const installApp = async (props) => {
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
-    const success = await fetch(appAPI.installFromMarketplace()).then(response => response.json)
+    await appAPI.installFromMarketplace()
 
-    const alertSeverity = success.ok ? 'success' : 'error'
-    const displayCopyIcon = success.ok ? 'none' : 'block'
+    const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
+    const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
     let snackbarText, errorMessage
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       setInstalled(true)
       setUninstalled(false)
       updateReferenceDataStatus(appAPI.app)
@@ -111,13 +111,14 @@ export default function OutlinedCard (props) {
   const uninstallApp = async (props) => {
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
-    const success = await fetch(appAPI.uninstall()).then(response => response.json)
+    await appAPI.uninstall()
 
-    const alertSeverity = success.ok ? 'success' : 'error'
-    const displayCopyIcon = success.ok ? 'none' : 'block'
+    const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
+    const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
     let snackbarText
+    let clipBoardContent
 
-    if (success.ok) {
+    if (appAPI.lastAPICallSuccessfull) {
       setInstalled(false)
       setUninstalled(true)
       updateReferenceDataStatus(appAPI.app)
@@ -125,13 +126,15 @@ export default function OutlinedCard (props) {
       snackbarText = props.name + ' successfully uninstalled.'
     } else {
       snackbarText = 'Failed to uninstall ' + props.name + '.'
+      clipBoardContent = appAPI.lastAPIError
     }
 
     setSnackbarState({
       snackbarOpen: true,
       alertSeverity: alertSeverity,
       snackbarText: snackbarText,
-      displayCopyState: displayCopyIcon
+      displayCopyState: displayCopyIcon,
+      clipBoardContent: clipBoardContent
     })
   }
 

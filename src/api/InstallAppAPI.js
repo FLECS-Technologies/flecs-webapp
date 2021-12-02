@@ -28,12 +28,7 @@ export default class PostInstallAppAPI extends BaseAPI {
     }
 
     try {
-      const response = await fetch(this.callAPI(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)).then(response => response.json)
-      if (response.ok) {
-        return response
-      } else {
-        throw Error('Failed to perform PostInstallAppAPI.installApp()')
-      }
+      await this.callAPI(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)
     } catch (error) {
       console.log(error)
     }

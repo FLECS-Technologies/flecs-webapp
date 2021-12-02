@@ -33,6 +33,5 @@ export default class StartAppInstanceAPI extends BaseAPI {
     } catch (error) {
       console.log(error)
     }
-    return false
   }
 }

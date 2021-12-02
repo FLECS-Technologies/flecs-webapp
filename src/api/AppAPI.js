@@ -80,9 +80,9 @@ export default class AppAPI extends React.Component {
           throw Error('failed to create instance after installing the app.')
         }
 
-        await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[length - 1])
+        await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
         if (this.lastAPICallSuccessfull) {
-          this.app.instances[length - 1].status = 'started'
+          this.app.instances[this.app.instances.length - 1].status = 'started'
         } else {
           throw Error('failed to start instance after installing the app.')
         }
@@ -114,7 +114,7 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
         await createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)
-        if (createInstanceAPI.lastAPICallSuccessfull) {
+        if (createInstanceAPI.state.success) {
           this.app.instances.push(
             {
               instanceId: createInstanceAPI.state.responseData.instanceId,
@@ -139,7 +139,7 @@ export default class AppAPI extends React.Component {
         const startInstanceAPI = new PostStartAppInstanceAPI()
         await startInstanceAPI.startAppInstance(this.app.app, version, instanceId)
 
-        if (startInstanceAPI.lastAPICallSuccessfull) {
+        if (startInstanceAPI.state.success) {
           this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'started' }
@@ -163,7 +163,7 @@ export default class AppAPI extends React.Component {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
         await stopInstanceAPI.stopAppInstance(this.app.app, version, instanceId)
 
-        if (stopInstanceAPI.lastAPICallSuccessfull) {
+        if (stopInstanceAPI.state.success) {
           this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'stopped' }
@@ -186,7 +186,7 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
         await deleteInstanceAPI.deleteAppInstance(this.app.app, version, instanceId)
-        if (deleteInstanceAPI.lastAPICallSuccessfull) {
+        if (deleteInstanceAPI.state.success) {
           // remove instance from array
           this.app.instances = this.app.instances.filter(instance => instance.instanceId === instanceId)
 
@@ -207,7 +207,7 @@ export default class AppAPI extends React.Component {
       const sideload = new PutSideloadAppAPI()
       await sideload.sideloadApp(appYaml)
 
-      this.lastAPICallSuccessfull = sideload.lastAPICallSuccessfull
+      this.lastAPICallSuccessfull = sideload.state.success
       if (!this.lastAPICallSuccessfull) {
         throw Error('failed to sideload app')
       }

@@ -33,7 +33,5 @@ export default class PostUninstallAppAPI extends BaseAPI {
     } catch (error) {
       console.log(error)
     }
-
-    return false
   }
 }

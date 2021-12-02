@@ -32,6 +32,5 @@ export default class GetInstalledAppsListAPI extends BaseAPI {
     } catch (error) {
       console.log(error)
     }
-    return false
   }
 }

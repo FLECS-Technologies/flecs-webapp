@@ -33,7 +33,5 @@ export default class DeleteAppInstanceAPI extends BaseAPI {
     } catch (error) {
       console.log(error)
     }
-
-    return false
   }
 }

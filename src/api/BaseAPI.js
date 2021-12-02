@@ -35,9 +35,9 @@ export default class BaseAPI extends React.Component {
 
       const data = await response.json()
 
-      if (response.ok) {
+      if (response.ok && response.status === 200) {
         this.state.responseData = data
-        this.success = true
+        this.state.success = true
       } else {
         const error = 'HTTP status: ' + response.status + ' additional info: ' + (data && data.additionalInfo)
         throw Error(error)

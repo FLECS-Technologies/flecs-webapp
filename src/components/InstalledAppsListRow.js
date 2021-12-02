@@ -21,7 +21,6 @@ import PropTypes from 'prop-types'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import Button from '@mui/material/Button'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -42,6 +41,8 @@ import Avatar from '@mui/material/Avatar'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 
+import LoadButton from './LoadButton'
+import LoadIconButton from './LoadIconButton'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/AppAPI'
 
@@ -55,7 +56,7 @@ export default function Row (props) {
     alertSeverity: 'success'
   })
   const { alertSeverity, snackbarText, snackbarOpen } = snackbarState
-
+  const [newInstanceStarting, setNewInstanceStarting] = useState(false)
   function loadReferenceData (props) {
     const tmpApp = appList.find(obj => {
       return obj.app === props.app
@@ -74,6 +75,7 @@ export default function Row (props) {
   }
 
   const startNewInstance = async (props) => {
+    setNewInstanceStarting(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(props.row)
@@ -93,6 +95,7 @@ export default function Row (props) {
         snackbarText: snackbarText
       })
     }
+    setNewInstanceStarting(false)
   }
 
   const stopInstance = async (app, instanceId) => {
@@ -191,13 +194,13 @@ export default function Row (props) {
         <TableCell style={{ borderBottom: 'none' }}>
           <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
             <span>
-              <IconButton
+              <LoadIconButton
+                icon={<AddTaskIcon />}
                 color="primary"
                 onClick={() => startNewInstance(props)}
-                disabled={!row.multiInstance}
-              >
-                <AddTaskIcon />
-              </IconButton>
+                disabled={!row.multiInstance || newInstanceStarting}
+                loading={newInstanceStarting}
+              />
             </span>
           </Tooltip>
         </TableCell>
@@ -210,14 +213,14 @@ export default function Row (props) {
                 <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h6" gutterBottom component="div">
                   App instances
                 </Typography>
-                <Button
+                <LoadButton
+                  text="start new instance"
                   variant="contained"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
-                  disabled={!row.multiInstance}
-                >
-                  start new instance
-                </Button>
+                  disabled={!row.multiInstance || newInstanceStarting}
+                  loading={newInstanceStarting}
+                />
               </Toolbar>
               <Table size="small" aria-label="app-instances">
                 <TableHead>

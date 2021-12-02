@@ -53,7 +53,7 @@ function AppList () {
   useEffect(() => {
     setAppList(appList => [...mergedList])
   }, [])
-  return (<div></div>)
+  return (<></>)
 }
 
 export default AppList

@@ -31,6 +31,7 @@ import IconButton from '@mui/material/IconButton'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CloseIcon from '@mui/icons-material/Close'
 
+import LoadButton from './LoadButton'
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/AppAPI'
 import RequestAppDialog from './RequestAppDialog'
@@ -39,15 +40,14 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 export default function OutlinedCard (props) {
   const { appList, setAppList } = useContext(ReferenceDataContext)
   const [installed, setInstalled] = useState(props.status === 'installed')
-  const [uninstalled, setUninstalled] = useState(
-    props.status === 'uninstalled'
-  )
+  const [installing, setInstalling] = useState(false)
+  const [uninstalled, setUninstalled] = useState(props.status === 'uninstalled')
+  const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
     props.availability === 'available'
   )
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'
-
   const [open, setConfirmOpen] = useState(false)
   const [requestOpen, setRequestOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
@@ -80,6 +80,7 @@ export default function OutlinedCard (props) {
   }
 
   const installApp = async (props) => {
+    setInstalling(true)
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
     await appAPI.installFromMarketplace()
@@ -88,7 +89,7 @@ export default function OutlinedCard (props) {
     const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
     let snackbarText, errorMessage
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessfull && !installed) {
       setInstalled(true)
       setUninstalled(false)
       updateReferenceDataStatus(appAPI.app)
@@ -106,9 +107,11 @@ export default function OutlinedCard (props) {
       displayCopyState: displayCopyIcon,
       clipBoardContent: errorMessage
     })
+    setInstalling(false)
   }
 
   const uninstallApp = async (props) => {
+    setUninstalling(true)
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
     await appAPI.uninstall()
@@ -136,6 +139,7 @@ export default function OutlinedCard (props) {
       displayCopyState: displayCopyIcon,
       clipBoardContent: clipBoardContent
     })
+    setUninstalling(false)
   }
 
   function requestApp (props, success) {
@@ -200,28 +204,26 @@ export default function OutlinedCard (props) {
         >
           Request
         </Button>
-        <Button
+        <LoadButton
+          text="Install"
           variant="contained"
           color="success"
-          size="small"
           aria-label="install-app-button"
-          disabled={installed}
+          disabled={installed || installing}
           onClick={() => installApp(props)}
-          style={{ display: displayState }}
-        >
-          Install
-        </Button>
-        <Button
+          displayState={displayState}
+          loading={installing}
+        />
+        <LoadButton
+          text="Uninstall"
           variant="outlined"
-          size="small"
           aria-label="uninstall-app-button"
-          disabled={uninstalled}
+          disabled={uninstalled || uninstalling}
           color="error"
           onClick={() => setConfirmOpen(true)}
-          style={{ display: displayState }}
-        >
-          Uninstall
-        </Button>
+          displayState={displayState}
+          loading={uninstalling}
+        />
         <ConfirmDialog
           title={'Uninstall ' + props.name + '?'}
           open={open}

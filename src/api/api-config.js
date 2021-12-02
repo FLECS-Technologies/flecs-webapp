@@ -24,8 +24,8 @@ const GET_INSTANTIATED_APP_LIST_URL = 'http://localhost:80/InstantiatedApps'
 
 const POST_INSTALL_APP_URL = 'http://localhost:80/InstallApp'
 const POST_UNINSTALL_APP_URL = 'http://localhost:80/UninstallApp'
-const POST_START_INSTANCE_URL = 'http://localhost:80/StartInstance'
-const POST_STOP_INSTANCE_URL = 'http://localhost:80/StopInstance'
+const POST_START_INSTANCE_URL = 'http://localhost:80/StartAppInstance'
+const POST_STOP_INSTANCE_URL = 'http://localhost:80/StopAppInstance'
 const POST_CREATE_APP_INSTANCE_URL = 'http://localhost:80/CreateAppInstance'
 const POST_DELETE_APP_INSTANCE_URL = 'http://localhost:80/DeleteAppInstance'
 

@@ -80,7 +80,7 @@ export default class AppAPI extends React.Component {
           throw Error('InstallApp(): Failed to create instance')
         }
 
-        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.app, this.app.instances[length - 1])).then(response => response.json)
+        const startOK = await fetch(startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[length - 1])).then(response => response.json)
         if (!startOK) {
           returnValue = startOK
           throw Error('InstallApp(): Failed to start instance')
@@ -142,7 +142,7 @@ export default class AppAPI extends React.Component {
     return returnValue
   }
 
-  async startInstance (instanceId) {
+  async startInstance (version, instanceId) {
     let returnValue
 
     try {
@@ -151,6 +151,7 @@ export default class AppAPI extends React.Component {
         const startOK = await fetch(
           startInstanceAPI.startAppInstance(
             this.app.app,
+            version,
             instanceId
           )
         ).then(response => response.json)

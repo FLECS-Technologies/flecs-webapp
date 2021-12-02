@@ -116,12 +116,12 @@ export default function Row (props) {
     }
   }
 
-  const startInstance = async (app, instanceId) => {
+  const startInstance = async (app, version, instanceId) => {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    const success = await fetch(appAPI.startInstance(instanceId)).then(response => response.json)
+    const success = await fetch(appAPI.startInstance(version, instanceId)).then(response => response.json)
 
     if (success.ok) {
       updateReferenceDataInstances(appAPI.app)
@@ -250,7 +250,7 @@ export default function Row (props) {
                             <IconButton
                               color="success"
                               disabled={appInstance.status === 'started'}
-                              onClick={() => startInstance(row, appInstance.instanceId)}
+                              onClick={() => startInstance(row, appInstance.version, appInstance.instanceId)}
                             >
                               <PlayCircleIcon />
                             </IconButton>

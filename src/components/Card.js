@@ -25,17 +25,13 @@ import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import IconButton from '@mui/material/IconButton'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import CloseIcon from '@mui/icons-material/Close'
 
 import LoadButton from './LoadButton'
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/AppAPI'
 import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import ActionSnackbar from './ActionSnackbar'
 
 export default function OutlinedCard (props) {
   const { appList, setAppList } = useContext(ReferenceDataContext)
@@ -50,15 +46,14 @@ export default function OutlinedCard (props) {
   const displayState = available ? 'block' : 'none'
   const [open, setConfirmOpen] = useState(false)
   const [requestOpen, setRequestOpen] = useState(false)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
-    snackbarOpen: false,
     snackbarText: 'Info',
     alertSeverity: 'success',
-    displayCopyState: 'none',
     clipBoardContent: ''
   })
 
-  const { alertSeverity, snackbarText, snackbarOpen, displayCopyState, clipBoardContent } = snackbarState
+  const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
 
   function loadReferenceData (props) {
     if (appList) {
@@ -101,12 +96,12 @@ export default function OutlinedCard (props) {
     }
 
     setSnackbarState({
-      snackbarOpen: true,
       alertSeverity: alertSeverity,
       snackbarText: snackbarText,
       displayCopyState: displayCopyIcon,
       clipBoardContent: errorMessage
     })
+    setSnackbarOpen(true)
     setInstalling(false)
   }
 
@@ -133,12 +128,12 @@ export default function OutlinedCard (props) {
     }
 
     setSnackbarState({
-      snackbarOpen: true,
       alertSeverity: alertSeverity,
       snackbarText: snackbarText,
       displayCopyState: displayCopyIcon,
       clipBoardContent: clipBoardContent
     })
+    setSnackbarOpen(true)
     setUninstalling(false)
   }
 
@@ -153,28 +148,11 @@ export default function OutlinedCard (props) {
     }
 
     setSnackbarState({
-      snackbarOpen: true,
       alertSeverity: alertSeverity,
       snackbarText: snackbarText,
       displayCopyState: displayCopyIcon
     })
-  }
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setSnackbarState({
-      snackbarOpen: false,
-      snackbarText: snackbarText,
-      alertSeverity: alertSeverity,
-      displayCopyState: displayCopyState
-    })
-  }
-
-  function copyErrorToClipboard () {
-    navigator.clipboard.writeText(clipBoardContent)
+    setSnackbarOpen(true)
   }
 
   return (
@@ -208,7 +186,7 @@ export default function OutlinedCard (props) {
           text="Install"
           variant="contained"
           color="success"
-          aria-label="install-app-button"
+          label="install-app-button"
           disabled={installed || installing}
           onClick={() => installApp(props)}
           displayState={displayState}
@@ -217,7 +195,7 @@ export default function OutlinedCard (props) {
         <LoadButton
           text="Uninstall"
           variant="outlined"
-          aria-label="uninstall-app-button"
+          label="uninstall-app-button"
           disabled={uninstalled || uninstalling}
           color="error"
           onClick={() => setConfirmOpen(true)}
@@ -240,36 +218,13 @@ export default function OutlinedCard (props) {
           onConfirm={(success) => requestApp(props, success)}
         >
         </RequestAppDialog>
-        <Snackbar
-          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        <ActionSnackbar
+          text={snackbarText}
+          errorText={clipBoardContent}
           open={snackbarOpen}
-          autoHideDuration={6000}
-        >
-          <Alert
-            onClose={handleSnackbarClose}
-            severity={alertSeverity}
-            sx={{ width: '100%' }}
-            action={[
-              <IconButton
-                key='snackbar-copy-button'
-                onClick={() => copyErrorToClipboard()}
-                style={{ display: displayCopyState }}
-                color='inherit'
-              >
-                <ContentCopyIcon />
-              </IconButton>,
-              <IconButton
-                key='snackbar-close-button'
-                onClick={handleSnackbarClose}
-                color='inherit'
-              >
-                <CloseIcon/>
-              </IconButton>
-            ]}
-          >
-            {snackbarText}
-          </Alert>
-        </Snackbar>
+          setOpen={setSnackbarOpen}
+          alertSeverity={alertSeverity}
+        />
       </CardActions>
     </Card>
   )

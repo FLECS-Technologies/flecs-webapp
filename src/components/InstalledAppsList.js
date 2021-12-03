@@ -204,6 +204,7 @@ export default function DeviceAppsList (props) {
             Installed Apps
           </Typography>
           <Tooltip title="Install your own app on this device">
+            <div>
             <FileOpen
               buttonText="Sideload App"
               buttonIcon={<GetAppIcon/>}
@@ -211,6 +212,7 @@ export default function DeviceAppsList (props) {
               // setFile={setSideloadFile}
               onConfirm={handleOnSideloadConfirm}
             ></FileOpen>
+            </div>
           </Tooltip>
         </Toolbar>
         <TableContainer >

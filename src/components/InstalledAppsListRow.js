@@ -29,34 +29,31 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import PlayCircleIcon from '@mui/icons-material/PlayCircle'
-import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
-import CircleIcon from '@mui/icons-material/Circle'
-import ErrorIcon from '@mui/icons-material/Error'
 import AddTaskIcon from '@mui/icons-material/AddTask'
-import DeleteIcon from '@mui/icons-material/Delete'
 import Tooltip from '@mui/material/Tooltip'
 import Toolbar from '@mui/material/Toolbar'
 import Avatar from '@mui/material/Avatar'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
 
 import LoadButton from './LoadButton'
 import LoadIconButton from './LoadIconButton'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/AppAPI'
+import AppInstanceRow from './AppInstanceRow'
+import ActionSnackbar from './ActionSnackbar'
 
 export default function Row (props) {
   const { appList, setAppList } = useContext(ReferenceDataContext)
   const { row } = props
   const [open, setOpen] = useState(false)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
-    snackbarOpen: false,
     snackbarText: 'Info',
-    alertSeverity: 'success'
+    alertSeverity: 'success',
+    snackbarErrorText: ''
   })
-  const { alertSeverity, snackbarText, snackbarOpen } = snackbarState
+  const { alertSeverity, snackbarText, snackbarErrorText } = snackbarState
   const [newInstanceStarting, setNewInstanceStarting] = useState(false)
+
   function loadReferenceData (props) {
     const tmpApp = appList.find(obj => {
       return obj.app === props.app
@@ -84,7 +81,7 @@ export default function Row (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
-      startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
+      // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
     } else {
       // error snackbar
       snackbarText = 'Failed to start a new instance of ' + appAPI.app.name + '.'
@@ -95,87 +92,13 @@ export default function Row (props) {
         snackbarText: snackbarText
       })
     }
+    setSnackbarOpen(true)
     setNewInstanceStarting(false)
-  }
-
-  const stopInstance = async (app, instanceId) => {
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadReferenceData(app))
-    await appAPI.stopInstance(instanceId)
-
-    if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
-    } else {
-      // error snackbar
-      snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
-      alertSeverity = 'error'
-      setSnackbarState({
-        snackbarOpen: true,
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText
-      })
-    }
-  }
-
-  const startInstance = async (app, version, instanceId) => {
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadReferenceData(app))
-    await appAPI.startInstance(version, instanceId)
-
-    if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
-    } else {
-      // error snackbar
-      snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
-      alertSeverity = 'error'
-      setSnackbarState({
-        snackbarOpen: true,
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText
-      })
-    }
-  }
-
-  const deleteInstance = async (app, version, instanceId) => {
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadReferenceData(app))
-    await appAPI.deleteInstance(version, instanceId)
-
-    if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
-    } else {
-      // error snackbar
-      snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
-      alertSeverity = 'error'
-      setSnackbarState({
-        snackbarOpen: true,
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText
-      })
-    }
-  }
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setSnackbarState({
-      snackbarOpen: false,
-      snackbarText: snackbarText,
-      alertSeverity: alertSeverity
-    })
   }
 
   return (
     <Fragment>
-      <TableRow /* sx={{ '& > *': { borderBottom: 'none' } }} */ >
+      <TableRow >
         <TableCell style={{ borderBottom: 'none' }}>
           <IconButton
             aria-label="expand row"
@@ -220,6 +143,7 @@ export default function Row (props) {
                   startIcon={<AddTaskIcon />}
                   disabled={!row.multiInstance || newInstanceStarting}
                   loading={newInstanceStarting}
+                  label='start-new-instance-button'
                 />
               </Toolbar>
               <Table size="small" aria-label="app-instances">
@@ -233,54 +157,13 @@ export default function Row (props) {
                 </TableHead>
                 <TableBody>
                   {row.instances.map((appInstance) => (
-                    <TableRow key={appInstance.instanceId}>
-                      <TableCell component="th" scope="row">
-                      <Tooltip title={'App ' + row.status}>
-                          {appInstance.status === 'started'
-                            ? (
-                            <CircleIcon color="success" />
-                              )
-                            : (
-                            <ErrorIcon color="warning" />
-                              )}
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>{appInstance.instancename}</TableCell>
-                      <TableCell>{appInstance.version}</TableCell>
-                      <TableCell>
-                      <Tooltip title="Start instance">
-                          <span>
-                            <IconButton
-                              color="success"
-                              disabled={appInstance.status === 'started'}
-                              onClick={() => startInstance(row, appInstance.version, appInstance.instanceId)}
-                            >
-                              <PlayCircleIcon />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-                        <Tooltip title="Stop instance">
-                          <span>
-                            <IconButton
-                              color="warning"
-                              disabled={appInstance.status === 'stopped'}
-                              onClick={() => stopInstance(row, appInstance.instanceId)}
-                            >
-                              <PauseCircleFilledIcon />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-                        <Tooltip title="Delete instance">
-                          <span>
-                            <IconButton
-                              onClick={() => deleteInstance(row, appInstance.version, appInstance.instanceId)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
+                    <AppInstanceRow
+                      key={appInstance.instanceId}
+                      app={row}
+                      appInstance={appInstance}
+                      loadAppReferenceData={loadReferenceData}
+                      updateReferenceDataInstances={updateReferenceDataInstances}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -288,20 +171,13 @@ export default function Row (props) {
           </Collapse>
         </TableCell>
       </TableRow>
-      <Snackbar
-          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+      <ActionSnackbar
+          text={snackbarText}
+          errorText={snackbarErrorText}
           open={snackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-        >
-          <Alert
-            onClose={handleSnackbarClose}
-            severity={alertSeverity}
-            sx={{ width: '100%' }}
-          >
-            {snackbarText}
-          </Alert>
-        </Snackbar>
+          setOpen={setSnackbarOpen}
+          alertSeverity={alertSeverity}
+      />
     </Fragment>
   )
 }

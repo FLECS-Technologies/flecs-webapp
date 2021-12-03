@@ -10,13 +10,14 @@ const LoadIconButton = (props) => {
   return (
         <Box sx={{ position: 'relative' }}>
           <IconButton
+            data-testid="icon-button"
             variant={variant}
             color={color}
             disabled={disabled}
             onClick={() => onClick(props)}
             style={{ display: displayState }}
           >
-            {icon}{loading && (<CircularProgress size={30} sx={{
+            {icon}{loading && (<CircularProgress data-testid="circularprogress" size={30} sx={{
               color: 'info',
               position: 'absolute'
             }}/>)}

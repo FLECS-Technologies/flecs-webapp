@@ -67,8 +67,8 @@ export default function AppInstanceRow (props) {
         snackbarText: snackbarText,
         snackbarErrorText: appAPI.lastAPIError
       })
+      setSnackbarOpen(true)
     }
-    setSnackbarOpen(true)
     setInstanceStopping(false)
   }
 
@@ -92,8 +92,8 @@ export default function AppInstanceRow (props) {
         snackbarText: snackbarText,
         snackbarErrorText: appAPI.lastAPIError
       })
+      setSnackbarOpen(true)
     }
-    setSnackbarOpen(true)
     setInstanceStarting(false)
   }
 
@@ -108,16 +108,17 @@ export default function AppInstanceRow (props) {
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
       snackbarText = appAPI.app.name + ' instance successully deleted.'
+      alertSeverity = 'success'
     } else {
       // error snackbar
       snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
-      setSnackbarState({
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText,
-        snackbarErrorText: appAPI.lastAPIError
-      })
     }
+    setSnackbarState({
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText,
+      snackbarErrorText: appAPI.lastAPIError
+    })
     setSnackbarOpen(true)
     setInstanceDeleting(false)
   }

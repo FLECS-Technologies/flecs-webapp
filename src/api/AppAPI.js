@@ -119,7 +119,8 @@ export default class AppAPI extends React.Component {
             {
               instanceId: createInstanceAPI.state.responseData.instanceId,
               instanceName: instanceName,
-              status: 'stopped'
+              status: 'stopped',
+              version: this.app.version
             }
           )
           this.lastAPICallSuccessfull = true
@@ -140,7 +141,7 @@ export default class AppAPI extends React.Component {
         await startInstanceAPI.startAppInstance(this.app.app, version, instanceId)
 
         if (startInstanceAPI.state.success) {
-          this.app.instances.map(item =>
+          this.app.instances = this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'running' }
               : item)
@@ -164,7 +165,7 @@ export default class AppAPI extends React.Component {
         await stopInstanceAPI.stopAppInstance(this.app.app, version, instanceId)
 
         if (stopInstanceAPI.state.success) {
-          this.app.instances.map(item =>
+          this.app.instances = this.app.instances.map(item =>
             item.instanceId === instanceId
               ? { ...item, status: 'stopped' }
               : item)

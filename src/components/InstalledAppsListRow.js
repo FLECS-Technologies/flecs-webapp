@@ -82,16 +82,18 @@ export default function Row (props) {
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
+      snackbarText = 'Successfully started a new instance of ' + appAPI.app.name + '.'
+      alertSeverity = 'success'
     } else {
       // error snackbar
       snackbarText = 'Failed to start a new instance of ' + appAPI.app.name + '.'
       alertSeverity = 'error'
-      setSnackbarState({
-        snackbarOpen: true,
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText
-      })
     }
+    setSnackbarState({
+      snackbarOpen: true,
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText
+    })
     setSnackbarOpen(true)
     setNewInstanceStarting(false)
   }

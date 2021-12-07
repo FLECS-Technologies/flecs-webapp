@@ -40,9 +40,7 @@ function AppList () {
     const deviceAPI = new DeviceAPI()
     await deviceAPI.getInstalledApps()
     if (deviceAPI.lastAPICallSuccessfull) {
-      console.log('... now we put the appList into the browsers state. The appList has the values of: ')
-      console.log(deviceAPI.appList)
-      // setInstalledAppList([deviceAPI.appList])
+      // only for test: deviceAPI.appList = TestDataInstalledApps.appList
       mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
         .reduce((r, o) => {
           r[o.app] = r[o.app]
@@ -51,8 +49,6 @@ function AppList () {
 
           return r
         }, {}))
-      console.log('Merged list: ')
-      console.log(mergedList)
       setAppList(appList => [...mergedList])
     } else {
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)

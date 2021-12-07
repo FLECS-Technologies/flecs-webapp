@@ -82,7 +82,7 @@ export default class AppAPI extends React.Component {
 
         await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
         if (this.lastAPICallSuccessfull) {
-          this.app.instances[this.app.instances.length - 1].status = 'started'
+          this.app.instances[this.app.instances.length - 1].status = 'running'
         } else {
           throw Error('failed to start instance after installing the app.')
         }
@@ -142,7 +142,7 @@ export default class AppAPI extends React.Component {
         if (startInstanceAPI.state.success) {
           this.app.instances.map(item =>
             item.instanceId === instanceId
-              ? { ...item, status: 'started' }
+              ? { ...item, status: 'running' }
               : item)
 
           this.lastAPICallSuccessfull = true

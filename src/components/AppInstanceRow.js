@@ -36,6 +36,9 @@ export default function AppInstanceRow (props) {
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
+  const [instanceNotReady] = useState(
+    props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
+  )
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
@@ -54,6 +57,7 @@ export default function AppInstanceRow (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
+      snackbarText = 'Successully stopped ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
       // error snackbar
       snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
@@ -78,6 +82,7 @@ export default function AppInstanceRow (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
+      snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
       // error snackbar
       snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
@@ -102,6 +107,7 @@ export default function AppInstanceRow (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
+      snackbarText = appAPI.app.name + ' instance successully deleted.'
     } else {
       // error snackbar
       snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
@@ -144,7 +150,7 @@ export default function AppInstanceRow (props) {
                     <LoadIconButton
                         icon={<PlayCircleIcon />}
                         color="success"
-                        disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting}
+                        disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting || instanceNotReady}
                         onClick={() => startInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStarting}
                     />
@@ -154,7 +160,7 @@ export default function AppInstanceRow (props) {
                     <span>
                     <LoadIconButton
                         icon={<PauseCircleFilledIcon />}
-                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting}
+                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStopping}
                     />

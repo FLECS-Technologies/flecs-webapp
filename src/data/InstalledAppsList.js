@@ -25,7 +25,7 @@ export const installedAppsList = [
       {
         instanceId: 'com.codesys.codesyscontrol.01234567',
         instanceName: 'Smarthome',
-        status: 'started',
+        status: 'running',
         version: '4.2.0'
       },
       {
@@ -44,7 +44,7 @@ export const installedAppsList = [
       {
         instanceId: 'com.codesys.codesysgateway.12345678',
         instanceName: 'cdsgateway',
-        status: 'started',
+        status: 'running',
         version: '4.1.0'
       }
     ]

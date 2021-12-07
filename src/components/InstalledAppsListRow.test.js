@@ -31,7 +31,7 @@ describe('Test Installed Apps List row', () => {
         {
           instanceId: 'com.codesys.codesyscontrol.01234567',
           instanceName: 'Smarthome',
-          status: 'started',
+          status: 'running',
           version: '4.2.0'
         },
         {

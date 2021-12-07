@@ -19,14 +19,14 @@
 import { useContext, useEffect, useState, React } from 'react'
 import { ReferenceDataContext } from './ReferenceDataContext'
 import { marketPlaceAppsList } from './MarketplaceAppsList'
-import { installedAppsList } from './InstalledAppsList'
+// import { installedAppsList } from './InstalledAppsList'
 import DeviceAPI from '../api/DeviceAPI'
 
 function AppList () {
   const { setAppList } = useContext(ReferenceDataContext)
 
   const [marketplaceAppList] = useState([...marketPlaceAppsList])
-  const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
+  // const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
   let mergedList = []
 
   // todo: call api from the marketplace to get all apps
@@ -39,11 +39,11 @@ function AppList () {
     const deviceAPI = new DeviceAPI()
     await deviceAPI.getInstalledApps()
     if (deviceAPI.lastAPICallSuccessfull) {
-      console.log('... now we put the appList into the browsers state. The appList has the values of: ' + deviceAPI.appList)
+      console.log('... now we put the appList into the browsers state. The appList has the values of: ')
       console.log(deviceAPI.appList)
-      setInstalledAppList([deviceAPI.appList])
+      // setInstalledAppList([deviceAPI.appList])
 
-      mergedList = Object.values([...marketplaceAppList, ...installedAppList]
+      mergedList = Object.values([...marketplaceAppList, deviceAPI.appList]
         .reduce((r, o) => {
           r[o.app] = r[o.app]
             ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
@@ -51,7 +51,8 @@ function AppList () {
 
           return r
         }, {}))
-
+      console.log('Merged list: ')
+      console.log(mergedList)
       setAppList(appList => [...mergedList])
     } else {
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)

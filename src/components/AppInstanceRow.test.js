@@ -24,6 +24,9 @@ import AppInstanceRow from './AppInstanceRow'
 describe('AppInstanceRow', () => {
   test('renders AppInstanceRow component', () => {
     render(<AppInstanceRow
+      app={
+        { multiInstance: true }
+      }
       appInstance={
         {
           instanceId: '01234567',

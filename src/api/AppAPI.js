@@ -70,7 +70,9 @@ export default class AppAPI extends React.Component {
         const startInstanceAPI = new PostStartAppInstanceAPI()
 
         await installAPI.installApp(this.app.app, this.app.version)
-        if (!installAPI.state.success) {
+        if (installAPI.state.success) {
+          this.app.status = 'installed'
+        } else {
           this.lastAPICallSuccessfull = false
           throw Error('failed to install app.')
         }
@@ -98,7 +100,9 @@ export default class AppAPI extends React.Component {
         const uninstallAPI = new PostUninstallAppAPI()
         await uninstallAPI.uninstallApp(this.app.app, this.app.version)
         this.lastAPICallSuccessfull = uninstallAPI.state.success
-        if (!this.lastAPICallSuccessfull) {
+        if (this.lastAPICallSuccessfull) {
+          this.app.status = 'uninstalled'
+        } else {
           this.lastAPIError = uninstallAPI.state.errorMessage
         }
       }

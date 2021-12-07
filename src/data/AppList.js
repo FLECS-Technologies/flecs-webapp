@@ -51,6 +51,7 @@ function AppList () {
         }, {}))
       setAppList(appList => [...mergedList])
     } else {
+      setAppList(appList => [...marketplaceAppList])
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
     }
   }, [])

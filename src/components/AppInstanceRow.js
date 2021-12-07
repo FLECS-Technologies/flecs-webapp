@@ -121,7 +121,7 @@ export default function AppInstanceRow (props) {
         <TableRow>
         <TableCell component="th" scope="row">
         <Tooltip title={'App ' + appInstance.status}>
-            {appInstance.status === 'started'
+            {appInstance.status === 'running'
               ? (
             <CircleIcon color="success" />
                 )

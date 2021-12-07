@@ -24,19 +24,24 @@ export default class DeviceAPI extends React.Component {
   constructor (props) {
     super(props)
     this.appList = null
+    this.lastAPICallSuccessfull = false
+    this.lastAPIError = null
   }
 
   async getInstalledApps () {
     try {
       const getAppListAPI = new GetInstalledAppsListAPI()
-      await fetch(getAppListAPI.getAppList())
-      if (getAppListAPI.success) {
+      await getAppListAPI.getAppList()
+      this.lastAPICallSuccessfull = getAppListAPI.state.success
+      if (this.lastAPICallSuccessfull) {
         this.appList = await getAppListAPI.state.responseData.appList
       } else {
-        throw Error('failed to perform DeviceAPI.getInstalledApps()')
+        this.lastAPIError = getAppListAPI.state.errorMessage
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
+      this.lastAPICallSuccessfull = false
+      this.lastAPIError = error
     }
   }
 }

@@ -37,8 +37,8 @@ function AppList () {
   // call api from the device to get all installed apps
   useEffect(async () => {
     const deviceAPI = new DeviceAPI()
-    const response = await fetch(deviceAPI.getInstalledApps()).then(response => response.json)
-    if (response.ok) {
+    await deviceAPI.getInstalledApps()
+    if (deviceAPI.lastAPICallSuccessfull) {
       setInstalledAppList([deviceAPI.appList])
     }
   }, [])

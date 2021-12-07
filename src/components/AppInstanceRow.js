@@ -144,7 +144,7 @@ export default function AppInstanceRow (props) {
                     <LoadIconButton
                         icon={<PlayCircleIcon />}
                         color="success"
-                        disabled={appInstance.status === 'started' || instanceStarting || instanceStopping || instanceDeleting}
+                        disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting}
                         onClick={() => startInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStarting}
                     />

@@ -171,7 +171,7 @@ export default function AppInstanceRow (props) {
                     <span>
                     <LoadIconButton
                         icon={<DeleteIcon />}
-                        disabled={instanceDeleting || instanceStopping || instanceStarting}
+                        disabled={(!app.multiInstance) || instanceDeleting || instanceStopping || instanceStarting}
                         onClick={() => deleteInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceDeleting}
                     />

@@ -42,22 +42,24 @@ function AppList () {
       console.log('... now we put the appList into the browsers state. The appList has the values of: ' + deviceAPI.appList)
       console.log(deviceAPI.appList)
       setInstalledAppList([deviceAPI.appList])
+
+      mergedList = Object.values([...marketplaceAppList, ...installedAppList]
+        .reduce((r, o) => {
+          r[o.app] = r[o.app]
+            ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
+            : o
+
+          return r
+        }, {}))
     } else {
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
     }
   }, [])
-  console.log('... now we are back from calling the device api and putting the result into the browsers state. Next step is to merge the installed apps with the apps from the marketplace. The appList has the values of: ')
-  console.log(installedAppList)
-  mergedList = Object.values([...marketplaceAppList, ...installedAppList]
-    .reduce((r, o) => {
-      r[o.app] = r[o.app]
-        ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
-        : o
 
-      return r
-    }, {}))
   useEffect(() => {
     setAppList(appList => [...mergedList])
+    console.log('Set the appList to the merged list')
+    console.log(mergedList)
   }, [])
   return (<></>)
 }

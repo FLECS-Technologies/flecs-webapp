@@ -80,7 +80,7 @@ export default function AppInstanceRow (props) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
-      snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
+      snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
       setSnackbarState({
         alertSeverity: alertSeverity,
@@ -130,7 +130,7 @@ export default function AppInstanceRow (props) {
                 )}
         </Tooltip>
         </TableCell>
-        <TableCell>{appInstance.instancename}</TableCell>
+        <TableCell>{appInstance.instanceName}</TableCell>
         <TableCell>{appInstance.version}</TableCell>
         <TableCell>
             <Grid

@@ -34,6 +34,7 @@ export default class DeviceAPI extends React.Component {
       await getAppListAPI.getAppList()
       this.lastAPICallSuccessfull = getAppListAPI.state.success
       if (this.lastAPICallSuccessfull) {
+        console.log('Successfully received the response from the device. This is the appList directly from the response body: ' + getAppListAPI.state.responseData.appList)
         this.appList = await getAppListAPI.state.responseData.appList
       } else {
         this.lastAPIError = getAppListAPI.state.errorMessage

@@ -51,16 +51,17 @@ function AppList () {
 
           return r
         }, {}))
+
+      setAppList(appList => [...mergedList])
     } else {
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
     }
   }, [])
 
+  /*
   useEffect(() => {
-    setAppList(appList => [...mergedList])
-    console.log('Set the appList to the merged list')
-    console.log(mergedList)
-  }, [])
+
+  }, []) */
   return (<></>)
 }
 

@@ -27,7 +27,7 @@ describe('AppInstanceRow', () => {
       appInstance={
         {
           instanceId: '01234567',
-          instancename: 'Smarthome',
+          instanceName: 'Smarthome',
           status: 'started',
           version: 'Test App Version'
         }

@@ -20,6 +20,7 @@ import { useContext, useEffect, useState, React } from 'react'
 import { ReferenceDataContext } from './ReferenceDataContext'
 import { marketPlaceAppsList } from './MarketplaceAppsList'
 // import { installedAppsList } from './InstalledAppsList'
+// import { TestDataInstalledApps } from './TestDataInstalledApps'
 import DeviceAPI from '../api/DeviceAPI'
 
 function AppList () {
@@ -42,8 +43,7 @@ function AppList () {
       console.log('... now we put the appList into the browsers state. The appList has the values of: ')
       console.log(deviceAPI.appList)
       // setInstalledAppList([deviceAPI.appList])
-
-      mergedList = Object.values([...marketplaceAppList, deviceAPI.appList]
+      mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
         .reduce((r, o) => {
           r[o.app] = r[o.app]
             ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }

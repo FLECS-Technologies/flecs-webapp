@@ -44,19 +44,19 @@ export default function AppInstanceRow (props) {
   })
   const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
 
-  const stopInstance = async (app, instanceId) => {
+  const stopInstance = async (app, version, instanceId) => {
     setInstanceStopping(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.stopInstance(instanceId)
+    await appAPI.stopInstance(version, instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
-      snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
+      snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'success'
       setSnackbarState({
         alertSeverity: alertSeverity,
@@ -104,7 +104,7 @@ export default function AppInstanceRow (props) {
       updateReferenceDataInstances(appAPI.app)
     } else {
       // error snackbar
-      snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instancename + '.'
+      snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
       setSnackbarState({
         alertSeverity: alertSeverity,
@@ -155,7 +155,7 @@ export default function AppInstanceRow (props) {
                     <LoadIconButton
                         icon={<PauseCircleFilledIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting}
-                        onClick={() => stopInstance(app, appInstance.instanceId)}
+                        onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStopping}
                     />
                     </span>

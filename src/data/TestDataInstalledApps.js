@@ -9,13 +9,13 @@ export const TestDataInstalledApps = {
         instances: [
           {
             instanceId: 'com.codesys.codesyscontrol.01234567',
-            instancename: 'Smarthome',
+            instanceName: 'Smarthome',
             status: 'started',
             version: '4.2.0'
           },
           {
             instanceId: 'com.codesys.codesyscontrol.12345678',
-            instancename: 'Energymanager',
+            instanceName: 'Energymanager',
             status: 'stopped',
             version: '4.2.0'
           }

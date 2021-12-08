@@ -193,7 +193,7 @@ export default class AppAPI extends React.Component {
         await deleteInstanceAPI.deleteAppInstance(this.app.app, version, instanceId)
         if (deleteInstanceAPI.state.success) {
           // remove instance from array
-          this.app.instances = this.app.instances.filter(instance => instance.instanceId === instanceId)
+          this.app.instances = this.app.instances.filter(instance => instance.instanceId !== instanceId)
 
           this.lastAPICallSuccessfull = true
         } else {

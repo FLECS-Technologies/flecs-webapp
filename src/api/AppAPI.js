@@ -227,7 +227,7 @@ export default class AppAPI extends React.Component {
     if (this.app.instances) {
       let i = 0
       let tmpName = this.app.name + i
-      while (this.app.instances.filter(instance => instance.name !== tmpName) != null || i < this.app.instances.length) {
+      while ((this.app.instances.filter(instance => instance.name === tmpName) != null) && (i < this.app.instances.length)) {
         ++i
         tmpName = this.app.name + i
       }

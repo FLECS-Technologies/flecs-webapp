@@ -36,6 +36,9 @@ import { visuallyHidden } from '@mui/utils'
 import Yaml from 'js-yaml'
 import Row from './InstalledAppsListRow'
 import FileOpen from './FileOpen'
+import AppAPI from '../api/AppAPI'
+import ActionSnackbar from './ActionSnackbar'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 const headCells = [
 
@@ -141,12 +144,19 @@ function stableSort (array, comparator) {
 }
 
 export default function DeviceAppsList (props) {
+  const { appList, setAppList } = React.useContext(ReferenceDataContext)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('apps')
   const [page, setPage] = React.useState(0)
-  // const [setSideloadFile] = React.useState()
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  let appList = []
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarState, setSnackbarState] = React.useState({
+    snackbarText: 'Info',
+    snackbarErrorText: '',
+    alertSeverity: 'success'
+  })
+  const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
+  let tmpAppList = []
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -164,15 +174,36 @@ export default function DeviceAppsList (props) {
   }
 
   const handleOnSideloadConfirm = async (text) => {
-    const doc = Yaml.load(text)
+    let snackbarText
+    let alertSeverity
+    try {
+      const doc = Yaml.load(text)
+      const sideloadAPI = new AppAPI(doc)
 
-    console.log(doc)
+      sideloadAPI.sideloadApp(doc)
+      if (sideloadAPI.lastAPICallSuccessfull) {
+        setAppList(appList.push(sideloadAPI.app))
+        snackbarText = 'Successully loaded ' + sideloadAPI.app.name + '.'
+        alertSeverity = 'success'
+      } else {
+        snackbarText = 'Failed to load ' + sideloadAPI.app.name + '.'
+        alertSeverity = 'error'
+      }
+      setSnackbarState({
+        alertSeverity: alertSeverity,
+        snackbarText: snackbarText,
+        snackbarErrorText: sideloadAPI.lastAPIError
+      })
+      setSnackbarOpen(true)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   if (props.appData) {
     // filter on only installed apps
-    appList = props.appData.filter(app => app.status === 'installed')
-    appList = stableSort(appList, getComparator(order, orderBy))
+    tmpAppList = props.appData.filter(app => app.status === 'installed')
+    tmpAppList = stableSort(tmpAppList, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
         return (<Row
@@ -182,7 +213,7 @@ export default function DeviceAppsList (props) {
       })
   }
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - appList.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tmpAppList.length) : 0
   return (
     <Box
      // sx={{ width: '100%' /*, mt: 10, mr: 10, ml: 32 */ }}
@@ -224,7 +255,7 @@ export default function DeviceAppsList (props) {
               rowCount={props.length}
             />
             <TableBody>
-              {appList}
+              {tmpAppList}
               {emptyRows > 0 && (
                 <TableRow>
                   <TableCell colSpan={6} />
@@ -236,13 +267,20 @@ export default function DeviceAppsList (props) {
         <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={appList.length}
+            count={tmpAppList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+        <ActionSnackbar
+            text={snackbarText}
+            errorText={snackbarErrorText}
+            open={snackbarOpen}
+            setOpen={setSnackbarOpen}
+            alertSeverity={alertSeverity}
+        />
     </Box>
   )
 }

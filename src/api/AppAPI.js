@@ -209,15 +209,29 @@ export default class AppAPI extends React.Component {
 
   async sideloadApp (appYaml) {
     try {
+      // sideload app - this request takes the .yml file and tries to install the app
       const sideload = new PutSideloadAppAPI()
       await sideload.sideloadApp(appYaml)
-
-      this.lastAPICallSuccessfull = sideload.state.success
-      if (!this.lastAPICallSuccessfull) {
-        throw Error('failed to sideload app')
+      if (sideload.state.success) {
+        this.app.status = 'installed'
+      } else {
+        this.lastAPICallSuccessfull = false
+        throw Error('failed to install app.')
       }
 
-      // todo: continue here with creating an instance starting the sideloaded app
+      // create new instance
+      await this.createInstance(this.createInstanceName())
+      if (!this.lastAPICallSuccessfull) {
+        throw Error('failed to create instance after installing the app.')
+      }
+
+      // start new instance
+      await this.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
+      if (this.lastAPICallSuccessfull) {
+        this.app.instances[this.app.instances.length - 1].status = 'running'
+      } else {
+        throw Error('failed to start instance after installing the app.')
+      }
     } catch (error) {
       console.error(error)
     }

@@ -77,7 +77,7 @@ export default function Row (props) {
     let alertSeverity
     const appAPI = new AppAPI(props.row)
     appAPI.setAppData(loadReferenceData(props.row))
-    await appAPI.createInstance(appAPI.app.name + appAPI.app.instances.length)
+    await appAPI.createInstance(appAPI.createInstanceName())
 
     if (appAPI.lastAPICallSuccessfull) {
       updateReferenceDataInstances(appAPI.app)

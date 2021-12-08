@@ -77,7 +77,7 @@ export default class AppAPI extends React.Component {
           throw Error('failed to install app.')
         }
 
-        await this.createInstance(this.app.name + this.app.instances.length)
+        await this.createInstance(this.createInstanceName())
         if (!this.lastAPICallSuccessfull) {
           throw Error('failed to create instance after installing the app.')
         }
@@ -220,6 +220,18 @@ export default class AppAPI extends React.Component {
       // todo: continue here with creating an instance starting the sideloaded app
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  createInstanceName () {
+    if (this.app.instances) {
+      let i = 0
+      let tmpName = this.app.name + i
+      while (this.app.instances.filter(instance => instance.name !== tmpName) != null || i < this.app.instances.length) {
+        ++i
+        tmpName = this.app.name + i
+      }
+      return tmpName
     }
   }
 

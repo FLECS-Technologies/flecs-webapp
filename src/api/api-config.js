@@ -18,18 +18,18 @@
 
 import { Component } from 'react'
 
-const GET_DEVICE_INFO_URL = 'http://localhost:80/GetDeviceInfo'
-const GET_INSTALLED_APP_LIST_URL = 'http://localhost:80/InstalledAppList'
-const GET_INSTANTIATED_APP_LIST_URL = 'http://localhost:80/InstantiatedApps'
+const GET_DEVICE_INFO_URL = '/GetDeviceInfo'
+const GET_INSTALLED_APP_LIST_URL = '/InstalledAppList'
+const GET_INSTANTIATED_APP_LIST_URL = '/InstantiatedApps'
 
-const POST_INSTALL_APP_URL = 'http://localhost:80/InstallApp'
-const POST_UNINSTALL_APP_URL = 'http://localhost:80/UninstallApp'
-const POST_START_INSTANCE_URL = 'http://localhost:80/StartAppInstance'
-const POST_STOP_INSTANCE_URL = 'http://localhost:80/StopAppInstance'
-const POST_CREATE_APP_INSTANCE_URL = 'http://localhost:80/CreateAppInstance'
-const POST_DELETE_APP_INSTANCE_URL = 'http://localhost:80/DeleteAppInstance'
+const POST_INSTALL_APP_URL = '/InstallApp'
+const POST_UNINSTALL_APP_URL = '/UninstallApp'
+const POST_START_INSTANCE_URL = '/StartAppInstance'
+const POST_STOP_INSTANCE_URL = '/StopAppInstance'
+const POST_CREATE_APP_INSTANCE_URL = '/CreateAppInstance'
+const POST_DELETE_APP_INSTANCE_URL = '/DeleteAppInstance'
 
-const PUT_SIDELOAD_APP = 'http://localhost:80/SideloadApp'
+const PUT_SIDELOAD_APP = '/SideloadApp'
 
 const GET_APP_LIST_URL = 'http://marketplace.flecs.tech/AppList'
 

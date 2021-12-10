@@ -18,7 +18,7 @@
 
 export const marketPlaceAppsList = [
   {
-    app: 'com.codesys.codesyscontrol',
+    app: 'com.codesys.control',
     avatar:
       'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     name: 'CODESYS Control',
@@ -31,7 +31,7 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    app: 'com.codesys.codesysgateway',
+    app: 'com.codesys.edge',
     avatar:
       'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     name: 'CODESYS Edge Gateway',

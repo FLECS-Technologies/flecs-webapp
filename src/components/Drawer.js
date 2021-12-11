@@ -29,7 +29,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import WidgetIcon from '@mui/icons-material/Widgets'
 import MarketplaceIcon from '@mui/icons-material/Store'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { withRouter } from 'react-router-dom'
+import { withRouter, useLocation } from 'react-router-dom'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
@@ -92,10 +92,12 @@ const MiniDrawer = (props) => {
     setOpen(!open)
   }
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const curLoc = useLocation()
+
+  // const [selectedIndex, setSelectedIndex] = React.useState()
 
   const handleListItemClick = (event, index) => {
-    setSelectedIndex(index)
+    // setSelectedIndex(index)
     switch (index) {
       case 0:
         history.push('/')
@@ -121,7 +123,7 @@ const MiniDrawer = (props) => {
           </IconButton>
           <Divider />
           <ListItemButton
-            selected={selectedIndex === 0}
+            selected={curLoc.pathname === '/'}
             onClick={(event) => handleListItemClick(event, 0)}
             aria-label="Apps"
           >
@@ -131,9 +133,9 @@ const MiniDrawer = (props) => {
             <ListItemText primary="Apps" />
           </ListItemButton>
           <ListItemButton
-            selected={selectedIndex === 1}
+            selected={curLoc.pathname === '/Marketplace'}
             onClick={(event) => handleListItemClick(event, 1)}
-            aria-label="Marketplace"
+            aria-label="/Marketplace"
           >
             <ListItemIcon>
               <MarketplaceIcon />
@@ -144,7 +146,7 @@ const MiniDrawer = (props) => {
         <Divider />
         <List component="nav" aria-label="Drawer-List-System">
           <ListItemButton
-            selected={selectedIndex === 2}
+            selected={curLoc.pathname === '/System'}
             onClick={(event) => handleListItemClick(event, 2)}
           >
             <ListItemIcon>

@@ -42,7 +42,7 @@ import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 
 export default function Row (props) {
-  const { appList, setAppList } = useContext(ReferenceDataContext)
+  const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { row } = props
   const [open, setOpen] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -62,15 +62,6 @@ export default function Row (props) {
     return tmpApp
   }
 
-  function updateReferenceDataInstances (props) {
-    setAppList(
-      appList.map(item =>
-        item.app === props.app
-          ? { ...item, instances: props.instances }
-          : item)
-    )
-  }
-
   const startNewInstance = async (props) => {
     setNewInstanceStarting(true)
     let snackbarText
@@ -80,7 +71,7 @@ export default function Row (props) {
     await appAPI.createInstance(appAPI.createInstanceName())
 
     if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
+      setUpdateAppList(true)
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
       snackbarText = 'Successfully started a new instance of ' + appAPI.app.name + '.'
       alertSeverity = 'success'
@@ -164,7 +155,6 @@ export default function Row (props) {
                       app={row}
                       appInstance={appInstance}
                       loadAppReferenceData={loadReferenceData}
-                      updateReferenceDataInstances={updateReferenceDataInstances}
                     />
                   ))}
                 </TableBody>

@@ -34,10 +34,10 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
 
 export default function OutlinedCard (props) {
-  const { appList, setAppList } = useContext(ReferenceDataContext)
-  const [installed, setInstalled] = useState(props.status === 'installed')
+  const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
+  const installed = (props.status === 'installed')
   const [installing, setInstalling] = useState(false)
-  const [uninstalled, setUninstalled] = useState(props.status === 'uninstalled')
+  const uninstalled = (props.status === 'uninstalled')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
     props.availability === 'available'
@@ -65,15 +65,6 @@ export default function OutlinedCard (props) {
     }
   }
 
-  function updateReferenceDataStatus (props) {
-    setAppList(
-      appList.map(item =>
-        item.app === props.app
-          ? { ...item, status: props.status }
-          : item)
-    )
-  }
-
   const installApp = async (props) => {
     setInstalling(true)
     const appAPI = new AppAPI(props)
@@ -85,10 +76,8 @@ export default function OutlinedCard (props) {
     let snackbarText, errorMessage
 
     if (appAPI.lastAPICallSuccessfull && !installed) {
-      setInstalled(true)
-      setUninstalled(false)
-      updateReferenceDataStatus(appAPI.app)
-
+      // trigger a reload of all installed apps
+      setUpdateAppList(true)
       snackbarText = props.name + ' successfully installed.'
     } else {
       snackbarText = 'Failed to install ' + props.name + '.'
@@ -117,9 +106,8 @@ export default function OutlinedCard (props) {
     let clipBoardContent
 
     if (appAPI.lastAPICallSuccessfull) {
-      setInstalled(false)
-      setUninstalled(true)
-      updateReferenceDataStatus(appAPI.app)
+      // trigger a reload of all installed apps
+      setUpdateAppList(true)
 
       snackbarText = props.name + ' successfully uninstalled.'
     } else {

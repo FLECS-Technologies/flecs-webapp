@@ -114,7 +114,7 @@ export default function Row (props) {
                 icon={<AddTaskIcon />}
                 color="primary"
                 onClick={() => startNewInstance(props)}
-                disabled={!row.multiInstance || newInstanceStarting}
+                disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
                 loading={newInstanceStarting}
               />
             </span>
@@ -134,7 +134,7 @@ export default function Row (props) {
                   variant="contained"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
-                  disabled={!row.multiInstance || newInstanceStarting}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
                   loading={newInstanceStarting}
                   label='start-new-instance-button'
                 />

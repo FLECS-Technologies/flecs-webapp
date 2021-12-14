@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useContext } from 'react'
 import PropTypes from 'prop-types'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
@@ -30,9 +30,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 export default function AppInstanceRow (props) {
-  const { app, appInstance, loadAppReferenceData, updateReferenceDataInstances } = props
+  const { app, appInstance, loadAppReferenceData } = props
+  const { setUpdateAppList } = useContext(ReferenceDataContext)
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
@@ -56,7 +58,7 @@ export default function AppInstanceRow (props) {
     await appAPI.stopInstance(version, instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
+      setUpdateAppList(true)
       snackbarText = 'Successully stopped ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
       // error snackbar
@@ -81,7 +83,7 @@ export default function AppInstanceRow (props) {
     await appAPI.startInstance(version, instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
+      setUpdateAppList(true)
       snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
       // error snackbar
@@ -106,7 +108,7 @@ export default function AppInstanceRow (props) {
     await appAPI.deleteInstance(version, instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
-      updateReferenceDataInstances(appAPI.app)
+      setUpdateAppList(true)
       snackbarText = appAPI.app.name + ' instance successully deleted.'
       alertSeverity = 'success'
     } else {

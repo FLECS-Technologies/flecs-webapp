@@ -144,7 +144,7 @@ function stableSort (array, comparator) {
 }
 
 export default function DeviceAppsList (props) {
-  const { appList, setAppList } = React.useContext(ReferenceDataContext)
+  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('apps')
   const [page, setPage] = React.useState(0)
@@ -182,7 +182,7 @@ export default function DeviceAppsList (props) {
 
       sideloadAPI.sideloadApp(doc)
       if (sideloadAPI.lastAPICallSuccessfull) {
-        setAppList(appList.push(sideloadAPI.app))
+        setUpdateAppList(true)
         snackbarText = 'Successully loaded ' + sideloadAPI.app.name + '.'
         alertSeverity = 'success'
       } else {

@@ -34,20 +34,21 @@ export default function App () {
     <DarkModeState>
       <Frame>
         <ReferenceDataContextProvider>
-          <AppList/>
-          <Switch>
-            <Route exact from="/" render={(props) => <InstalledApps {...props} />} />
-            <Route
-              exact
-              path="/Marketplace"
-              render={(props) => <Marketplace {...props} />}
-            />
-            <Route
-              exact
-              path="/System"
-              render={(props) => <System {...props} />}
-            />
-          </Switch>
+          <AppList>
+            <Switch>
+              <Route exact from="/" render={(props) => <InstalledApps {...props} />} />
+              <Route
+                exact
+                path="/Marketplace"
+                render={(props) => <Marketplace {...props} />}
+              />
+              <Route
+                exact
+                path="/System"
+                render={(props) => <System {...props} />}
+              />
+            </Switch>
+          </AppList>
         </ReferenceDataContextProvider>
       </Frame>
     </DarkModeState>

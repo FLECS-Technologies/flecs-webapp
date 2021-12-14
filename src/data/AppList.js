@@ -16,51 +16,75 @@
  * limitations under the License.
  */
 
-import { useContext, useEffect, useState, React } from 'react'
+import { React, Component } from 'react'
+import PropTypes from 'prop-types'
 import { ReferenceDataContext } from './ReferenceDataContext'
 import { marketPlaceAppsList } from './MarketplaceAppsList'
-// import { installedAppsList } from './InstalledAppsList'
-// import { TestDataInstalledApps } from './TestDataInstalledApps'
 import DeviceAPI from '../api/DeviceAPI'
 
-function AppList () {
-  const { setAppList } = useContext(ReferenceDataContext)
-
-  const [marketplaceAppList] = useState([...marketPlaceAppsList])
-  // const [installedAppList, setInstalledAppList] = useState([...installedAppsList])
-  let mergedList = []
-
-  // todo: call api from the marketplace to get all apps
-  //   useEffect(() => {
-  //       setMarketPlaceList(marketplaceAppList => [...marketplaceAppList, ...marketPlaceAppsList]);
-  //   }, []);
-
-  // call api from the device to get all installed apps
-  useEffect(async () => {
-    const deviceAPI = new DeviceAPI()
-    await deviceAPI.getInstalledApps()
-    if (deviceAPI.lastAPICallSuccessfull) {
-      // only for test: deviceAPI.appList = TestDataInstalledApps.appList
-      mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
-        .reduce((r, o) => {
-          r[o.app] = r[o.app]
-            ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
-            : o
-
-          return r
-        }, {}))
-      setAppList(appList => [...mergedList])
-    } else {
-      setAppList(appList => [...marketplaceAppList])
-      console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
+class AppList extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      updateNow: false
     }
-  }, [])
+  }
 
-  /*
-  useEffect(() => {
+  componentDidMount () {
+    this.loadAppList()
+  }
 
-  }, []) */
-  return (<></>)
+  componentDidUpdate () {
+    const { updateAppList, setUpdateAppList } = this.context
+    if (updateAppList) {
+      setUpdateAppList(false)
+      this.loadAppList()
+    }
+  }
+
+  handleUpdateAppList () {
+    this.loadAppList()
+  }
+
+  loadAppList () {
+    (async () => {
+      const { setAppList } = this.context
+
+      const marketplaceAppList = [...marketPlaceAppsList]
+      let mergedList = []
+
+      // todo: call api from the marketplace to get all apps
+      //   useEffect(() => {
+      //       setMarketPlaceList(marketplaceAppList => [...marketplaceAppList, ...marketPlaceAppsList]);
+      //   }, []);
+
+      // call api from the device to get all installed apps
+      const deviceAPI = new DeviceAPI()
+      await deviceAPI.getInstalledApps()
+      if (deviceAPI.lastAPICallSuccessfull) {
+        mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
+          .reduce((r, o) => {
+            r[o.app] = r[o.app]
+              ? { ...r[o.app], instances: [...r[o.app].instances, ...o.instances], status: o.status }
+              : o
+
+            return r
+          }, {}))
+        setAppList(appList => [...mergedList])
+      } else {
+        setAppList(appList => [...marketplaceAppList])
+        console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
+      }
+    })()
+      .catch(error => { console.log(error) })
+  }
+
+  render () {
+    return (<>{this.props.children}</>)
+  }
 }
-
+AppList.contextType = ReferenceDataContext
+AppList.propTypes = {
+  children: PropTypes.any
+}
 export default AppList

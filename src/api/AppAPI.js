@@ -85,6 +85,8 @@ export default class AppAPI extends React.Component {
         await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
         if (this.lastAPICallSuccessfull) {
           this.app.instances[this.app.instances.length - 1].status = 'running'
+          // pop this instance, because it'll be automatically reloaded from the device. Leaving it in the list leads to double entries in the instance list
+          this.app.instances.pop()
         } else {
           throw Error('failed to start instance after installing the app.')
         }
@@ -241,9 +243,11 @@ export default class AppAPI extends React.Component {
     if (this.app.instances) {
       let i = 0
       let tmpName = this.app.name + i
-      while ((this.app.instances.filter(instance => instance.name === tmpName) != null) && (i < this.app.instances.length)) {
-        ++i
+      let tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
+      while ((tmpList.length > 0) && (i < this.app.instances.length)) {
+        i++
         tmpName = this.app.name + i
+        tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
       }
       return tmpName
     }

@@ -30,6 +30,7 @@ import Typography from '@mui/material/Typography'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import AddTaskIcon from '@mui/icons-material/AddTask'
+import DeleteIcon from '@mui/icons-material/Delete'
 import Tooltip from '@mui/material/Tooltip'
 import Toolbar from '@mui/material/Toolbar'
 import Avatar from '@mui/material/Avatar'
@@ -44,7 +45,9 @@ import ActionSnackbar from './ActionSnackbar'
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { row } = props
+  const displayStateDeleteApp = (props.row.status === 'sideloaded') ? 'block' : 'none'
   const [open, setOpen] = useState(false)
+  const [uninstalling, setUninstalling] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
@@ -60,6 +63,32 @@ export default function Row (props) {
     })
 
     return tmpApp
+  }
+
+  const uninstallSideload = async (props) => {
+    setUninstalling(true)
+    let snackbarText
+    let alertSeverity
+    console.log('uninstalling sideloaded app...')
+    const appAPI = new AppAPI(props.row)
+    await appAPI.uninstall()
+
+    if (appAPI.lastAPICallSuccessfull) {
+      setUpdateAppList(true)
+      // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
+      snackbarText = 'Successfully uninstalled ' + appAPI.app.name + '.'
+      alertSeverity = 'success'
+    } else {
+      snackbarText = 'Failed to uninstall ' + appAPI.app.name + '.'
+      alertSeverity = 'error'
+    }
+
+    setSnackbarState({
+      alertSeverity: alertSeverity,
+      snackbarText: snackbarText
+    })
+    setSnackbarOpen(true)
+    setUninstalling(false)
   }
 
   const startNewInstance = async (props) => {
@@ -81,7 +110,6 @@ export default function Row (props) {
       alertSeverity = 'error'
     }
     setSnackbarState({
-      snackbarOpen: true,
       alertSeverity: alertSeverity,
       snackbarText: snackbarText
     })
@@ -91,9 +119,10 @@ export default function Row (props) {
 
   return (
     <Fragment>
-      <TableRow >
-        <TableCell style={{ borderBottom: 'none' }}>
+      <TableRow data-testid="app-row" >
+        <TableCell data-testid="expand-app-cell" style={{ borderBottom: 'none' }}>
           <IconButton
+            data-testid="expand-app-button"
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
@@ -101,28 +130,42 @@ export default function Row (props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell style={{ borderBottom: 'none' }} component="th" scope="row">
-          <Avatar src={row.avatar}></Avatar>
+        <TableCell data-testid="app-avatar-cell" style={{ borderBottom: 'none' }} component="th" scope="row">
+          <Avatar data-testid="app-avatar" src={row.avatar}></Avatar>
         </TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.name}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>
-          <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
-            <span>
-              <LoadIconButton
-                icon={<AddTaskIcon />}
-                color="primary"
-                onClick={() => startNewInstance(props)}
-                disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
-                loading={newInstanceStarting}
-              />
-            </span>
-          </Tooltip>
+        <TableCell data-testid="app-name-cell" style={{ borderBottom: 'none' }}>{row.name}</TableCell>
+        <TableCell data-testid="app-author-cell" style={{ borderBottom: 'none' }}>{row.author}</TableCell>
+        <TableCell data-testid="app-version-cell" style={{ borderBottom: 'none' }}>{row.version}</TableCell>
+        <TableCell data-testid="app-actions-cell" style={{ borderBottom: 'none' }}>
+          <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
+            <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
+              <span>
+                <LoadIconButton
+                  data-testid="start-new-instance-icon-button"
+                  icon={<AddTaskIcon />}
+                  color="primary"
+                  onClick={() => startNewInstance(props)}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
+                  loading={newInstanceStarting}
+                />
+              </span>
+            </Tooltip>
+            <Tooltip title={'Uninstall sideloaded app'}>
+              <span>
+                <LoadIconButton
+                  data-testid="uninstall-sideload-button"
+                  icon={<DeleteIcon />}
+                  onClick={() => uninstallSideload(props)}
+                  disabled={uninstalling}
+                  displayState={displayStateDeleteApp}
+                />
+              </span>
+            </Tooltip>
+          </Toolbar>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+      <TableRow data-testid="instances-row">
+        <TableCell data-testid="instances-cell" style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
@@ -130,6 +173,7 @@ export default function Row (props) {
                   App instances
                 </Typography>
                 <LoadButton
+                  data-testid="start-new-instance-button"
                   text="start new instance"
                   variant="contained"
                   onClick={() => startNewInstance(props)}
@@ -139,16 +183,16 @@ export default function Row (props) {
                   label='start-new-instance-button'
                 />
               </Toolbar>
-              <Table size="small" aria-label="app-instances">
-                <TableHead>
+              <Table data-testid="instances-table" size="small" aria-label="app-instances">
+                <TableHead data-testid="instances-table-head">
                   <TableRow>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Instance name</TableCell>
-                    <TableCell>Version</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell data-testid="instances-table-header-status">Status</TableCell>
+                    <TableCell data-testid="instances-table-header-name">Instance name</TableCell>
+                    <TableCell data-testid="instances-table-header-version">Version</TableCell>
+                    <TableCell data-testid="instances-table-header-actions">Actions</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody data-testid="instances-table-body">
                   {row.instances.map((appInstance) => (
                     <AppInstanceRow
                       key={appInstance.instanceId}
@@ -164,6 +208,7 @@ export default function Row (props) {
         </TableCell>
       </TableRow>
       <ActionSnackbar
+          data-testid="snackbar"
           text={snackbarText}
           errorText={snackbarErrorText}
           open={snackbarOpen}

@@ -17,7 +17,7 @@
  */
 
 import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Row from './InstalledAppsListRow'
 
@@ -42,11 +42,54 @@ describe('Test Installed Apps List row', () => {
         }
       ]
     }
-    render(<Row
+    const { getByTestId } = render(<Row
+      key = {app.app}
+      row = {app}
+      />)
+
+    const createInstanceButton = getByTestId('AddTaskIcon')
+    const deleteButton = getByTestId('DeleteIcon')
+
+    fireEvent.click(createInstanceButton)
+
+    expect(createInstanceButton).toBeVisible()
+    expect(deleteButton).not.toBeVisible()
+    // screen.debug()
+  })
+
+  test('renders sideloaded app list row component', () => {
+    const app = {
+      app: 'com.codesys.codesyscontrol',
+      status: 'sideloaded',
+      version: '4.2.0',
+      multiInstance: true,
+      instances: [
+        {
+          instanceId: 'com.codesys.codesyscontrol.01234567',
+          instanceName: 'Smarthome',
+          status: 'running',
+          version: '4.2.0'
+        },
+        {
+          instanceId: 'com.codesys.codesyscontrol.12345678',
+          instanceName: 'Energymanager',
+          status: 'stopped',
+          version: '4.2.0'
+        }
+      ]
+    }
+    const { getByTestId } = render(<Row
         key = {app.app}
         row = {app}
    />)
 
+    const createInstanceButton = getByTestId('AddTaskIcon')
+    const deleteButton = getByTestId('DeleteIcon')
+
+    fireEvent.click(deleteButton)
+
+    expect(createInstanceButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
     // screen.debug()
   })
 })

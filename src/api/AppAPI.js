@@ -240,8 +240,8 @@ export default class AppAPI extends React.Component {
   }
 
   createInstanceName () {
+    let i = 0
     if (this.app.instances) {
-      let i = 0
       let tmpName = this.app.name + i
       let tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
       while ((tmpList.length > 0) && (i < this.app.instances.length)) {
@@ -250,7 +250,7 @@ export default class AppAPI extends React.Component {
         tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
       }
       return tmpName
-    }
+    } else { return this.app.name + i }
   }
 
   static get propTypes () {

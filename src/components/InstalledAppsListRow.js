@@ -162,6 +162,21 @@ export default function Row (props) {
               </span>
             </Tooltip>
           </Toolbar>
+        <TableCell style={{ borderBottom: 'none' }}>{row.name}</TableCell>
+        <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
+        <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
+        <TableCell style={{ borderBottom: 'none' }}>
+          <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
+            <span>
+              <LoadIconButton
+                icon={<AddTaskIcon />}
+                color="primary"
+                onClick={() => startNewInstance(props)}
+                disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
+                loading={newInstanceStarting}
+              />
+            </span>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow data-testid="instances-row">

@@ -162,6 +162,7 @@ export default function Row (props) {
               </span>
             </Tooltip>
           </Toolbar>
+        </TableCell>
         <TableCell style={{ borderBottom: 'none' }}>{row.name}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
         <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>

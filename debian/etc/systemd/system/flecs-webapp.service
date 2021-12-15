@@ -1,0 +1,18 @@
+[Unit]
+Description=FLECS App Management Web App
+After=network-online.target
+Wants=network-online.target
+After=docker.service containerd.service
+Requires=docker.service containerd.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker stop flecs-webapp
+ExecStartPre=-/usr/bin/docker rm flecs-webapp
+ExecStartPre=-/usr/bin/docker pull marketplace.flecs.tech:5000/flecs/webapp:latest
+ExecStart=/usr/bin/docker run -p 80:80 --add-host=host.docker.internal:host-gateway --name flecs-webapp marketplace.flecs.tech:5000/flecs/webapp:latest
+ExecStop=/usr/bin/docker stop flecs-webapp
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

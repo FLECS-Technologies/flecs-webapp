@@ -1,0 +1,40 @@
+name: Develop
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+      - name: install dependencies
+        run: npm ci
+      - name: build
+        run: npm run build --if-present
+      - name: archive raw artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build
+
+  docker:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: download raw artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: build
+        run: make docker
+      - name: push
+        run: docker push marketplace.flecs.tech:5001/flecs/webapp:develop

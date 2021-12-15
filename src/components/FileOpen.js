@@ -18,10 +18,10 @@
 
 import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
-import Button from '@mui/material/Button'
+import LoadButton from './LoadButton'
 
 const FileOpen = (props) => {
-  const { buttonText, buttonIcon, accept, /* setFile , */ onConfirm } = props
+  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm } = props
   const inputFile = useRef(null)
 
   const handleFileOpen = e => {
@@ -49,13 +49,15 @@ const FileOpen = (props) => {
         onChange={(e) => handleFileOpen(e)}
         type="file"
       />
-      <Button
+      <LoadButton
         startIcon={buttonIcon}
+        text={buttonText}
         variant='outlined'
         onClick={onButtonClick}
+        loading={loading}
         >
         {buttonText}
-      </Button>
+      </LoadButton>
     </div>
   )
 }
@@ -65,6 +67,7 @@ FileOpen.propTypes = {
   buttonIcon: PropTypes.any,
   accept: PropTypes.string,
   setFile: PropTypes.any,
+  loading: PropTypes.bool,
   onConfirm: PropTypes.func
 }
 

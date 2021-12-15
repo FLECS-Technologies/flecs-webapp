@@ -17,6 +17,7 @@
  */
 
 import React from 'react'
+// import DeviceAPIConfiguration from './api-config'
 
 export default class BaseAPI extends React.Component {
   constructor (props) {
@@ -31,7 +32,7 @@ export default class BaseAPI extends React.Component {
 
   async callAPI (apiURL, requestOptions) {
     try {
-      const response = await fetch(apiURL, requestOptions)
+      const response = await fetch(process.env.REACT_APP_DEV_VM_IP + apiURL, requestOptions)
 
       const data = await response.json()
 

@@ -149,6 +149,7 @@ export default function DeviceAppsList (props) {
   const [orderBy, setOrderBy] = React.useState('apps')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [sideLoading, setSideLoading] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarState, setSnackbarState] = React.useState({
     snackbarText: 'Info',
@@ -177,6 +178,7 @@ export default function DeviceAppsList (props) {
     let snackbarText
     let alertSeverity
     try {
+      setSideLoading(true)
       const doc = Yaml.load(text)
       const sideloadAPI = new AppAPI(doc)
 
@@ -198,6 +200,7 @@ export default function DeviceAppsList (props) {
     } catch (error) {
       console.error(error)
     }
+    setSideLoading(false)
   }
 
   if (props.appData) {
@@ -237,10 +240,12 @@ export default function DeviceAppsList (props) {
           <Tooltip title="Install your own app on this device">
             <div>
             <FileOpen
+              data-testid="sideload-app-button"
               buttonText="Sideload App"
               buttonIcon={<GetAppIcon/>}
               accept='.yml'
               // setFile={setSideloadFile}
+              loading={sideLoading}
               onConfirm={handleOnSideloadConfirm}
             ></FileOpen>
             </div>

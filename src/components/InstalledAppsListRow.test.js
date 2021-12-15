@@ -47,7 +47,7 @@ describe('Test Installed Apps List row', () => {
       row = {app}
       />)
 
-    const createInstanceButton = getByTestId('AddTaskIcon')
+    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = getByTestId('DeleteIcon')
 
     fireEvent.click(createInstanceButton)
@@ -83,7 +83,7 @@ describe('Test Installed Apps List row', () => {
         row = {app}
    />)
 
-    const createInstanceButton = getByTestId('AddTaskIcon')
+    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = getByTestId('DeleteIcon')
 
     fireEvent.click(deleteButton)

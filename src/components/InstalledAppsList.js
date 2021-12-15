@@ -182,7 +182,7 @@ export default function DeviceAppsList (props) {
       const doc = Yaml.load(text)
       const sideloadAPI = new AppAPI(doc)
 
-      sideloadAPI.sideloadApp(doc)
+      await sideloadAPI.sideloadApp(doc)
       if (sideloadAPI.lastAPICallSuccessfull) {
         setUpdateAppList(true)
         snackbarText = 'Successully loaded ' + sideloadAPI.app.name + '.'
@@ -262,6 +262,7 @@ export default function DeviceAppsList (props) {
             <TableBody>
               {tmpAppList}
               {emptyRows > 0 && (
+
                 <TableRow>
                   <TableCell colSpan={6} />
                 </TableRow>

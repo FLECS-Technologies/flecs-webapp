@@ -134,6 +134,19 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
+    app: 'com.influxdata.influxdb',
+    avatar:
+      'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
+    name: 'InfluxDB',
+    author: 'InfluxData Inc.',
+    version: '2.1.0',
+    description: 'CONFIRMED: Time series data platform.',
+    availability: 'unavailable',
+    status: 'uninstalled',
+    multiInstance: true,
+    instances: []
+  },
+  {
     app: 'com.honeywell.matriconopcua',
     avatar:
       'https://pbs.twimg.com/profile_images/1133980019/squiggle_icon_400x400.png',
@@ -144,19 +157,6 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
-  },
-  {
-    app: 'com.influxdata.influxdb',
-    avatar:
-      'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
-    name: 'InfluxDB',
-    author: 'InfluxData Inc.',
-    version: '2.1.0',
-    description: 'Time series data platform.',
-    availability: 'unavailable',
-    status: 'uninstalled',
-    multiInstance: true,
     instances: []
   },
   {

@@ -45,7 +45,7 @@ export default class BaseAPI extends React.Component {
       }
     } catch (error) {
       this.state.success = false
-      this.state.errorMessage = error
+      this.state.errorMessage = error.message
     }
   }
 }

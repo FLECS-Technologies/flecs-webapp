@@ -5,11 +5,12 @@ import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 
 const LoadIconButton = (props) => {
-  const { icon, variant, color, disabled, onClick, displayState, loading } = props
+  const { icon, variant, color, disabled, onClick, displayState, loading, label } = props
 
   return (
         <Box sx={{ position: 'relative' }}>
           <IconButton
+            aria-label={label}
             data-testid="icon-button"
             variant={variant}
             color={color}
@@ -34,7 +35,8 @@ LoadIconButton.propTypes = {
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
   displayState: PropTypes.string,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  label: PropTypes.string
 }
 
 export default LoadIconButton

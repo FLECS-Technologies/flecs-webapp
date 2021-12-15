@@ -43,10 +43,13 @@ const FileOpen = (props) => {
   return (
     <div>
       <input
+        data-testid="fileInput"
         style={{ display: 'none' }}
         accept={accept}
         ref={inputFile}
         onChange={(e) => handleFileOpen(e)}
+        // the onClick event is necessary to null the current file. Otherwise there will be no onChange event if the user selects the same file again.
+        onClick={(event) => { event.target.value = null }}
         type="file"
       />
       <LoadButton

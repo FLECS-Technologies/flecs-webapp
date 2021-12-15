@@ -42,17 +42,17 @@ describe('Test Installed Apps List row', () => {
         }
       ]
     }
-    const { getByTestId } = render(<Row
+    const { getByTestId, getByLabelText } = render(<Row
       key = {app.app}
       row = {app}
       />)
 
-    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
+    const crtInstnButton = getByLabelText('start-new-instance-button')
     const deleteButton = getByTestId('DeleteIcon')
 
-    fireEvent.click(createInstanceButton)
+    fireEvent.click(crtInstnButton)
 
-    expect(createInstanceButton).toBeVisible()
+    expect(crtInstnButton).toBeVisible()
     expect(deleteButton).not.toBeVisible()
     // screen.debug()
   })
@@ -78,12 +78,12 @@ describe('Test Installed Apps List row', () => {
         }
       ]
     }
-    const { getByTestId } = render(<Row
+    const { getByTestId, getByLabelText } = render(<Row
         key = {app.app}
         row = {app}
    />)
 
-    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
+    const createInstanceButton = getByLabelText('start-new-instance-button')
     const deleteButton = getByTestId('DeleteIcon')
 
     fireEvent.click(deleteButton)

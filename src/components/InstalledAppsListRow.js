@@ -170,7 +170,7 @@ export default function Row (props) {
           <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
             <span>
               <LoadIconButton
-                icon={<AddTaskIcon />}
+                icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
                 color="primary"
                 onClick={() => startNewInstance(props)}
                 disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}

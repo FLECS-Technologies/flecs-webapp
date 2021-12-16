@@ -43,7 +43,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 const headCells = [
 
   {
-    id: 'name',
+    id: 'title',
     numeric: false,
     disablePadding: false,
     label: 'App'
@@ -185,10 +185,10 @@ export default function DeviceAppsList (props) {
       await sideloadAPI.sideloadApp(doc)
       if (sideloadAPI.lastAPICallSuccessfull) {
         setUpdateAppList(true)
-        snackbarText = 'Successully loaded ' + sideloadAPI.app.name + '.'
+        snackbarText = 'Successully loaded ' + sideloadAPI.app.title + '.'
         alertSeverity = 'success'
       } else {
-        snackbarText = 'Failed to load ' + sideloadAPI.app.name + '.'
+        snackbarText = 'Failed to load ' + sideloadAPI.app.title + '.'
         alertSeverity = 'error'
       }
       setSnackbarState({

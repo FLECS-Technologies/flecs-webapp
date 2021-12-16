@@ -68,8 +68,8 @@ export default function Row (props) {
 
   // set defaults
   const appId = props.row.app.split('.')
-  if (!('name' in row)) {
-    row.name = appId[2]
+  if (!('title' in row)) {
+    row.title = appId[2]
   }
   if (!('author' in row)) {
     row.author = appId[1]
@@ -91,10 +91,10 @@ export default function Row (props) {
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
-      snackbarText = appAPI.app.name + ' successfully uninstalled.'
+      snackbarText = appAPI.app.title + ' successfully uninstalled.'
       alertSeverity = 'success'
     } else {
-      snackbarText = 'Failed to uninstall ' + appAPI.app.name + '.'
+      snackbarText = 'Failed to uninstall ' + appAPI.app.title + '.'
       alertSeverity = 'error'
     }
 
@@ -117,11 +117,11 @@ export default function Row (props) {
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
-      snackbarText = 'Successfully started a new instance of ' + appAPI.app.name + '.'
+      snackbarText = 'Successfully started a new instance of ' + appAPI.app.title + '.'
       alertSeverity = 'success'
     } else {
       // error snackbar
-      snackbarText = 'Failed to start a new instance of ' + appAPI.app.name + '.'
+      snackbarText = 'Failed to start a new instance of ' + appAPI.app.title + '.'
       alertSeverity = 'error'
     }
     setSnackbarState({
@@ -146,9 +146,9 @@ export default function Row (props) {
           </IconButton>
         </TableCell>
         <TableCell data-testid="app-avatar-cell" style={{ borderBottom: 'none' }} component="th" scope="row">
-          <Avatar data-testid="app-avatar" sx={{ bgcolor: 'primary.main' }} src={row.avatar}>{row.name.charAt(0).toUpperCase()}</Avatar>
+          <Avatar data-testid="app-avatar" src={row.avatar}>{row.title.charAt(0).toUpperCase()}</Avatar>
         </TableCell>
-        <TableCell data-testid="app-name-cell" style={{ borderBottom: 'none' }}>{row.name}</TableCell>
+        <TableCell data-testid="app-title-cell" style={{ borderBottom: 'none' }}>{row.title}</TableCell>
         <TableCell data-testid="app-author-cell" style={{ borderBottom: 'none' }}>{row.author}</TableCell>
         <TableCell data-testid="app-version-cell" style={{ borderBottom: 'none' }}>{row.version}</TableCell>
         <TableCell data-testid="app-actions-cell" style={{ borderBottom: 'none' }}>
@@ -223,7 +223,7 @@ export default function Row (props) {
         </TableCell>
       </TableRow>
       <ConfirmDialog
-          title={'Uninstall ' + row.name + '?'}
+          title={'Uninstall ' + row.title + '?'}
           open={confirmOpen}
           setOpen={setConfirmOpen}
           onConfirm={() => uninstallApp(props)}

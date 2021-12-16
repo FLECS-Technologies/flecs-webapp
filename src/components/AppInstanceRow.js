@@ -26,6 +26,7 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
 import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
+import LaunchIcon from '@mui/icons-material/Launch'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
@@ -125,6 +126,10 @@ export default function AppInstanceRow (props) {
     setInstanceDeleting(false)
   }
 
+  function openInstanceEditor () {
+    window.open(process.env.REACT_APP_DEV_VM_IP + ':1880')
+  }
+
   return (
       <Fragment>
         <TableRow>
@@ -167,6 +172,14 @@ export default function AppInstanceRow (props) {
                         onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStopping}
                     />
+                    </span>
+                </Tooltip>
+                <Tooltip title="Open editor">
+                    <span>
+                      <LoadIconButton
+                        icon={<LaunchIcon/>}
+                        onClick={() => openInstanceEditor()}
+                      />
                     </span>
                 </Tooltip>
                 <Tooltip title="Delete instance">

@@ -41,12 +41,13 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/AppAPI'
 import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { row } = props
-  const displayStateDeleteApp = (props.row.status === 'sideloaded') ? 'block' : 'none'
   const [open, setOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [uninstalling, setUninstalling] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
@@ -65,18 +66,32 @@ export default function Row (props) {
     return tmpApp
   }
 
-  const uninstallSideload = async (props) => {
+  // set defaults
+  const appId = props.row.app.split('.')
+  if (!('name' in row)) {
+    row.name = appId[2]
+  }
+  if (!('author' in row)) {
+    row.author = appId[1]
+  }
+  if (!('avatar' in row)) {
+    row.avatar = ''
+  }
+  if (!('multiInstance' in row)) {
+    row.multiInstance = false
+  }
+
+  const uninstallApp = async (props) => {
     setUninstalling(true)
     let snackbarText
     let alertSeverity
-    console.log('uninstalling sideloaded app...')
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
 
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
-      snackbarText = 'Successfully uninstalled ' + appAPI.app.name + '.'
+      snackbarText = appAPI.app.name + ' successfully uninstalled.'
       alertSeverity = 'success'
     } else {
       snackbarText = 'Failed to uninstall ' + appAPI.app.name + '.'
@@ -131,7 +146,7 @@ export default function Row (props) {
           </IconButton>
         </TableCell>
         <TableCell data-testid="app-avatar-cell" style={{ borderBottom: 'none' }} component="th" scope="row">
-          <Avatar data-testid="app-avatar" src={row.avatar}></Avatar>
+          <Avatar data-testid="app-avatar" sx={{ bgcolor: 'primary.main' }} src={row.avatar}>{row.name.charAt(0).toUpperCase()}</Avatar>
         </TableCell>
         <TableCell data-testid="app-name-cell" style={{ borderBottom: 'none' }}>{row.name}</TableCell>
         <TableCell data-testid="app-author-cell" style={{ borderBottom: 'none' }}>{row.author}</TableCell>
@@ -146,40 +161,23 @@ export default function Row (props) {
                   icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
                   color="primary"
                   onClick={() => startNewInstance(props)}
-                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </span>
             </Tooltip>
-            <Tooltip title={'Uninstall sideloaded app'}>
+            <Tooltip title={'Uninstall app'}>
               <span>
                 <LoadIconButton
-                  data-testid="uninstall-sideload-button"
+                  data-testid="uninstall-button"
                   icon={<DeleteIcon />}
-                  onClick={() => uninstallSideload(props)}
+                  onClick={() => setConfirmOpen(true)}
+                  loading={uninstalling}
                   disabled={uninstalling}
-                  displayState={displayStateDeleteApp}
                 />
               </span>
             </Tooltip>
           </Toolbar>
-        </TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.name}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.author}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>{row.version}</TableCell>
-        <TableCell style={{ borderBottom: 'none' }}>
-          <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
-            <span>
-              <LoadIconButton
-                icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
-                color="primary"
-                onClick={() => startNewInstance(props)}
-                disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
-                loading={newInstanceStarting}
-                label='start-new-instance-button'
-              />
-            </span>
-          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow data-testid="instances-row">
@@ -196,7 +194,7 @@ export default function Row (props) {
                   variant="contained"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
-                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </Toolbar>
@@ -224,6 +222,12 @@ export default function Row (props) {
           </Collapse>
         </TableCell>
       </TableRow>
+      <ConfirmDialog
+          title={'Uninstall ' + row.name + '?'}
+          open={confirmOpen}
+          setOpen={setConfirmOpen}
+          onConfirm={() => uninstallApp(props)}
+        ></ConfirmDialog>
       <ActionSnackbar
           data-testid="snackbar"
           text={snackbarText}

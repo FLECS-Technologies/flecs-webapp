@@ -25,7 +25,9 @@ import Box from '@mui/material/Box'
 export default function MarketplaceList (props) {
   let appList = []
   if (props.appData) {
-    appList = props.appData.map((app) => (
+    // this filters the sideloaded apps
+    appList = props.appData.filter(app => app.availability != null)
+    appList = appList.map((app) => (
       <Card
         key={app.app}
         app={app.app}

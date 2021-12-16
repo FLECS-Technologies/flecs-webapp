@@ -247,6 +247,7 @@ export default function DeviceAppsList (props) {
               // setFile={setSideloadFile}
               loading={sideLoading}
               onConfirm={handleOnSideloadConfirm}
+              disabled={sideLoading}
             ></FileOpen>
             </div>
           </Tooltip>

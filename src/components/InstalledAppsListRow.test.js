@@ -42,25 +42,25 @@ describe('Test Installed Apps List row', () => {
         }
       ]
     }
-    const { getByTestId, getByLabelText } = render(<Row
+    const { getByTestId /*, getByLabelText */ } = render(<Row
       key = {app.app}
       row = {app}
       />)
 
-    const crtInstnButton = getByLabelText('start-new-instance-button')
+    const crtInstnButton = getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = getByTestId('DeleteIcon')
 
     fireEvent.click(crtInstnButton)
 
     expect(crtInstnButton).toBeVisible()
-    expect(deleteButton).not.toBeVisible()
+    expect(deleteButton).toBeVisible()
     // screen.debug()
   })
 
-  test('renders sideloaded app list row component', () => {
+  test('test delete app', () => {
     const app = {
       app: 'com.codesys.codesyscontrol',
-      status: 'sideloaded',
+      status: 'installed',
       version: '4.2.0',
       multiInstance: true,
       instances: [
@@ -78,12 +78,12 @@ describe('Test Installed Apps List row', () => {
         }
       ]
     }
-    const { getByTestId, getByLabelText } = render(<Row
+    const { getByTestId /*, getByLabelText */ } = render(<Row
         key = {app.app}
         row = {app}
    />)
 
-    const createInstanceButton = getByLabelText('start-new-instance-button')
+    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = getByTestId('DeleteIcon')
 
     fireEvent.click(deleteButton)

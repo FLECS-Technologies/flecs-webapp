@@ -17,13 +17,15 @@
  */
 
 import React from 'react'
-import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import AppInstanceRow from './AppInstanceRow'
 
 describe('AppInstanceRow', () => {
-  test('renders AppInstanceRow component', () => {
-    render(<AppInstanceRow
+  function loadReferenceData () {}
+  test('render running instance and stop instance', () => {
+    const { getByLabelText } = render(<AppInstanceRow
+      loadAppReferenceData = {loadReferenceData}
       app={
         { multiInstance: true }
       }
@@ -36,6 +38,103 @@ describe('AppInstanceRow', () => {
         }
       }/>
     )
-    // screen.debug()
+    const stopButton = getByLabelText('stop-instance-button')
+    const startButton = getByLabelText('start-instance-button')
+    const deleteButton = getByLabelText('delete-instance-button')
+
+    fireEvent.click(stopButton)
+
+    expect(stopButton).toBeDisabled()
+    expect(startButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
+  })
+
+  test('render running instance and delete instance', () => {
+    const { getByLabelText } = render(<AppInstanceRow
+      loadAppReferenceData = {loadReferenceData}
+      app={
+        { multiInstance: true }
+      }
+      appInstance={
+        {
+          instanceId: '01234567',
+          instanceName: 'Smarthome',
+          status: 'running',
+          version: 'Test App Version'
+        }
+      }/>
+    )
+    const stopButton = getByLabelText('stop-instance-button')
+    const startButton = getByLabelText('start-instance-button')
+    const deleteButton = getByLabelText('delete-instance-button')
+
+    fireEvent.click(deleteButton)
+
+    expect(stopButton).toBeVisible()
+    expect(startButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
+  })
+
+  test('render stopped instance and start instance', () => {
+    const { getByLabelText } = render(<AppInstanceRow
+      loadAppReferenceData = {loadReferenceData}
+      app={
+        { multiInstance: true }
+      }
+      appInstance={
+        {
+          instanceId: '01234567',
+          instanceName: 'Smarthome',
+          status: 'stopped',
+          version: 'Test App Version'
+        }
+      }/>
+    )
+    const stopButton = getByLabelText('stop-instance-button')
+    const startButton = getByLabelText('start-instance-button')
+    const deleteButton = getByLabelText('delete-instance-button')
+
+    fireEvent.click(startButton)
+
+    expect(stopButton).toBeVisible()
+    expect(startButton).toBeDisabled()
+    expect(deleteButton).toBeVisible()
+  })
+
+  test('renders an instance with an editor', () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+
+    const { getByLabelText } = render(<AppInstanceRow
+      loadAppReferenceData = {loadReferenceData}
+      app={
+        {
+          multiInstance: true,
+          editor: ':8080'
+        }
+      }
+      appInstance={
+        {
+          instanceId: '01234567',
+          instanceName: 'Smarthome',
+          status: 'running',
+          version: 'Test App Version'
+        }
+      }/>
+    )
+
+    const editorButton = getByLabelText('open-editor-button')
+    const stopButton = getByLabelText('stop-instance-button')
+    const startButton = getByLabelText('start-instance-button')
+    const deleteButton = getByLabelText('delete-instance-button')
+
+    fireEvent.click(editorButton)
+
+    expect(editorButton).toBeEnabled()
+    expect(stopButton).toBeVisible()
+    expect(startButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
+    expect(window.open).toHaveBeenCalled()
+    expect(window.open).toHaveBeenCalledWith(':8080')
   })
 })

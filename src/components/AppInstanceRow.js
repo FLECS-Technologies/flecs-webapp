@@ -162,6 +162,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title="Start instance">
                     <span>
                     <LoadIconButton
+                        label="start-instance-button"
                         icon={<PlayCircleIcon />}
                         color="success"
                         disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting || instanceNotReady}
@@ -173,6 +174,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title="Stop instance">
                     <span>
                     <LoadIconButton
+                        label="stop-instance-button"
                         icon={<PauseCircleFilledIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
@@ -183,6 +185,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title={'Open editor for ' + appInstance.instanceName + ' in new tab'}>
                     <span>
                       <LoadIconButton
+                        label="open-editor-button"
                         icon={<LaunchIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceEditor()}
@@ -193,6 +196,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title="Delete instance">
                     <span>
                     <LoadIconButton
+                        label="delete-instance-button"
                         icon={<DeleteIcon />}
                         disabled={(!app.multiInstance) || instanceDeleting || instanceStopping || instanceStarting}
                         onClick={() => deleteInstance(app, appInstance.version, appInstance.instanceId)}

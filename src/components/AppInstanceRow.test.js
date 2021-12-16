@@ -23,20 +23,23 @@ import AppInstanceRow from './AppInstanceRow'
 
 describe('AppInstanceRow', () => {
   function loadReferenceData () {}
+  const testApp = {
+    multiInstance: true,
+    editor: ':8080'
+  }
+  const testAppInstance = {
+    instanceId: '01234567',
+    instanceName: 'Smarthome',
+    status: 'running',
+    version: 'Test App Version'
+  }
   test('render running instance and stop instance', () => {
+    testAppInstance.status = 'running'
     const { getByLabelText } = render(<AppInstanceRow
       loadAppReferenceData = {loadReferenceData}
-      app={
-        { multiInstance: true }
-      }
-      appInstance={
-        {
-          instanceId: '01234567',
-          instanceName: 'Smarthome',
-          status: 'running',
-          version: 'Test App Version'
-        }
-      }/>
+      app={testApp}
+      appInstance={testAppInstance}
+      />
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -50,19 +53,12 @@ describe('AppInstanceRow', () => {
   })
 
   test('render running instance and delete instance', () => {
+    testAppInstance.status = 'running'
     const { getByLabelText } = render(<AppInstanceRow
       loadAppReferenceData = {loadReferenceData}
-      app={
-        { multiInstance: true }
-      }
-      appInstance={
-        {
-          instanceId: '01234567',
-          instanceName: 'Smarthome',
-          status: 'running',
-          version: 'Test App Version'
-        }
-      }/>
+      app={testApp}
+      appInstance={testAppInstance}
+      />
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -76,19 +72,12 @@ describe('AppInstanceRow', () => {
   })
 
   test('render stopped instance and start instance', () => {
+    testAppInstance.status = 'stopped'
     const { getByLabelText } = render(<AppInstanceRow
       loadAppReferenceData = {loadReferenceData}
-      app={
-        { multiInstance: true }
-      }
-      appInstance={
-        {
-          instanceId: '01234567',
-          instanceName: 'Smarthome',
-          status: 'stopped',
-          version: 'Test App Version'
-        }
-      }/>
+      app={testApp}
+      appInstance={testAppInstance}
+      />
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -105,22 +94,12 @@ describe('AppInstanceRow', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
+    testAppInstance.status = 'running'
     const { getByLabelText } = render(<AppInstanceRow
       loadAppReferenceData = {loadReferenceData}
-      app={
-        {
-          multiInstance: true,
-          editor: ':8080'
-        }
-      }
-      appInstance={
-        {
-          instanceId: '01234567',
-          instanceName: 'Smarthome',
-          status: 'running',
-          version: 'Test App Version'
-        }
-      }/>
+      app = {testApp}
+      appInstance = {testAppInstance}
+      />
     )
 
     const editorButton = getByLabelText('open-editor-button')

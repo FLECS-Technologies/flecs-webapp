@@ -78,10 +78,10 @@ export default function OutlinedCard (props) {
     if (appAPI.lastAPICallSuccessfull && !installed) {
       // trigger a reload of all installed apps
       setUpdateAppList(true)
-      snackbarText = props.name + ' successfully installed.'
+      snackbarText = props.title + ' successfully installed.'
     } else {
-      snackbarText = 'Failed to install ' + props.name + '.'
-      errorMessage = 'Error during the installation of ' + appAPI.app.name
+      snackbarText = 'Failed to install ' + props.title + '.'
+      errorMessage = 'Error during the installation of ' + appAPI.app.title
     }
 
     setSnackbarState({
@@ -109,9 +109,9 @@ export default function OutlinedCard (props) {
       // trigger a reload of all installed apps
       setUpdateAppList(true)
 
-      snackbarText = props.name + ' successfully uninstalled.'
+      snackbarText = props.title + ' successfully uninstalled.'
     } else {
-      snackbarText = 'Failed to uninstall ' + props.name + '.'
+      snackbarText = 'Failed to uninstall ' + props.title + '.'
       clipBoardContent = appAPI.lastAPIError
     }
 
@@ -130,7 +130,7 @@ export default function OutlinedCard (props) {
     const displayCopyIcon = success ? 'none' : 'block'
     let snackbarText = ''
     if (success) {
-      snackbarText = 'Successfully requested ' + props.name + ' as a new app from ' + props.author + '.'
+      snackbarText = 'Successfully requested ' + props.title + ' as a new app from ' + props.author + '.'
     } else {
       snackbarText = 'Failed to send us the request. Please try again later.'
     }
@@ -147,7 +147,7 @@ export default function OutlinedCard (props) {
     <Card sx={{ minWidth: 300, maxWidth: 300, mr: 2, mb: 2 }}>
       <CardHeader
         avatar={<Avatar src={props.avatar} />}
-        title={props.name}
+        title={props.title}
         subheader={props.author}
       ></CardHeader>
       <CardContent>
@@ -191,15 +191,15 @@ export default function OutlinedCard (props) {
           loading={uninstalling}
         />
         <ConfirmDialog
-          title={'Uninstall ' + props.name + '?'}
+          title={'Uninstall ' + props.title + '?'}
           open={open}
           setOpen={setConfirmOpen}
           onConfirm={() => uninstallApp(props)}
         >
-          Are you sure you want to uninstall {props.name}?
+          Are you sure you want to uninstall {props.title}?
         </ConfirmDialog>
         <RequestAppDialog
-          appName={props.name}
+          appName={props.title}
           appauthor={props.author}
           open={requestOpen}
           setOpen={setRequestOpen}
@@ -221,7 +221,7 @@ export default function OutlinedCard (props) {
 OutlinedCard.propTypes = {
   app: PropTypes.string,
   avatar: PropTypes.string,
-  name: PropTypes.string,
+  title: PropTypes.string,
   author: PropTypes.string,
   version: PropTypes.string,
   description: PropTypes.string,

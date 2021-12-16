@@ -43,7 +43,7 @@ describe('Card', () => {
     render(<Card
       app= 'Testapp'
       avatar= ''
-      name= 'Test App Name'
+      title= 'Test App Title'
       author= 'Test App author'
       version= 'Test App Version'
       description= 'Test App Description'

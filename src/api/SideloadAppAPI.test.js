@@ -29,7 +29,7 @@ describe('PutSideloadAppAPI', () => {
       .put('/SideloadApp')
       .reply(200, {
         app: 'org.eclipse.mosquitto',
-        name: 'Mosquitto MQTT broker',
+        title: 'Mosquitto MQTT broker',
         version: '2.0.14-openssl',
         description: 'Mosquitto MQTT broker',
         author: 'alex@flecs.tech',

@@ -36,6 +36,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
   const { setUpdateAppList } = useContext(ReferenceDataContext)
+  const editorAvailable = (app.editor != null) ? '' : 'none'
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
@@ -127,7 +128,12 @@ export default function AppInstanceRow (props) {
   }
 
   function openInstanceEditor () {
-    window.open(process.env.REACT_APP_DEV_VM_IP + ':1880')
+    let editorURL = ''
+    if (process.env.NODE_ENV === 'development') {
+      editorURL = process.env.REACT_APP_DEV_VM_IP
+    }
+    editorURL = editorURL + app.editor
+    window.open(editorURL)
   }
 
   return (
@@ -174,11 +180,13 @@ export default function AppInstanceRow (props) {
                     />
                     </span>
                 </Tooltip>
-                <Tooltip title="Open editor">
+                <Tooltip title={'Open editor for ' + appInstance.instanceName + ' in new tab'}>
                     <span>
                       <LoadIconButton
-                        icon={<LaunchIcon/>}
+                        icon={<LaunchIcon />}
+                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceEditor()}
+                        displayState={editorAvailable}
                       />
                     </span>
                 </Tooltip>

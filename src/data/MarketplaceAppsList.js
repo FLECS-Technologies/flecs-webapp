@@ -65,7 +65,7 @@ export const marketPlaceAppsList = [
     description: 'Low code programming.',
     availability: 'available',
     status: 'uninstalled',
-    multiInstance: true,
+    multiInstance: false,
     editor: ':1880',
     instances: []
   },

@@ -121,6 +121,9 @@ export default class AppAPI extends React.Component {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
         await createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)
         if (createInstanceAPI.state.success) {
+          if (this.app.instances == null) {
+            this.app.instances = []
+          }
           this.app.instances.push(
             {
               instanceId: createInstanceAPI.state.responseData.instanceId,
@@ -228,7 +231,7 @@ export default class AppAPI extends React.Component {
       }
 
       // start new instance
-      await this.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
+      await this.startInstance(this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
       if (this.lastAPICallSuccessfull) {
         this.app.instances[this.app.instances.length - 1].status = 'running'
       } else {

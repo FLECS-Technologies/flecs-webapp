@@ -144,6 +144,7 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: true,
+    editor: ':1880',
     instances: []
   },
   {

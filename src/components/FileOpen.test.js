@@ -23,10 +23,13 @@ import userEvent from '@testing-library/user-event'
 
 describe('Test FileOpen', () => {
   const file = new File(['hello'], 'hello.yml', { type: 'application/yml' })
+  function onConfirm () {}
 
   test('input file', async () => {
     const { getByTestId } = render(
-        <FileOpen/>
+        <FileOpen
+          onConfirm = {onConfirm}
+        />
     )
     const input = getByTestId('fileInput')
     userEvent.upload(input, file)

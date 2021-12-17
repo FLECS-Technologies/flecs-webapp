@@ -32,7 +32,13 @@ export default class BaseAPI extends React.Component {
 
   async callAPI (apiURL, requestOptions) {
     try {
-      const response = await fetch(process.env.REACT_APP_DEV_VM_IP + apiURL, requestOptions)
+      let url
+      if (process.env.NODE_ENV === 'development') {
+        url = process.env.REACT_APP_DEV_VM_IP + apiURL
+      } else {
+        url = apiURL
+      }
+      const response = await fetch(url, requestOptions)
 
       const data = await response.json()
 

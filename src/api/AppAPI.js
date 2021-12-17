@@ -33,7 +33,7 @@ export default class AppAPI extends React.Component {
     this.app = {
       app: props.app,
       avatar: props.avatar,
-      name: props.name,
+      title: props.title,
       author: props.author,
       version: props.version,
       description: props.description,
@@ -51,7 +51,7 @@ export default class AppAPI extends React.Component {
       this.app = {
         app: props.app,
         avatar: props.avatar,
-        name: props.name,
+        title: props.title,
         author: props.author,
         version: props.version,
         description: props.description,
@@ -245,22 +245,22 @@ export default class AppAPI extends React.Component {
   createInstanceName () {
     let i = 0
     if (this.app.instances) {
-      let tmpName = this.app.name + i
+      let tmpName = this.app.title + i
       let tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
       while ((tmpList.length > 0) && (i < this.app.instances.length)) {
         i++
-        tmpName = this.app.name + i
+        tmpName = this.app.title + i
         tmpList = this.app.instances.filter(instance => instance.instanceName === tmpName)
       }
       return tmpName
-    } else { return this.app.name + i }
+    } else { return this.app.title + i }
   }
 
   static get propTypes () {
     return {
       app: PropTypes.string,
       avatar: PropTypes.string,
-      name: PropTypes.string,
+      title: PropTypes.string,
       author: PropTypes.string,
       version: PropTypes.string,
       description: PropTypes.string,

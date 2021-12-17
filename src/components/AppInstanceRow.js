@@ -111,7 +111,7 @@ export default function AppInstanceRow (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
-      snackbarText = appAPI.app.name + ' instance successully deleted.'
+      snackbarText = appAPI.app.title + ' instance successully deleted.'
       alertSeverity = 'success'
     } else {
       // error snackbar

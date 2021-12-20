@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { DialogTitle, Dialog, DialogActions, Button, DialogContent, Typography } from '@mui/material'
 
 function ContentDialog (props) {
-  const { content, title, open, setOpen, actions } = props
+  const { title, open, setOpen, actions } = props
 
   const handleClose = () => {
     setOpen(false)
@@ -19,14 +19,14 @@ function ContentDialog (props) {
             {title}
         </DialogTitle>
         <DialogContent dividers={true}>
-            {(content == null) ? <Typography>Hm, looks like I was not given any content to display.</Typography> : content}
+            {(props.children == null) ? <Typography>Hm, looks like I was not given any content to display.</Typography> : props.children}
         </DialogContent>
         <DialogActions>{(actions == null) ? <Button data-testid="close-button" onClick={handleClose}>Close</Button> : actions}</DialogActions>
       </Dialog>
   )
 }
 ContentDialog.propTypes = {
-  content: PropTypes.object,
+  children: PropTypes.any,
   title: PropTypes.string,
   open: PropTypes.bool,
   setOpen: PropTypes.func,

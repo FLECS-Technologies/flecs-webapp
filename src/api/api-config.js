@@ -28,6 +28,7 @@ const POST_START_INSTANCE_URL = '/StartAppInstance'
 const POST_STOP_INSTANCE_URL = '/StopAppInstance'
 const POST_CREATE_APP_INSTANCE_URL = '/CreateAppInstance'
 const POST_DELETE_APP_INSTANCE_URL = '/DeleteAppInstance'
+const POST_APP_INSTANCE_DATA_URL = '/AppInstanceData'
 
 const PUT_SIDELOAD_APP = '/SideloadApp'
 
@@ -57,6 +58,10 @@ export default class DeviceAPIConfiguration extends Component {
 
   static get POST_DELETE_APP_INSTANCE_URL () {
     return POST_DELETE_APP_INSTANCE_URL
+  }
+
+  static get POST_APP_INSTANCE_DATA_URL () {
+    return POST_APP_INSTANCE_DATA_URL
   }
 
   // get requests

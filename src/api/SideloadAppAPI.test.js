@@ -24,8 +24,16 @@ import '@testing-library/jest-dom'
 import PutSideloadAppAPI from './SideloadAppAPI'
 
 describe('PutSideloadAppAPI', () => {
+  beforeEach(() => {
+    nock.disableNetConnect()
+    nock.enableNetConnect('127.0.0.1')
+  })
+  afterEach(() => {
+    nock.cleanAll()
+    nock.enableNetConnect()
+  })
   test('calls PutSideloadAppAPI with success response', async () => {
-    nock('http://localhost:80')
+    nock('http://localhost')
       .put('/SideloadApp')
       .reply(200, {
         app: 'org.eclipse.mosquitto',
@@ -51,7 +59,7 @@ describe('PutSideloadAppAPI', () => {
   })
 
   test('calls PutSideloadAppAPI with unsuccessfull response', async () => {
-    nock('http://localhost:80')
+    nock('http://localhost')
       .put('/SideloadApp')
       .reply(405, {
         'Access-Control-Allow-Origin': '*',

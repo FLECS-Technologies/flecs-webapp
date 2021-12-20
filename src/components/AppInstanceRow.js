@@ -27,16 +27,19 @@ import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
 import LaunchIcon from '@mui/icons-material/Launch'
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import ContentDialog from './ContentDialog'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
   const { setUpdateAppList } = useContext(ReferenceDataContext)
   const editorAvailable = (app.editor != null) ? '' : 'none'
+  const [dataDialogOpen, setDataDialogOpen] = useState(false)
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
@@ -136,6 +139,10 @@ export default function AppInstanceRow (props) {
     window.open(editorURL)
   }
 
+  function openInstanceDataDialog () {
+    setDataDialogOpen(true)
+  }
+
   return (
       <Fragment>
         <TableRow>
@@ -193,6 +200,16 @@ export default function AppInstanceRow (props) {
                       />
                     </span>
                 </Tooltip>
+                <Tooltip title={'Show data of ' + appInstance.instanceName + '.'}>
+                    <span>
+                      <LoadIconButton
+                        label="instance-data-button"
+                        icon={<AccountTreeIcon />}
+                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
+                        onClick={() => openInstanceDataDialog()}
+                      />
+                    </span>
+                </Tooltip>
                 <Tooltip title="Delete instance">
                     <span>
                     <LoadIconButton
@@ -213,6 +230,11 @@ export default function AppInstanceRow (props) {
             open={snackbarOpen}
             setOpen={setSnackbarOpen}
             alertSeverity={alertSeverity}
+        />
+        <ContentDialog
+          title = {'Data of ' + appInstance.instanceName}
+          open={dataDialogOpen}
+          setOpen={setDataDialogOpen}
         />
     </Fragment>
   )

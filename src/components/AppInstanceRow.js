@@ -34,6 +34,7 @@ import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
+import AppInstanceData from './AppInstanceData'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -43,6 +44,7 @@ export default function AppInstanceRow (props) {
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
+  const [instanceDataLoading, setInstanceDataLoading] = useState(false)
   const [instanceNotReady] = useState(
     props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
   )
@@ -132,6 +134,7 @@ export default function AppInstanceRow (props) {
 
   function openInstanceEditor () {
     let editorURL = ''
+
     if (process.env.NODE_ENV === 'development') {
       editorURL = process.env.REACT_APP_DEV_VM_IP
     }
@@ -139,8 +142,28 @@ export default function AppInstanceRow (props) {
     window.open(editorURL)
   }
 
-  function openInstanceDataDialog () {
-    setDataDialogOpen(true)
+  const openInstanceDataDialog = async () => {
+    setInstanceDataLoading(true)
+    let snackbarText
+    let alertSeverity
+    const appAPI = new AppAPI(app)
+    await appAPI.getAppInstanceData(appInstance.version, appInstance.instanceId)
+
+    if (appAPI.lastAPICallSuccessfull) {
+      setInstanceDataLoading(false)
+      setDataDialogOpen(true)
+    } else {
+      // error snackbar
+      snackbarText = 'Failed to load data from ' + appInstance.instanceName + '.'
+      alertSeverity = 'error'
+      setSnackbarState({
+        alertSeverity: alertSeverity,
+        snackbarText: snackbarText,
+        snackbarErrorText: appAPI.lastAPIError
+      })
+      setSnackbarOpen(true)
+      setInstanceDataLoading(false)
+    }
   }
 
   return (
@@ -207,6 +230,7 @@ export default function AppInstanceRow (props) {
                         icon={<AccountTreeIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceDataDialog()}
+                        loading={instanceDataLoading}
                       />
                     </span>
                 </Tooltip>
@@ -235,7 +259,12 @@ export default function AppInstanceRow (props) {
           title = {'Data of ' + appInstance.instanceName}
           open={dataDialogOpen}
           setOpen={setDataDialogOpen}
-        />
+        >
+          <AppInstanceData
+            instanceName = {appInstance.instanceName}
+            instanceData = {appInstance.data}
+          ></AppInstanceData>
+        </ContentDialog>
     </Fragment>
   )
 }

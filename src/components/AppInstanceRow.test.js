@@ -124,4 +124,26 @@ describe('AppInstanceRow', () => {
     expect(window.open).toHaveBeenCalled()
     expect(window.open).toHaveBeenCalledWith(':8080')
   })
+
+  test('renders an instance with data', () => {
+    testAppInstance.status = 'running'
+    const { getByLabelText } = render(<AppInstanceRow
+      loadAppReferenceData = {loadReferenceData}
+      app = {testApp}
+      appInstance = {testAppInstance}
+      />
+    )
+
+    const stopButton = getByLabelText('stop-instance-button')
+    const startButton = getByLabelText('start-instance-button')
+    const deleteButton = getByLabelText('delete-instance-button')
+    const dataButton = getByLabelText('instance-data-button')
+
+    fireEvent.click(dataButton)
+
+    expect(stopButton).toBeVisible()
+    expect(startButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
+    expect(dataButton).toBeVisible()
+  })
 })

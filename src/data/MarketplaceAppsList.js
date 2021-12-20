@@ -57,11 +57,24 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
-    app: 'com.openjsfoundation.nodered',
+    app: 'org.openjsf.node-red',
     avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
     name: 'Node-RED',
     author: 'OpenJS Foundation',
-    version: '2.1.3',
+    version: '2.1.4',
+    description: 'Low code programming.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    editor: ':1880',
+    instances: []
+  },
+  {
+    app: 'org.openjsf.node-red',
+    avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
+    title: 'Node-RED',
+    author: 'OpenJS Foundation',
+    version: '2.1.4',
     description: 'Low code programming.',
     availability: 'available',
     status: 'uninstalled',
@@ -132,19 +145,6 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
-  },
-  {
-    app: 'com.openjsfoundation.nodered',
-    avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
-    title: 'Node-Red',
-    author: 'OpenJS Foundation',
-    version: '2.1.3',
-    description: 'CONFIRMED: Low code programming.',
-    availability: 'unavailable',
-    status: 'uninstalled',
-    multiInstance: true,
-    editor: ':1880',
     instances: []
   },
   {

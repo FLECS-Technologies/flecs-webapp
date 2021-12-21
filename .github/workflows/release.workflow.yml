@@ -35,6 +35,6 @@ jobs:
         with:
           name: build
       - name: build
-        run: make docker
+        run: make NDEBUG=1 docker
       - name: push
         run: docker push marketplace.flecs.tech:5001/flecs/webapp:latest

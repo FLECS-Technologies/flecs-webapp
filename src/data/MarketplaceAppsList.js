@@ -59,7 +59,7 @@ export const marketPlaceAppsList = [
   {
     app: 'org.openjsf.node-red',
     avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
-    name: 'Node-RED',
+    title: 'Node-RED',
     author: 'OpenJS Foundation',
     version: '2.1.4',
     description: 'Low code programming.',

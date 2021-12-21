@@ -70,6 +70,32 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
+    app: 'com.influxdata.influxdb',
+    avatar:
+      'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
+    title: 'InfluxDB',
+    author: 'InfluxData Inc.',
+    version: '2.1.1',
+    description: 'Time series data platform.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    editor: ':8086',
+    instances: []
+  },
+  {
+    app: 'com.influxdata.telegraf',
+    title: 'Telegraf',
+    version: '1.21.1',
+    description: 'Data collection Agent for InfluxDB',
+    author: 'InfluxData Inc.',
+    avatar: 'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
+    availability: 'available',
+    status: 'uninstalled',
+    editor: ':8086',
+    multiInstance: false
+  },
+  {
     app: 'com.logicals.logiCAD',
     avatar:
       'https://scontent-frx5-1.xx.fbcdn.net/v/t1.18169-9/25151847_10155541197772740_1125669131781020098_n.png?_nc_cat=111&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeEy-bQEuZHVP5muz5lp_3Lg3ofMdJjQqwjeh8x0mNCrCDpaYIFTEgbzZnU8vMmb0PMagz5dBQCQ-ie1TQav3QhY&_nc_ohc=Vg1dVWVczQIAX-Yfala&_nc_ht=scontent-frx5-1.xx&oh=b06873d98231b3a5e598f2c608593e85&oe=61C50C21',
@@ -132,19 +158,6 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
-  },
-  {
-    app: 'com.influxdata.influxdb',
-    avatar:
-      'https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool.svg',
-    title: 'InfluxDB',
-    author: 'InfluxData Inc.',
-    version: '2.1.0',
-    description: 'CONFIRMED: Time series data platform.',
-    availability: 'unavailable',
-    status: 'uninstalled',
-    multiInstance: true,
     instances: []
   },
   {

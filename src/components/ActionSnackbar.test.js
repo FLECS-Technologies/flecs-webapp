@@ -87,7 +87,7 @@ describe('ActionSnackbar', () => {
     expect(snackbar).toBeInTheDocument()
     expect(alert).toHaveTextContent('Operation failed')
     expect(closeButton).toBeInTheDocument()
-    expect(copyButton).toBeInTheDocument()
+    expect(copyButton).toBeVisible()
 
     // screen.debug()
   })
@@ -112,7 +112,7 @@ describe('ActionSnackbar', () => {
     expect(snackbar).toBeInTheDocument()
     expect(alert).toHaveTextContent('Operation failed')
     expect(closeButton).toBeInTheDocument()
-    expect(copyButton).toBeInTheDocument()
+    expect(copyButton).toBeVisible()
 
     // screen.debug()
   })

@@ -82,7 +82,6 @@ export default function AppInstanceData (props) {
               defaultExpandIcon={<ChevronRightIcon />}
               expanded={expanded}
               onNodeToggle={handleToggle}
-              multiSelect
           >
               {renderTree(root)}
           </TreeView>

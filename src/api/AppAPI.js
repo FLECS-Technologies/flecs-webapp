@@ -77,6 +77,9 @@ export default class AppAPI extends React.Component {
           this.app.status = 'installed'
         } else {
           this.lastAPICallSuccessfull = false
+          if (installAPI.state.errorMessage !== null) {
+            this.lastAPIError = installAPI.state.errorMessage.message
+          }
           throw Error('failed to install app.')
         }
 
@@ -108,7 +111,9 @@ export default class AppAPI extends React.Component {
         if (this.lastAPICallSuccessfull) {
           this.app.status = 'uninstalled'
         } else {
-          this.lastAPIError = uninstallAPI.state.errorMessage
+          if (uninstallAPI.state.errorMessage !== null) {
+            this.lastAPIError = uninstallAPI.state.errorMessage
+          }
         }
       }
     } catch (error) {
@@ -137,6 +142,10 @@ export default class AppAPI extends React.Component {
           )
           this.lastAPICallSuccessfull = true
         } else {
+          this.lastAPICallSuccessfull = false
+          if (createInstanceAPI.state.errorMessage !== null) {
+            this.lastAPIError = createInstanceAPI.state.errorMessage.message
+          }
           throw Error('failed to create instance')
         }
       }
@@ -161,6 +170,10 @@ export default class AppAPI extends React.Component {
           this.lastAPICallSuccessfull = true
         } else {
         // catch response of start app instance was not OK
+          this.lastAPICallSuccessfull = false
+          if (startInstanceAPI.state.errorMessage !== null) {
+            this.lastAPIError = startInstanceAPI.state.errorMessage.message
+          }
           throw Error('failed to start instance')
         }
       }
@@ -185,6 +198,10 @@ export default class AppAPI extends React.Component {
           this.lastAPICallSuccessfull = true
         } else {
         // catch response of stop app instance was not OK
+          this.lastAPICallSuccessfull = false
+          if (stopInstanceAPI.state.errorMessage !== null) {
+            this.lastAPIError = stopInstanceAPI.state.errorMessage.message
+          }
           throw Error('failed to stop instance')
         }
       }
@@ -206,6 +223,10 @@ export default class AppAPI extends React.Component {
           this.lastAPICallSuccessfull = true
         } else {
         // catch response of delete instance was not OK
+          this.lastAPICallSuccessfull = false
+          if (deleteInstanceAPI.state.errorMessage !== null) {
+            this.lastAPIError = deleteInstanceAPI.state.errorMessage.message
+          }
           throw Error('failed to delete instance')
         }
       }
@@ -224,6 +245,9 @@ export default class AppAPI extends React.Component {
         this.app.status = 'installed'
       } else {
         this.lastAPICallSuccessfull = false
+        if (sideload.state.errorMessage !== null) {
+          this.lastAPIError = sideload.state.errorMessage.message
+        }
         throw Error('failed to install app.')
       }
 
@@ -258,6 +282,10 @@ export default class AppAPI extends React.Component {
         this.lastAPICallSuccessfull = true
       } else {
         this.lastAPICallSuccessfull = false
+        if (instanceData.state.errorMessage !== null) {
+          this.lastAPIError = instanceData.state.errorMessage.message
+        }
+
         throw Error('failed to get the data of instance ' + instanceId)
       }
     } catch (error) {

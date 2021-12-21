@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, fireEvent, screen } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import AppInstanceData from './AppInstanceData'
 
@@ -41,7 +41,5 @@ describe('AppInstanceData', () => {
 
     expect(expandAllButton).toBeInTheDocument()
     expect(treeView).toBeInTheDocument()
-
-    screen.debug()
   })
 })

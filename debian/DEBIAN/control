@@ -1,0 +1,6 @@
+Package: flecs-webapp
+Version: 0.1.0-b2
+Description: FLECS App Management Web App
+Architecture: all
+Priority: optional
+Maintainer: FLECS Technologies GmbH <alex@flecs.tech>

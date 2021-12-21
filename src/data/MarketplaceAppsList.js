@@ -93,7 +93,8 @@ export const marketPlaceAppsList = [
     availability: 'available',
     status: 'uninstalled',
     editor: ':8086',
-    multiInstance: false
+    multiInstance: false,
+    instances: []
   },
   {
     app: 'com.logicals.logiCAD',

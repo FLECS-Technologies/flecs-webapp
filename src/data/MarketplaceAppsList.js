@@ -57,6 +57,19 @@ export const marketPlaceAppsList = [
     instances: []
   },
   {
+    app: 'org.openjsf.node-red',
+    avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
+    name: 'Node-RED',
+    author: 'OpenJS Foundation',
+    version: '2.1.4',
+    description: 'Low code programming.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    editor: ':1880',
+    instances: []
+  },
+  {
     app: 'com.logicals.logiCAD',
     avatar:
       'https://scontent-frx5-1.xx.fbcdn.net/v/t1.18169-9/25151847_10155541197772740_1125669131781020098_n.png?_nc_cat=111&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeEy-bQEuZHVP5muz5lp_3Lg3ofMdJjQqwjeh8x0mNCrCDpaYIFTEgbzZnU8vMmb0PMagz5dBQCQ-ie1TQav3QhY&_nc_ohc=Vg1dVWVczQIAX-Yfala&_nc_ht=scontent-frx5-1.xx&oh=b06873d98231b3a5e598f2c608593e85&oe=61C50C21',
@@ -119,18 +132,6 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
-  },
-  {
-    app: 'com.openjsfoundation.nodered',
-    avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',
-    title: 'Node-Red',
-    author: 'OpenJS Foundation',
-    version: '2.1.3',
-    description: 'CONFIRMED: Low code programming.',
-    availability: 'unavailable',
-    status: 'uninstalled',
-    multiInstance: true,
     instances: []
   },
   {

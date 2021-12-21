@@ -26,6 +26,7 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
 import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
+import LaunchIcon from '@mui/icons-material/Launch'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
@@ -35,6 +36,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
   const { setUpdateAppList } = useContext(ReferenceDataContext)
+  const editorAvailable = (app.editor != null) ? '' : 'none'
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
@@ -125,6 +127,15 @@ export default function AppInstanceRow (props) {
     setInstanceDeleting(false)
   }
 
+  function openInstanceEditor () {
+    let editorURL = ''
+    if (process.env.NODE_ENV === 'development') {
+      editorURL = process.env.REACT_APP_DEV_VM_IP
+    }
+    editorURL = editorURL + app.editor
+    window.open(editorURL)
+  }
+
   return (
       <Fragment>
         <TableRow>
@@ -151,6 +162,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title="Start instance">
                     <span>
                     <LoadIconButton
+                        label="start-instance-button"
                         icon={<PlayCircleIcon />}
                         color="success"
                         disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting || instanceNotReady}
@@ -162,6 +174,7 @@ export default function AppInstanceRow (props) {
                 <Tooltip title="Stop instance">
                     <span>
                     <LoadIconButton
+                        label="stop-instance-button"
                         icon={<PauseCircleFilledIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
@@ -169,9 +182,21 @@ export default function AppInstanceRow (props) {
                     />
                     </span>
                 </Tooltip>
+                <Tooltip title={'Open editor for ' + appInstance.instanceName + ' in new tab'}>
+                    <span>
+                      <LoadIconButton
+                        label="open-editor-button"
+                        icon={<LaunchIcon />}
+                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
+                        onClick={() => openInstanceEditor()}
+                        displayState={editorAvailable}
+                      />
+                    </span>
+                </Tooltip>
                 <Tooltip title="Delete instance">
                     <span>
                     <LoadIconButton
+                        label="delete-instance-button"
                         icon={<DeleteIcon />}
                         disabled={(!app.multiInstance) || instanceDeleting || instanceStopping || instanceStarting}
                         onClick={() => deleteInstance(app, appInstance.version, appInstance.instanceId)}

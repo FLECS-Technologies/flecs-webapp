@@ -39,7 +39,8 @@ export default class AppAPI extends React.Component {
       description: props.description,
       status: props.status,
       availability: props.availability,
-      instances: props.instances
+      instances: props.instances,
+      multiInstance: props.multiInstance
     }
 
     this.lastAPICallSuccessfull = false
@@ -57,7 +58,8 @@ export default class AppAPI extends React.Component {
         description: props.description,
         status: props.status,
         availability: props.availability,
-        instances: props.instances
+        instances: props.instances,
+        multiInstance: props.multiInstance
       }
     }
   }
@@ -266,6 +268,7 @@ export default class AppAPI extends React.Component {
       description: PropTypes.string,
       status: PropTypes.string,
       availability: PropTypes.string,
+      multiInstance: PropTypes.bool,
       instances: PropTypes.array
     }
   }

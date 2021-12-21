@@ -37,7 +37,7 @@ export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const installed = (props.status === 'installed')
   const [installing, setInstalling] = useState(false)
-  const uninstalled = (props.status === 'uninstalled')
+  const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
     props.availability === 'available'

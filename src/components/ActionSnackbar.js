@@ -23,7 +23,7 @@ import { Close, ContentCopy } from '@mui/icons-material'
 
 export default function ActionSnackbar (props) {
   const { text, errorText, open, setOpen, alertSeverity } = props
-  const [displayCopyState] = useState(alertSeverity !== 'error' ? 'none' : 'block')
+  const [displayCopyState] = useState((alertSeverity === 'error') ? 'block' : 'none')
 
   function copyErrorToClipboard () {
     if (errorText) {

@@ -33,6 +33,7 @@ export default class BaseAPI extends React.Component {
   async callAPI (apiURL, requestOptions) {
     try {
       let url
+      let data
       if (process.env.NODE_ENV === 'development') {
         url = process.env.REACT_APP_DEV_VM_IP + apiURL
       } else {
@@ -40,7 +41,12 @@ export default class BaseAPI extends React.Component {
       }
       const response = await fetch(url, requestOptions)
 
-      const data = await response.json()
+      // try to read data. This might fail e.g. for 404, because .json() can't parse the html in the response body
+      try {
+        data = await response.json()
+      } catch (error) {
+
+      }
 
       if (response.ok && response.status === 200) {
         this.state.responseData = data

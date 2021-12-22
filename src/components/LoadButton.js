@@ -7,8 +7,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 const LoadButton = (props) => {
   const { startIcon, text, variant, color, disabled, onClick, displayState, loading, label } = props
 
+  console.log(displayState)
   return (
-        <Box sx={{ m: 1, position: 'relative' }}>
+        <Box sx={{ position: 'relative' }}>
           <Button
             data-testid="button"
             aria-label={label}

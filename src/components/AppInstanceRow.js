@@ -27,7 +27,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
 import LaunchIcon from '@mui/icons-material/Launch'
-import AccountTreeIcon from '@mui/icons-material/AccountTree'
+import BarChartIcon from '@mui/icons-material/BarChart'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
@@ -230,7 +230,7 @@ export default function AppInstanceRow (props) {
                     <span>
                       <LoadIconButton
                         label="instance-data-button"
-                        icon={<AccountTreeIcon />}
+                        icon={<BarChartIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceDataDialog()}
                         loading={instanceDataLoading}

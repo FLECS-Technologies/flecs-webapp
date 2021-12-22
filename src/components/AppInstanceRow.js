@@ -234,6 +234,7 @@ export default function AppInstanceRow (props) {
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceDataDialog()}
                         loading={instanceDataLoading}
+                        displayState={'none'}
                       />
                     </span>
                 </Tooltip>

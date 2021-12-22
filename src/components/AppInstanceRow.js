@@ -133,12 +133,12 @@ export default function AppInstanceRow (props) {
   }
 
   function openInstanceEditor () {
-    let editorURL = ''
+    let editorURL = window.location.protocol + '//'
 
     if (process.env.NODE_ENV === 'development') {
-      editorURL = process.env.REACT_APP_DEV_VM_IP
+      editorURL = editorURL + process.env.REACT_APP_DEV_VM_IP
     } else {
-      editorURL = window.location.hostname
+      editorURL = editorURL + window.location.hostname
     }
 
     editorURL = editorURL + app.editor

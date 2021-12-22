@@ -72,7 +72,7 @@ describe('AppInstanceRow', () => {
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).not.toBeVisible()
+    expect(dataButton).toBeVisible()
   })
 
   test('render stopped instance and start instance', () => {
@@ -93,7 +93,7 @@ describe('AppInstanceRow', () => {
     expect(stopButton).toBeVisible()
     expect(startButton).toBeDisabled()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).not.toBeVisible()
+    expect(dataButton).toBeVisible()
   })
 
   test('renders an instance with an editor', () => {
@@ -120,7 +120,7 @@ describe('AppInstanceRow', () => {
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).not.toBeVisible()
+    expect(dataButton).toBeVisible()
     expect(window.open).toHaveBeenCalled()
     expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
   })
@@ -144,6 +144,6 @@ describe('AppInstanceRow', () => {
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).not.toBeVisible()
+    expect(dataButton).toBeVisible()
   })
 })

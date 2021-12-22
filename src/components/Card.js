@@ -160,6 +160,7 @@ export default function OutlinedCard (props) {
       </CardContent>
       <CardActions>
         <Button
+          data-testid ="app-request-button"
           variant="outlined"
           size="small"
           aria-label="app-request-button"
@@ -191,6 +192,7 @@ export default function OutlinedCard (props) {
           loading={uninstalling}
         />
         <ConfirmDialog
+          data-testid="confirm-dialog"
           title={'Uninstall ' + props.title + '?'}
           open={open}
           setOpen={setConfirmOpen}

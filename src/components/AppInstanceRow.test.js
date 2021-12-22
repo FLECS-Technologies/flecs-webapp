@@ -122,7 +122,7 @@ describe('AppInstanceRow', () => {
     expect(deleteButton).toBeVisible()
     expect(dataButton).not.toBeVisible()
     expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('localhost:8080')
+    expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
   })
 
   test('renders an instance with data', () => {

@@ -29,18 +29,21 @@ describe('Card', () => {
   })
 
   test('Click request', async () => {
-    render(<Card />)
+    const { getByTestId } = render(<Card />)
 
-    fireEvent.click(screen.getByLabelText('app-request-button'))
+    const requestButton = getByTestId('app-request-button')
+    // const confirmDialog = getByTestId('confirm-dialog')
+    expect(requestButton).toBeVisible()
+    expect(requestButton).toBeEnabled()
 
-    // todo: add what to expect
-    // expect(screen.getByText("Profile")).toBeVisible();
+    fireEvent.click(requestButton)
 
+    // expect(confirmDialog).toBeVisible()
     // screen.debug()
   })
 
   test('Click install', async () => {
-    render(<Card
+    const { getByLabelText, getByTestId } = render(<Card
       app= 'Testapp'
       avatar= ''
       title= 'Test App Title'
@@ -48,12 +51,17 @@ describe('Card', () => {
       version= 'Test App Version'
       description= 'Test App Description'
       status= 'uninstalled'
-      availability='avialable'
+      availability='available'
       instances={[]} />)
 
-    fireEvent.click(screen.getByLabelText('install-app-button'))
-
-    // expect(screen.getByText("Profile")).toBeVisible();
+    const installButton = getByLabelText('install-app-button')
+    const uninstallButton = getByLabelText('uninstall-app-button')
+    const requestButton = getByTestId('app-request-button')
+    expect(installButton).toBeVisible()
+    expect(installButton).toBeEnabled()
+    expect(uninstallButton).not.toBeEnabled()
+    expect(requestButton).not.toBeVisible()
+    fireEvent.click(installButton)
 
     // screen.debug()
   })

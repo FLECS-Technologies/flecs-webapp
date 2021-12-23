@@ -32,6 +32,7 @@ import AppAPI from '../api/AppAPI'
 import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
+import AppLinksMenu from './AppLinksMenu'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -149,6 +150,7 @@ export default function OutlinedCard (props) {
         avatar={<Avatar src={props.avatar} />}
         title={props.title}
         subheader={props.author}
+        action={[props.relatedLinks && <AppLinksMenu data_testid='relatedLinks' key='relatedLinks' vertIcon={true} appLinks={props.relatedLinks}/>]}
       ></CardHeader>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -229,5 +231,6 @@ OutlinedCard.propTypes = {
   description: PropTypes.string,
   status: PropTypes.string,
   availability: PropTypes.string,
-  instances: PropTypes.array
+  instances: PropTypes.array,
+  relatedLinks: PropTypes.array
 }

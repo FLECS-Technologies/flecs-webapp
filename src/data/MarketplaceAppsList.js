@@ -28,7 +28,22 @@ export const marketPlaceAppsList = [
     availability: 'available',
     status: 'uninstalled',
     multiInstance: true,
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Buy',
+        link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
+      },
+      {
+        text: 'Documentation',
+        link: 'https://help.codesys.com/webapp/_lnx_f_help;product=codesys_control_for_linux_sl;version=4.2.0.0'
+
+      },
+      {
+        text: 'Download IDE',
+        link: 'https://store.codesys.com/de/codesys.html'
+      }
+    ]
   },
   {
     app: 'com.codesys.edge',

@@ -22,26 +22,26 @@ import '@testing-library/jest-dom'
 import Row from './InstalledAppsListRow'
 
 describe('Test Installed Apps List row', () => {
+  const app = {
+    app: 'com.codesys.codesyscontrol',
+    status: 'installed',
+    version: '4.2.0',
+    instances: [
+      {
+        instanceId: 'com.codesys.codesyscontrol.01234567',
+        instanceName: 'Smarthome',
+        status: 'running',
+        version: '4.2.0'
+      },
+      {
+        instanceId: 'com.codesys.codesyscontrol.12345678',
+        instanceName: 'Energymanager',
+        status: 'stopped',
+        version: '4.2.0'
+      }
+    ]
+  }
   test('renders installed apps list row component', () => {
-    const app = {
-      app: 'com.codesys.codesyscontrol',
-      status: 'installed',
-      version: '4.2.0',
-      instances: [
-        {
-          instanceId: 'com.codesys.codesyscontrol.01234567',
-          instanceName: 'Smarthome',
-          status: 'running',
-          version: '4.2.0'
-        },
-        {
-          instanceId: 'com.codesys.codesyscontrol.12345678',
-          instanceName: 'Energymanager',
-          status: 'stopped',
-          version: '4.2.0'
-        }
-      ]
-    }
     const { getByTestId /*, getByLabelText */ } = render(<Row
       key = {app.app}
       row = {app}
@@ -58,26 +58,6 @@ describe('Test Installed Apps List row', () => {
   })
 
   test('test delete app', () => {
-    const app = {
-      app: 'com.codesys.codesyscontrol',
-      status: 'installed',
-      version: '4.2.0',
-      multiInstance: true,
-      instances: [
-        {
-          instanceId: 'com.codesys.codesyscontrol.01234567',
-          instanceName: 'Smarthome',
-          status: 'running',
-          version: '4.2.0'
-        },
-        {
-          instanceId: 'com.codesys.codesyscontrol.12345678',
-          instanceName: 'Energymanager',
-          status: 'stopped',
-          version: '4.2.0'
-        }
-      ]
-    }
     const { getByTestId /*, getByLabelText */ } = render(<Row
         key = {app.app}
         row = {app}
@@ -90,6 +70,38 @@ describe('Test Installed Apps List row', () => {
 
     expect(createInstanceButton).toBeVisible()
     expect(deleteButton).toBeVisible()
+    // screen.debug()
+  })
+
+  test('test app with relatedLinks', () => {
+    app.relatedLinks = [
+      {
+        text: 'Buy',
+        link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
+      }
+    ]
+    const { getByTestId /*, getByLabelText */ } = render(<Row
+        key = {app.app}
+        row = {app}
+   />)
+
+    const relatedLinks = getByTestId('more-horiz-icon')
+
+    fireEvent.click(relatedLinks)
+
+    expect(relatedLinks).toBeVisible()
+    expect(relatedLinks).toBeEnabled()
+    // screen.debug()
+  })
+
+  test('test app without relatedLinks', () => {
+    app.relatedLinks = null
+    const { getByTestId /*, getByLabelText */ } = render(<Row
+        key = {app.app}
+        row = {app}
+   />)
+
+    expect(() => getByTestId('more-horiz-icon')).toThrow()
     // screen.debug()
   })
 })

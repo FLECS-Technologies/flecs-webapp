@@ -42,6 +42,7 @@ import AppAPI from '../api/AppAPI'
 import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
+import AppLinksMenu from './AppLinksMenu'
 
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -177,6 +178,7 @@ export default function Row (props) {
                 />
               </span>
             </Tooltip>
+            {row.relatedLinks && <AppLinksMenu data_testid='relatedLinks' key='relatedLinks' vertIcon={false} appLinks={row.relatedLinks}/>}
           </Toolbar>
         </TableCell>
       </TableRow>

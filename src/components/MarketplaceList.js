@@ -38,6 +38,7 @@ export default function MarketplaceList (props) {
         description={app.description}
         status={app.status}
         availability={app.availability}
+        relatedLinks={app.relatedLinks}
       />
     ))
   }
@@ -66,5 +67,6 @@ MarketplaceList.propTypes = {
   description: PropTypes.string,
   status: PropTypes.string,
   availability: PropTypes.string,
-  instances: PropTypes.array
+  instances: PropTypes.array,
+  relatedLinks: PropTypes.array
 }

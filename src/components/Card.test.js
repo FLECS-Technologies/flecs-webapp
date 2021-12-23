@@ -17,11 +17,18 @@
  */
 
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Card from './Card'
 
 describe('Card', () => {
+  const relatedLinks = [
+    {
+      text: 'Buy',
+      link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
+    }
+  ]
+
   test('renders Card component', () => {
     render(<Card />)
 
@@ -67,13 +74,26 @@ describe('Card', () => {
   })
 
   test('Click uninstall', async () => {
-    render(<Card />)
+    const { getByLabelText } = render(<Card />)
 
-    fireEvent.click(screen.getByLabelText('uninstall-app-button'))
+    const uninstallButton = getByLabelText('uninstall-app-button')
+    fireEvent.click(uninstallButton)
 
     // todo: add what to expect
     // expect(screen.getByText("Profile")).toBeVisible();
 
     // screen.debug()
+  })
+
+  test('Card with related links', async () => {
+    const { getByTestId } = render(<Card relatedLinks={relatedLinks} />)
+
+    expect(getByTestId('more-vert-icon')).toBeVisible()
+  })
+
+  test('Card without related links', async () => {
+    const { getByTestId } = render(<Card />)
+
+    expect(() => getByTestId('more-vert-icon')).toThrow()
   })
 })

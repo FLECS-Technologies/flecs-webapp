@@ -56,7 +56,18 @@ export const marketPlaceAppsList = [
     availability: 'available',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Download IDE AddOn',
+        link: 'https://store.codesys.com/en/codesys-edge-gateway-for-linux.html'
+
+      },
+      {
+        text: 'Download IDE',
+        link: 'https://store.codesys.com/de/codesys.html'
+      }
+    ]
   },
   {
     app: 'org.mosquitto.broker',
@@ -82,7 +93,18 @@ export const marketPlaceAppsList = [
     status: 'uninstalled',
     multiInstance: false,
     editor: ':1880',
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Create First Flow',
+        link: 'https://nodered.org/docs/tutorials/first-flow'
+
+      },
+      {
+        text: 'User Guide',
+        link: 'https://nodered.org/docs/user-guide/'
+      }
+    ]
   },
   {
     app: 'com.influxdata.influxdb',
@@ -96,7 +118,18 @@ export const marketPlaceAppsList = [
     status: 'uninstalled',
     multiInstance: false,
     editor: ':8086',
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Pricing',
+        link: 'https://www.influxdata.com/influxdb-pricing/'
+
+      },
+      {
+        text: 'Documentation',
+        link: 'https://docs.influxdata.com/influxdb/v2.0/'
+      }
+    ]
   },
   {
     app: 'com.influxdata.telegraf',
@@ -109,7 +142,18 @@ export const marketPlaceAppsList = [
     status: 'uninstalled',
     editor: ':8086',
     multiInstance: false,
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Integrations',
+        link: 'https://www.influxdata.com/products/integrations/'
+
+      },
+      {
+        text: 'Documentation',
+        link: 'https://docs.influxdata.com/telegraf/v1.21/'
+      }
+    ]
   },
   {
     app: 'com.logicals.logiCAD',
@@ -122,7 +166,18 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: true,
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Inquiry',
+        link: 'https://www.logicals.com/en/about-us/send-inquiry'
+
+      },
+      {
+        text: 'Forum',
+        link: 'https://www.logicals.com/de/support/forum'
+      }
+    ]
   },
   {
     app: 'com.openplc.openplc',
@@ -174,7 +229,18 @@ export const marketPlaceAppsList = [
     availability: 'unavailable',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Create Account',
+        link: 'https://portal.anyviz.de/'
+
+      },
+      {
+        text: 'Getting started',
+        link: 'https://www.anyviz.io/getting-started/'
+      }
+    ]
   },
   {
     app: 'com.honeywell.matriconopcua',

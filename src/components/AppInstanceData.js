@@ -19,10 +19,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { Box } from '@mui/system'
 import TreeView from '@mui/lab/TreeView'
 import TreeItem from '@mui/lab/TreeItem'
-import { Button } from '@mui/material'
+import { Button, Box } from '@mui/material'
 
 export default function AppInstanceData (props) {
   const { instanceName, instanceData } = props

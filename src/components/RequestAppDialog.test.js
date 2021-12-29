@@ -32,8 +32,8 @@ describe('RequestAppDialog', () => {
     )
     expect(screen.getByText('Cancel')).toBeVisible()
     expect(screen.getByText('Send Request')).toBeVisible()
-    expect(screen.getByLabelText('Name')).toBeVisible()
-    expect(screen.getByLabelText('E-Mail')).toBeVisible()
+    expect(screen.getByText('Name')).toBeVisible()
+    expect(screen.getByText('E-Mail')).toBeVisible()
 
     // screen.debug()
   })

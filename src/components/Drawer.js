@@ -29,7 +29,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import WidgetIcon from '@mui/icons-material/Widgets'
 import MarketplaceIcon from '@mui/icons-material/Store'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { withRouter, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
@@ -85,14 +85,15 @@ const Drawer = styled(MuiDrawer, {
 }))
 
 const MiniDrawer = (props) => {
-  const { history } = props
+  // const { history } = props
   const [open, setOpen] = React.useState(true)
 
   const handleDrawerMove = () => {
     setOpen(!open)
   }
 
-  const curLoc = useLocation()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   // const [selectedIndex, setSelectedIndex] = React.useState()
 
@@ -100,16 +101,16 @@ const MiniDrawer = (props) => {
     // setSelectedIndex(index)
     switch (index) {
       case 0:
-        history.push('/')
+        navigate('/')
         break
       case 1:
-        history.push('/Marketplace')
+        navigate('/Marketplace')
         break
       case 2:
-        history.push('/System')
+        navigate('/System')
         break
       default:
-        history.push('/')
+        navigate('/')
         break
     }
   }
@@ -123,7 +124,7 @@ const MiniDrawer = (props) => {
           </IconButton>
           <Divider />
           <ListItemButton
-            selected={curLoc.pathname === '/'}
+            selected={location.pathname === '/'}
             onClick={(event) => handleListItemClick(event, 0)}
             aria-label="Apps"
           >
@@ -133,7 +134,7 @@ const MiniDrawer = (props) => {
             <ListItemText primary="Apps" />
           </ListItemButton>
           <ListItemButton
-            selected={curLoc.pathname === '/Marketplace'}
+            selected={location.pathname === '/Marketplace'}
             onClick={(event) => handleListItemClick(event, 1)}
             aria-label="/Marketplace"
           >
@@ -146,7 +147,7 @@ const MiniDrawer = (props) => {
         <Divider />
         <List component="nav" aria-label="Drawer-List-System">
           <ListItemButton
-            selected={curLoc.pathname === '/System'}
+            selected={location.pathname === '/System'}
             onClick={(event) => handleListItemClick(event, 2)}
           >
             <ListItemIcon>
@@ -163,4 +164,4 @@ MiniDrawer.propTypes = {
   history: PropTypes.any
 }
 
-export default withRouter(MiniDrawer)
+export default MiniDrawer

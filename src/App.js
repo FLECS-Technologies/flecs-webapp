@@ -17,7 +17,7 @@
  */
 
 import { React } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import { DarkModeState } from './components/ThemeHandler'
 import Frame from './components/Frame'
@@ -35,19 +35,17 @@ export default function App () {
       <Frame>
         <ReferenceDataContextProvider>
           <AppList>
-            <Switch>
-              <Route exact from="/" render={(props) => <InstalledApps {...props} />} />
+            <Routes>
+              <Route path="/" element={<InstalledApps />} />
               <Route
-                exact
                 path="/Marketplace"
-                render={(props) => <Marketplace {...props} />}
+                element={<Marketplace />}
               />
               <Route
-                exact
                 path="/System"
-                render={(props) => <System {...props} />}
+                element={<System/>}
               />
-            </Switch>
+            </Routes>
           </AppList>
         </ReferenceDataContextProvider>
       </Frame>

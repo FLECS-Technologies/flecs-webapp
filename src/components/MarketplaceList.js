@@ -16,17 +16,27 @@
  * limitations under the License.
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
+import SearchBar from './SearchBar'
 
 export default function MarketplaceList (props) {
   let appList = []
+  const [searchValue, setSearch] = useState('')
+  const [searchAuthor, searchTitle] = searchValue.split(' / ')
+
   if (props.appData) {
     // this filters the sideloaded apps
-    appList = props.appData.filter(app => app.availability != null)
+    appList = props.appData.filter(app => (app.availability != null))
+    // this filters the users search
+    if (searchAuthor.length > 0 && !searchTitle) {
+      appList = appList.filter(app => (app.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+    } else if (searchAuthor.length > 0 && (searchTitle && searchTitle.length > 0)) {
+      appList = appList.filter(app => (app.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+    }
     appList = appList.map((app) => (
       <Card
         key={app.app}
@@ -51,6 +61,9 @@ export default function MarketplaceList (props) {
         justify="flex-start"
         alignItems="flex-start"
       >
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
+          <SearchBar testId='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={props.appData ? props.appData.map((app) => (app.author + ' / ' + app.title)).sort() : null}/>
+        </Grid>
         {appList}
       </Grid>
     </Box>

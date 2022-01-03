@@ -17,14 +17,72 @@
  */
 
 import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
+import { render, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import MPList from './MarketplaceList'
 
 describe('Marketplace List', () => {
-  test('renders marketplace list component', () => {
-    render(<MPList />)
+  const marketPlaceAppsList = [
+    {
+      app: 'com.codesys.control',
+      avatar:
+        'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+      title: 'CODESYS Control',
+      author: 'CODESYS GmbH',
+      version: '4.2.0',
+      description: 'IEC61131-3 Runtime.',
+      availability: 'available',
+      status: 'uninstalled',
+      multiInstance: true,
+      instances: []
+    },
+    {
+      app: 'com.codesys.edge',
+      avatar:
+        'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+      title: 'CODESYS Edge Gateway',
+      author: 'CODESYS GmbH',
+      version: '4.1.0',
+      description: 'Gateway to connect to CODESYS RTS.',
+      availability: 'available',
+      status: 'uninstalled',
+      multiInstance: false,
+      instances: []
+    },
+    {
+      app: 'org.mosquitto.broker',
+      avatar:
+        'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
+      title: 'Mosquitto MQTT',
+      author: 'Eclipse Foundation',
+      version: '2.0.14-openssl',
+      description: 'MQTT broker.',
+      availability: 'available',
+      status: 'uninstalled',
+      multiInstance: false,
+      instances: []
+    }]
 
-    // screen.debug()
+  test('renders marketplace list component', () => {
+    const { getByTestId, queryAllByTestId } = render(<MPList appData={marketPlaceAppsList} />)
+
+    const searchBar = getByTestId('search-bar')
+    const apps = queryAllByTestId('app-card')
+
+    expect(searchBar).toBeVisible()
+    expect(apps).toHaveLength(3)
+  })
+
+  test('filter apps by free text', () => {
+    const { getByTestId, queryAllByTestId } = render(<MPList appData={marketPlaceAppsList} />)
+
+    const searchBar = getByTestId('search-bar')
+    const input = within(searchBar).getByRole('textbox')
+
+    fireEvent.change(input, { target: { value: 'mqtt' } })
+
+    const apps = queryAllByTestId('app-card')
+
+    expect(apps).toHaveLength(1)
   })
 })

@@ -28,6 +28,7 @@ import InstalledApps from './pages/InstalledApps'
 import Marketplace from './pages/Marketplace'
 import System from './pages/System'
 import AppList from './data/AppList'
+import NotFound from './pages/NotFound'
 
 export default function App () {
   return (
@@ -44,6 +45,10 @@ export default function App () {
               <Route
                 path="/System"
                 element={<System/>}
+              />
+              <Route
+                path="*"
+                element={<NotFound/>}
               />
             </Routes>
           </AppList>

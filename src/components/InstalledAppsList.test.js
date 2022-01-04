@@ -19,11 +19,12 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import DeviceAppsList from './InstalledAppsList'
 
 describe('Test Installed Apps List', () => {
   test('renders installed apps list component', () => {
-    const { getByTestId } = render(<DeviceAppsList />)
+    const { getByTestId } = render(<Router><DeviceAppsList /></Router>)
 
     const sideloadButton = getByTestId('GetAppIcon')
 

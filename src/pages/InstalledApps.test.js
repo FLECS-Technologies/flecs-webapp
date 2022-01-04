@@ -20,10 +20,11 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstalledApps from './InstalledApps'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 describe('Installed Apps', () => {
   test('renders installed apps page', () => {
-    render(<InstalledApps />)
+    render(<Router><InstalledApps /></Router>)
 
     expect(screen.getByLabelText('installed-apps-list')).toBeVisible()
 

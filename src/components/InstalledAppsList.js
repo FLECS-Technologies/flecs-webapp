@@ -18,6 +18,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import TableContainer from '@mui/material/TableContainer'
 import Table from '@mui/material/Table'
@@ -266,6 +267,18 @@ export default function DeviceAppsList (props) {
 
                 <TableRow>
                   <TableCell colSpan={6} />
+                </TableRow>
+              )}
+              {tmpAppList.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Typography align='center'>
+                      There are no apps installed on this device.
+                      Go to the&nbsp;
+                      <Link to="/Marketplace">marketplace</Link>
+                      &nbsp;or sideload your own app.
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

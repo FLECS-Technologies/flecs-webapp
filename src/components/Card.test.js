@@ -17,6 +17,7 @@
  */
 
 import React from 'react'
+import nock from 'nock'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Card from './Card'
@@ -28,6 +29,15 @@ describe('Card', () => {
       link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
     }
   ]
+
+  beforeEach(() => {
+    nock.disableNetConnect()
+    nock.enableNetConnect('127.0.0.1')
+  })
+  afterEach(() => {
+    nock.cleanAll()
+    nock.enableNetConnect()
+  })
 
   test('renders Card component', () => {
     render(<Card />)
@@ -50,6 +60,41 @@ describe('Card', () => {
   })
 
   test('Click install', async () => {
+    nock('http://localhost')
+      .post('/InstallApp')
+      .reply(200, {
+        app: 'Testapp',
+        version: 'Test App Version',
+        additionalInfo: ''
+      }, {
+        'Access-Control-Allow-Origin': '*',
+        'Content-type': 'application/json'
+      })
+
+    nock('http://localhost')
+      .post('/CreateAppInstance')
+      .reply(200, {
+        app: 'Testapp',
+        version: 'Test App Version',
+        instanceName: 'Test app instance',
+        instanceId: '01234567',
+        additionalInfo: ''
+      }, {
+        'Access-Control-Allow-Origin': '*',
+        'Content-type': 'application/json'
+      })
+
+    nock('http://localhost')
+      .post('/StartAppInstance')
+      .reply(200, {
+        app: 'Testapp',
+        version: 'Test App Version',
+        instanceId: '01234567',
+        additionalInfo: ''
+      }, {
+        'Access-Control-Allow-Origin': '*',
+        'Content-type': 'application/json'
+      })
     const { getByLabelText, getByTestId } = render(<Card
       app= 'Testapp'
       avatar= ''

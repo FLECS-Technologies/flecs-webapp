@@ -43,13 +43,14 @@ import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import AppLinksMenu from './AppLinksMenu'
+import useStateWithLocalStorage from './LocalStorage'
 
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { row } = props
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useStateWithLocalStorage(props.row.app + '.row.collapsed', false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [uninstalling, setUninstalling] = useState(false)
+  const [uninstalling, setUninstalling] = useStateWithLocalStorage(props.row.app + '.row.uninstalling', false) // useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',

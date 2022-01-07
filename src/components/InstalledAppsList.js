@@ -159,6 +159,7 @@ export default function DeviceAppsList (props) {
   })
   const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
   let tmpAppList = []
+  let numberOfInstalledApps = 0
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -207,6 +208,7 @@ export default function DeviceAppsList (props) {
   if (props.appData) {
     // filter on only installed apps
     tmpAppList = props.appData.filter(app => app.status === 'installed')
+    numberOfInstalledApps = tmpAppList.length
     tmpAppList = stableSort(tmpAppList, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
@@ -287,7 +289,7 @@ export default function DeviceAppsList (props) {
         <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={tmpAppList.length}
+            count={numberOfInstalledApps}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

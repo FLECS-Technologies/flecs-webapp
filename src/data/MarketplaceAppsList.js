@@ -156,9 +156,32 @@ export const marketPlaceAppsList = [
     ]
   },
   {
+    app: 'ch.inasoft.s4a',
+    title: 'SQL4Automation',
+    version: '4.0.0.5',
+    description: 'Connect your device with SQL DB',
+    author: 'Inasoft GmbH',
+    avatar: 'https://www.sql4automation.com/img/favicons/open-graph.png?v=1516616065075',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    instances: [],
+    relatedLinks: [
+      {
+        text: 'Buy',
+        link: 'https://www.sql4automation.com/en/license-models/purchase_offer.php'
+
+      },
+      {
+        text: 'Documentation',
+        link: 'https://www.sql4automation.com/en/functionality/database-connection/1_configure.php'
+      }
+    ]
+  },
+  {
     app: 'com.logicals.logiCAD',
     avatar:
-      'https://scontent-frx5-1.xx.fbcdn.net/v/t1.18169-9/25151847_10155541197772740_1125669131781020098_n.png?_nc_cat=111&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeEy-bQEuZHVP5muz5lp_3Lg3ofMdJjQqwjeh8x0mNCrCDpaYIFTEgbzZnU8vMmb0PMagz5dBQCQ-ie1TQav3QhY&_nc_ohc=Vg1dVWVczQIAX-Yfala&_nc_ht=scontent-frx5-1.xx&oh=b06873d98231b3a5e598f2c608593e85&oe=61C50C21',
+      'https://www.logicals.com/images/logos/logo_retina.png',
     title: 'logi.CAD',
     author: 'logi.cals GmbH',
     version: '1.104.0',
@@ -284,7 +307,7 @@ export const marketPlaceAppsList = [
   {
     app: 'com.ininet.spidercontrol',
     avatar:
-      'https://spidercontrol.net/wp-content/uploads/2017/05/header_01.png',
+      'https://is2-ssl.mzstatic.com/image/thumb/Purple115/v4/76/1a/fd/761afd33-ebb4-d1fd-d0ce-b2b4e630e29f/source/512x512bb.jpg',
     title: 'SpiderControl',
     author: 'iniNet Solutions GmbH',
     version: '2.06.0',

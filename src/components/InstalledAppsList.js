@@ -40,6 +40,7 @@ import FileOpen from './FileOpen'
 import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import useStateWithLocalStorage from './LocalStorage'
 
 const headCells = [
 
@@ -146,10 +147,10 @@ function stableSort (array, comparator) {
 
 export default function DeviceAppsList (props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext)
-  const [order, setOrder] = React.useState('asc')
-  const [orderBy, setOrderBy] = React.useState('apps')
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
+  const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
+  const [page, setPage] = useStateWithLocalStorage('installedApps.paginator.page', 0)
+  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('installedApps.paginator.rowsPerPage', 5)
   const [sideLoading, setSideLoading] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarState, setSnackbarState] = React.useState({

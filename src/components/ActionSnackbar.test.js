@@ -20,6 +20,8 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ActionSnackbar from './ActionSnackbar'
+import { Snackbar } from '@mui/material'
+import { shallow } from 'enzyme'
 
 describe('ActionSnackbar', () => {
   const originalClipboard = { ...global.navigator.clipboard }
@@ -34,6 +36,8 @@ describe('ActionSnackbar', () => {
   afterEach(() => {
     jest.resetAllMocks()
     global.navigator.clipboard = originalClipboard
+
+    jest.useRealTimers()
   })
 
   test('renders ActionSnackbar component', () => {
@@ -115,5 +119,38 @@ describe('ActionSnackbar', () => {
     expect(copyButton).toBeVisible()
 
     // screen.debug()
+  })
+
+  test('Snackbar close', async () => {
+    const setOpen = jest.fn()
+
+    const wrapper = shallow(<ActionSnackbar
+      text='Successfull operation'
+      errorText=''
+      open={true}
+      setOpen={setOpen}
+      alertSeverity='success' />)
+
+    /*
+      Challenge: find out how to test the "if (reason === 'clickaway')" path of handleSnackbarClose
+    wrapper.find(Snackbar).simulate('close', { event: 'event', reason: 'clickaway' })
+    expect(setOpen).not.toHaveBeenCalled()
+    */
+
+    wrapper.find(Snackbar).simulate('close')
+    expect(setOpen).toHaveBeenCalled()
+  })
+
+  test('Snackbar auto-hide', async () => {
+    const setOpen = jest.fn()
+
+    const wrapper = shallow(<ActionSnackbar
+      text='Successfull operation'
+      errorText=''
+      open={true}
+      setOpen={setOpen}
+      alertSeverity='success' />)
+
+    expect(wrapper.find(Snackbar).prop('autoHideDuration')).toBe(3000)
   })
 })

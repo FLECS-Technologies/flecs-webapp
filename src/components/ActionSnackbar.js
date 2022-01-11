@@ -33,7 +33,7 @@ export default function ActionSnackbar (props) {
     }
   }
 
-  const handleSnackbarClose = (event, reason) => {
+  function handleSnackbarClose (event, reason) {
     if (reason === 'clickaway') {
       return
     }
@@ -47,10 +47,10 @@ export default function ActionSnackbar (props) {
           anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
           open={open}
           autoHideDuration={3000}
+          onClose={handleSnackbarClose}
         >
           <Alert
             data-testid="alert"
-            onClose={handleSnackbarClose}
             severity={alertSeverity}
             sx={{ width: '100%' }}
             action={[

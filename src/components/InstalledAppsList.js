@@ -185,7 +185,7 @@ export default function DeviceAppsList (props) {
       const doc = Yaml.load(text)
       const sideloadAPI = new AppAPI(doc)
 
-      await sideloadAPI.sideloadApp(doc)
+      await sideloadAPI.sideloadApp(text)
       if (sideloadAPI.lastAPICallSuccessfull) {
         setUpdateAppList(true)
         snackbarText = 'Successully loaded ' + sideloadAPI.app.title + '.'

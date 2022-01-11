@@ -48,7 +48,7 @@ describe('PutSideloadAppAPI', () => {
         ports: ['1883:1883', '9001:9001']
       }, {
         'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+        'Content-type': 'application/yaml'
       })
 
     const testSideload = new PutSideloadAppAPI()

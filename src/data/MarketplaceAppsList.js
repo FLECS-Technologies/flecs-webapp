@@ -158,7 +158,7 @@ export const marketPlaceAppsList = [
   {
     app: 'ch.inasoft.s4a',
     title: 'SQL4Automation',
-    version: '4.0.0.5',
+    version: 'v4.0.0.6',
     description: 'Connect your device with SQL DB',
     author: 'Inasoft GmbH',
     avatar: 'https://www.sql4automation.com/img/favicons/open-graph.png?v=1516616065075',

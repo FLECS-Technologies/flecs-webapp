@@ -18,6 +18,7 @@
 
 import React from 'react'
 import styled from 'styled-components'
+import { Box, Divider, Paper, Toolbar, Typography } from '@mui/material'
 
 const Header = styled.div`
   display: 'flex';
@@ -28,10 +29,32 @@ const Header = styled.div`
 
 const System = () => {
   const data = (
-    <div aria-label='system-page' className="box">
-      <h2>System Setting</h2>
-      <p>You will find the system settings here soon.</p>
-    </div>
+    <Paper aria-label='system-page' className="box">
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 }
+        }}
+      >
+        <Typography
+          sx={{ flex: '0.1 0.1 10%' }}
+          variant="h6"
+        >
+          System
+        </Typography>
+      </Toolbar>
+      <Divider/>
+      <Box sx={{
+        width: '100%',
+        p: { xs: 1, sm: 2 }
+      }} >
+        <Typography
+          variant='body'
+        >
+          You are currently running FLECS on {window.location.hostname} in Version {process.env.REACT_APP_VERSION}.
+        </Typography>
+      </Box>
+    </Paper>
   )
   return (
     <div>

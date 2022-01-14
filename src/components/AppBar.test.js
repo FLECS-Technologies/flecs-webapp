@@ -17,31 +17,109 @@
  */
 
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import AppBar from './AppBar'
+import { useAuth } from './AuthProvider'
+import { DarkModeState } from './ThemeHandler'
+
+const mockedUsedNavigate = jest.fn()
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate
+}))
+
+const currentUser = {
+  user: {
+    user: {
+      data: {
+        ID: 4,
+        user_login: 'development-customer',
+        user_nicename: 'development-customer',
+        display_name: 'development-customer',
+        user_url: '',
+        user_email: 'development-customer@flecs.tech',
+        user_registered: '2022-01-13 08:43:14'
+      }
+    }
+  },
+  setUser: jest.fn()
+}
+
+jest.mock('./AuthProvider', () => ({ useAuth: jest.fn() }))
 
 describe('AppBar', () => {
-  test('renders AppBar component', () => {
-    render(<AppBar />)
+  beforeEach(() => {
+  })
 
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
+  test('renders AppBar component', () => {
+    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
     // test if logo is there
-    expect(screen.getByLabelText('FLECS-Logo')).toBeVisible()
+    expect(getByLabelText('FLECS-Logo')).toBeVisible()
     // test if FLECS brand name is there
-    expect(screen.getByText('FLECS')).toBeVisible()
+    expect(getByText('FLECS')).toBeVisible()
     // screen.debug()
   })
 
-  test('Select user avatar', async () => {
-    render(<AppBar />)
+  test('Click on login', async () => {
+    const { getByLabelText } = render(<Router><AppBar /></Router>)
+    const loginButton = getByLabelText('login-button')
+    fireEvent.click(loginButton)
 
-    fireEvent.click(screen.getByLabelText('account of current user'))
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Login')
+  })
 
-    await waitFor(() => screen.getByText('Profile'))
+  test('Click on user menu', async () => {
+    useAuth.mockReturnValue(currentUser)
+    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
+    const userMenuButton = getByLabelText('user-menu-button')
 
-    expect(screen.getByText('Profile')).toBeVisible()
-    expect(screen.getByText('Sign out')).toBeVisible()
+    fireEvent.click(userMenuButton)
 
-    // screen.debug()
+    await waitFor(() => getByText('Profile'))
+
+    expect(getByText('Profile')).toBeVisible()
+    expect(getByText('Sign out')).toBeVisible()
+
+    const menu = getByLabelText('user-menu')
+    fireEvent.keyDown(menu, { key: 'Escape' })
+  })
+
+  test('Click on logout', async () => {
+    useAuth.mockReturnValue(currentUser)
+    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
+    const userMenuButton = getByLabelText('user-menu-button')
+
+    fireEvent.click(userMenuButton)
+
+    await waitFor(() => getByText('Sign out'))
+
+    const signOut = getByText('Sign out')
+    expect(signOut).toBeVisible()
+
+    fireEvent.click(signOut)
+
+    expect(currentUser.setUser).toBeCalled()
+  })
+
+  test('Change theme', async () => {
+    const { getByLabelText } = render(<DarkModeState><Router><AppBar /></Router></DarkModeState>)
+    const changeThemeButton = getByLabelText('change-theme-button')
+
+    fireEvent.click(changeThemeButton)
+
+    const darkmodeIcon = getByLabelText('DarkModeIcon')
+    expect(darkmodeIcon).toBeVisible()
+
+    fireEvent.click(changeThemeButton)
+
+    const lightModeIcon = getByLabelText('LightModeIcon')
+    expect(lightModeIcon).toBeVisible()
   })
 })

@@ -30,35 +30,40 @@ import System from './pages/System'
 import AppList from './data/AppList'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
+import { AuthProvider, RequireAuth } from './components/AuthProvider'
 
 export default function App () {
   return (
     <DarkModeState>
-      <Frame>
-        <ReferenceDataContextProvider>
-          <AppList>
-            <Routes>
-              <Route path="/" element={<InstalledApps />} />
-              <Route
-                path="/Marketplace"
-                element={<Marketplace />}
-              />
-              <Route
-                path="/System"
-                element={<System/>}
-              />
-              <Route
-                 path="/Login"
-                 element={<Login/>}
-              />
-              <Route
-                path="*"
-                element={<NotFound/>}
-              />
-            </Routes>
-          </AppList>
-        </ReferenceDataContextProvider>
-      </Frame>
+      <AuthProvider>
+        <Frame>
+          <ReferenceDataContextProvider>
+            <AppList>
+              <Routes>
+                <Route path="/" element={<InstalledApps />} />
+                <Route path="/Marketplace" element={<RequireAuth />}>
+                  <Route
+                    path="/Marketplace"
+                    element={<Marketplace />}
+                  />
+                </Route>
+                <Route
+                  path="/System"
+                  element={<System/>}
+                />
+                <Route
+                  path="/Login"
+                  element={<Login/>}
+                />
+                <Route
+                  path="*"
+                  element={<NotFound/>}
+                />
+              </Routes>
+            </AppList>
+          </ReferenceDataContextProvider>
+        </Frame>
+      </AuthProvider>
     </DarkModeState>
   )
 }

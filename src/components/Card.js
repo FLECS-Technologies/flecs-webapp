@@ -164,7 +164,6 @@ export default function OutlinedCard (props) {
         <Button
           data-testid ="app-request-button"
           variant="outlined"
-          size="small"
           aria-label="app-request-button"
           color="info"
           disabled={available}

@@ -16,13 +16,14 @@
  * limitations under the License.
  */
 import { Grid, Link, Paper, TextField, Typography, IconButton, Box } from '@mui/material'
-import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import LoadButton from '../components/LoadButton'
 import AuthService from '../api/AuthService'
+import { useAuth } from '../components/AuthProvider'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Header = styled.div`
   display: 'flex';
@@ -31,53 +32,57 @@ const Header = styled.div`
   padding: 32px 32px;
 `
 
-export default class Login extends Component {
-  constructor (props) {
-    super(props)
-    this.handleLogin = this.handleLogin.bind(this)
-    this.onChangeUsername = this.onChangeUsername.bind(this)
-    this.onChangePassword = this.onChangePassword.bind(this)
-    this.handleClickShowPassword = this.handleClickShowPassword.bind(this)
-    this.handleMouseDownPassword = this.handleMouseDownPassword.bind(this)
+export default function Login () {
+  const [state, setState] = React.useState({
+    username: '',
+    password: '',
+    showPassword: false,
+    loading: false,
+    message: ''
+  })
+  const userRef = useRef('') // creating a refernce for user TextField Component
+  const pwRef = useRef('') // creating a refernce for password TextField Component
+  const user = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/'
 
-    this.state = {
-      username: '',
-      password: '',
-      showPassword: false,
-      loading: false,
-      message: ''
-    }
-  }
-
-  onChangeUsername (e) {
-    this.setState({
-      username: e.target.value
+  function onChangeUsername (event) {
+    setState(previousState => {
+      return { ...previousState, username: userRef.current.value }
     })
   }
 
-  onChangePassword (e) {
-    this.setState({
-      password: e.target.value
+  function onChangePassword (event) {
+    setState(previousState => {
+      return { ...previousState, password: pwRef.current.value }
     })
   }
 
-  handleLogin (e) {
-    e.preventDefault()
+  function handleLogin (event) {
+    event.preventDefault()
 
-    this.setState((state, props) => ({
-      message: '',
-      loading: true
-    }))
+    setState(previousState => {
+      return { ...previousState, message: '', loading: true }
+    })
 
-    AuthService.login(this.state.username, this.state.password).then(
+    AuthService.login(state.username, state.password).then(
       () => {
-        this.setState({
-          username: '',
-          password: '',
-          showPassword: false,
-          message: 'Successfully logged in!',
-          loading: false
+        pwRef.current.value = ''
+        userRef.current.value = ''
+        setState(previousState => {
+          return {
+            ...previousState,
+            username: pwRef.current.value,
+            password: userRef.current.value,
+            showPassword: false,
+            message: 'Successfully logged in!',
+            loading: false
+          }
         })
+
+        user.setUser(AuthService.getCurrentUser())
+        navigate(from, { replace: true })
       },
       error => {
         const resMessage =
@@ -87,31 +92,35 @@ export default class Login extends Component {
           error.message ||
           error.toString()
 
-        this.setState((state, props) => ({
-          message: resMessage,
-          loading: false
-        }))
+        setState(previousState => {
+          return {
+            ...previousState,
+            message: resMessage,
+            loading: false
+          }
+        })
       }
     )
   }
 
-  handleClickShowPassword (e) {
-    this.setState({
-      showPassword: !this.state.showPassword,
-      loading: !this.state.loading
+  function handleClickShowPassword (e) {
+    setState(previousState => {
+      return {
+        ...previousState,
+        showPassword: !state.showPassword
+      }
     })
   };
 
-  handleMouseDownPassword (event) {
+  function handleMouseDownPassword (event) {
     event.preventDefault()
   }
 
-  render () {
-    return (
+  return (
         <>
         <Header/>
-
             <Grid
+                aria-label='login-page'
                 container
                 spacing={0}
                 direction="column"
@@ -139,29 +148,44 @@ export default class Login extends Component {
                                 sx={{ backgroundColor: 'standard' }}
                             >
                                 <Grid item xs={4}>
-                                    <TextField sx={{ width: '300px' }} autoFocus={true} aria-label="user-name" name="user-name" value={this.state.username} label="Username" variant="standard" type="text" required onChange={this.onChangeUsername} onSubmit={this.handleLogin}></TextField>
+                                    <TextField
+                                      sx={{ width: '300px' }}
+                                      autoFocus={true}
+                                      aria-label="user-name"
+                                      name="user-name"
+                                      // value={state.username}
+                                      label="Username"
+                                      variant="standard"
+                                      type="text"
+                                      required
+                                      onChange={onChangeUsername}
+                                      onSubmit={handleLogin}
+                                      inputRef={userRef} // connecting inputRef property of TextField to the userRef
+                                    ></TextField>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <TextField
                                         sx={{ width: '300px' }}
                                         aria-label="password"
                                         name="password"
-                                        value={this.state.password}
+                                        // value={state.password}
                                         label="Password"
                                         variant="standard"
-                                        type={this.state.showPassword ? 'text' : 'password'}
+                                        type={state.showPassword ? 'text' : 'password'}
                                         required
-                                        onChange={this.onChangePassword}
-                                        onSubmit={this.handleLogin}
+                                        onChange={onChangePassword}
+                                        onSubmit={handleLogin}
+                                        inputRef={pwRef} // connecting inputRef property of TextField to the pwRef
                                         InputProps={{
+                                          'aria-label': 'password-input',
                                           endAdornment:
                                                 <IconButton
                                                     aria-label="toggle password visibility"
-                                                    onClick={this.handleClickShowPassword}
-                                                    onMouseDown={this.handleMouseDownPassword}
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
 
                                                 >
-                                                    {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    {state.showPassword ? <VisibilityOff /> : <Visibility />}
                                                 </IconButton>
                                         }}
                                     >
@@ -169,12 +193,12 @@ export default class Login extends Component {
                                     </TextField>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <LoadButton width="300px" size="medium" text="GO" variant="contained" onClick={this.handleLogin} label="login-button" loading={this.state.loading} type="submit" disabled={!this.state.username || !this.state.password || this.state.loading}></LoadButton>
+                                    <LoadButton width="300px" size="medium" text="GO" variant="contained" onClick={handleLogin} label="login-button" loading={state.loading} type="submit" disabled={!state.username || !state.password || state.loading}></LoadButton>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Box maxWidth="300px">
-                                    {this.state.message && (
-                                        <div aria-label='message' dangerouslySetInnerHTML={{ __html: this.state.message }}/>
+                                    {state.message && (
+                                        <div aria-label='message' dangerouslySetInnerHTML={{ __html: state.message }}/>
                                     )}
                                     </Box>
                                 </Grid>
@@ -192,19 +216,19 @@ export default class Login extends Component {
                                 <Grid item xs={6}>
                                     <Typography aria-label='create-account' variant='body'>
                                         Don&apos;t have an account yet?<br/>
-                                        <Link href="/" target="_blank">Create an account</Link>
+                                        <Link aria-label='create-account-link' href="/" target="_blank">Create an account</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Typography aria-label='forgot-password' variant='body'>
                                         Forgot your password?<br/>
-                                        <Link href="/" target="_blank">Reset password</Link>
+                                        <Link aria-label='forgot-password-link' href="/" target="_blank">Reset password</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Typography aria-label='privacy-policy' variant='body' >
                                         How do we treat your data?<br/>
-                                        <Link href="https://flecs-technologies.com/privacy-policy" target="_blank">Read our privacy policy</Link><br/><br/>
+                                        <Link aria-label='privacy-policy-link' href="https://flecs-technologies.com/privacy-policy" target="_blank">Read our privacy policy</Link><br/><br/>
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -216,12 +240,5 @@ export default class Login extends Component {
             </Grid>
 
         </>
-    )
-  }
-
-  static get propTypes () {
-    return {
-      history: PropTypes.any
-    }
-  }
+  )
 }

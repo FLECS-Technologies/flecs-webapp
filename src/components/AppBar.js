@@ -29,9 +29,13 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
-import AuthService from '../api/AuthService'
 import { ReactComponent as Logo } from '../img/Flecs.svg'
-import { Avatar } from '@mui/material'
+import { Stack } from '@mui/material'
+import { useAuth } from './AuthProvider'
+import AuthService from '../api/AuthService'
+import LoginIcon from '@mui/icons-material/Login'
+import PersonIcon from '@mui/icons-material/Person'
+import { useNavigate } from 'react-router-dom'
 
 function ElevationScroll (props) {
   const { children, window } = props
@@ -55,8 +59,8 @@ ElevationScroll.propTypes = {
 
 export default function ElevateAppBar (props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const user = AuthService.getCurrentUser()
-  const userInitials = (user && user.user.data.display_name.charAt(0).toUpperCase())
+  const user = useAuth()
+  const navigate = useNavigate()
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -68,7 +72,13 @@ export default function ElevateAppBar (props) {
 
   const handleSignout = () => {
     AuthService.logout()
+    user?.setUser(null)
+
     setAnchorEl(null)
+  }
+
+  const handleSignIn = () => {
+    navigate('/Login')
   }
 
   const DarkModeContext = useContext(darkModeContext)
@@ -99,31 +109,37 @@ export default function ElevateAppBar (props) {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               FLECS
             </Typography>
-            <IconButton sx={{ ml: 1, mr: 1 }} onClick={handleThemeChange}>
-              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            <IconButton aria-label='change-theme-button' sx={{ ml: 1, mr: 1 }} onClick={handleThemeChange}>
+              {darkMode ? <LightModeIcon aria-label='LightModeIcon' /> : <DarkModeIcon aria-label='DarkModeIcon'/>}
             </IconButton>
               <div>
                 <IconButton
+                  aria-label='avatar-button'
                   component="span"
-                  onClick={handleMenu}
+                  onClick={user?.user ? (handleMenu) : (handleSignIn)}
                   size="small"
                 >
-                  <Avatar
-                    id="user-avatar"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                  >
-                    {userInitials}
-                  </Avatar>
+                  {user?.user
+                    ? (<PersonIcon aria-label="user-menu-button" />)
+                    : (<LoginIcon aria-label="login-button" />)
+                  }
                 </IconButton>
                 <Menu
-                  id="menu-appbar"
+                  id="user-menu"
+                  aria-label="user-menu"
                   anchorEl={anchorEl}
                   keepMounted
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
+                  <MenuItem divider={true} style={{ pointerEvents: 'none' }}>
+                    <Stack>
+                      <Typography variant="caption">Signed in as</Typography>
+                      <Typography variant="caption" style={{ fontWeight: 600 }}>
+                        {user?.user?.user?.data?.display_name}
+                      </Typography>
+                    </Stack>
+                  </MenuItem>
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
                   <MenuItem onClick={handleSignout}>Sign out</MenuItem>
                 </Menu>

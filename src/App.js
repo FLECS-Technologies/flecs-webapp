@@ -28,6 +28,7 @@ import InstalledApps from './pages/InstalledApps'
 import Marketplace from './pages/Marketplace'
 import System from './pages/System'
 import AppList from './data/AppList'
+import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 
 export default function App () {
@@ -45,6 +46,10 @@ export default function App () {
               <Route
                 path="/System"
                 element={<System/>}
+              />
+              <Route
+                 path="/Login"
+                 element={<Login/>}
               />
               <Route
                 path="*"

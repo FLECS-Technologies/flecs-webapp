@@ -17,7 +17,7 @@
  */
 
 import BaseAPI from './BaseAPI'
-import DeviceAPIConfiguration from './api-config'
+import { DeviceAPIConfiguration } from './api-config'
 // import Yaml from 'js-yaml'
 
 export default class PutSideloadAppAPI extends BaseAPI {

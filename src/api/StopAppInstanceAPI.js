@@ -17,7 +17,7 @@
  */
 
 import BaseAPI from './BaseAPI'
-import DeviceAPIConfiguration from './api-config'
+import { DeviceAPIConfiguration } from './api-config'
 
 export default class StopAppInstanceAPI extends BaseAPI {
   async stopAppInstance (app, version, instanceId) {

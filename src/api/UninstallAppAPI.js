@@ -17,7 +17,7 @@
  */
 
 import BaseAPI from './BaseAPI'
-import DeviceAPIConfiguration from './api-config'
+import { DeviceAPIConfiguration } from './api-config'
 
 export default class PostUninstallAppAPI extends BaseAPI {
   async uninstallApp (app, version) {

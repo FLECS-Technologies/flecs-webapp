@@ -5,19 +5,19 @@ import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 
 const LoadButton = (props) => {
-  const { startIcon, text, variant, color, disabled, onClick, displayState, loading, label } = props
+  const { startIcon, text, variant, color, disabled, displayState, loading, label, width } = props
 
   return (
         <Box sx={{ position: 'relative' }}>
           <Button
+            {...props}
+            sx={{ width: { width } }}
             data-testid="button"
             aria-label={label}
             startIcon={startIcon}
             variant={variant}
             color={color}
-            size="small"
             disabled={disabled}
-            onClick={() => onClick(props)}
             style={{ display: displayState }}
           >
             {text}
@@ -40,10 +40,10 @@ LoadButton.propTypes = {
   variant: PropTypes.string,
   color: PropTypes.string,
   disabled: PropTypes.bool,
-  onClick: PropTypes.func,
   displayState: PropTypes.string,
   loading: PropTypes.bool,
-  label: PropTypes.string
+  label: PropTypes.string,
+  width: PropTypes.string
 }
 
 export default LoadButton

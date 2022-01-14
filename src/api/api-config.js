@@ -32,9 +32,11 @@ const POST_APP_INSTANCE_DATA_URL = '/AppInstanceData'
 
 const PUT_SIDELOAD_APP = '/SideloadApp'
 
-const GET_APP_LIST_URL = 'http://marketplace.flecs.tech/AppList'
+const MP_BASE_URL = 'https://marketplace.flecs.tech'
+const GET_APP_LIST_URL = 'AppList'
+const POST_AUTHENTICATE_URL = 'wp-json/aam/v2/authenticate'
 
-export default class DeviceAPIConfiguration extends Component {
+class DeviceAPIConfiguration extends Component {
   // post requests
   static get POST_INSTALL_APP_URL () {
     return POST_INSTALL_APP_URL
@@ -83,10 +85,20 @@ export default class DeviceAPIConfiguration extends Component {
   }
 }
 
-export class MarketplaceAPIConfiguration {
+class MarketplaceAPIConfiguration {
   // get requests
   static get GET_APP_LIST_URL () {
     return GET_APP_LIST_URL
   }
+
+  static get BASE_URL () {
+    return MP_BASE_URL
+  }
+
   // post requests
+  static get POST_AUTHENTICATE_URL () {
+    return POST_AUTHENTICATE_URL
+  }
 }
+
+export { DeviceAPIConfiguration, MarketplaceAPIConfiguration }

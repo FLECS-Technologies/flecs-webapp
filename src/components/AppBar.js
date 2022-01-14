@@ -21,7 +21,6 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import AccountCircle from '@mui/icons-material/AccountCircle'
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -30,7 +29,9 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
+import AuthService from '../api/AuthService'
 import { ReactComponent as Logo } from '../img/Flecs.svg'
+import { Avatar } from '@mui/material'
 
 function ElevationScroll (props) {
   const { children, window } = props
@@ -54,12 +55,19 @@ ElevationScroll.propTypes = {
 
 export default function ElevateAppBar (props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const user = AuthService.getCurrentUser()
+  const userInitials = (user && user.user.data.display_name.charAt(0).toUpperCase())
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
 
   const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleSignout = () => {
+    AuthService.logout()
     setAnchorEl(null)
   }
 
@@ -91,37 +99,33 @@ export default function ElevateAppBar (props) {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               FLECS
             </Typography>
-            <IconButton onClick={handleThemeChange}>
+            <IconButton sx={{ ml: 1, mr: 1 }} onClick={handleThemeChange}>
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
               <div>
                 <IconButton
-                  id="user-avatar"
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
+                  component="span"
                   onClick={handleMenu}
+                  size="small"
                 >
-                  <AccountCircle />
+                  <Avatar
+                    id="user-avatar"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                  >
+                    {userInitials}
+                  </Avatar>
                 </IconButton>
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
                   keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>Sign out</MenuItem>
+                  <MenuItem onClick={handleSignout}>Sign out</MenuItem>
                 </Menu>
               </div>
           </Toolbar>

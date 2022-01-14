@@ -15,6 +15,7 @@
     "@mui/material": "latest",
     "@mui/styles": "latest",
     "@testing-library/react": "12.1.2",
+    "axios": "^0.24.0",
     "classnames": "2.3.1",
     "clsx": "latest",
     "emailjs-com": "^3.2.0",

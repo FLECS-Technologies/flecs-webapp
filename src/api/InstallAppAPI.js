@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import BaseAPI from './BaseAPI'
-import DeviceAPIConfiguration from './api-config'
+import { DeviceAPIConfiguration } from './api-config'
 
 export default class PostInstallAppAPI extends BaseAPI {
   async installApp (app, version) {

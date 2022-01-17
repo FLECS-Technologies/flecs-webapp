@@ -34,7 +34,8 @@ const PUT_SIDELOAD_APP = '/SideloadApp'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const GET_APP_LIST_URL = 'AppList'
-const POST_AUTHENTICATE_URL = 'wp-json/aam/v2/authenticate'
+const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
+const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
 
 class DeviceAPIConfiguration extends Component {
   // post requests
@@ -98,6 +99,10 @@ class MarketplaceAPIConfiguration {
   // post requests
   static get POST_AUTHENTICATE_URL () {
     return POST_AUTHENTICATE_URL
+  }
+
+  static get POST_VALIDATE_URL () {
+    return POST_VALIDATE_URL
   }
 }
 

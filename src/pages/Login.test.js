@@ -16,22 +16,43 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Login from './Login'
-import nock from 'nock'
+import { MarketplaceAPIConfiguration } from '../api/api-config'
+import axios from 'axios'
+import { useAuth } from '../components/AuthProvider'
+
+jest.mock('axios')
+jest.mock('../components/AuthProvider', () => ({ useAuth: jest.fn() }))
 
 describe('Login', () => {
-  beforeEach(() => {
-    nock.disableNetConnect()
-    nock.enableNetConnect('127.0.0.1')
+  const homer = {
+    user: {
+      data: {
+        ID: 4,
+        user_login: 'homer-simpson',
+        user_nicename: 'Homer Simpson',
+        display_name: 'Homer Simpson',
+        user_url: '',
+        user_email: 'homer-simpson@springfield.io',
+        user_registered: '2022-01-13 08:43:14'
+      },
+      redirect: null,
+      jwt: {
+        token: 'supersafetoken',
+        token_expires: 1642255418
+      }
+    },
+    setUser: jest.fn()
+  }
+
+  afterAll(() => {
+    jest.resetAllMocks()
   })
-  afterEach(() => {
-    nock.cleanAll()
-    nock.enableNetConnect()
-  })
+
   test('renders Login page', () => {
     render(<Router><Login /></Router>)
 
@@ -94,7 +115,9 @@ describe('Login', () => {
     expect(goButton).toBeEnabled()
   })
 
-  test('Login', () => {
+  test('Successfull Login', async () => {
+    axios.post.mockResolvedValueOnce(homer)
+    useAuth.mockReturnValue(homer)
     const { getByLabelText } = render(<Router><Login /></Router>)
 
     const goButton = getByLabelText('login-button')
@@ -102,10 +125,38 @@ describe('Login', () => {
     const userInput = getByLabelText('user-name')
     const input = within(userInput).getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'Homer' } })
+    fireEvent.change(input, { target: { value: 'homer-simpson' } })
     userEvent.type(passwordInput, 'pass1234')
 
     expect(goButton).toBeEnabled()
     fireEvent.click(goButton)
+
+    await waitFor(() => getByLabelText('message'))
+    const message = getByLabelText('message')
+
+    expect(message).toHaveTextContent('Successfully logged in!')
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+  })
+
+  test('Unsuccessfull Login', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to login'))
+    const { getByLabelText } = render(<Router><Login /></Router>)
+
+    const goButton = getByLabelText('login-button')
+    const passwordInput = getByLabelText('password-input')
+    const userInput = getByLabelText('user-name')
+    const input = within(userInput).getByRole('textbox')
+
+    fireEvent.change(input, { target: { value: 'homer-simpson' } })
+    userEvent.type(passwordInput, 'pass1234')
+
+    expect(goButton).toBeEnabled()
+    fireEvent.click(goButton)
+
+    await waitFor(() => getByLabelText('message'))
+    const message = getByLabelText('message')
+
+    expect(message).toHaveTextContent('Failed to login')
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
   })
 })

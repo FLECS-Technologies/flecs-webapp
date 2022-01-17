@@ -19,6 +19,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import AuthService from '../api/AuthService'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+
 let SET_USER
 
 const AuthContext = React.createContext()
@@ -36,9 +37,13 @@ const userReducer = (state, action) => {
 }
 
 function AuthProvider (props) {
+  React.useEffect(() => {
+    validate()
+  })
   const initialState = {
     user: AuthService.getCurrentUser()
   }
+
   const [state, dispatch] = React.useReducer(userReducer, initialState)
 
   const setUser = async (user) => {
@@ -70,6 +75,25 @@ function RequireAuth (props) {
   }
 
   return <Outlet />
+}
+
+function validate () {
+  if (AuthService.getCurrentUser()) {
+    AuthService.validate(AuthService.getCurrentUser()?.jwt?.token).then(
+      () => {
+        // nothing to do here.
+      },
+      error => {
+        const resMessage =
+        (error.response &&
+          error.response.data &&
+          error.response.data.reason) ||
+        error.message ||
+        error.toString()
+        console.log(resMessage)
+      }
+    )
+  }
 }
 
 export { AuthContext, AuthProvider, useAuth, RequireAuth }

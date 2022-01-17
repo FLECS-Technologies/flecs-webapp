@@ -36,10 +36,31 @@ class AuthService {
         issueJWT
       })
       .then(response => {
-        if (response.data.jwt.token) {
+        if (response.data?.jwt?.token) {
           localStorage.setItem('user', JSON.stringify(response.data))
         }
 
+        return response.data
+      })
+  }
+
+  validate (jwt) {
+    let url
+
+    if (process.env.NODE_ENV === 'development') {
+      url = process.env.REACT_APP_DEV_MP_URL
+    } else {
+      url = MarketplaceAPIConfiguration.BASE_URL
+    }
+    url = url + MarketplaceAPIConfiguration.POST_VALIDATE_URL
+    return axios
+      .post(url, {
+        jwt
+      })
+      .then(response => {
+        if (!response.data?.isValid) {
+          this.logout()
+        }
         return response.data
       })
   }

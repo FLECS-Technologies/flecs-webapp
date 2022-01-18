@@ -58,10 +58,13 @@ class AuthService {
         jwt
       })
       .then(response => {
-        if (!response.data?.isValid) {
-          this.logout()
+        if (response.data?.isValid) {
+          return response.data
         }
-        return response.data
+      })
+      .catch(error => {
+        this.logout()
+        return Promise.reject(error)
       })
   }
 

@@ -20,10 +20,11 @@ import React, { useRef } from 'react'
 import styled from 'styled-components'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import LoadButton from '../components/LoadButton'
+// import LoadButton from '../components/LoadButton'
 import AuthService from '../api/AuthService'
 import { useAuth } from '../components/AuthProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { LoadingButton } from '@mui/lab'
 
 const Header = styled.div`
   display: 'flex';
@@ -139,6 +140,7 @@ export default function Login () {
                             <Typography aria-label='login' variant='h2' color='primary.main' align='center' sx={{ width: '100%', mt: 2, mb: 2 }}>Login</Typography>
                         </Grid>
                         <Grid item xs={6}>
+                          <form onSubmit={handleLogin}>
                             <Grid
                                 container
                                 spacing={2}
@@ -159,7 +161,6 @@ export default function Login () {
                                       type="text"
                                       required
                                       onChange={onChangeUsername}
-                                      onSubmit={handleLogin}
                                       inputRef={userRef} // connecting inputRef property of TextField to the userRef
                                     ></TextField>
                                 </Grid>
@@ -174,7 +175,6 @@ export default function Login () {
                                         type={state.showPassword ? 'text' : 'password'}
                                         required
                                         onChange={onChangePassword}
-                                        onSubmit={handleLogin}
                                         inputRef={pwRef} // connecting inputRef property of TextField to the pwRef
                                         InputProps={{
                                           'aria-label': 'password-input',
@@ -193,7 +193,7 @@ export default function Login () {
                                     </TextField>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <LoadButton width="300px" size="medium" text="GO" variant="contained" onClick={handleLogin} label="login-button" loading={state.loading} type="submit" disabled={!state.username || !state.password || state.loading}></LoadButton>
+                                    <LoadingButton sx={{ width: '300px' }} variant="contained" aria-label="login-button" loading={state.loading} type="submit" disabled={!state.username || !state.password || state.loading}>GO</LoadingButton>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Box maxWidth="300px">
@@ -203,6 +203,7 @@ export default function Login () {
                                     </Box>
                                 </Grid>
                             </Grid>
+                          </form>
                         </Grid>
                         <Grid item xs={6} >
                             <Grid

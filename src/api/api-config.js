@@ -33,6 +33,8 @@ const POST_APP_INSTANCE_DATA_URL = '/AppInstanceData'
 const PUT_SIDELOAD_APP = '/SideloadApp'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
+const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
+
 const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
 const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
@@ -94,6 +96,10 @@ class MarketplaceAPIConfiguration {
 
   static get BASE_URL () {
     return MP_BASE_URL
+  }
+
+  static get BETA_BASE_URL () {
+    return MP_BETA_BASE_URL
   }
 
   // post requests

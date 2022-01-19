@@ -6,6 +6,7 @@ endif
 
 .PHONY: docker
 docker:
+	@docker login -u $${REGISTRY_USER} -p $${REGISTRY_AUTH} marketplace.flecs.tech:5001
 	docker buildx build \
 	--push \
 	--platform linux/amd64,linux/arm/v7,linux/arm64 \

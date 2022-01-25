@@ -41,7 +41,7 @@ export default function OutlinedCard (props) {
   const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
-    props.availability === 'available'
+    (props.availability === 'available') || (props.availability === 'publish')
   )
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'
@@ -179,7 +179,7 @@ export default function OutlinedCard (props) {
           label="install-app-button"
           disabled={installed || installing}
           onClick={() => installApp(props)}
-          displayState={displayState}
+          displaystate={displayState}
           loading={installing}
         />
         <LoadButton
@@ -189,7 +189,7 @@ export default function OutlinedCard (props) {
           disabled={uninstalled || uninstalling}
           color="error"
           onClick={() => setConfirmOpen(true)}
-          displayState={displayState}
+          displaystate={displayState}
           loading={uninstalling}
         />
         <ConfirmDialog

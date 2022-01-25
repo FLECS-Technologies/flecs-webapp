@@ -68,7 +68,7 @@ export const marketPlaceAppsList = [
         link: 'https://store.codesys.com/de/codesys.html'
       }
     ]
-  },
+  }, /*
   {
     app: 'org.mosquitto.broker',
     avatar:
@@ -81,7 +81,7 @@ export const marketPlaceAppsList = [
     status: 'uninstalled',
     multiInstance: false,
     instances: []
-  },
+  }, */
   {
     app: 'org.openjsf.node-red',
     avatar: 'https://nodered.org/about/resources/media/node-red-icon.png',

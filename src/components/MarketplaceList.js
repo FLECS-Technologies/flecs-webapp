@@ -22,22 +22,65 @@ import Card from './Card'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import SearchBar from './SearchBar'
+import { getProducts } from '../api/ProductService'
+import { CircularProgress, Typography } from '@mui/material'
 
 export default function MarketplaceList (props) {
-  let appList = []
+  let productCards = []
+  let products = []
+  const [appList, setAppList] = useState()
   const [searchValue, setSearch] = useState('')
   const [searchAuthor, searchTitle] = searchValue.split(' / ')
+  const [loading, setLoading] = useState(true)
+
+  async function loadProducts () {
+    await getProducts().then(
+      (products) => {
+        setAppList(products)
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.reason) ||
+          error.message ||
+          error.toString()
+        console.log(resMessage)
+      }
+    )
+      .finally(function () { setLoading(false) })
+  }
+
+  React.useEffect(() => {
+    loadProducts()
+  }, [])
+  if (appList && props.appData) {
+    products = appList.map((app) => (
+      <Card
+        key={app?.meta_data.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value}
+        app={app?.meta_data.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value}
+        avatar={app?.meta_data.find(o => o.key === 'app-icon')?.value}
+        title={app.name}
+        author={app?.meta_data.find(o => o.key === 'port-author-name')?.value}
+        version={app?.meta_data.find(o => o.key === 'port-version')?.value}
+        description={app.short_description.replace(/<[^>]+>/g, '')}
+        status={props.appData.find(o => o.app === app)?.status || 'uninstalled'}
+        availability={app.status}
+        relatedLinks={app.relatedLinks}
+      />
+    ))
+  }
 
   if (props.appData) {
     // this filters the sideloaded apps
-    appList = props.appData.filter(app => (app.availability != null))
+    productCards = props.appData.filter(app => (app.availability != null))
     // this filters the users search
     if (searchAuthor.length > 0 && !searchTitle) {
-      appList = appList.filter(app => (app.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+      productCards = productCards.filter(app => (app.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
     } else if (searchAuthor.length > 0 && (searchTitle && searchTitle.length > 0)) {
-      appList = appList.filter(app => (app.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+      productCards = productCards.filter(app => (app.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.author.toLowerCase().includes(searchAuthor.toLowerCase())))
     }
-    appList = appList.map((app) => (
+    productCards = productCards.map((app) => (
       <Card
         key={app.app}
         app={app.app}
@@ -64,7 +107,18 @@ export default function MarketplaceList (props) {
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
           <SearchBar testId='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={props.appData ? props.appData.map((app) => (app.author + ' / ' + app.title)).sort() : null}/>
         </Grid>
-        {appList}
+        {loading && (
+          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
+            <CircularProgress color='primary'></CircularProgress>
+          </Grid>
+        )}
+        {loading && (
+          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
+            <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
+          </Grid>
+        )}
+        {productCards}
+        {products}
       </Grid>
     </Box>
   )

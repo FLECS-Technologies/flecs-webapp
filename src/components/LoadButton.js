@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 
 const LoadButton = (props) => {
-  const { startIcon, text, variant, color, disabled, displayState, loading, label, width } = props
+  const { startIcon, text, variant, color, disabled, displaystate, loading, label, width } = props
 
   return (
         <Box sx={{ position: 'relative' }}>
@@ -18,7 +18,7 @@ const LoadButton = (props) => {
             variant={variant}
             color={color}
             disabled={disabled}
-            style={{ display: displayState }}
+            style={{ display: displaystate }}
           >
             {text}
           </Button>
@@ -40,7 +40,7 @@ LoadButton.propTypes = {
   variant: PropTypes.string,
   color: PropTypes.string,
   disabled: PropTypes.bool,
-  displayState: PropTypes.string,
+  displaystate: PropTypes.string,
   loading: PropTypes.bool,
   label: PropTypes.string,
   width: PropTypes.string

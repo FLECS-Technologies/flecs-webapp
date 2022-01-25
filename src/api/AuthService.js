@@ -17,6 +17,7 @@
  */
 import axios from 'axios'
 import { MarketplaceAPIConfiguration } from './api-config'
+// import CoCartAPI from '@cocart/cocart-rest-api'
 
 class AuthService {
   login (username, password) {

@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 
 const LoadIconButton = (props) => {
-  const { icon, variant, color, disabled, onClick, displayState, loading, label } = props
+  const { icon, variant, color, disabled, onClick, displaystate, loading, label } = props
 
   return (
         <Box sx={{ position: 'relative' }}>
@@ -16,7 +16,7 @@ const LoadIconButton = (props) => {
             color={color}
             disabled={disabled}
             onClick={() => onClick(props)}
-            style={{ display: displayState }}
+            style={{ display: displaystate }}
           >
             {icon}{loading && (<CircularProgress data-testid="circularprogress" size={30} sx={{
               color: 'info',
@@ -34,7 +34,7 @@ LoadIconButton.propTypes = {
   color: PropTypes.string,
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
-  displayState: PropTypes.string,
+  displaystate: PropTypes.string,
   loading: PropTypes.bool,
   label: PropTypes.string
 }

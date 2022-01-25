@@ -38,6 +38,7 @@ const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
 const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
 const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
+const GET_PRODUCTS_URL = '/api/products'
 
 class DeviceAPIConfiguration extends Component {
   // post requests
@@ -89,17 +90,21 @@ class DeviceAPIConfiguration extends Component {
 }
 
 class MarketplaceAPIConfiguration {
-  // get requests
-  static get GET_APP_LIST_URL () {
-    return GET_APP_LIST_URL
-  }
-
   static get BASE_URL () {
     return MP_BASE_URL
   }
 
   static get BETA_BASE_URL () {
     return MP_BETA_BASE_URL
+  }
+
+  // get requests
+  static get GET_APP_LIST_URL () {
+    return GET_APP_LIST_URL
+  }
+
+  static get GET_PRODUCTS_URL () {
+    return GET_PRODUCTS_URL
   }
 
   // post requests

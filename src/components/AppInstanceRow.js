@@ -222,7 +222,7 @@ export default function AppInstanceRow (props) {
                         icon={<LaunchIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => openInstanceEditor()}
-                        displayState={editorAvailable}
+                        displaystate={editorAvailable}
                       />
                     </span>
                 </Tooltip>

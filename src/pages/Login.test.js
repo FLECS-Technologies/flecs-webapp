@@ -135,7 +135,7 @@ describe('Login', () => {
     const message = getByLabelText('message')
 
     expect(message).toHaveTextContent('Successfully logged in!')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
   })
 
   test('Unsuccessfull Login', async () => {
@@ -157,6 +157,6 @@ describe('Login', () => {
     const message = getByLabelText('message')
 
     expect(message).toHaveTextContent('Failed to login')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
   })
 })

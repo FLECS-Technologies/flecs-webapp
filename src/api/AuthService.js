@@ -27,7 +27,7 @@ class AuthService {
     if (process.env.NODE_ENV === 'development') {
       url = process.env.REACT_APP_DEV_MP_URL
     } else {
-      url = MarketplaceAPIConfiguration.BASE_URL
+      url = MarketplaceAPIConfiguration.BETA_BASE_URL
     }
     url = url + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL
     return axios

@@ -20,8 +20,18 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Marketplace from './Marketplace'
+// import { getProducts } from '../api/ProductService'
+
+jest.mock('../api/ProductService', () => ({
+  getProducts: jest.fn()
+    .mockReturnValue(Promise.resolve())
+}))
 
 describe('Marketplace', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
   test('renders Marketplace page', () => {
     render(<Marketplace />)
 

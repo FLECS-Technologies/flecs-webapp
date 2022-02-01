@@ -180,7 +180,7 @@ export default function OutlinedCard (props) {
           disabled={installed || installing}
           onClick={() => installApp(props)}
           displaystate={displayState}
-          loading={installing}
+          loading={installing || false}
         />
         <LoadButton
           text="Uninstall"
@@ -190,7 +190,7 @@ export default function OutlinedCard (props) {
           color="error"
           onClick={() => setConfirmOpen(true)}
           displaystate={displayState}
-          loading={uninstalling}
+          loading={uninstalling || false}
         />
         <ConfirmDialog
           data-testid="confirm-dialog"

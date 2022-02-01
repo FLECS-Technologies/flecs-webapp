@@ -17,12 +17,69 @@
  */
 
 import React from 'react'
-import { render, fireEvent, within } from '@testing-library/react'
+import { render, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import MPList from './MarketplaceList'
+import { getProducts } from '../api/ProductService'
+
+jest.mock('../api/ProductService', () => ({ getProducts: jest.fn() }))
+// jest.useFakeTimers()
 
 describe('Marketplace List', () => {
-  const marketPlaceAppsList = [
+  const products = [{
+    id: 35,
+    name: 'CODESYS Control SL',
+    status: 'publish',
+    short_description: '<p>IEC61131-3 Runtime.</p>\n',
+    sku: '',
+    price: '1',
+    categories: [
+      {
+        id: 15,
+        name: 'Unkategorisiert',
+        slug: 'unkategorisiert'
+      }
+    ],
+    meta_data: [
+      {
+        id: 664,
+        key: 'port-author-name',
+        value: 'CODESYS GmbH'
+      },
+      {
+        id: 665,
+        key: 'port-release',
+        value: ''
+      },
+      {
+        id: 666,
+        key: 'port-version',
+        value: '4.2.0.0'
+      },
+      {
+        id: 670,
+        key: 'app-icon',
+        value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
+      },
+      {
+        id: 672,
+        key: 'port-requirement',
+        value: ''
+      },
+      {
+        id: 1669,
+        key: 'app-custom-meta',
+        value: [
+          {
+            title: 'reverse-domain-name',
+            icon: '',
+            value: 'com.codesys.control'
+          }
+        ]
+      }
+    ]
+  }]
+  const installedApps = [
     {
       app: 'com.codesys.control',
       avatar:
@@ -63,23 +120,30 @@ describe('Marketplace List', () => {
       instances: []
     }]
 
-  test('renders marketplace list component', () => {
-    const { getByTestId, queryAllByTestId } = render(<MPList appData={marketPlaceAppsList} />)
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
+  test('renders marketplace list component', async () => {
+    getProducts.mockReturnValueOnce(Promise.resolve(products))
+    const { getByTestId, queryAllByTestId } = await waitFor(() => render(<MPList appData={installedApps} />))
 
     const searchBar = getByTestId('search-bar')
     const apps = queryAllByTestId('app-card')
 
     expect(searchBar).toBeVisible()
-    expect(apps).toHaveLength(3)
+    expect(apps).toHaveLength(1 /* 3 */)
   })
 
-  test('filter apps by free text', () => {
-    const { getByTestId, queryAllByTestId } = render(<MPList appData={marketPlaceAppsList} />)
+  test('filter apps by free text', async () => {
+    getProducts.mockReturnValueOnce(Promise.resolve(products))
+
+    const { getByTestId, queryAllByTestId } = await waitFor(() => render(<MPList appData={installedApps} />))
 
     const searchBar = getByTestId('search-bar')
     const input = within(searchBar).getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'mqtt' } })
+    fireEvent.change(input, { target: { value: 'control' } })
 
     const apps = queryAllByTestId('app-card')
 

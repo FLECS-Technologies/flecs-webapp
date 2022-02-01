@@ -22,7 +22,7 @@ import { Paper, IconButton, Divider, Autocomplete, TextField } from '@mui/materi
 import { FilterList, Clear, Search } from '@mui/icons-material'
 
 const SearchBar = (props) => {
-  const { defaultSearchValue, setSearch, searchTitle, searchAutocomplete, filter } = props
+  const { defaultSearchValue, setSearch, searchTitle, searchAutocomplete, setToggleFilter } = props
   const valueRef = useRef('') // creating a refernce for TextField Component
 
   function search (event, reason) {
@@ -54,7 +54,7 @@ const SearchBar = (props) => {
 
   return (
     <Paper data-testid='search-bar' component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-        {filter && <IconButton sx={{ p: '10px' }} aria-label="filter">
+        {setToggleFilter && <IconButton onClick={setToggleFilter} sx={{ p: '10px' }} aria-label="filter">
             <FilterList />
         </IconButton>}
         <Search aria-label='search-icon' sx={{ ml: 1 }} />
@@ -89,13 +89,14 @@ const SearchBar = (props) => {
       <IconButton sx={{ p: '10px' }} aria-label="clear-all" onClick={clearSearch}>
         <Clear />
       </IconButton>
-    </Paper>)
+    </Paper>
+  )
 }
 
 SearchBar.propTypes = {
   defaultSearchValue: PropTypes.string,
   setSearch: PropTypes.func,
-  filter: PropTypes.array,
+  setToggleFilter: PropTypes.func,
   searchTitle: PropTypes.string,
   searchAutocomplete: PropTypes.array
 }

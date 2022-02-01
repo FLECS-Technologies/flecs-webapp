@@ -57,7 +57,7 @@ const FileOpen = (props) => {
         text={buttonText}
         variant='outlined'
         onClick={onButtonClick}
-        loading={loading}
+        loading={loading || undefined}
         disabled={disabled}
         >
         {buttonText}

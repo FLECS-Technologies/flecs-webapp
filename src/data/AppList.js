@@ -19,7 +19,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { ReferenceDataContext } from './ReferenceDataContext'
-import { marketPlaceAppsList } from './MarketplaceAppsList'
+// import { marketPlaceAppsList } from './MarketplaceAppsList'
 import DeviceAPI from '../api/DeviceAPI'
 import { getProducts } from '../api/ProductService'
 
@@ -51,7 +51,7 @@ class AppList extends Component {
     (async () => {
       const { setAppList } = this.context
 
-      let marketplaceAppList = [...marketPlaceAppsList]
+      let marketplaceAppList = [] // [...marketPlaceAppsList]
       let mergedList = []
 
       // todo: call api from the marketplace to get all apps
@@ -78,17 +78,28 @@ class AppList extends Component {
       const deviceAPI = new DeviceAPI()
       await deviceAPI.getInstalledApps()
       if (deviceAPI.lastAPICallSuccessfull) {
+        mergedList = deviceAPI.appList
+
+        mergedList.forEach((app) => {
+          const mpApp = this.findApp(app.app, marketplaceAppList)
+          if (mpApp) {
+            app.avatar = mpApp?.meta_data?.find(o => o.key === 'app-icon')?.value
+            app.title = mpApp?.name
+            app.author = mpApp?.meta_data.find(o => o.key === 'port-author-name')?.value
+          }
+        })
+
+        /*
         mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
           .reduce((r, o) => {
             const index = o?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value
             r[index] = r[index]
-              ? { ...r[index], instances: [...r[index].instances, ...o.instances], status: o.status }
+              ? { ...r[index], instances: [...r[index].instances, ...o.instances], status: o.status, avatar: o?.meta_data.find(o => o.key === 'app-icon')?.value, title: o?.name, author: o?.meta_data.find(o => o.key === 'port-author-name')?.value }
               : o
 
             return r
           }, {}))
 
-        /*
         mergedList = Object.values([...deviceAPI.appList, ...marketplaceAppList]
           .reduce((r, o) => {
             const index = o?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value
@@ -105,6 +116,17 @@ class AppList extends Component {
       }
     })()
       .catch(error => { console.log(error) })
+  }
+
+  findApp (app, list) {
+    let result
+    list.forEach((product) => {
+      if (app === product?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value) {
+        result = product
+      }
+    })
+
+    return result
   }
 
   render () {

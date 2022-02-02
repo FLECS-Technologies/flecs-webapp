@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import { ReferenceDataContext } from './ReferenceDataContext'
 // import { marketPlaceAppsList } from './MarketplaceAppsList'
 import DeviceAPI from '../api/DeviceAPI'
-import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getProducts, getReverseDomainName } from '../api/ProductService'
 
 class AppList extends Component {
   constructor (props) {
@@ -82,6 +82,7 @@ class AppList extends Component {
             app.title = mpApp?.name
             app.author = getAuthor(mpApp)
             app.relatedLinks = getCustomLinks(mpApp)
+            app.editor = getEditorAddress(mpApp)
           }
         })
 

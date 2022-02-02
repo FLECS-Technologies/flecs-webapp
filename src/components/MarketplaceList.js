@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import Grid from '@mui/material/Grid'
@@ -26,10 +26,11 @@ import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainNam
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 export default function MarketplaceList (props) {
   const [products, setProducts] = useState()
-  // const [appList, setAppList] = useState()
+  const { appList } = useContext(ReferenceDataContext)
   const [searchValue, setSearch] = useState('')
   const [searchAuthor, searchTitle] = searchValue.split(' / ')
   const [loading, setLoading] = useState(true)
@@ -81,7 +82,7 @@ export default function MarketplaceList (props) {
 
   function createProductCards (newProducts) {
     let productCards = []
-    if (newProducts && props.appData) {
+    if (newProducts) {
       productCards = newProducts.map((app) => (
         <Card
           key={getReverseDomainName(app) ? getReverseDomainName(app) : app?.id}
@@ -91,7 +92,7 @@ export default function MarketplaceList (props) {
           author={getAuthor(app)}
           version={getVersion(app)}
           description={getShortDescription(app)}
-          status={props.appData.find(o => o.app === getReverseDomainName(app))?.status || 'uninstalled'}
+          status={appList?.find(o => o.app === getReverseDomainName(app))?.status || 'uninstalled'}
           availability={app.status}
           relatedLinks={getCustomLinks(app)}
         />
@@ -108,9 +109,26 @@ export default function MarketplaceList (props) {
     }
   }
 
+  function updateProductCards () {
+    if (products && appList) {
+      const updatedProducts = products.map((app) => ({
+        ...app,
+        props: { ...app.props, status: appList?.find(o => o.app === app.props.app)?.status || 'uninstalled' }
+      }))
+
+      setProducts(updatedProducts)
+    }
+  }
+
   React.useEffect(() => {
     loadProducts()
   }, [loadProducts])
+
+  React.useEffect(() => {
+    if (!loading) {
+      updateProductCards()
+    }
+  }, [appList])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">

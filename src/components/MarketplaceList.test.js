@@ -17,15 +17,20 @@
  */
 
 import React from 'react'
-import { render, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import MPList from './MarketplaceList'
 import { getProducts } from '../api/ProductService'
+import { render, fireEvent, within, waitFor } from '@testing-library/react'
 
-jest.mock('../api/ProductService', () => ({ getProducts: jest.fn() }))
+jest.mock('../api/ProductService', () => ({
+  ...jest.requireActual('../api/ProductService'),
+  getProducts: jest.fn()
+}))
+// jest.mock('../api/ProductService', () => ({ getProducts: jest.fn() }))
 // jest.useFakeTimers()
 
 describe('Marketplace List', () => {
+  let container
   const products = [{
     id: 35,
     name: 'CODESYS Control SL',
@@ -124,23 +129,36 @@ describe('Marketplace List', () => {
     jest.resetAllMocks()
   })
 
+  beforeEach(() => {
+    container = document.createElement('div')
+    document.body.appendChild(container)
+  })
+
+  afterEach(() => {
+    document.body.removeChild(container)
+    container = null
+  })
+
   test('renders marketplace list component', async () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
-    const { getByTestId, queryAllByTestId } = await waitFor(() => render(<MPList appData={installedApps} />))
 
-    const searchBar = getByTestId('search-bar')
+    const { getByTestId, queryAllByTestId } = render(<MPList appData={installedApps} />, container)
+
+    const searchBar = await waitFor(() => getByTestId('search-bar'))
+    expect(searchBar).toBeInTheDocument()
+
     const apps = queryAllByTestId('app-card')
 
     expect(searchBar).toBeVisible()
-    expect(apps).toHaveLength(1 /* 3 */)
+    expect(apps).toHaveLength(1)
   })
 
   test('filter apps by free text', async () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
 
-    const { getByTestId, queryAllByTestId } = await waitFor(() => render(<MPList appData={installedApps} />))
+    const { getByTestId, queryAllByTestId } = render(<MPList appData={installedApps} />)
 
-    const searchBar = getByTestId('search-bar')
+    const searchBar = await waitFor(() => getByTestId('search-bar'))
     const input = within(searchBar).getByRole('textbox')
 
     fireEvent.change(input, { target: { value: 'control' } })
@@ -148,5 +166,37 @@ describe('Marketplace List', () => {
     const apps = queryAllByTestId('app-card')
 
     expect(apps).toHaveLength(1)
+  })
+
+  test('filter apps by installable filter', async () => {
+    getProducts.mockReturnValueOnce(Promise.resolve(products))
+
+    const { getByTestId } = render(<MPList appData={installedApps} />)
+
+    const searchBar = await waitFor(() => getByTestId('search-bar'))
+    const filterButton = within(searchBar).getByLabelText('filter')
+
+    expect(filterButton).toBeEnabled()
+
+    fireEvent.click(filterButton)
+
+    const filterByInstallable = await waitFor(() => getByTestId('installable-filter'))
+    expect(filterByInstallable).toBeEnabled()
+
+    fireEvent.click(filterByInstallable)
+  })
+
+  test('fetching products failed', async () => {
+    getProducts.mockReturnValueOnce(Promise.reject(new Error('failed to load products')))
+
+    const { getByTestId, queryAllByTestId } = render(<MPList appData={installedApps} />)
+
+    const searchBar = await waitFor(() => getByTestId('search-bar'))
+
+    expect(searchBar).toBeInTheDocument()
+
+    const apps = queryAllByTestId('app-card')
+
+    expect(apps).toHaveLength(0)
   })
 })

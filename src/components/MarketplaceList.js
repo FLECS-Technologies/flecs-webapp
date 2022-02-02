@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import SearchBar from './SearchBar'
-import { getProducts } from '../api/ProductService'
-import { CircularProgress, Collapse, List, Typography } from '@mui/material'
+import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName, getShortDescription, getVersion } from '../api/ProductService'
+import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
 
 export default function MarketplaceList (props) {
-  let products = []
-  const [appList, setAppList] = useState()
+  const [products, setProducts] = useState()
+  // const [appList, setAppList] = useState()
   const [searchValue, setSearch] = useState('')
   const [searchAuthor, searchTitle] = searchValue.split(' / ')
   const [loading, setLoading] = useState(true)
@@ -53,13 +53,15 @@ export default function MarketplaceList (props) {
   function toggleFilter () {
     setToggleFilter(!showFilter)
   }
-  async function loadProducts () {
+  const loadProducts = useCallback(async () => {
     try {
       await getProducts(queryParams)
         .then(
-          (products) => {
-            products.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
-            setAppList(products)
+          (loadedProducts) => {
+            loadedProducts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+
+            const productCards = createProductCards(loadedProducts)
+            setProducts(productCards)
           },
           error => {
             const resMessage =
@@ -75,34 +77,40 @@ export default function MarketplaceList (props) {
     } catch (error) {
       console.log(error.response)
     }
+  }, [queryParams])
+
+  function createProductCards (newProducts) {
+    let productCards = []
+    if (newProducts && props.appData) {
+      productCards = newProducts.map((app) => (
+        <Card
+          key={getReverseDomainName(app) ? getReverseDomainName(app) : app?.id}
+          app={getReverseDomainName(app)}
+          avatar={getAppIcon(app)}
+          title={app.name}
+          author={getAuthor(app)}
+          version={getVersion(app)}
+          description={getShortDescription(app)}
+          status={props.appData.find(o => o.app === getReverseDomainName(app))?.status || 'uninstalled'}
+          availability={app.status}
+          relatedLinks={getCustomLinks(app)}
+        />
+      ))
+
+      // this filters the users search
+      if (searchAuthor.length > 0 && !searchTitle) {
+        productCards = productCards.filter(app => (app.props.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+      } else if (searchAuthor.length > 0 && (searchTitle && searchTitle.length > 0)) {
+        productCards = productCards.filter(app => (app.props.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
+      }
+
+      return productCards
+    }
   }
 
   React.useEffect(() => {
     loadProducts()
-  }, [queryParams])
-  if (appList && props.appData) {
-    products = appList.map((app) => (
-      <Card
-        key={app?.meta_data.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value}
-        app={app?.meta_data.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value}
-        avatar={app?.meta_data.find(o => o.key === 'app-icon')?.value}
-        title={app.name}
-        author={app?.meta_data.find(o => o.key === 'port-author-name')?.value}
-        version={app?.meta_data.find(o => o.key === 'port-version')?.value}
-        description={app.short_description.replace(/<[^>]+>/g, '')}
-        status={props.appData.find(o => o.app === app?.meta_data.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value)?.status || 'uninstalled'}
-        availability={app.status}
-        relatedLinks={app.relatedLinks}
-      />
-    ))
-
-    // this filters the users search
-    if (searchAuthor.length > 0 && !searchTitle) {
-      products = products.filter(app => (app.props.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
-    } else if (searchAuthor.length > 0 && (searchTitle && searchTitle.length > 0)) {
-      products = products.filter(app => (app.props.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
-    }
-  }
+  }, [loadProducts])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
@@ -113,12 +121,12 @@ export default function MarketplaceList (props) {
         alignItems="flex-start"
       >
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
-            <List>
-              <SearchBar testId='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={products ? products.map((app) => (app.props.author + ' / ' + app.props.title)).sort() : null} setToggleFilter={toggleFilter}/>
-              <Collapse in={showFilter} timeout="auto" unmountOnExit>
+
+              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={products ? products.map((app) => (app.props.author + ' / ' + app.props.title)).sort() : null} setToggleFilter={toggleFilter}/>
+              <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
                 <AppFilter open={showFilter} setInstalled={setInstalledFilter} installed={(queryParams.status === 'publish')}/>
               </Collapse>
-            </List>
+
         </Grid>
         {loading && (
           <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>

@@ -41,6 +41,7 @@ import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
+import { useAuth } from './AuthProvider'
 
 const headCells = [
 
@@ -147,6 +148,7 @@ function stableSort (array, comparator) {
 
 export default function DeviceAppsList (props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext)
+  const user = useAuth()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
   const [page, setPage] = useStateWithLocalStorage('installedApps.paginator.page', 0)
@@ -241,7 +243,7 @@ export default function DeviceAppsList (props) {
           >
             Installed Apps
           </Typography>
-          <Tooltip title="Install your own app on this device">
+          <Tooltip title={user?.user ? 'Install your own app on this device' : 'Please log in to be able to sideload apps'}>
             <div>
             <FileOpen
               data-testid="sideload-app-button"
@@ -251,7 +253,7 @@ export default function DeviceAppsList (props) {
               // setFile={setSideloadFile}
               loading={sideLoading}
               onConfirm={handleOnSideloadConfirm}
-              disabled={sideLoading}
+              disabled={sideLoading || !user?.user}
             ></FileOpen>
             </div>
           </Tooltip>

@@ -55,8 +55,8 @@ export default function AppLinksMenu (props) {
             onClose={handleClose}
         >
             {appLinks && appLinks.map((link) => (
-                <MenuItem data_testid={link.link} key={link} component='a' href={(link.link) ? link.link : '#'} target='_blank'>
-                    {(link.text) ? link.text : 'further information'}
+                <MenuItem data_testid={link.url} key={link} component='a' href={(link.url) ? link.url : '#'} target='_blank'>
+                    {(link.title) ? link.title : 'further information'}
                 </MenuItem>
             ))}
         </Menu>

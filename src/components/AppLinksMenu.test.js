@@ -27,17 +27,17 @@ import { BrowserRouter as Router } from 'react-router-dom'
 describe('AppLinksMenu', () => {
   const relatedLinks = [
     {
-      text: 'Buy',
-      link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
+      title: 'Buy',
+      url: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
     },
     {
-      text: 'Documentation',
-      link: 'https://help.codesys.com/webapp/_lnx_f_help;product=codesys_control_for_linux_sl;version=4.2.0.0'
+      title: 'Documentation',
+      url: 'https://help.codesys.com/webapp/_lnx_f_help;product=codesys_control_for_linux_sl;version=4.2.0.0'
 
     },
     {
-      text: 'Download IDE',
-      link: 'https://store.codesys.com/de/codesys.html'
+      title: 'Download IDE',
+      url: 'https://store.codesys.com/de/codesys.html'
     }
   ]
   test('renders AppLinksMenu', () => {
@@ -48,7 +48,7 @@ describe('AppLinksMenu', () => {
 
     fireEvent.click(menuButton)
 
-    const menuItem = getByText(relatedLinks[0].text)
+    const menuItem = getByText(relatedLinks[0].title)
 
     expect(menuItem).toBeVisible()
 

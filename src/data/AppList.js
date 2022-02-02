@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import { ReferenceDataContext } from './ReferenceDataContext'
 // import { marketPlaceAppsList } from './MarketplaceAppsList'
 import DeviceAPI from '../api/DeviceAPI'
-import { getProducts } from '../api/ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/ProductService'
 
 class AppList extends Component {
   constructor (props) {
@@ -51,13 +51,8 @@ class AppList extends Component {
     (async () => {
       const { setAppList } = this.context
 
-      let marketplaceAppList = [] // [...marketPlaceAppsList]
+      let marketplaceAppList = []
       let mergedList = []
-
-      // todo: call api from the marketplace to get all apps
-      //   useEffect(() => {
-      //       setMarketPlaceList(marketplaceAppList => [...marketplaceAppList, ...marketPlaceAppsList]);
-      //   }, []);
 
       await getProducts().then(
         (products) => {
@@ -83,32 +78,13 @@ class AppList extends Component {
         mergedList.forEach((app) => {
           const mpApp = this.findApp(app.app, marketplaceAppList)
           if (mpApp) {
-            app.avatar = mpApp?.meta_data?.find(o => o.key === 'app-icon')?.value
+            app.avatar = getAppIcon(mpApp)
             app.title = mpApp?.name
-            app.author = mpApp?.meta_data.find(o => o.key === 'port-author-name')?.value
+            app.author = getAuthor(mpApp)
+            app.relatedLinks = getCustomLinks(mpApp)
           }
         })
 
-        /*
-        mergedList = Object.values([...marketplaceAppList, ...deviceAPI.appList]
-          .reduce((r, o) => {
-            const index = o?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value
-            r[index] = r[index]
-              ? { ...r[index], instances: [...r[index].instances, ...o.instances], status: o.status, avatar: o?.meta_data.find(o => o.key === 'app-icon')?.value, title: o?.name, author: o?.meta_data.find(o => o.key === 'port-author-name')?.value }
-              : o
-
-            return r
-          }, {}))
-
-        mergedList = Object.values([...deviceAPI.appList, ...marketplaceAppList]
-          .reduce((r, o) => {
-            const index = o?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value
-            r[index] = r[index]
-              ? { ...r[index], availability: o?.availability, avatar: o?.meta_data?.find(o => o.key === 'app-icon')?.value }
-              : o
-
-            return r
-          }, {})) */
         setAppList(appList => [...mergedList])
       } else {
         setAppList(appList => [...marketplaceAppList])
@@ -121,7 +97,7 @@ class AppList extends Component {
   findApp (app, list) {
     let result
     list.forEach((product) => {
-      if (app === product?.meta_data?.find(o => o.key === 'app-custom-meta')?.value.find(o => o.title === 'reverse-domain-name')?.value) {
+      if (app === getReverseDomainName(product)) {
         result = product
       }
     })

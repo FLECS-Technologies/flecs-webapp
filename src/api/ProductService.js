@@ -43,4 +43,37 @@ function getProducts (params) {
     })
 }
 
-export { getProducts }
+function getReverseDomainName (app) {
+  let reverseDomainName
+  if (app) {
+    reverseDomainName = app.attributes?.find(o => o.name === 'reverse-domain-name')?.options[0]
+  }
+  return reverseDomainName
+}
+
+function getEditorAddress (app) {
+  return app?.attributes?.find(o => o.name === 'editor')?.options[0]
+}
+
+function getAppIcon (app) {
+  return app?.meta_data.find(o => o.key === 'app-icon')?.value
+}
+
+function getAuthor (app) {
+  return app?.meta_data.find(o => o.key === 'port-author-name')?.value
+}
+
+function getVersion (app) {
+  return app?.meta_data.find(o => o.key === 'port-version')?.value
+}
+
+function getShortDescription (app) {
+  return app?.short_description?.replace(/<[^>]+>/g, '')
+}
+
+function getCustomLinks (app) {
+  const customLinks = app?.meta_data.find(o => o.key === 'app-custom-link')?.value
+  if (customLinks === '') { return undefined } else { return customLinks }
+}
+
+export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks }

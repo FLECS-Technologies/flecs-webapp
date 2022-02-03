@@ -27,7 +27,15 @@ class AppList extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      updateNow: false
+      updateNow: false,
+      queryParams: {
+        page: undefined,
+        per_page: undefined,
+        search: undefined,
+        order: undefined,
+        orderby: undefined,
+        status: 'publish'
+      }
     }
   }
 
@@ -54,7 +62,7 @@ class AppList extends Component {
       let marketplaceAppList = []
       let mergedList = []
 
-      await getProducts().then(
+      await getProducts(this.state.queryParams).then(
         (products) => {
           marketplaceAppList = marketplaceAppList.concat(products)
         },

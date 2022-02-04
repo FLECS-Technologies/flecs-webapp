@@ -73,7 +73,13 @@ function getShortDescription (app) {
 
 function getCustomLinks (app) {
   const customLinks = app?.meta_data.find(o => o.key === 'app-custom-link')?.value
-  if (customLinks === '') { return undefined } else { return customLinks }
+  if (customLinks === '') {
+    return undefined
+  } else if (!Array.isArray(customLinks)) {
+    const retval = []
+    retval.push(customLinks['1'])
+    return retval
+  } else { return customLinks }
 }
 
 export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks }

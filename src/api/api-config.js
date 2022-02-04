@@ -34,6 +34,8 @@ const PUT_SIDELOAD_APP = '/SideloadApp'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
+const MP_CART_ROUTE = '/kasse?cocart-load-cart='
+const MP_INSTALL_TICKET_ID = 122
 
 const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
@@ -96,6 +98,14 @@ class MarketplaceAPIConfiguration {
 
   static get BETA_BASE_URL () {
     return MP_BETA_BASE_URL
+  }
+
+  static get MP_CART_ROUTE () {
+    return MP_CART_ROUTE
+  }
+
+  static get MP_INSTALL_TICKET_ID () {
+    return MP_INSTALL_TICKET_ID
   }
 
   // get requests

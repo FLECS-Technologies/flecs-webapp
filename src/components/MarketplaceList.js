@@ -59,10 +59,12 @@ export default function MarketplaceList (props) {
       await getProducts(queryParams)
         .then(
           (loadedProducts) => {
-            loadedProducts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+            try {
+              loadedProducts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
 
-            const productCards = createProductCards(loadedProducts)
-            setProducts(productCards)
+              const productCards = createProductCards(loadedProducts)
+              setProducts(productCards)
+            } catch (error) { console.log(error) }
           },
           error => {
             const resMessage =

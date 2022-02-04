@@ -22,6 +22,7 @@ function getProducts (params) {
   let url
   const { /* page , per_page, search, order, orderby, */ status } = params || {}
   const reqParams = new URLSearchParams()
+  reqParams.append('exclude', [122])
   if (status) {
     reqParams.append('status', status)
   }
@@ -73,7 +74,7 @@ function getShortDescription (app) {
 
 function getCustomLinks (app) {
   const customLinks = app?.meta_data.find(o => o.key === 'app-custom-link')?.value
-  if (customLinks === '') {
+  if (!customLinks || customLinks === '') {
     return undefined
   } else if (!Array.isArray(customLinks)) {
     const retval = []

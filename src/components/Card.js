@@ -33,6 +33,8 @@ import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
 import AppLinksMenu from './AppLinksMenu'
+import ContentDialog from './ContentDialog'
+import InstallAppStepper from './InstallAppStepper'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -53,8 +55,8 @@ export default function OutlinedCard (props) {
     alertSeverity: 'success',
     clipBoardContent: ''
   })
-
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
+  const [installAppOpen, setInstallAppOpen] = useState(false)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -68,6 +70,7 @@ export default function OutlinedCard (props) {
 
   const installApp = async (props) => {
     setInstalling(true)
+    setInstallAppOpen(true)
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
     await appAPI.installFromMarketplace()
@@ -216,6 +219,13 @@ export default function OutlinedCard (props) {
           setOpen={setSnackbarOpen}
           alertSeverity={alertSeverity}
         />
+        <ContentDialog
+          open={installAppOpen}
+          setOpen={setInstallAppOpen}
+          title={'Install ' + props.title}
+        >
+          <InstallAppStepper app={props} />
+        </ContentDialog>
       </CardActions>
     </Card>
   )

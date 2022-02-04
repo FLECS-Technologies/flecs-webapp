@@ -11,6 +11,8 @@ function ContentDialog (props) {
 
   return (
     <Dialog
+        fullWidth={true}
+        maxWidth='lg'
         open={open}
         onClose={handleClose}
         scroll='paper'

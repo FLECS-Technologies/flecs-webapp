@@ -16,9 +16,15 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SelectTicket from './SelectTicket'
+import { addToCart } from '../api/Cart'
+
+jest.mock('../api/Cart', () => ({
+  ...jest.requireActual('../api/Cart'),
+  addToCart: jest.fn()
+}))
 
 describe('Test SelectTicket', () => {
   test('renders SelectTicket component', () => {
@@ -29,7 +35,10 @@ describe('Test SelectTicket', () => {
     expect(sideloadButton).toBeVisible()
   })
 
-  test('Click on the open-cart card', () => {
+  test('Click on the open-cart card', async () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+    addToCart.mockReturnValueOnce(Promise.resolve('my-cart-key'))
     const { getByTestId } = render(<SelectTicket />)
 
     const openCartCard = getByTestId('open-cart-card-action')
@@ -37,5 +46,24 @@ describe('Test SelectTicket', () => {
     expect(openCartCard).toBeEnabled()
 
     fireEvent.click(openCartCard)
+
+    await waitFor(() => expect(getByTestId('open-cart-card-action')).toBeEnabled())
+    expect(window.open).toHaveBeenCalled()
+  })
+
+  test('Failed to load cart', async () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+    addToCart.mockReturnValueOnce(Promise.reject(new Error('failed to load cart')))
+    const { getByTestId } = render(<SelectTicket />)
+
+    const openCartCard = getByTestId('open-cart-card-action')
+
+    expect(openCartCard).toBeEnabled()
+
+    fireEvent.click(openCartCard)
+
+    await waitFor(() => expect(getByTestId('open-cart-card-action')).toBeEnabled())
+    expect(window.open).not.toHaveBeenCalled()
   })
 })

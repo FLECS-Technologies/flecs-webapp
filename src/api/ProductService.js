@@ -73,7 +73,7 @@ function getShortDescription (app) {
 
 function getCustomLinks (app) {
   const customLinks = app?.meta_data.find(o => o.key === 'app-custom-link')?.value
-  if (customLinks === '') {
+  if (!customLinks || customLinks === '') {
     return undefined
   } else if (!Array.isArray(customLinks)) {
     const retval = []

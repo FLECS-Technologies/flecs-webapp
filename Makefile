@@ -6,11 +6,11 @@ endif
 
 .PHONY: docker
 docker:
-	@docker login -u $${REGISTRY_USER} -p $${REGISTRY_AUTH} marketplace.flecs.tech:5001
+	@docker login -u $${REGISTRY_USER} -p $${REGISTRY_AUTH}
 	docker buildx build \
 	--push \
 	--platform linux/amd64,linux/arm/v7,linux/arm64 \
-	--tag marketplace.flecs.tech:5001/flecs/webapp:$(DOCKER_TAG) \
+	--tag flecs/webapp:$(DOCKER_TAG) \
 	--file docker/Dockerfile \
 	.
 

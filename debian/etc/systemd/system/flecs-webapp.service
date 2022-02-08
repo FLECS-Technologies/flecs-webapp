@@ -6,13 +6,14 @@ After=docker.service containerd.service
 Requires=docker.service containerd.service
 
 [Service]
+Type=oneshot
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker stop flecs-webapp
-ExecStartPre=-/usr/bin/docker rm flecs-webapp
-ExecStartPre=-/usr/bin/docker pull flecs/webapp:latest
-ExecStart=/usr/bin/docker run -p 80:80 --add-host=host.docker.internal:host-gateway --name flecs-webapp flecs/webapp:latest
-ExecStop=/usr/bin/docker stop flecs-webapp
-Restart=on-failure
+ExecStart=/usr/bin/flecs-webapp.sh
+RemainAfterExit=yes
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/usr/bin/flecs-webapp.sh
 
 [Install]
 WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 Package: flecs-webapp
-Version: 0.1.0-b3
+Version: 1.0.0-alpha
 Description: FLECS App Management Web App
 Architecture: all
 Priority: optional

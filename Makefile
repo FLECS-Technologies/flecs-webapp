@@ -15,5 +15,6 @@ docker:
 	.
 
 .PHONY: deb-pkg
+deb-pkg: VERSION=$$(cat debian/DEBIAN/control | grep -oE "[0-9]\.[0-9]\.[0-9]-.+")
 deb-pkg:
-	dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp.deb
+	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_${VERSION}_all.deb

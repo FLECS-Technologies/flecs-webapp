@@ -49,3 +49,22 @@ jobs:
       - name: build and push
         run: |
           make docker
+
+  package:
+    runs-on: ubuntu-20.04
+    container: flecs/flecs-build
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build and push
+        run: |
+          make deb-pkg
+
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOSTNAME }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "*.deb"
+          target: ${{ secrets.SSH_DEVELOP_TARGET_DIR }}

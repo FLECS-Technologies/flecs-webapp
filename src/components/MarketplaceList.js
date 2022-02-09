@@ -22,6 +22,7 @@ import Card from './Card'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import SearchBar from './SearchBar'
+import CloudOffIcon from '@mui/icons-material/CloudOff'
 import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName, getShortDescription, getVersion } from '../api/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
@@ -34,6 +35,7 @@ export default function MarketplaceList (props) {
   const [searchValue, setSearch] = useState('')
   const [searchAuthor, searchTitle] = searchValue.split(' / ')
   const [loading, setLoading] = useState(true)
+  const [loadingError, setLoadingError] = useState(false)
   const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
     page: undefined,
     per_page: undefined,
@@ -64,6 +66,7 @@ export default function MarketplaceList (props) {
 
               const productCards = createProductCards(loadedProducts)
               setProducts(productCards)
+              setLoadingError(false)
             } catch (error) { console.log(error) }
           },
           error => {
@@ -74,6 +77,7 @@ export default function MarketplaceList (props) {
           error.message ||
           error.toString()
             console.log(resMessage)
+            setLoadingError(true)
           }
         )
         .finally(function () { setLoading(false) })
@@ -158,7 +162,16 @@ export default function MarketplaceList (props) {
             <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
           </Grid>
         )}
-        {products}
+        {(loadingError && !loading) &&
+        (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
+          <CloudOffIcon fontSize='large'/>
+        </Grid>)}
+        {(loadingError && !loading) &&
+        (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
+            <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
+          </Grid>)
+        }
+        { products }
       </Grid>
     </Box>
   )

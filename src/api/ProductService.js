@@ -83,4 +83,9 @@ function getCustomLinks (app) {
   } else { return customLinks }
 }
 
-export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks }
+function getMultiInstance (app) {
+  const multiInstance = app.attributes?.find(o => o.name === 'multiInstance')?.options[0]
+  return (!!multiInstance)
+}
+
+export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance }

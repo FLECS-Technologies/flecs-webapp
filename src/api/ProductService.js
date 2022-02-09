@@ -30,7 +30,7 @@ function getProducts (params) {
   if (process.env.NODE_ENV === 'development') {
     url = process.env.REACT_APP_DEV_LOCAL_MP_URL
   } else {
-    url = MarketplaceAPIConfiguration.BASE_DEV_URL
+    url = MarketplaceAPIConfiguration.BASE_URL
   }
   return axios
     .get(url + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })

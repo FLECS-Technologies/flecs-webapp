@@ -22,7 +22,7 @@ function getProducts (params) {
   let url
   const { /* page , per_page, search, order, orderby, */ status } = params || {}
   const reqParams = new URLSearchParams()
-  reqParams.append('exclude', [122])
+  reqParams.append('category', '18')
   if (status) {
     reqParams.append('status', status)
   }
@@ -30,7 +30,7 @@ function getProducts (params) {
   if (process.env.NODE_ENV === 'development') {
     url = process.env.REACT_APP_DEV_LOCAL_MP_URL
   } else {
-    url = MarketplaceAPIConfiguration.BETA_BASE_URL
+    url = MarketplaceAPIConfiguration.BASE_URL
   }
   return axios
     .get(url + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })
@@ -83,4 +83,9 @@ function getCustomLinks (app) {
   } else { return customLinks }
 }
 
-export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks }
+function getMultiInstance (app) {
+  const multiInstance = app.attributes?.find(o => o.name === 'multiInstance')?.options[0]
+  return (!!multiInstance)
+}
+
+export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance }

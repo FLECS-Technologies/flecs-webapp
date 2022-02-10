@@ -15,27 +15,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import '@testing-library/jest-dom'
 import { addToCart } from './Cart'
 import CoCartAPI from '@cocart/cocart-rest-api'
 
-jest.mock('@cocart/cocart-rest-api', () => ({
-  ...jest.requireActual('@cocart/cocart-rest-api'),
-  post: jest.fn()
-}))
+const responseData = {
+  data: {
+    cart_key: 'my-cart-key'
+  }
+}
 
 describe('Cart', () => {
+  beforeEach(() => {
+  })
   afterAll(() => {
     jest.resetAllMocks()
   })
 
   test('Successfull addToCart call', async () => {
-    CoCartAPI.post.mockResolvedValue(Promise.resolve('my-cart-key'))
+    const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockResolvedValueOnce(responseData)
     const cartkey = await addToCart(12)
 
-    expect(cartkey).toBe('my-cart-key')
+    expect(spy).toHaveBeenCalled()
+    expect(cartkey).toBe(responseData.data.cart_key)
+
+    spy.mockRestore()
   })
 
   test('Unsuccessfull addToCart call', async () => {
-    // CoCartAPI.post.mockResolvedValueOnce(Promise.reject(new Error('Failed to add item to cart')))
+    const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockRejectedValueOnce('failed to add item.')
+
+    await addToCart(12)
+      .catch(e => {
+        expect(e).toEqual('failed to add item.')
+      })
+
+    expect(spy).toHaveBeenCalled()
+
+    spy.mockRestore()
   })
 })

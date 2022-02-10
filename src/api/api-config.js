@@ -36,6 +36,7 @@ const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
 const MP_CART_ROUTE = '/kasse?cocart-load-cart='
 const MP_INSTALL_TICKET_ID = 122
+const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
@@ -106,6 +107,10 @@ class MarketplaceAPIConfiguration {
 
   static get MP_INSTALL_TICKET_ID () {
     return MP_INSTALL_TICKET_ID
+  }
+
+  static get BASE_DEV_URL () {
+    return MP_BASE_DEV_URL
   }
 
   // get requests

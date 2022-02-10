@@ -23,6 +23,8 @@ import AuthService from './AuthService'
 function createCart () {}
 
 async function getCurrentCart () {
+  /* getCurrentCart is currently not used. */
+  /*
   const currentUser = AuthService.getCurrentUser()
 
   const CoCart = new CoCartAPI({
@@ -42,6 +44,7 @@ async function getCurrentCart () {
     .finally(() => {
       // Always executed.
     })
+    */
 }
 
 async function addToCart (appId) {

@@ -75,7 +75,7 @@ export default function SelectTicket (props) {
     <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
         <Grid item >
             <Alert sx={{ mb: 2 }} severity='info'>
-                <Typography variant='body2'>To install or update an app, you must first purchase a download or installation ticket.</Typography>
+                <Typography variant='body2'>To install or update an app, you must first purchase an installation ticket.</Typography>
                 <Typography variant='body2'>To make it as easy as possible for you to try out FLECS, we&apos;ll give you three of these tickets per month for free.
                 Once you have a ticket, you can install {app?.title} in the next step.</Typography>
                 <Typography variant='body2'>If you already have a ticket, you can simply continue with the next.</Typography>

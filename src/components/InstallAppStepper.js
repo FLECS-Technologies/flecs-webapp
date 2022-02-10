@@ -71,10 +71,6 @@ export default function InstallAppStepper (props) {
     })
   }
 
-  const handleReset = () => {
-    setActiveStep(0)
-  }
-
   return (
     <Box sx={{ width: '100%' }}>
       <Stepper data-testid='install-app-stepper' activeStep={activeStep}>
@@ -96,22 +92,9 @@ export default function InstallAppStepper (props) {
           )
         })}
       </Stepper>
-      {activeStep === steps.length
-        ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleReset}>Reset</Button>
-          </Box>
-        </React.Fragment>
-          )
-        : (
         <React.Fragment>
           {(activeStep === 0) && <SelectTicket app={app}/>}
-          {(activeStep === 1) && <InstallApp app={app}/>}
+          {(activeStep === 1) && <InstallApp app={app} install={(activeStep === 1)}/>}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               data-testid='back-button'
@@ -128,13 +111,11 @@ export default function InstallAppStepper (props) {
                 Skip
               </Button>
             )}
-
-            <Button data-testid='next-button' onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+            <Button data-testid='next-button' onClick={handleNext} disabled={(activeStep === steps.length - 1)}>
+              Next
             </Button>
           </Box>
         </React.Fragment>
-          )}
     </Box>
   )
 }

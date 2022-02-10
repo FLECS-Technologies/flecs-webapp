@@ -15,17 +15,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CircularProgress, Grid, Typography } from '@mui/material'
+import { Button, CircularProgress, Grid, Typography } from '@mui/material'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import ReplayIcon from '@mui/icons-material/Replay'
+import ReportIcon from '@mui/icons-material/Report'
+import PropTypes from 'prop-types'
 import React from 'react'
-export default function InstallApp () {
+import AppAPI from '../api/AppAPI'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
+
+export default function InstallApp (props) {
+  const { install, app } = (props)
+  const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
+  const [installing, setInstalling] = React.useState(false)
+  const [success, setSuccess] = React.useState(false)
+  const [error, setError] = React.useState(false)
+  const [retry, setRetry] = React.useState(false)
+  const [installationMessage, setInstallationMessage] = React.useState('')
+
+  function loadReferenceData (props) {
+    if (appList) {
+      const tmpApp = appList.find(obj => {
+        return obj.app === props.app
+      })
+
+      return tmpApp
+    }
+  }
+
+  const installApp = React.useCallback(async (app) => {
+    setInstalling(true)
+    setSuccess(false)
+    setError(false)
+    setInstallationMessage('Installing...')
+    const appAPI = new AppAPI(app)
+    appAPI.setAppData(loadReferenceData(app))
+    await appAPI.installFromMarketplace()
+
+    if (appAPI.lastAPICallSuccessfull) {
+      // trigger a reload of all installed apps
+      setUpdateAppList(true)
+      setSuccess(true)
+      setInstallationMessage('Congratulations! ' + app.title + ' was successfully installed!')
+    } else {
+      setSuccess(false)
+      setError(true)
+      setInstallationMessage('Oops... ' + (appAPI.lastAPIError.additionalInfo || 'Error during the installation of ' + appAPI.app.title + '.'))
+    }
+    setInstalling(false)
+  })
+
+  React.useEffect(() => {
+    if (app && install && !installing && (!success || !error)) {
+      setRetry(false)
+      installApp(app)
+    }
+  }, [retry])
+
   return (
-      <Grid data-testid='install-app-step' container direction="column" style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
+    <div>
+      <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          <CircularProgress></CircularProgress>
+          {installing && <CircularProgress></CircularProgress>}
+          {(success && !installing) && <CheckCircleIcon fontSize='large' color='success'></CheckCircleIcon>}
+          {error && <ReportIcon fontSize='large' color='error'></ReportIcon>}
         </Grid>
         <Grid item >
-          <Typography>Installing...</Typography>
+          <Typography>{installationMessage}</Typography>
         </Grid>
+        {(error) &&
+        <Grid item >
+          <Button onClick={() => setRetry(true)} startIcon={<ReplayIcon />}>Retry</Button>
+        </Grid>}
       </Grid>
+    </div>
   )
+}
+
+InstallApp.propTypes = {
+  install: PropTypes.bool,
+  app: PropTypes.object
 }

@@ -49,7 +49,7 @@ describe('Test InstallAppStepper', () => {
 
     const installApp = await waitFor(() => getByTestId('install-app-step'))
 
-    expect(nextButton).toBeEnabled()
+    expect(nextButton).toBeDisabled()
     expect(backButton).toBeEnabled()
     expect(installApp).toBeVisible()
 

@@ -33,11 +33,13 @@ import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
 import AppLinksMenu from './AppLinksMenu'
+import ContentDialog from './ContentDialog'
+import InstallAppStepper from './InstallAppStepper'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const installed = (props.status === 'installed')
-  const [installing, setInstalling] = useState(false)
+  // const [installing, setInstalling] = useState(false)
   const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
@@ -53,8 +55,8 @@ export default function OutlinedCard (props) {
     alertSeverity: 'success',
     clipBoardContent: ''
   })
-
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
+  const [installAppOpen, setInstallAppOpen] = useState(false)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -64,35 +66,6 @@ export default function OutlinedCard (props) {
 
       return tmpApp
     }
-  }
-
-  const installApp = async (props) => {
-    setInstalling(true)
-    const appAPI = new AppAPI(props)
-    appAPI.setAppData(loadReferenceData(props))
-    await appAPI.installFromMarketplace()
-
-    const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
-    const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
-    let snackbarText, errorMessage
-
-    if (appAPI.lastAPICallSuccessfull && !installed) {
-      // trigger a reload of all installed apps
-      setUpdateAppList(true)
-      snackbarText = props.title + ' successfully installed.'
-    } else {
-      snackbarText = 'Failed to install ' + props.title + '.'
-      errorMessage = 'Error during the installation of ' + appAPI.app.title
-    }
-
-    setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText,
-      displayCopyState: displayCopyIcon,
-      clipBoardContent: errorMessage
-    })
-    setSnackbarOpen(true)
-    setInstalling(false)
   }
 
   const uninstallApp = async (props) => {
@@ -177,10 +150,10 @@ export default function OutlinedCard (props) {
           variant="contained"
           color="success"
           label="install-app-button"
-          disabled={installed || installing}
-          onClick={() => installApp(props)}
+          disabled={installed}
+          onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
-          loading={installing || false}
+          // loading={installing || false}
         />
         <LoadButton
           text="Uninstall"
@@ -216,6 +189,13 @@ export default function OutlinedCard (props) {
           setOpen={setSnackbarOpen}
           alertSeverity={alertSeverity}
         />
+        <ContentDialog
+          open={installAppOpen}
+          setOpen={setInstallAppOpen}
+          title={'Install ' + props.title}
+        >
+          <InstallAppStepper app={props} />
+        </ContentDialog>
       </CardActions>
     </Card>
   )

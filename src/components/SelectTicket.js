@@ -18,7 +18,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckCircle'
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber'
 import ErrorIcon from '@mui/icons-material/Error'
 import { Alert, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, LinearProgress, Typography } from '@mui/material'
@@ -28,7 +28,7 @@ import ActionSnackbar from './ActionSnackbar'
 
 export default function SelectTicket (props) {
   const { app } = (props)
-  const [tickets, setTickets] = React.useState()
+  const [tickets, setTickets] = React.useState([1, 2, 3])
   const [loadingCart, setLoadingCart] = React.useState(false)
   const [loadingTickets, setLoadingTickets] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -101,7 +101,7 @@ export default function SelectTicket (props) {
               <CardContent sx={{ p: 0, minHeight: 230, maxHeight: 230 }}>
                   <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>
                   <Badge badgeContent={tickets ? <CheckIcon fontSize='small' color='success'/> : <ErrorIcon fontSize='small' color='error'/>}>
-                    <Card sx={{ p: 3 }} variant='outlined'>
+                    <Card sx={{ p: 3 }} variant='outlined' >
                         <ConfirmationNumberIcon color='primary' fontSize='large'/>
                     </Card>
                     </Badge>

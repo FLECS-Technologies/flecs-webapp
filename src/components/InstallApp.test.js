@@ -17,12 +17,68 @@
  */
 
 import React from 'react'
-import { render /*, fireEvent, waitFor */ } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallApp from './InstallApp'
+import { ReferenceDataContextProvider } from '../data/ReferenceDataContext'
+import AppAPI from '../api/AppAPI'
+
+const app = {
+  app: 'com.codesys.codesyscontrol',
+  title: 'test app',
+  status: 'installed',
+  version: '4.2.0',
+  instances: []
+}
 
 describe('Test Install App', () => {
   test('renders InstallApp component', () => {
-    render(<InstallApp></InstallApp>)
+    render(
+      <ReferenceDataContextProvider>
+        <InstallApp app={app}></InstallApp>
+      </ReferenceDataContextProvider>
+    )
+  })
+
+  test('Successfully install app', async () => {
+    const spyInstall = jest.spyOn(AppAPI.prototype, 'installFromMarketplace').mockResolvedValueOnce('ride on.')
+    jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(true)
+    const { getByTestId } = render(
+      <ReferenceDataContextProvider>
+        <InstallApp app={app} install={true}></InstallApp>
+      </ReferenceDataContextProvider>
+    )
+
+    expect(spyInstall).toHaveBeenCalled()
+
+    await screen.findByText('Installing...')
+    await screen.findByText('Congratulations! ' + app.title + ' was successfully installed!')
+
+    const icon = getByTestId('success-icon')
+    expect(icon).toBeVisible()
+  })
+
+  test('Failed to install app', async () => {
+    const spyInstall = jest.spyOn(AppAPI.prototype, 'installFromMarketplace').mockResolvedValueOnce('ride on.')
+    jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(false)
+    const { getByTestId } = render(
+      <ReferenceDataContextProvider>
+        <InstallApp app={app} install={true}></InstallApp>
+      </ReferenceDataContextProvider>
+    )
+
+    expect(spyInstall).toHaveBeenCalled()
+
+    await screen.findByText('Installing...')
+    await screen.findByText('Oops... Error during the installation of ' + app.title + '.')
+
+    const icon = getByTestId('error-icon')
+    expect(icon).toBeVisible()
+
+    const retry = screen.getByRole('button', { name: 'Retry' })
+    fireEvent.click(retry)
+
+    await screen.findByText('Installing...')
+    await screen.findByText('Oops... Error during the installation of ' + app.title + '.')
   })
 })

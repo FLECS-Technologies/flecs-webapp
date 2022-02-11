@@ -44,7 +44,7 @@ export default class AppAPI extends React.Component {
       multiInstance: props.multiInstance
     }
 
-    this.lastAPICallSuccessfull = false
+    this._lastAPICallSuccessfull = false
     this.lastAPIError = null
   }
 
@@ -63,6 +63,14 @@ export default class AppAPI extends React.Component {
         multiInstance: props.multiInstance
       }
     }
+  }
+
+  get lastAPICallSuccessfull () {
+    return this._lastAPICallSuccessfull
+  }
+
+  set lastAPICallSuccessfull (value) {
+    this._lastAPICallSuccessfull = value
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app

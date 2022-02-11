@@ -60,7 +60,7 @@ export default function InstallApp (props) {
     } else {
       setSuccess(false)
       setError(true)
-      setInstallationMessage('Oops... ' + (appAPI.lastAPIError.additionalInfo || 'Error during the installation of ' + appAPI.app.title + '.'))
+      setInstallationMessage('Oops... ' + (appAPI?.lastAPIError?.additionalInfo || 'Error during the installation of ' + appAPI.app.title + '.'))
     }
     setInstalling(false)
   })
@@ -77,11 +77,11 @@ export default function InstallApp (props) {
       <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
           {installing && <CircularProgress></CircularProgress>}
-          {(success && !installing) && <CheckCircleIcon fontSize='large' color='success'></CheckCircleIcon>}
-          {error && <ReportIcon fontSize='large' color='error'></ReportIcon>}
+          {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
+          {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>
         <Grid item >
-          <Typography>{installationMessage}</Typography>
+          <Typography data-testid='installationMessage'>{installationMessage}</Typography>
         </Grid>
         {(error) &&
         <Grid item >

@@ -114,7 +114,7 @@ export default function SelectTicket (props) {
                     }
                   </CardContent>
                   <CardActions>
-                    <Button onClick={fetchTickets} disabled={loadingTickets}>Refresh</Button>
+                    <Button onClick={fetchTickets} disabled={true}>Refresh</Button>
                   </CardActions>
                 </CardContent>
             </Card>

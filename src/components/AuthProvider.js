@@ -19,6 +19,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import AuthService from '../api/AuthService'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { postMPLogout, postMPLogin } from '../api/DeviceAuthAPI'
 
 let SET_USER
 
@@ -71,17 +72,23 @@ function RequireAuth (props) {
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
     // than dropping them off on the home page.
-    return <Navigate to="/Login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   return <Outlet />
 }
 
 function validate () {
-  if (AuthService.getCurrentUser()) {
-    AuthService.validate(AuthService.getCurrentUser()?.jwt?.token).then(
+  const currentUser = AuthService.getCurrentUser()
+  if (currentUser) {
+    AuthService.validate(currentUser?.jwt?.token).then(
       () => {
-        // nothing to do here.
+        postMPLogin(currentUser).then(
+          () => {
+            // nothing to do here
+          },
+          error => { console.log(error.message) }
+        )
       },
       error => {
         const resMessage =
@@ -91,6 +98,10 @@ function validate () {
         error.message ||
         error.toString()
         console.log(resMessage)
+        postMPLogout(currentUser).then(
+          () => { /* successfully logged in at the device */ },
+          error => { console.log(error.message) }
+        )
       }
     )
   }

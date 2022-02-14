@@ -18,6 +18,7 @@
 
 import { Component } from 'react'
 
+const DEVICE_ROUTE = '/api'
 const GET_DEVICE_INFO_URL = '/GetDeviceInfo'
 const GET_INSTALLED_APP_LIST_URL = '/InstalledAppList'
 const GET_INSTANTIATED_APP_LIST_URL = '/InstantiatedApps'
@@ -29,6 +30,8 @@ const POST_STOP_INSTANCE_URL = '/StopAppInstance'
 const POST_CREATE_APP_INSTANCE_URL = '/CreateAppInstance'
 const POST_DELETE_APP_INSTANCE_URL = '/DeleteAppInstance'
 const POST_APP_INSTANCE_DATA_URL = '/AppInstanceData'
+const POST_MP_LOGIN_URL = '/mp-login'
+const POST_MP_LOGOUT_URL = '/mp-logout'
 
 const PUT_SIDELOAD_APP = '/SideloadApp'
 
@@ -44,6 +47,10 @@ const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
 const GET_PRODUCTS_URL = '/api/products'
 
 class DeviceAPIConfiguration extends Component {
+  static get DEVICE_ROUTE () {
+    return DEVICE_ROUTE
+  }
+
   // post requests
   static get POST_INSTALL_APP_URL () {
     return POST_INSTALL_APP_URL
@@ -71,6 +78,14 @@ class DeviceAPIConfiguration extends Component {
 
   static get POST_APP_INSTANCE_DATA_URL () {
     return POST_APP_INSTANCE_DATA_URL
+  }
+
+  static get POST_MP_LOGIN_URL () {
+    return POST_MP_LOGIN_URL
+  }
+
+  static get POST_MP_LOGOUT_URL () {
+    return POST_MP_LOGOUT_URL
   }
 
   // get requests

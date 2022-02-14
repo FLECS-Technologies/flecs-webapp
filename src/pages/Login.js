@@ -25,6 +25,7 @@ import AuthService from '../api/AuthService'
 import { useAuth } from '../components/AuthProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
+import { postMPLogin } from '../api/DeviceAuthAPI'
 
 const Header = styled.div`
   display: 'flex';
@@ -83,7 +84,19 @@ export default function Login () {
         })
 
         user.setUser(AuthService.getCurrentUser())
-        navigate(from, { replace: true })
+        postMPLogin(AuthService.getCurrentUser())
+          .then(() => {
+            navigate(from, { replace: true })
+          },
+          error => {
+            setState(previousState => {
+              return {
+                ...previousState,
+                message: error.message,
+                loading: false
+              }
+            })
+          })
       },
       error => {
         const resMessage =

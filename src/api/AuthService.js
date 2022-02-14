@@ -17,6 +17,7 @@
  */
 import axios from 'axios'
 import { MarketplaceAPIConfiguration } from './api-config'
+import { postMPLogout } from './DeviceAuthAPI'
 // import CoCartAPI from '@cocart/cocart-rest-api'
 
 class AuthService {
@@ -70,7 +71,14 @@ class AuthService {
   }
 
   logout () {
-    localStorage.removeItem('user')
+    postMPLogout(this.getCurrentUser())
+      .then(
+        () => { /* successfully logged out from the device */ },
+        error => { console.log(error.message) }
+      )
+      .finally(() => {
+        localStorage.removeItem('user')
+      })
   }
 
   getCurrentUser () {

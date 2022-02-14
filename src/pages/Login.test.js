@@ -21,7 +21,7 @@ import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Login from './Login'
-import { MarketplaceAPIConfiguration } from '../api/api-config'
+import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../api/api-config'
 import axios from 'axios'
 import { useAuth } from '../components/AuthProvider'
 
@@ -117,6 +117,7 @@ describe('Login', () => {
 
   test('Successfull Login', async () => {
     axios.post.mockResolvedValueOnce(homer)
+    axios.post.mockResolvedValueOnce()
     useAuth.mockReturnValue(homer)
     const { getByLabelText } = render(<Router><Login /></Router>)
 
@@ -135,7 +136,9 @@ describe('Login', () => {
     const message = getByLabelText('message')
 
     expect(message).toHaveTextContent('Successfully logged in!')
+    expect(axios.post).toHaveBeenCalledTimes(2)
     expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
   })
 
   test('Unsuccessfull Login', async () => {

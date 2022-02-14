@@ -17,20 +17,23 @@
  */
 
 import { React } from 'react'
-import { Route, Routes } from 'react-router-dom'
+// import { BrowserRouter/*, Route, Routes */ } from 'react-router-dom'
 
 import { DarkModeState } from './components/ThemeHandler'
 import Frame from './components/Frame'
 
 import { ReferenceDataContextProvider } from './data/ReferenceDataContext'
 
-import InstalledApps from './pages/InstalledApps'
-import Marketplace from './pages/Marketplace'
-import System from './pages/System'
+// import InstalledApps from './pages/InstalledApps'
+// import Marketplace from './pages/Marketplace'
+// import System from './pages/System'
 import { AppList } from './data/AppList'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import { AuthProvider, RequireAuth } from './components/AuthProvider'
+// import Login from './pages/Login'
+// import NotFound from './pages/NotFound'
+import { AuthProvider /*, RequireAuth */ } from './components/AuthProvider'
+import { UIRoutes } from './pages/ui-routes'
+// import { Router } from 'react-router-dom'
+// import { Router } from 'react-router-dom'
 
 export default function App () {
   return (
@@ -39,27 +42,7 @@ export default function App () {
         <Frame>
           <ReferenceDataContextProvider>
             <AppList>
-              <Routes>
-                <Route path="/" element={<InstalledApps />} />
-                <Route path="/Marketplace" element={<RequireAuth />}>
-                  <Route
-                    path="/Marketplace"
-                    element={<Marketplace />}
-                  />
-                </Route>
-                <Route
-                  path="/System"
-                  element={<System/>}
-                />
-                <Route
-                  path="/Login"
-                  element={<Login/>}
-                />
-                <Route
-                  path="*"
-                  element={<NotFound/>}
-                />
-              </Routes>
+              <UIRoutes />
             </AppList>
           </ReferenceDataContextProvider>
         </Frame>

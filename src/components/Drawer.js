@@ -104,10 +104,10 @@ const MiniDrawer = (props) => {
         navigate('/')
         break
       case 1:
-        navigate('/Marketplace')
+        navigate('/marketplace')
         break
       case 2:
-        navigate('/System')
+        navigate('/system')
         break
       default:
         navigate('/')
@@ -134,9 +134,9 @@ const MiniDrawer = (props) => {
             <ListItemText primary="Apps" />
           </ListItemButton>
           <ListItemButton
-            selected={location.pathname === '/Marketplace'}
+            selected={location.pathname === '/marketplace'}
             onClick={(event) => handleListItemClick(event, 1)}
-            aria-label="/Marketplace"
+            aria-label="/marketplace"
           >
             <ListItemIcon>
               <MarketplaceIcon />
@@ -147,7 +147,7 @@ const MiniDrawer = (props) => {
         <Divider />
         <List component="nav" aria-label="Drawer-List-System">
           <ListItemButton
-            selected={location.pathname === '/System'}
+            selected={location.pathname === '/system'}
             onClick={(event) => handleListItemClick(event, 2)}
           >
             <ListItemIcon>

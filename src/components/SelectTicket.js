@@ -75,10 +75,10 @@ export default function SelectTicket (props) {
     <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
         <Grid item >
             <Alert sx={{ mb: 2 }} severity='info'>
-                <Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>                
-		<Typography variant='body2'>Get started with 3 (three) included tickets per month.</Typography>
-		<Typography variant='body2'>To buy a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
-		<Typography variant='body2'>If you already have a ticket, you can simply continue with the &apos;next&apos;.</Typography>
+		<Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>
+                <Typography variant='body2'>Get started with 3 (three) included tickets per month.</Typography>
+                <Typography variant='body2'>To buy a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
+                <Typography variant='body2'>If you already have a ticket, you can simply continue with the &apos;next&apos;.</Typography>
             </Alert>
         </Grid>
         <Grid item>

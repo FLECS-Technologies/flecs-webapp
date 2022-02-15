@@ -17,7 +17,7 @@
  */
 
 import React from 'react'
-// import DeviceAPIConfiguration from './api-config'
+import { DeviceAPIConfiguration } from './api-config'
 
 export default class BaseAPI extends React.Component {
   constructor (props) {
@@ -35,9 +35,9 @@ export default class BaseAPI extends React.Component {
       let url
       let data
       if (process.env.NODE_ENV === 'development') {
-        url = process.env.REACT_APP_DEV_VM_IP + apiURL
+        url = process.env.REACT_APP_DEV_VM_IP + DeviceAPIConfiguration.DEVICE_ROUTE + apiURL
       } else {
-        url = apiURL
+        url = DeviceAPIConfiguration.DEVICE_ROUTE + apiURL
       }
       const response = await fetch(url, requestOptions)
 

@@ -34,7 +34,7 @@ describe('PutSideloadAppAPI', () => {
   })
   test('calls PutSideloadAppAPI with success response', async () => {
     nock('http://localhost')
-      .put('/SideloadApp')
+      .put('/api/SideloadApp')
       .reply(200, {
         app: 'org.eclipse.mosquitto',
         title: 'Mosquitto MQTT broker',
@@ -60,7 +60,7 @@ describe('PutSideloadAppAPI', () => {
 
   test('calls PutSideloadAppAPI with unsuccessfull response', async () => {
     nock('http://localhost')
-      .put('/SideloadApp')
+      .put('/api/SideloadApp')
       .reply(405, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

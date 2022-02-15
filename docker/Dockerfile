@@ -1,6 +1,5 @@
-FROM httpd:2.4-alpine
+FROM nginx:mainline-alpine
 
-ADD build/ /usr/local/apache2/htdocs/
+COPY docker/conf.d/default.conf /etc/nginx/conf.d/
 
-COPY docker/conf/httpd.conf /usr/local/apache2/conf/httpd.conf
-COPY docker/conf/extra/httpd-vhosts.conf /usr/local/apache2/conf/extra/httpd-vhosts.conf
+ADD build/ /usr/share/nginx/html/ui/

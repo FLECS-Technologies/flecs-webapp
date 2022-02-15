@@ -6,6 +6,7 @@
     "react",
     "FLECS"
   ],
+  "homepage": "http://localhost/ui/",
   "main": "src/index.js",
   "dependencies": {
     "@cocart/cocart-rest-api": "^1.1.0",

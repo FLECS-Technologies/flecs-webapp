@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// import React from 'react'
 import nock from 'nock'
-// import { render /*, screen */ } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import AppAPI from './AppAPI'
 
@@ -84,7 +82,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.uninstall', async () => {
     nock('http://localhost')
-      .post('/UninstallApp')
+      .post('/api/UninstallApp')
       .reply(200, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -103,7 +101,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.createInstance', async () => {
     nock('http://localhost')
-      .post('/CreateAppInstance')
+      .post('/api/CreateAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -134,7 +132,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.startInstance', async () => {
     nock('http://localhost')
-      .post('/StartAppInstance')
+      .post('/api/StartAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -165,7 +163,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.stopInstance', async () => {
     nock('http://localhost')
-      .post('/StopAppInstance')
+      .post('/api/StopAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -196,7 +194,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.deleteInstance', async () => {
     nock('http://localhost')
-      .post('/DeleteAppInstance')
+      .post('/api/DeleteAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -223,7 +221,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.installFromMarketplace', async () => {
     nock('http://localhost')
-      .post('/InstallApp')
+      .post('/api/InstallApp')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -234,7 +232,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/CreateAppInstance')
+      .post('/api/CreateAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -246,7 +244,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/StartAppInstance')
+      .post('/api/StartAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -273,7 +271,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.getAppInstanceData', async () => {
     nock('http://localhost')
-      .post('/AppInstanceData')
+      .post('/api/AppInstanceData')
       .reply(200, {
         version: testApp.version,
         instanceId: testInstance.instanceId,
@@ -319,14 +317,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.sideloadApp', async () => {
     nock('http://localhost')
-      .put('/SideloadApp')
+      .put('/api/SideloadApp')
       .reply(200, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
       })
 
     nock('http://localhost')
-      .post('/CreateAppInstance')
+      .post('/api/CreateAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -338,7 +336,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/StartAppInstance')
+      .post('/api/StartAppInstance')
       .reply(200, {
         app: testApp.app,
         version: testApp.version,

@@ -32,6 +32,7 @@ export default function InstallAppStepper (props) {
   const { app } = props
   const [activeStep, setActiveStep] = React.useState(0)
   const [skipped, setSkipped] = React.useState(new Set())
+  const [tickets, setTickets] = React.useState([])
 
   const isStepOptional = (step) => {
     return false // step === 0
@@ -93,8 +94,8 @@ export default function InstallAppStepper (props) {
         })}
       </Stepper>
         <React.Fragment>
-          {(activeStep === 0) && <SelectTicket app={app}/>}
-          {(activeStep === 1) && <InstallApp app={app} install={(activeStep === 1)}/>}
+          {(activeStep === 0) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
+          {(activeStep === 1) && <InstallApp app={app} tickets={tickets} install={(activeStep === 1)}/>}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               data-testid='back-button'
@@ -111,7 +112,7 @@ export default function InstallAppStepper (props) {
                 Skip
               </Button>
             )}
-            <Button data-testid='next-button' onClick={handleNext} disabled={(activeStep === steps.length - 1)}>
+            <Button data-testid='next-button' onClick={handleNext} disabled={(activeStep === steps.length - 1) || tickets?.length === 0}>
               Next
             </Button>
           </Box>

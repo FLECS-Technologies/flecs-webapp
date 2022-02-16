@@ -19,7 +19,7 @@ function authHeaderUseBearer () {
   const user = JSON.parse(localStorage.getItem('user'))
 
   if (user && user.jwt && user.jwt.token) {
-    return { Authorization: 'Bearer ' + user.jwt.token }
+    return { Authentication: 'Bearer ' + user.jwt.token }
   } else {
     return {}
   }

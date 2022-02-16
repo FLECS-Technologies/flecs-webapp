@@ -21,7 +21,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import CheckIcon from '@mui/icons-material/CheckCircle'
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber'
 import ErrorIcon from '@mui/icons-material/Error'
-import { Alert, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, LinearProgress, Typography } from '@mui/material'
+import { Alert, AlertTitle, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, LinearProgress, Typography } from '@mui/material'
 import { MarketplaceAPIConfiguration } from '../api/api-config'
 import { addToCart } from '../api/Cart'
 import ActionSnackbar from './ActionSnackbar'
@@ -73,10 +73,12 @@ export default function SelectTicket (props) {
   }
   return (
     <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
-        <Grid item >
-            <Alert sx={{ mb: 2 }} severity='info'><Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>
+        <Grid item xs={12}>
+            <Alert sx={{ mb: 2 }} severity='info'>
+                <AlertTitle>Info</AlertTitle>
+                <Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>
                 <Typography variant='body2'>Get started with 3 (three) included tickets per month.</Typography>
-                <Typography variant='body2'>To buy a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
+                <Typography variant='body2'>To purchase a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
                 <Typography variant='body2'>If you already have a ticket, you can simply continue with the &apos;next&apos;.</Typography>
             </Alert>
         </Grid>

@@ -25,10 +25,11 @@ import { Alert, AlertTitle, Badge, Button, Card, CardActionArea, CardActions, Ca
 import { MarketplaceAPIConfiguration } from '../api/api-config'
 import { addToCart } from '../api/Cart'
 import ActionSnackbar from './ActionSnackbar'
+import { getCurrentUserLicenses } from '../api/LicenseService'
 
 export default function SelectTicket (props) {
-  const { app } = (props)
-  const [tickets, setTickets] = React.useState([1, 2, 3])
+  const { app, tickets, setTickets } = (props)
+  const [reloadTickets, setReloadTickets] = React.useState(false)
   const [loadingCart, setLoadingCart] = React.useState(false)
   const [loadingTickets, setLoadingTickets] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -67,9 +68,29 @@ export default function SelectTicket (props) {
       })
   }
 
+  React.useEffect(() => {
+    fetchTickets()
+    if (reloadTickets) {
+      setReloadTickets(false)
+    }
+  }, [reloadTickets])
+
   const fetchTickets = async (props) => {
-    setTickets()
     setLoadingTickets(true)
+    getCurrentUserLicenses()
+      .then((response) => {
+        setTickets(response)
+      })
+      .catch((error) => {
+        setSnackbarState({
+          alertSeverity: 'error',
+          snackbarText: error?.response?.data?.message
+        })
+        setSnackbarOpen(true)
+      })
+      .finally(() => {
+        setLoadingTickets(false)
+      })
   }
   return (
     <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
@@ -115,7 +136,7 @@ export default function SelectTicket (props) {
                     }
                   </CardContent>
                   <CardActions>
-                    <Button onClick={fetchTickets} disabled={true}>Refresh</Button>
+                    <Button onClick={() => setReloadTickets(true)} disabled={loadingTickets}>Refresh</Button>
                   </CardActions>
                 </CardContent>
             </Card>
@@ -129,5 +150,7 @@ export default function SelectTicket (props) {
 }
 
 SelectTicket.propTypes = {
-  app: PropTypes.object
+  app: PropTypes.object,
+  tickets: PropTypes.array,
+  setTickets: PropTypes.func
 }

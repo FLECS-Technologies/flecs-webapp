@@ -37,13 +37,14 @@ const PUT_SIDELOAD_APP = '/SideloadApp'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
-const MP_CART_ROUTE = '/warenkorb?cocart-load-cart='
+const MP_CART_ROUTE = '/warenkorb?keep-cart=true&cocart-load-cart='
 const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
 const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
+const POST_GET_CURRENT_USER_LICENSES_URL = '/wp-json/wclm/v3/get-current-user-licenses'
 const GET_PRODUCTS_URL = '/api/products'
 
 class DeviceAPIConfiguration extends Component {
@@ -144,6 +145,10 @@ class MarketplaceAPIConfiguration {
 
   static get POST_VALIDATE_URL () {
     return POST_VALIDATE_URL
+  }
+
+  static get POST_GET_CURRENT_USER_LICENSES_URL () {
+    return POST_GET_CURRENT_USER_LICENSES_URL
   }
 }
 

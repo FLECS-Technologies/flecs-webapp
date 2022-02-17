@@ -36,6 +36,7 @@ describe('Test SelectTicket', () => {
 
   afterAll(() => {
     jest.resetAllMocks()
+    jest.clearAllTimers()
   })
   test('renders SelectTicket component', async () => {
     await act(async () => { render(<SelectTicket setTickets={setTickets} tickets={tickets}/>) })
@@ -46,19 +47,15 @@ describe('Test SelectTicket', () => {
   })
 
   test('Click on the open-cart card', async () => {
-    const closeSpy = jest.fn()
-    window.open = jest.fn().mockReturnValue({ close: closeSpy })
-
     await act(async () => {
+      const closeSpy = jest.fn()
+      window.open = jest.fn().mockReturnValue({ close: closeSpy })
+
       addToCart.mockReturnValueOnce(Promise.resolve('my-cart-key'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
+      const openCartCard = screen.getByTestId('open-cart-card-action')
+      fireEvent.click(openCartCard)
     })
-
-    const openCartCard = screen.getByTestId('open-cart-card-action')
-
-    expect(openCartCard).toBeEnabled()
-
-    await act(async () => { fireEvent.click(openCartCard) })
 
     await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
     expect(window.open).toHaveBeenCalled()
@@ -71,13 +68,9 @@ describe('Test SelectTicket', () => {
       await act(async () => {
         addToCart.mockRejectedValueOnce(new Error('failed to load cart'))
         render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
+        const openCartCard = screen.getByTestId('open-cart-card-action')
+        fireEvent.click(openCartCard)
       })
-
-      const openCartCard = screen.getByTestId('open-cart-card-action')
-
-      expect(openCartCard).toBeEnabled()
-
-      await act(async () => { fireEvent.click(openCartCard) })
 
       await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
       expect(window.open).not.toHaveBeenCalled()

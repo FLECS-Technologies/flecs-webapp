@@ -34,11 +34,12 @@ describe('Test InstallAppStepper', () => {
   })
 
   test('renders InstallAppStepper component', async () => {
-    await act(async () => { render(<InstallAppStepper />) })
+    await act(async () => {
+      render(<InstallAppStepper />)
+      const stepper = screen.getByTestId('install-app-stepper')
 
-    const stepper = screen.getByTestId('install-app-stepper')
-
-    expect(stepper).toBeVisible()
+      expect(stepper).toBeVisible()
+    })
   })
 
   test('one step forward, one step back', async () => {

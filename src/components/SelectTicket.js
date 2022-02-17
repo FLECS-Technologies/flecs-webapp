@@ -69,7 +69,9 @@ export default function SelectTicket (props) {
   }
 
   React.useEffect(() => {
-    fetchTickets()
+    if (!loadingTickets) {
+      fetchTickets()
+    }
     if (reloadTickets) {
       setReloadTickets(false)
     }

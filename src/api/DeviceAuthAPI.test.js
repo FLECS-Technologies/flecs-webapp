@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
+import { act } from 'react-dom/test-utils'
 import { DeviceAPIConfiguration } from './api-config'
 import { postMPLogin, postMPLogout } from './DeviceAuthAPI'
 
@@ -50,25 +50,29 @@ describe('DeviceAuthAPI', () => {
 
   test('calls successfull mp-login', async () => {
     axios.post.mockResolvedValueOnce()
-    await waitFor(() => postMPLogin(testUser))
+    await act(async () => {
+      postMPLogin(testUser)
+    })
 
     expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.data.user_login, token: testUser.jwt.token })
   })
 
   test('calls successfull mp-logout', async () => {
     axios.post.mockResolvedValueOnce()
-    await waitFor(() => postMPLogout(testUser))
+    await act(async () => {
+      postMPLogout(testUser)
+    })
 
     expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.data.user_login })
   })
 
   test('calls failed mp-login', async () => {
     axios.post.mockReturnValue(Promise.reject(new Error('Failed to login user at the device')))
-    await waitFor(() => expect(postMPLogin(testUser)).rejects.toThrowError())
+    await act(async () => { expect(postMPLogin(testUser)).rejects.toThrowError() })
   })
 
   test('calls successfull mp-logout', async () => {
     axios.post.mockReturnValue(Promise.reject(new Error('Failed to log out user from the device')))
-    await waitFor(() => expect(postMPLogout(testUser)).rejects.toThrowError())
+    await act(async () => { expect(postMPLogout(testUser)).rejects.toThrowError() })
   })
 })

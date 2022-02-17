@@ -22,6 +22,7 @@ import '@testing-library/jest-dom'
 import SelectTicket from './SelectTicket'
 import { addToCart } from '../api/Cart'
 import { act } from 'react-dom/test-utils'
+import nock from 'nock'
 
 jest.mock('../api/Cart', () => ({
   ...jest.requireActual('../api/Cart'),
@@ -32,12 +33,14 @@ const setTickets = jest.fn()
 const tickets = [1, 2, 3]
 
 describe('Test SelectTicket', () => {
-  beforeEach(() => {
+  beforeAll(() => {
+    nock.disableNetConnect()
   })
 
   afterAll(() => {
     jest.resetAllMocks()
     jest.clearAllTimers()
+    nock.enableNetConnect()
   })
   test('renders SelectTicket component', async () => {
     await act(async () => {

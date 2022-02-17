@@ -18,7 +18,75 @@
 
 function getCurrentUserLicenses () {
   return new Promise((resolve, reject) => {
-    resolve([1, 2, 3])
+    resolve([{
+      license_id: '5',
+      product_id: '122',
+      variation_id: '0',
+      license_key: 'XXXX-XXXX-XXXX-XXXX',
+      image_license_key: null,
+      license_status: 'sold',
+      owner_first_name: 'Development',
+      owner_last_name: 'Customer',
+      activation_date: null,
+      creation_date: '2022-02-16',
+      expiration_date: null,
+      valid: '0',
+      sold_date: '2022-02-16',
+      product_name: 'App Installation Ticket',
+      variation_name: '',
+      delivery_limit: '0',
+      remaining_delivery_times: '0',
+      activation_limit: '1',
+      remaining_activations: '1',
+      device_ids: [],
+      license_key_meta: []
+    },
+    {
+      license_id: '4',
+      product_id: '122',
+      variation_id: '0',
+      license_key: 'AAAA-AAAA-AAAA-AAAA',
+      image_license_key: null,
+      license_status: 'sold',
+      owner_first_name: 'Development',
+      owner_last_name: 'Customer',
+      activation_date: null,
+      creation_date: '2022-02-16',
+      expiration_date: null,
+      valid: '0',
+      sold_date: '2022-02-16',
+      product_name: 'App Installation Ticket',
+      variation_name: '',
+      delivery_limit: '0',
+      remaining_delivery_times: '0',
+      activation_limit: '1',
+      remaining_activations: '1',
+      device_ids: [],
+      license_key_meta: []
+    },
+    {
+      license_id: '3',
+      product_id: '122',
+      variation_id: '0',
+      license_key: 'YYYY-YYYY-YYYY-YYYY',
+      image_license_key: null,
+      license_status: 'sold',
+      owner_first_name: 'Development',
+      owner_last_name: 'Customer',
+      activation_date: null,
+      creation_date: '2022-02-16',
+      expiration_date: null,
+      valid: '0',
+      sold_date: '2022-02-16',
+      product_name: 'App Installation Ticket',
+      variation_name: '',
+      delivery_limit: '0',
+      remaining_delivery_times: '0',
+      activation_limit: '1',
+      remaining_activations: '1',
+      device_ids: [],
+      license_key_meta: []
+    }])
   })
 }
 

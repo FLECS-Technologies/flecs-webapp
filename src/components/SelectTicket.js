@@ -122,7 +122,7 @@ export default function SelectTicket (props) {
             <Card sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 230 }}>
               <CardContent sx={{ p: 0, minHeight: 230, maxHeight: 230 }}>
                   <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>
-                  <Badge badgeContent={tickets ? <CheckIcon fontSize='small' color='success'/> : <ErrorIcon fontSize='small' color='error'/>}>
+                  <Badge badgeContent={(tickets.length > 0) ? <CheckIcon fontSize='small' color='success'/> : <ErrorIcon fontSize='small' color='error'/>}>
                     <Card sx={{ p: 3 }} variant='outlined' >
                         <ConfirmationNumberIcon color='primary' fontSize='large'/>
                     </Card>
@@ -130,8 +130,8 @@ export default function SelectTicket (props) {
                   </CardMedia>
                   {loadingTickets && <LinearProgress></LinearProgress>}
                   <CardContent sx={{ m: 2, p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-                    { tickets
-                      ? (<Typography align='center' sx={{ ml: 1, flex: 1 }}>{tickets?.length} Tickets available.</Typography>)
+                    { (tickets?.length > 0)
+                      ? (<Typography data-testid='tickets-available-label' align='center' sx={{ ml: 1, flex: 1 }}>{tickets?.length} Tickets available.</Typography>)
                       : (<Typography align='center' sx={{ ml: 1, flex: 1 }}>No tickets available.</Typography>)
                     }
                   </CardContent>

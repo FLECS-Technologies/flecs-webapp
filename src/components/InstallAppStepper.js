@@ -112,7 +112,7 @@ export default function InstallAppStepper (props) {
                 Skip
               </Button>
             )}
-            <Button data-testid='next-button' onClick={handleNext} disabled={(activeStep === steps.length - 1) || tickets?.length === 0}>
+            <Button data-testid='next-button' onClick={handleNext} disabled={(activeStep === steps.length - 1) || (tickets.length === 0)} >
               Next
             </Button>
           </Box>

@@ -26,9 +26,12 @@ jest.mock('../api/Cart', () => ({
   addToCart: jest.fn()
 }))
 
+const setTickets = jest.fn()
+const tickets = [1, 2, 3]
+
 describe('Test SelectTicket', () => {
   test('renders SelectTicket component', () => {
-    const { getByTestId } = render(<SelectTicket />)
+    const { getByTestId } = render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
 
     const sideloadButton = getByTestId('select-ticket-step')
 
@@ -39,7 +42,7 @@ describe('Test SelectTicket', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
     addToCart.mockReturnValueOnce(Promise.resolve('my-cart-key'))
-    const { getByTestId } = render(<SelectTicket />)
+    const { getByTestId } = render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
 
     const openCartCard = getByTestId('open-cart-card-action')
 
@@ -55,7 +58,7 @@ describe('Test SelectTicket', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
     addToCart.mockReturnValueOnce(Promise.reject(new Error('failed to load cart')))
-    const { getByTestId } = render(<SelectTicket />)
+    const { getByTestId } = render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
 
     const openCartCard = getByTestId('open-cart-card-action')
 

@@ -21,7 +21,17 @@ import { render, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallAppStepper from './InstallAppStepper'
 
+jest.mock('../api/LicenseService')
+
 describe('Test InstallAppStepper', () => {
+  beforeAll(() => {
+
+  })
+
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
+
   test('renders InstallAppStepper component', () => {
     const { getByTestId } = render(<InstallAppStepper />)
 
@@ -33,6 +43,7 @@ describe('Test InstallAppStepper', () => {
   test('one step forward, one step back', async () => {
     const { getByTestId } = render(<InstallAppStepper />)
 
+    await waitFor(() => expect(getByTestId('next-button')).toBeEnabled())
     const stepper = getByTestId('install-app-stepper')
 
     expect(stepper).toBeVisible()

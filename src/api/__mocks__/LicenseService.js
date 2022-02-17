@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed Feb 16 2022
+ * Created on Thu Feb 17 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MarketplaceAPIConfiguration } from './api-config'
-import axios from 'axios'
-import { authHeaderUseBearer } from './auth-header'
 
 function getCurrentUserLicenses () {
-  const url = MarketplaceAPIConfiguration.BETA_BASE_URL
-  const data = undefined
-  return axios
-    .post(url + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data, { headers: authHeaderUseBearer() })
-    .then(response => {
-      if (response?.data?.response?.licenses) {
-        return response.data.response.licenses
-      }
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+  return new Promise((resolve, reject) => {
+    resolve([1, 2, 3])
+  })
 }
 
 export { getCurrentUserLicenses }

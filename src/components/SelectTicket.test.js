@@ -54,7 +54,7 @@ describe('Test SelectTicket', () => {
       addToCart.mockReturnValueOnce(Promise.resolve('my-cart-key'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
       const openCartCard = screen.getByTestId('open-cart-card-action')
-      fireEvent.click(openCartCard)
+      await act(async () => { fireEvent.click(openCartCard) })
     })
 
     await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
@@ -69,7 +69,7 @@ describe('Test SelectTicket', () => {
         addToCart.mockRejectedValueOnce(new Error('failed to load cart'))
         render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
         const openCartCard = screen.getByTestId('open-cart-card-action')
-        fireEvent.click(openCartCard)
+        await act(async () => { fireEvent.click(openCartCard) })
       })
 
       await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())

@@ -45,7 +45,7 @@ describe('Test Install App', () => {
     jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(true)
     const { getByTestId } = render(
       <ReferenceDataContextProvider>
-        <InstallApp app={app} install={true}></InstallApp>
+        <InstallApp app={app} install={true} tickets={[{ license_key: 'abc' }]}></InstallApp>
       </ReferenceDataContextProvider>
     )
 
@@ -63,7 +63,7 @@ describe('Test Install App', () => {
     jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(false)
     const { getByTestId } = render(
       <ReferenceDataContextProvider>
-        <InstallApp app={app} install={true}></InstallApp>
+        <InstallApp app={app} install={true} tickets={[{ license_key: 'abc' }]}></InstallApp>
       </ReferenceDataContextProvider>
     )
 

@@ -25,7 +25,7 @@ import AppAPI from '../api/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 export default function InstallApp (props) {
-  const { install, app } = (props)
+  const { install, app, tickets } = (props)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -50,7 +50,7 @@ export default function InstallApp (props) {
     setInstallationMessage('Installing...')
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    await appAPI.installFromMarketplace()
+    await appAPI.installFromMarketplace(tickets[0]?.license_key)
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
@@ -66,7 +66,7 @@ export default function InstallApp (props) {
   })
 
   React.useEffect(() => {
-    if (app && install && !installing && (!success || !error)) {
+    if (tickets?.length > 0 && app && install && !installing && (!success || !error)) {
       setRetry(false)
       installApp(app)
     }
@@ -94,5 +94,6 @@ export default function InstallApp (props) {
 
 InstallApp.propTypes = {
   install: PropTypes.bool,
-  app: PropTypes.object
+  app: PropTypes.object,
+  tickets: PropTypes.array
 }

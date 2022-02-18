@@ -269,52 +269,6 @@ describe('AppAPI', () => {
     expect(app.app.instances.length).toBe(0)
   })
 
-  test('calls AppAPI.getAppInstanceData', async () => {
-    nock('http://localhost')
-      .post('/api/AppInstanceData')
-      .reply(200, {
-        version: testApp.version,
-        instanceId: testInstance.instanceId,
-        additionalInfo: '',
-        data: [
-          {
-            path: 'app.task.var1'
-          },
-          {
-            path: 'app.task.var2'
-          },
-          {
-            path: 'app.task1.var5'
-          }
-        ]
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
-      })
-
-    testApp.status = 'installed'
-    testInstance.status = 'running'
-    testApp.instances = [testInstance]
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
-
-    await app.getAppInstanceData(testApp.version, testInstance.instanceId)
-
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(1)
-    expect(app.app.instances[0].status).toBe('running')
-    expect(app.app.instances[0].version).toBe(testApp.version)
-    expect(app.app.instances[0].instanceName).toBe(testInstance.instanceName)
-    expect(app.app.instances[0].instanceId).toBe('01234567')
-    // check if response data was loaded into the app instance
-    expect(app.app.instances[0].data.length).toBe(3)
-    expect(app.app.instances[0].data[0].path).toBe('app.task.var1')
-    expect(app.app.instances[0].data[1].path).toBe('app.task.var2')
-    expect(app.app.instances[0].data[2].path).toBe('app.task1.var5')
-  })
-
   test('calls AppAPI.sideloadApp', async () => {
     nock('http://localhost')
       .put('/api/SideloadApp')

@@ -22,6 +22,7 @@ const DEVICE_ROUTE = '/api'
 const GET_DEVICE_INFO_URL = '/GetDeviceInfo'
 const GET_INSTALLED_APP_LIST_URL = '/InstalledAppList'
 const GET_INSTANTIATED_APP_LIST_URL = '/InstantiatedApps'
+const GET_BROWSE_SERVICE_MESH = '/Browse'
 
 const POST_INSTALL_APP_URL = '/InstallApp'
 const POST_UNINSTALL_APP_URL = '/UninstallApp'
@@ -29,7 +30,6 @@ const POST_START_INSTANCE_URL = '/StartAppInstance'
 const POST_STOP_INSTANCE_URL = '/StopAppInstance'
 const POST_CREATE_APP_INSTANCE_URL = '/CreateAppInstance'
 const POST_DELETE_APP_INSTANCE_URL = '/DeleteAppInstance'
-const POST_APP_INSTANCE_DATA_URL = '/AppInstanceData'
 const POST_MP_LOGIN_URL = '/mp-login'
 const POST_MP_LOGOUT_URL = '/mp-logout'
 
@@ -77,10 +77,6 @@ class DeviceAPIConfiguration extends Component {
     return POST_DELETE_APP_INSTANCE_URL
   }
 
-  static get POST_APP_INSTANCE_DATA_URL () {
-    return POST_APP_INSTANCE_DATA_URL
-  }
-
   static get POST_MP_LOGIN_URL () {
     return POST_MP_LOGIN_URL
   }
@@ -100,6 +96,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_INSTANTIATED_APP_LIST_URL () {
     return GET_INSTANTIATED_APP_LIST_URL
+  }
+
+  static get GET_BROWSE_SERVICE_MESH () {
+    return GET_BROWSE_SERVICE_MESH
   }
 
   // put requests

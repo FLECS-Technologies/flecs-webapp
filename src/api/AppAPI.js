@@ -25,7 +25,6 @@ import PostStopAppInstanceAPI from '../api/StopAppInstanceAPI'
 import PostUninstallAppAPI from '../api/UninstallAppAPI'
 import PostDeleteAppInstanceAPI from '../api/DeleteAppInstanceAPI'
 import PutSideloadAppAPI from '../api/SideloadAppAPI'
-import GetAppInstanceDataAPI from './AppInstanceDataAPI'
 
 export default class AppAPI extends React.Component {
   constructor (props) {
@@ -271,30 +270,6 @@ export default class AppAPI extends React.Component {
         this.app.instances[this.app.instances.length - 1].status = 'running'
       } else {
         throw Error('failed to start instance after installing the app.')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  async getAppInstanceData (version, instanceId) {
-    try {
-      const instanceData = new GetAppInstanceDataAPI()
-      await instanceData.getAppInstanceData(this.app.app, version, instanceId)
-
-      if (instanceData.state.success && instanceData.state.responseData.data) {
-        this.app.instances = this.app.instances.map(item =>
-          item.instanceId === instanceId
-            ? { ...item, data: instanceData.state.responseData.data }
-            : item)
-        this.lastAPICallSuccessfull = true
-      } else {
-        this.lastAPICallSuccessfull = false
-        if (instanceData.state.errorMessage !== null) {
-          this.lastAPIError = instanceData.state.errorMessage.message
-        }
-
-        throw Error('failed to get the data of instance ' + instanceId)
       }
     } catch (error) {
       console.error(error)

@@ -32,6 +32,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import BarChartIcon from '@mui/icons-material/BarChart'
 
 const drawerWidth = 240
 
@@ -107,6 +108,9 @@ const MiniDrawer = (props) => {
         navigate('/marketplace')
         break
       case 2:
+        navigate('/service-mesh')
+        break
+      case 3:
         navigate('/system')
         break
       default:
@@ -143,12 +147,22 @@ const MiniDrawer = (props) => {
             </ListItemIcon>
             <ListItemText primary="Marketplace" />
           </ListItemButton>
+          <ListItemButton
+            selected={location.pathname === '/service-mesh'}
+            onClick={(event) => handleListItemClick(event, 2)}
+            aria-label="/service-mesh"
+          >
+            <ListItemIcon>
+              <BarChartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Service Mesh" />
+          </ListItemButton>
         </List>
         <Divider />
         <List component="nav" aria-label="Drawer-List-System">
           <ListItemButton
             selected={location.pathname === '/system'}
-            onClick={(event) => handleListItemClick(event, 2)}
+            onClick={(event) => handleListItemClick(event, 3)}
           >
             <ListItemIcon>
               <SettingsIcon />

@@ -19,6 +19,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import GetInstalledAppsListAPI from '../api/InstalledAppsListAPI'
+import GetBrowseServiceMesh from './BrowseServiceMeshAPI'
 
 export default class DeviceAPI extends React.Component {
   constructor (props) {
@@ -26,6 +27,7 @@ export default class DeviceAPI extends React.Component {
     this.appList = null
     this.lastAPICallSuccessfull = false
     this.lastAPIError = null
+    this.serviceMeshData = null
   }
 
   async getInstalledApps () {
@@ -44,6 +46,27 @@ export default class DeviceAPI extends React.Component {
       console.error(error)
       this.lastAPICallSuccessfull = false
       this.lastAPIError = error
+    }
+  }
+
+  async browseServiceMesh () {
+    try {
+      const browse = new GetBrowseServiceMesh()
+      await browse.getBrowseServiceMesh()
+
+      if (browse.state.success && browse.state.responseData.data) {
+        this.lastAPICallSuccessfull = true
+        this.state.serviceMeshData = browse.state.responseData.data
+      } else {
+        this.lastAPICallSuccessfull = false
+        if (browse.state.errorMessage !== null) {
+          this.lastAPIError = browse.state.errorMessage.message
+        }
+
+        throw Error('failed to get the data of instance ')
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 }

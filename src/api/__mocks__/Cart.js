@@ -28,7 +28,9 @@ async function addToCart (appId) {
         cart_key: 'my-cart-key'
       }
     }
-    resolve(responseData)
+    appId
+      ? resolve(responseData)
+      : reject(new Error('Mock: Failed to add to cart'))
   })
 }
 

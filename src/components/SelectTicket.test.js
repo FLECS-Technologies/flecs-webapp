@@ -22,8 +22,8 @@ import '@testing-library/jest-dom'
 import SelectTicket from './SelectTicket'
 import { addToCart } from '../api/Cart'
 import { act } from 'react-dom/test-utils'
-import nock from 'nock'
 
+jest.mock('../api/LicenseService')
 jest.mock('../api/Cart', () => ({
   ...jest.requireActual('../api/Cart'),
   addToCart: jest.fn()
@@ -34,13 +34,10 @@ const tickets = [1, 2, 3]
 
 describe('Test SelectTicket', () => {
   beforeAll(() => {
-    nock.disableNetConnect()
   })
 
   afterAll(() => {
     jest.resetAllMocks()
-    jest.clearAllTimers()
-    nock.enableNetConnect()
   })
   test('renders SelectTicket component', async () => {
     await act(async () => {
@@ -55,7 +52,7 @@ describe('Test SelectTicket', () => {
       const closeSpy = jest.fn()
       window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
-      addToCart.mockReturnValueOnce(Promise.resolve('my-cart-key'))
+      addToCart.mockReturnValue(Promise.resolve('my-cart-key'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
       const openCartCard = screen.getByTestId('open-cart-card-action')
       await act(async () => { fireEvent.click(openCartCard) })
@@ -69,7 +66,7 @@ describe('Test SelectTicket', () => {
     await act(async () => {
       const closeSpy = jest.fn()
       window.open = jest.fn().mockReturnValue({ close: closeSpy })
-      addToCart.mockRejectedValueOnce(new Error('failed to load cart'))
+      addToCart.mockRejectedValue(new Error('failed to load cart'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
       const openCartCard = screen.getByTestId('open-cart-card-action')
       await act(async () => { fireEvent.click(openCartCard) })

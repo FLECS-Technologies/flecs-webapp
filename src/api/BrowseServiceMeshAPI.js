@@ -18,17 +18,16 @@
 import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from './api-config'
 
-export default class PostAppInstanceDataAPI extends BaseAPI {
-  async getAppInstanceData (app, version, instanceId) {
+export default class GetBrowseServiceMesh extends BaseAPI {
+  async getBrowseServiceMesh () {
     // POST request using fetch with error handling
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version, instanceId })
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_APP_INSTANCE_DATA_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.GET_BROWSE_SERVICE_MESH, requestOptions)
     } catch (error) {
       console.log(error)
     }

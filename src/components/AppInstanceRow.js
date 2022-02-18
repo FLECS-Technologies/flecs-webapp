@@ -27,14 +27,12 @@ import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
 import LaunchIcon from '@mui/icons-material/Launch'
-import BarChartIcon from '@mui/icons-material/BarChart'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
-import AppInstanceData from './AppInstanceData'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -44,7 +42,6 @@ export default function AppInstanceRow (props) {
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
   const [instanceDeleting, setInstanceDeleting] = useState(false)
-  const [instanceDataLoading, setInstanceDataLoading] = useState(false)
   const [instanceNotReady] = useState(
     props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
   )
@@ -145,30 +142,6 @@ export default function AppInstanceRow (props) {
     window.open(editorURL)
   }
 
-  const openInstanceDataDialog = async () => {
-    setInstanceDataLoading(true)
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    await appAPI.getAppInstanceData(appInstance.version, appInstance.instanceId)
-
-    if (appAPI.lastAPICallSuccessfull) {
-      setInstanceDataLoading(false)
-      setDataDialogOpen(true)
-    } else {
-      // error snackbar
-      snackbarText = 'Failed to load data from ' + appInstance.instanceName + '.'
-      alertSeverity = 'error'
-      setSnackbarState({
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText,
-        snackbarErrorText: appAPI.lastAPIError
-      })
-      setSnackbarOpen(true)
-      setInstanceDataLoading(false)
-    }
-  }
-
   return (
       <Fragment>
         <TableRow>
@@ -226,17 +199,6 @@ export default function AppInstanceRow (props) {
                       />
                     </span>
                 </Tooltip>
-                <Tooltip title={'Show data of ' + appInstance.instanceName + '.'}>
-                    <span>
-                      <LoadIconButton
-                        label="instance-data-button"
-                        icon={<BarChartIcon />}
-                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
-                        onClick={() => openInstanceDataDialog()}
-                        loading={instanceDataLoading}
-                      />
-                    </span>
-                </Tooltip>
                 <Tooltip title="Delete instance">
                     <span>
                     <LoadIconButton
@@ -263,10 +225,6 @@ export default function AppInstanceRow (props) {
           open={dataDialogOpen}
           setOpen={setDataDialogOpen}
         >
-          <AppInstanceData
-            instanceName = {appInstance.instanceName}
-            instanceData = {appInstance.data}
-          ></AppInstanceData>
         </ContentDialog>
     </Fragment>
   )

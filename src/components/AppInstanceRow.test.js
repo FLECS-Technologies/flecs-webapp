@@ -44,14 +44,12 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
-    const dataButton = getByLabelText('instance-data-button')
 
     fireEvent.click(stopButton)
 
     expect(stopButton).toBeDisabled()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).toBeDisabled()
   })
 
   test('render running instance and delete instance', () => {
@@ -65,14 +63,12 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
-    const dataButton = getByLabelText('instance-data-button')
 
     fireEvent.click(deleteButton)
 
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).toBeVisible()
   })
 
   test('render stopped instance and start instance', () => {
@@ -86,14 +82,12 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
-    const dataButton = getByLabelText('instance-data-button')
 
     fireEvent.click(startButton)
 
     expect(stopButton).toBeVisible()
     expect(startButton).toBeDisabled()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).toBeVisible()
   })
 
   test('renders an instance with an editor', () => {
@@ -112,7 +106,6 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
-    const dataButton = getByLabelText('instance-data-button')
 
     fireEvent.click(editorButton)
 
@@ -120,30 +113,7 @@ describe('AppInstanceRow', () => {
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    expect(dataButton).toBeVisible()
     expect(window.open).toHaveBeenCalled()
     expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
-  })
-
-  test('renders an instance with data', () => {
-    testAppInstance.status = 'running'
-    const { getByLabelText } = render(<AppInstanceRow
-      loadAppReferenceData = {loadReferenceData}
-      app = {testApp}
-      appInstance = {testAppInstance}
-      />
-    )
-
-    const stopButton = getByLabelText('stop-instance-button')
-    const startButton = getByLabelText('start-instance-button')
-    const deleteButton = getByLabelText('delete-instance-button')
-    const dataButton = getByLabelText('instance-data-button')
-
-    fireEvent.click(dataButton)
-
-    expect(stopButton).toBeVisible()
-    expect(startButton).toBeVisible()
-    expect(deleteButton).toBeVisible()
-    expect(dataButton).toBeVisible()
   })
 })

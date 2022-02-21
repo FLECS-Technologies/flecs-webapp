@@ -17,7 +17,7 @@
  */
 import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
-import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getMultiInstance, getProducts, getReverseDomainName, getShortDescription, getVersion } from './ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getMultiInstance, getProducts, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
 
 jest.mock('axios')
 

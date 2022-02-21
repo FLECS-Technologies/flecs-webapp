@@ -17,8 +17,8 @@
  */
 import axios from 'axios'
 import { act } from 'react-dom/test-utils'
-import { DeviceAPIConfiguration } from './api-config'
-import { postMPLogin, postMPLogout } from './DeviceAuthAPI'
+import { DeviceAPIConfiguration } from '../api-config'
+import { postMPLogin, postMPLogout } from '../DeviceAuthAPI'
 
 jest.mock('axios')
 

@@ -29,9 +29,7 @@ export default class DeleteAppInstanceAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL, requestOptions)
-    } catch (error) {
-      console.log(error)
-    }
+      await this.callAPI(DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL, requestOptions)
+    } catch (error) { }
   }
 }

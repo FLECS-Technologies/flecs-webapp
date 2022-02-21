@@ -28,8 +28,6 @@ export default class GetBrowseServiceMesh extends BaseAPI {
 
     try {
       await this.callAPI(DeviceAPIConfiguration.GET_BROWSE_SERVICE_MESH, requestOptions)
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (error) { }
   }
 }

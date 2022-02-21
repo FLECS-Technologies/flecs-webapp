@@ -28,9 +28,7 @@ export default class PostInstallAppAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)
-    } catch (error) {
-      console.log(error)
-    }
+      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_INSTALL_APP_URL, requestOptions)
+    } catch (error) { }
   }
 }

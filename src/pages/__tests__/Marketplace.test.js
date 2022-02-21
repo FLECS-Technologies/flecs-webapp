@@ -17,20 +17,26 @@
  */
 
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { BrowserRouter as Router } from 'react-router-dom'
-import DeviceAppsList from './InstalledAppsList'
+import Marketplace from '../Marketplace'
+// import { getProducts } from '../api/ProductService'
 
-describe('Test Installed Apps List', () => {
-  test('renders installed apps list component', () => {
-    const { getByTestId } = render(<Router><DeviceAppsList /></Router>)
+jest.mock('../../api/ProductService', () => ({
+  getProducts: jest.fn()
+    .mockReturnValue(Promise.resolve())
+}))
 
-    const sideloadButton = getByTestId('GetAppIcon')
+describe('Marketplace', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
-    fireEvent.click(sideloadButton)
+  test('renders Marketplace page', () => {
+    render(<Marketplace />)
 
-    expect(sideloadButton).toBeVisible()
+    expect(screen.getByLabelText('marketplace-apps-list')).toBeVisible()
+
     // screen.debug()
   })
 })

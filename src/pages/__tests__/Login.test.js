@@ -20,13 +20,13 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'
-import Login from './Login'
-import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../api/api-config'
+import Login from '../Login'
+import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../../api/api-config'
 import axios from 'axios'
-import { useAuth } from '../components/AuthProvider'
+import { useAuth } from '../../components/AuthProvider'
 
 jest.mock('axios')
-jest.mock('../components/AuthProvider', () => ({ useAuth: jest.fn() }))
+jest.mock('../../components/AuthProvider', () => ({ useAuth: jest.fn() }))
 
 describe('Login', () => {
   const homer = {

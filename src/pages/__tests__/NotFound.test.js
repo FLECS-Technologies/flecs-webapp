@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021 FLECS Technologies GmbH
+ * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Tue Jan 04 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Frame from './Frame'
-import { DarkModeState } from './ThemeHandler'
+import NotFound from '../NotFound'
+import { BrowserRouter as Router } from 'react-router-dom'
 
-describe('Frame', () => {
-  test('renders Frame component', () => {
-    render(
-        <Router>
-            <DarkModeState>
-                <Frame />
-            </DarkModeState>
-        </Router>
-    )
-    // screen.debug()
+describe('NotFound', () => {
+  test('renders NotFound page', () => {
+    render(<Router><NotFound /></Router>)
+
+    expect(screen.getByLabelText('404')).toBeVisible()
+    expect(screen.getByLabelText('sorry')).toBeVisible()
+    expect(screen.getByLabelText('take-me-back')).toBeVisible()
   })
 })

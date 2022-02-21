@@ -19,13 +19,13 @@
 import React from 'react'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import SelectTicket from './SelectTicket'
-import { addToCart } from '../api/Cart'
+import SelectTicket from '../SelectTicket'
+import { addToCart } from '../../api/Cart'
 import { act } from 'react-dom/test-utils'
 
-jest.mock('../api/LicenseService')
-jest.mock('../api/Cart', () => ({
-  ...jest.requireActual('../api/Cart'),
+jest.mock('../../api/LicenseService')
+jest.mock('../../api/Cart', () => ({
+  ...jest.requireActual('../../api/Cart'),
   addToCart: jest.fn()
 }))
 
@@ -42,8 +42,8 @@ describe('Test SelectTicket', () => {
   test('renders SelectTicket component', async () => {
     await act(async () => {
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
-      const sideloadButton = screen.getByTestId('select-ticket-step')
-      expect(sideloadButton).toBeVisible()
+      const selectTicket = screen.getByTestId('select-ticket-step')
+      expect(selectTicket).toBeVisible()
     })
   })
 

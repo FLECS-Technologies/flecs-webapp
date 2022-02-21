@@ -19,7 +19,7 @@
 import React from 'react'
 import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import LoadButton from './LoadButton'
+import LoadButton from '../LoadButton'
 
 describe('LoadButton', () => {
   test('renders LoadButton component', () => {

@@ -19,7 +19,7 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import AppInstanceRow from './AppInstanceRow'
+import AppInstanceRow from '../AppInstanceRow'
 
 describe('AppInstanceRow', () => {
   function loadReferenceData () {}

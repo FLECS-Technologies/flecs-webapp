@@ -19,21 +19,14 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import RequestAppDialog from './RequestAppDialog'
+import InstalledApps from '../InstalledApps'
+import { BrowserRouter as Router } from 'react-router-dom'
 
-describe('RequestAppDialog', () => {
-  test('renders RequestAppDialog component', () => {
-    render(
-        <RequestAppDialog
-            open={true}
-            appName = 'Testapp'
-            appauthor = 'Test-author'
-        />
-    )
-    expect(screen.getByText('Cancel')).toBeVisible()
-    expect(screen.getByText('Send Request')).toBeVisible()
-    expect(screen.getByText('Name')).toBeVisible()
-    expect(screen.getByText('E-Mail')).toBeVisible()
+describe('Installed Apps', () => {
+  test('renders installed apps page', () => {
+    render(<Router><InstalledApps /></Router>)
+
+    expect(screen.getByLabelText('installed-apps-list')).toBeVisible()
 
     // screen.debug()
   })

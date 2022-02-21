@@ -19,7 +19,7 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Row from './InstalledAppsListRow'
+import Row from '../InstalledAppsListRow'
 
 describe('Test Installed Apps List row', () => {
   const app = {

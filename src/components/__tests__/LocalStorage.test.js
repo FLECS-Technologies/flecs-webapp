@@ -17,7 +17,7 @@
  */
 import '@testing-library/jest-dom'
 import React from 'react'
-import useStateWithLocalStorage from './LocalStorage'
+import useStateWithLocalStorage from '../LocalStorage'
 
 describe('LocalStorage', () => {
   // Cache original functionality

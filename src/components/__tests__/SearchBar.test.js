@@ -19,7 +19,7 @@ import React from 'react'
 import { render, within, fireEvent } from '@testing-library/react'
 // import { shallow } from 'enzyme'
 import '@testing-library/jest-dom'
-import SearchBar from './SearchBar'
+import SearchBar from '../SearchBar'
 
 describe('SearchBar', () => {
   const searchFunc = jest.fn()

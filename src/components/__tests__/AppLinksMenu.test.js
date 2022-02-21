@@ -20,7 +20,7 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import { shallow } from 'enzyme'
 import '@testing-library/jest-dom'
-import AppLinksMenu from './AppLinksMenu'
+import AppLinksMenu from '../AppLinksMenu'
 import Menu from '@mui/material/Menu'
 import { BrowserRouter as Router } from 'react-router-dom'
 

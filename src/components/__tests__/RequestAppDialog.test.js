@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021 FLECS Technologies GmbH
  *
- * Created on Wed Dec 15 2021
+ * Created on Tue Nov 30 2021
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import FileOpen from './FileOpen'
-import userEvent from '@testing-library/user-event'
+import RequestAppDialog from '../RequestAppDialog'
 
-describe('Test FileOpen', () => {
-  const file = new File(['hello'], 'hello.yml', { type: 'application/yml' })
-  function onConfirm () {}
-
-  test('input file', async () => {
-    const { getByTestId } = render(
-        <FileOpen
-          onConfirm = {onConfirm}
+describe('RequestAppDialog', () => {
+  test('renders RequestAppDialog component', () => {
+    render(
+        <RequestAppDialog
+            open={true}
+            appName = 'Testapp'
+            appauthor = 'Test-author'
         />
     )
-    const input = getByTestId('fileInput')
-    userEvent.upload(input, file)
+    expect(screen.getByText('Cancel')).toBeVisible()
+    expect(screen.getByText('Send Request')).toBeVisible()
+    expect(screen.getByText('Name')).toBeVisible()
+    expect(screen.getByText('E-Mail')).toBeVisible()
 
-    expect(input.files[0]).toStrictEqual(file)
-    expect(input.files.item(0)).toStrictEqual(file)
-    expect(input.files).toHaveLength(1)
+    // screen.debug()
   })
 })

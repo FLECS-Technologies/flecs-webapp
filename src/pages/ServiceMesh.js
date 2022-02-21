@@ -61,7 +61,8 @@ export default function ServiceMesh () {
     await deviceAPI.browseServiceMesh()
 
     if (deviceAPI.lastAPICallSuccessfull) {
-      setData(deviceAPI.state.serviceMeshData)
+      setData(deviceAPI.state?.serviceMeshData)
+      createTree()
     } else {
       // error snackbar
       snackbarText = 'Failed to load data from the service mesh.'
@@ -81,19 +82,21 @@ export default function ServiceMesh () {
     }
   }, [refresh])
 
-  data.forEach(path => {
-    path.split('.').reduce((r, name, i, a) => {
-      if (!r[name]) {
-        r[name] = { result: [] }
-        r.result.push({ path, name, children: r[name].result })
-      }
-      if (r[name].result.length > 0) {
-        branches.push(name)
-      }
+  const createTree = () => {
+    data.forEach(path => {
+      path.split('.').reduce((r, name, i, a) => {
+        if (!r[name]) {
+          r[name] = { result: [] }
+          r.result.push({ path, name, children: r[name].result })
+        }
+        if (r[name].result.length > 0) {
+          branches.push(name)
+        }
 
-      return r[name]
-    }, level)
-  })
+        return r[name]
+      }, level)
+    })
+  }
 
   root.children = result
   branches.push(root.name)
@@ -114,9 +117,9 @@ export default function ServiceMesh () {
   return (
     <>
         <Header aria-label='Header-Placeholder'/>
-        <Paper sx={{ flexGrow: 1, overflowY: 'auto' }}>
+        <Paper data-testid='service-mesh' sx={{ flexGrow: 1, overflowY: 'auto' }}>
             <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }} >
-                <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
+                <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
                     Service Mesh
                 </Typography>
                 <Button sx={{ mr: 1 }} data-testid='expand-button' onClick={handleExpandAllClick} disabled={loading}>

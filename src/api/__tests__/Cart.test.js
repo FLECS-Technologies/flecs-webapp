@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import '@testing-library/jest-dom'
-import { addToCart } from './Cart'
+import { addToCart } from '../Cart'
 import CoCartAPI from '@cocart/cocart-rest-api'
 
 const responseData = {

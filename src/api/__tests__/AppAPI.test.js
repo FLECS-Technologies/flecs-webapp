@@ -17,7 +17,7 @@
  */
 import nock from 'nock'
 import '@testing-library/jest-dom'
-import AppAPI from './AppAPI'
+import AppAPI from '../AppAPI'
 
 describe('AppAPI', () => {
   const testApp = {

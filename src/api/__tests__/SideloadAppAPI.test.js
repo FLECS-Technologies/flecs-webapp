@@ -21,7 +21,7 @@ import nock from 'nock'
 // import { render /*, screen */ } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import PutSideloadAppAPI from './SideloadAppAPI'
+import PutSideloadAppAPI from '../SideloadAppAPI'
 
 describe('PutSideloadAppAPI', () => {
   beforeEach(() => {

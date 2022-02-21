@@ -19,7 +19,7 @@
 import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import axios from 'axios'
-import { getCurrentUserLicenses } from './LicenseService'
+import { getCurrentUserLicenses } from '../LicenseService'
 
 jest.mock('axios')
 

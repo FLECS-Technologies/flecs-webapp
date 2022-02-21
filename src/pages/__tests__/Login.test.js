@@ -138,7 +138,7 @@ describe('Login', () => {
     expect(message).toHaveTextContent('Successfully logged in!')
     expect(axios.post).toHaveBeenCalledTimes(2)
     expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
   })
 
   test('Unsuccessfull Login', async () => {

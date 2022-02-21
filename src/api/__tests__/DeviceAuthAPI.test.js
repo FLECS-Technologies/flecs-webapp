@@ -54,7 +54,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogin(testUser)
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.data.user_login, token: testUser.jwt.token })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.data.user_login, token: testUser.jwt.token })
   })
 
   test('calls successfull mp-logout', async () => {
@@ -63,7 +63,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogout(testUser)
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.data.user_login })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.data.user_login })
   })
 
   test('calls failed mp-login', async () => {

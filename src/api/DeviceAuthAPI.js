@@ -27,7 +27,7 @@ async function postMPLogin (currentUser) {
     if (process.env.NODE_ENV === 'development') {
       url = process.env.REACT_APP_DEV_VM_IP
     }
-    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL
+    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL
     return axios
       .post(url, { user, token })
       .then(response => {
@@ -49,7 +49,7 @@ async function postMPLogout (currentUser) {
       if (process.env.NODE_ENV === 'development') {
         url = process.env.REACT_APP_DEV_VM_IP
       }
-      url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL
+      url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL
       return axios
         .post(url, { user })
         .then(response => {

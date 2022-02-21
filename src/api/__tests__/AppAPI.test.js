@@ -18,6 +18,7 @@
 import nock from 'nock'
 import '@testing-library/jest-dom'
 import AppAPI from '../AppAPI'
+import { DeviceAPIConfiguration } from '../api-config'
 
 describe('AppAPI', () => {
   const testApp = {
@@ -82,7 +83,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.uninstall', async () => {
     nock('http://localhost')
-      .post('/api/UninstallApp')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_UNINSTALL_APP_URL)
       .reply(200, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -101,7 +102,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.createInstance', async () => {
     nock('http://localhost')
-      .post('/api/CreateAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -132,7 +133,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.startInstance', async () => {
     nock('http://localhost')
-      .post('/api/StartAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -163,7 +164,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.stopInstance', async () => {
     nock('http://localhost')
-      .post('/api/StopAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -194,7 +195,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.deleteInstance', async () => {
     nock('http://localhost')
-      .post('/api/DeleteAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -221,7 +222,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.installFromMarketplace', async () => {
     nock('http://localhost')
-      .post('/api/InstallApp')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_INSTALL_APP_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -232,7 +233,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/api/CreateAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -244,7 +245,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/api/StartAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -271,14 +272,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.sideloadApp', async () => {
     nock('http://localhost')
-      .put('/api/SideloadApp')
+      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
       .reply(200, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
       })
 
     nock('http://localhost')
-      .post('/api/CreateAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,
@@ -290,7 +291,7 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post('/api/StartAppInstance')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
       .reply(200, {
         app: testApp.app,
         version: testApp.version,

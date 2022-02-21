@@ -22,6 +22,7 @@ import nock from 'nock'
 import '@testing-library/jest-dom'
 
 import PutSideloadAppAPI from '../SideloadAppAPI'
+import { DeviceAPIConfiguration } from '../api-config'
 
 describe('PutSideloadAppAPI', () => {
   beforeEach(() => {
@@ -34,7 +35,7 @@ describe('PutSideloadAppAPI', () => {
   })
   test('calls PutSideloadAppAPI with success response', async () => {
     nock('http://localhost')
-      .put('/api/SideloadApp')
+      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
       .reply(200, {
         app: 'org.eclipse.mosquitto',
         title: 'Mosquitto MQTT broker',
@@ -60,7 +61,7 @@ describe('PutSideloadAppAPI', () => {
 
   test('calls PutSideloadAppAPI with unsuccessfull response', async () => {
     nock('http://localhost')
-      .put('/api/SideloadApp')
+      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
       .reply(405, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

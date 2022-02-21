@@ -19,21 +19,23 @@
 import { Component } from 'react'
 
 const DEVICE_ROUTE = '/api'
-const GET_DEVICE_INFO_URL = '/GetDeviceInfo'
-const GET_INSTALLED_APP_LIST_URL = '/InstalledAppList'
-const GET_INSTANTIATED_APP_LIST_URL = '/InstantiatedApps'
-const GET_BROWSE_SERVICE_MESH = '/Browse'
+const APP_ROUTE = '/app'
+const INSTANCE_ROUTE = '/instance'
+const MARKETPLACE_ROUTE = '/marketplace'
+const SYSTEM_ROUTE = '/system'
+const GET_INSTALLED_APP_LIST_URL = '/list'
+const GET_BROWSE_SERVICE_MESH = '/browse'
 
-const POST_INSTALL_APP_URL = '/InstallApp'
-const POST_UNINSTALL_APP_URL = '/UninstallApp'
-const POST_START_INSTANCE_URL = '/StartAppInstance'
-const POST_STOP_INSTANCE_URL = '/StopAppInstance'
-const POST_CREATE_APP_INSTANCE_URL = '/CreateAppInstance'
-const POST_DELETE_APP_INSTANCE_URL = '/DeleteAppInstance'
-const POST_MP_LOGIN_URL = '/mp-login'
-const POST_MP_LOGOUT_URL = '/mp-logout'
+const POST_INSTALL_APP_URL = '/install'
+const POST_UNINSTALL_APP_URL = '/uninstall'
+const POST_START_INSTANCE_URL = '/start'
+const POST_STOP_INSTANCE_URL = '/stop'
+const POST_CREATE_APP_INSTANCE_URL = '/create'
+const POST_DELETE_APP_INSTANCE_URL = '/delete'
+const POST_MP_LOGIN_URL = '/login'
+const POST_MP_LOGOUT_URL = '/logout'
 
-const PUT_SIDELOAD_APP = '/SideloadApp'
+const PUT_SIDELOAD_APP = '/sideload'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
@@ -41,7 +43,6 @@ const MP_CART_ROUTE = '/warenkorb?keep-cart=true&cocart-load-cart='
 const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
-const GET_APP_LIST_URL = 'AppList'
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
 const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/wp-json/wclm/v3/get-current-user-licenses'
@@ -50,6 +51,22 @@ const GET_PRODUCTS_URL = '/api/products'
 class DeviceAPIConfiguration extends Component {
   static get DEVICE_ROUTE () {
     return DEVICE_ROUTE
+  }
+
+  static get APP_ROUTE () {
+    return APP_ROUTE
+  }
+
+  static get INSTANCE_ROUTE () {
+    return INSTANCE_ROUTE
+  }
+
+  static get MARKETPLACE_ROUTE () {
+    return MARKETPLACE_ROUTE
+  }
+
+  static get SYSTEM_ROUTE () {
+    return SYSTEM_ROUTE
   }
 
   // post requests
@@ -86,16 +103,8 @@ class DeviceAPIConfiguration extends Component {
   }
 
   // get requests
-  static get GET_DEVICE_INFO_URL () {
-    return GET_DEVICE_INFO_URL
-  }
-
   static get GET_INSTALLED_APP_LIST_URL () {
     return GET_INSTALLED_APP_LIST_URL
-  }
-
-  static get GET_INSTANTIATED_APP_LIST_URL () {
-    return GET_INSTANTIATED_APP_LIST_URL
   }
 
   static get GET_BROWSE_SERVICE_MESH () {
@@ -130,10 +139,6 @@ class MarketplaceAPIConfiguration {
   }
 
   // get requests
-  static get GET_APP_LIST_URL () {
-    return GET_APP_LIST_URL
-  }
-
   static get GET_PRODUCTS_URL () {
     return GET_PRODUCTS_URL
   }

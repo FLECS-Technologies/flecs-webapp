@@ -28,9 +28,7 @@ export default class GetInstalledAppsListAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL, requestOptions)
-    } catch (error) {
-      console.log(error)
-    }
+      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL, requestOptions)
+    } catch (error) { }
   }
 }

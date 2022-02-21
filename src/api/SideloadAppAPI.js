@@ -30,9 +30,7 @@ export default class PutSideloadAppAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.PUT_SIDELOAD_APP, requestOptions)
-    } catch (error) {
-      console.log(error)
-    }
+      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP, requestOptions)
+    } catch (error) { }
   }
 }

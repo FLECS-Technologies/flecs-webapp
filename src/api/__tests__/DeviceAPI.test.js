@@ -89,7 +89,7 @@ describe('DeviceAPI', () => {
 
   test('calls successfull DeviceAPI.getInstalledApps', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
       .reply(200, { appList }, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -103,7 +103,7 @@ describe('DeviceAPI', () => {
 
   test('calls failed DeviceAPI.getInstalledApps', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

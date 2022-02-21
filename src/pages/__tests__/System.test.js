@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2022 FLECS Technologies GmbH
+ * Copyright (c) 2021 FLECS Technologies GmbH
  *
- * Created on Tue Jan 04 2022
+ * Created on Tue Nov 30 2021
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import NotFound from './NotFound'
-import { BrowserRouter as Router } from 'react-router-dom'
+import System from '../System'
 
-describe('NotFound', () => {
-  test('renders NotFound page', () => {
-    render(<Router><NotFound /></Router>)
+describe('System', () => {
+  test('renders System page', () => {
+    render(<System />)
 
-    expect(screen.getByLabelText('404')).toBeVisible()
-    expect(screen.getByLabelText('sorry')).toBeVisible()
-    expect(screen.getByLabelText('take-me-back')).toBeVisible()
+    expect(screen.getByLabelText('system-page')).toBeVisible()
+
+    // screen.debug()
   })
 })

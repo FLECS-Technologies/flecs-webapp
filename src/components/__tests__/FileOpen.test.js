@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Wed Dec 15 2021
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import InstalledApps from './InstalledApps'
-import { BrowserRouter as Router } from 'react-router-dom'
+import FileOpen from '../FileOpen'
+import userEvent from '@testing-library/user-event'
 
-describe('Installed Apps', () => {
-  test('renders installed apps page', () => {
-    render(<Router><InstalledApps /></Router>)
+describe('Test FileOpen', () => {
+  const file = new File(['hello'], 'hello.yml', { type: 'application/yml' })
+  function onConfirm () {}
 
-    expect(screen.getByLabelText('installed-apps-list')).toBeVisible()
+  test('input file', async () => {
+    const { getByTestId } = render(
+        <FileOpen
+          onConfirm = {onConfirm}
+        />
+    )
+    const input = getByTestId('fileInput')
+    userEvent.upload(input, file)
 
-    // screen.debug()
+    expect(input.files[0]).toStrictEqual(file)
+    expect(input.files.item(0)).toStrictEqual(file)
+    expect(input.files).toHaveLength(1)
   })
 })

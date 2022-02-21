@@ -19,10 +19,10 @@
 import React from 'react'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import InstallAppStepper from './InstallAppStepper'
+import InstallAppStepper from '../InstallAppStepper'
 import { act } from 'react-dom/test-utils'
 
-jest.mock('../api/LicenseService')
+jest.mock('../../api/LicenseService')
 
 describe('Test InstallAppStepper', () => {
   beforeAll(() => {

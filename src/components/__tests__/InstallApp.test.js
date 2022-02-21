@@ -19,9 +19,9 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import InstallApp from './InstallApp'
-import { ReferenceDataContextProvider } from '../data/ReferenceDataContext'
-import AppAPI from '../api/AppAPI'
+import InstallApp from '../InstallApp'
+import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
+import AppAPI from '../../api/AppAPI'
 
 const app = {
   app: 'com.codesys.codesyscontrol',

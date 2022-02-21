@@ -43,7 +43,6 @@ export default class DeviceAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.error(error)
       this.lastAPICallSuccessfull = false
       this.lastAPIError = error
     }
@@ -64,7 +63,6 @@ export default class DeviceAPI extends React.Component {
         }
       }
     } catch (error) {
-      console.error(error)
       this.lastAPICallSuccessfull = false
       this.lastAPIError = error
     }

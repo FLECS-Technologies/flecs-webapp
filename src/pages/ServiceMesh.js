@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 import { TreeItem, TreeView } from '@mui/lab'
-import { Button, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
+import { Alert, AlertTitle, Button, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
 import React from 'react'
 import styled from 'styled-components'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ReportIcon from '@mui/icons-material/Report'
 import useStateWithLocalStorage from '../components/LocalStorage'
-import ActionSnackbar from '../components/ActionSnackbar'
 import DeviceAPI from '../api/DeviceAPI'
 
 const Header = styled.div`
@@ -36,13 +37,9 @@ export default function ServiceMesh () {
   const [expanded, setExpanded] = useStateWithLocalStorage('service-mesh-expanded', [])
   const [loading, setLoading] = React.useState(false)
   const [refresh, setRefresh] = React.useState(false)
-  const [data, setData] = React.useState(['app1.t', 'app1.u', 'app1.v', 'app1.w', 'app1.x', 'app1.y', 'app1.z', 'app2.a', 'app2.b', 'app2.b.b1', 'app2.b.b2', 'app2.c', 'app2.d', 'app2.e', 'app2.f.f0', 'app2.f.f1'])
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
-  const [snackbarState, setSnackbarState] = React.useState({
-    snackbarText: 'Info',
-    alertSeverity: 'success',
-    snackbarErrorText: ''
-  })
+  const [error, setError] = React.useState(false)
+  const [errorText, setErrorText] = React.useState()
+  const [data, setData] = React.useState([]) // React.useState(['app1.t', 'app1.u', 'app1.v', 'app1.w', 'app1.x', 'app1.y', 'app1.z', 'app2.a', 'app2.b', 'app2.b.b1', 'app2.b.b2', 'app2.c', 'app2.d', 'app2.e', 'app2.f.f0', 'app2.f.f1'])
   const handleToggle = (event, nodeIds) => {
     setExpanded(nodeIds)
   }
@@ -54,26 +51,17 @@ export default function ServiceMesh () {
 
   const browseServiceMesh = async () => {
     setLoading(true)
-    let snackbarText
-    let alertSeverity
+    setError(false)
     const deviceAPI = new DeviceAPI()
 
     await deviceAPI.browseServiceMesh()
 
     if (deviceAPI.lastAPICallSuccessfull) {
       setData(deviceAPI.state?.serviceMeshData)
-      createTree()
     } else {
-      // error snackbar
-      snackbarText = 'Failed to load data from the service mesh.'
-      alertSeverity = 'error'
+      setErrorText('Something went wrong while loading the data! ' + deviceAPI?.lastAPIError)
+      setError(true)
     }
-    setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText,
-      snackbarErrorText: deviceAPI?.lastAPIError
-    })
-    setSnackbarOpen(true)
     setLoading(false)
   }
   React.useEffect(() => {
@@ -82,7 +70,7 @@ export default function ServiceMesh () {
     }
   }, [refresh])
 
-  const createTree = () => {
+  if (data) {
     data.forEach(path => {
       path.split('.').reduce((r, name, i, a) => {
         if (!r[name]) {
@@ -122,22 +110,34 @@ export default function ServiceMesh () {
                 <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
                     Service Mesh
                 </Typography>
-                <Button sx={{ mr: 1 }} data-testid='expand-button' onClick={handleExpandAllClick} disabled={loading}>
+                {root.children.length > 0 && <Button variant='outlined' sx={{ mr: 1 }} data-testid='expand-button' onClick={handleExpandAllClick} disabled={loading}>
                     {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
-                </Button>
-                <Button sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => setRefresh(true)}>
+                </Button>}
+                <Button variant='outlined' sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => setRefresh(true)}>
                     <RefreshIcon sx={{ mr: 1 }}/> Refresh
                 </Button>
             </Toolbar>
-            {loading && <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ pb: { sm: 2 } }} >
+            <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ pb: { sm: 2 } }} >
                 <Grid item>
-                    <CircularProgress color="primary" />
+                  {loading && <CircularProgress color="primary" />}
+                  {error && <ReportIcon fontSize='large' color='error'/> }
                 </Grid>
                 <Grid item>
-                    <Typography>Loading data from the service mesh...</Typography>
+                  {loading && <Typography>Loading data from the service mesh...</Typography>}
+                  {error &&
+                    <Typography>Oops... {errorText}</Typography>}
+                  {(!error && root.children.length === 0) &&
+                    <Alert severity='info'>
+                      <AlertTitle>Info</AlertTitle>
+                      <Typography>There is no provider that supplies data...</Typography>
+                      <Typography>In order to see data here, you need to install a provider.</Typography>
+                      <Typography>Currently you can use the Mosquitto MQTT Broker from our <Link to="/Marketplace">marketplace</Link>.</Typography>
+                      <Typography>Just publish MQTT from your app to this broker and you will see the topics here.</Typography>
+                      <Typography>Other apps can then easily access and use this data.</Typography>
+                    </Alert> }
                 </Grid>
-            </Grid>}
-            {!loading && <TreeView sx={{ pb: { sm: 2 } }}
+            </Grid>
+            {(!loading && root.children.length > 0) && <TreeView sx={{ pb: { sm: 2 } }}
                 data-testid="app-instances-data-tree"
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpandIcon={<ChevronRightIcon />}
@@ -148,14 +148,6 @@ export default function ServiceMesh () {
                 {renderTree(root)}
             </TreeView>}
         </Paper>
-        <ActionSnackbar
-          data-testid="snackbar"
-          text={snackbarState.snackbarText}
-          errorText={snackbarState.snackbarErrorText}
-          open={snackbarOpen}
-          setOpen={setSnackbarOpen}
-          alertSeverity={snackbarState.alertSeverity}
-        />
     </>
   )
 }

@@ -46,7 +46,7 @@ export default function Login () {
   const pwRef = useRef('') // creating a refernce for password TextField Component
   const user = useAuth()
   const navigate = useNavigate()
-  const location = useLocation()
+  const [location] = React.useState(useLocation())
   const from = location.state?.from?.pathname || '/'
 
   function onChangeUsername (event) {

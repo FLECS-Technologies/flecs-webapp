@@ -39,7 +39,7 @@ const PUT_SIDELOAD_APP = '/sideload'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'http://mp-dev.flecs.tech'
-const MP_CART_ROUTE = '/warenkorb?keep-cart=true&cocart-load-cart='
+const MP_CART_ROUTE = '/cart? cocart-load-cart='
 const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 

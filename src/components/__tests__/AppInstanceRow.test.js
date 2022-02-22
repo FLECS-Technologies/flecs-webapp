@@ -89,31 +89,4 @@ describe('AppInstanceRow', () => {
     expect(startButton).toBeDisabled()
     expect(deleteButton).toBeVisible()
   })
-
-  test('renders an instance with an editor', () => {
-    const closeSpy = jest.fn()
-    window.open = jest.fn().mockReturnValue({ close: closeSpy })
-
-    testAppInstance.status = 'running'
-    const { getByLabelText } = render(<AppInstanceRow
-      loadAppReferenceData = {loadReferenceData}
-      app = {testApp}
-      appInstance = {testAppInstance}
-      />
-    )
-
-    const editorButton = getByLabelText('open-editor-button')
-    const stopButton = getByLabelText('stop-instance-button')
-    const startButton = getByLabelText('start-instance-button')
-    const deleteButton = getByLabelText('delete-instance-button')
-
-    fireEvent.click(editorButton)
-
-    expect(editorButton).toBeEnabled()
-    expect(stopButton).toBeVisible()
-    expect(startButton).toBeVisible()
-    expect(deleteButton).toBeVisible()
-    expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
-  })
 })

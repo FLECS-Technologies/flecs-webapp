@@ -37,6 +37,7 @@ import Avatar from '@mui/material/Avatar'
 
 import LoadButton from './LoadButton'
 import LoadIconButton from './LoadIconButton'
+import LaunchIcon from '@mui/icons-material/Launch'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/AppAPI'
 import AppInstanceRow from './AppInstanceRow'
@@ -44,6 +45,7 @@ import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import AppLinksMenu from './AppLinksMenu'
 import useStateWithLocalStorage from './LocalStorage'
+import { LoadingButton } from '@mui/lab'
 
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -61,7 +63,7 @@ export default function Row (props) {
   const [newInstanceStarting, setNewInstanceStarting] = useState(false)
 
   function loadReferenceData (props) {
-    const tmpApp = appList.find(obj => {
+    const tmpApp = appList?.find(obj => {
       return obj.app === props.app
     })
 
@@ -91,7 +93,9 @@ export default function Row (props) {
     await appAPI.uninstall()
 
     if (appAPI.lastAPICallSuccessfull) {
-      setUpdateAppList(true)
+      if (setUpdateAppList) {
+        setUpdateAppList(true)
+      }
       // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
       snackbarText = appAPI.app.title + ' successfully uninstalled.'
       alertSeverity = 'success'
@@ -117,8 +121,9 @@ export default function Row (props) {
     await appAPI.createInstance(appAPI.createInstanceName())
 
     if (appAPI.lastAPICallSuccessfull) {
-      setUpdateAppList(true)
-      // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
+      if (setUpdateAppList) {
+        setUpdateAppList(true)
+      }
       snackbarText = 'Successfully started a new instance of ' + appAPI.app.title + '.'
       alertSeverity = 'success'
     } else {
@@ -132,6 +137,19 @@ export default function Row (props) {
     })
     setSnackbarOpen(true)
     setNewInstanceStarting(false)
+  }
+
+  function openApp () {
+    let editorURL = window.location.protocol + '//'
+
+    if (process.env.NODE_ENV === 'development') {
+      editorURL = process.env.REACT_APP_DEV_VM_IP
+    } else {
+      editorURL = editorURL + window.location.hostname
+    }
+
+    editorURL = editorURL + row.editor
+    window.open(editorURL)
   }
 
   return (
@@ -191,10 +209,18 @@ export default function Row (props) {
                 <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h6" gutterBottom component="div">
                   App instances
                 </Typography>
+                {row.editor &&
+                <LoadingButton
+                  aria-label="open-app-button"
+                  variant="contained"
+                  onClick={() => openApp(props)}
+                  startIcon={<LaunchIcon />}>
+                    open app
+                </LoadingButton>}
                 <LoadButton
                   data-testid="start-new-instance-button"
                   text="start new instance"
-                  variant="contained"
+                  variant="outlined"
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
                   disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}

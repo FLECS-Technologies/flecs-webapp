@@ -26,7 +26,6 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
 import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
-import LaunchIcon from '@mui/icons-material/Launch'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
@@ -37,7 +36,6 @@ import ContentDialog from './ContentDialog'
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
   const { setUpdateAppList } = useContext(ReferenceDataContext)
-  const editorAvailable = (app.editor != null) ? '' : 'none'
   const [dataDialogOpen, setDataDialogOpen] = useState(false)
   const [instanceStarting, setInstanceStarting] = useState(false)
   const [instanceStopping, setInstanceStopping] = useState(false)
@@ -129,19 +127,6 @@ export default function AppInstanceRow (props) {
     setInstanceDeleting(false)
   }
 
-  function openInstanceEditor () {
-    let editorURL = window.location.protocol + '//'
-
-    if (process.env.NODE_ENV === 'development') {
-      editorURL = process.env.REACT_APP_DEV_VM_IP
-    } else {
-      editorURL = editorURL + window.location.hostname
-    }
-
-    editorURL = editorURL + app.editor
-    window.open(editorURL)
-  }
-
   return (
       <Fragment>
         <TableRow>
@@ -186,17 +171,6 @@ export default function AppInstanceRow (props) {
                         onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
                         loading={instanceStopping}
                     />
-                    </span>
-                </Tooltip>
-                <Tooltip title={'Open editor for ' + appInstance.instanceName + ' in new tab'}>
-                    <span>
-                      <LoadIconButton
-                        label="open-editor-button"
-                        icon={<LaunchIcon />}
-                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
-                        onClick={() => openInstanceEditor()}
-                        displaystate={editorAvailable}
-                      />
                     </span>
                 </Tooltip>
                 <Tooltip title="Delete instance">

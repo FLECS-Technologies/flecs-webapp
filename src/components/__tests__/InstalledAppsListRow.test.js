@@ -17,15 +17,20 @@
  */
 
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Row from '../InstalledAppsListRow'
+import { act } from 'react-dom/test-utils'
+
+jest.mock('../../api/AppAPI')
 
 describe('Test Installed Apps List row', () => {
   const app = {
     app: 'com.codesys.codesyscontrol',
     status: 'installed',
     version: '4.2.0',
+    editor: ':8080',
+    multiInstance: true,
     instances: [
       {
         instanceId: 'com.codesys.codesyscontrol.01234567',
@@ -41,36 +46,48 @@ describe('Test Installed Apps List row', () => {
       }
     ]
   }
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
   test('renders installed apps list row component', () => {
-    const { getByTestId /*, getByLabelText */ } = render(<Row
-      key = {app.app}
-      row = {app}
-      />)
+    render(<Row key = {app.app} row = {app} />)
 
-    const crtInstnButton = getByTestId('start-new-instance-icon-button-icon')
-    const deleteButton = getByTestId('DeleteIcon')
-
-    fireEvent.click(crtInstnButton)
+    const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const deleteButton = screen.getByTestId('DeleteIcon')
 
     expect(crtInstnButton).toBeVisible()
     expect(deleteButton).toBeVisible()
-    // screen.debug()
   })
 
-  test('test delete app', () => {
-    const { getByTestId /*, getByLabelText */ } = render(<Row
-        key = {app.app}
-        row = {app}
-   />)
+  test('create new instance', async () => {
+    await act(async () => {
+      render(<Row key = {app.app} row = {app} />)
 
-    const createInstanceButton = getByTestId('start-new-instance-icon-button-icon')
-    const deleteButton = getByTestId('DeleteIcon')
+      const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
+      const deleteButton = screen.getByTestId('DeleteIcon')
 
-    fireEvent.click(deleteButton)
+      fireEvent.click(crtInstnButton)
 
-    expect(createInstanceButton).toBeVisible()
-    expect(deleteButton).toBeVisible()
-    // screen.debug()
+      expect(crtInstnButton).toBeVisible()
+      expect(deleteButton).toBeVisible()
+    })
+  })
+
+  test('test delete app', async () => {
+    await act(async () => {
+      render(<Row key = {app.app} row = {app} />)
+
+      const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon')
+      const deleteButton = screen.getByTestId('DeleteIcon')
+
+      fireEvent.click(deleteButton)
+
+      const yesButton = await waitFor(() => screen.getByText('Yes'))
+      fireEvent.click(yesButton)
+
+      expect(createInstanceButton).toBeVisible()
+      expect(deleteButton).toBeVisible()
+    })
   })
 
   test('test app with relatedLinks', () => {
@@ -103,5 +120,22 @@ describe('Test Installed Apps List row', () => {
 
     expect(() => getByTestId('more-horiz-icon')).toThrow()
     // screen.debug()
+  })
+
+  test('renders an app with an editor', () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+
+    render(<Row key = {app.app} row = {app} />)
+
+    const expandButton = screen.getByLabelText('expand row')
+    fireEvent.click(expandButton)
+
+    const editorButton = screen.getByLabelText('open-app-button')
+    fireEvent.click(editorButton)
+
+    expect(editorButton).toBeEnabled()
+    expect(window.open).toHaveBeenCalled()
+    expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
   })
 })

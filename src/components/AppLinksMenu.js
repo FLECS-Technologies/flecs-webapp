@@ -49,6 +49,7 @@ export default function AppLinksMenu (props) {
         <Menu
             data_testid="app-links-menu"
             id="menu"
+            key='app-links-menu'
             MenuListProps={{ 'aria-labelledby': 'long-button' }}
             anchorEl={anchorEl}
             open={open}

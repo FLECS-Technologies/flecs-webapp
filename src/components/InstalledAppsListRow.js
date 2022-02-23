@@ -213,6 +213,7 @@ export default function Row (props) {
                 <LoadingButton
                   aria-label="open-app-button"
                   variant="contained"
+                  sx={{ mr: 1 }}
                   onClick={() => openApp(props)}
                   startIcon={<LaunchIcon />}>
                     open app
@@ -221,6 +222,7 @@ export default function Row (props) {
                   data-testid="start-new-instance-button"
                   text="start new instance"
                   variant="outlined"
+                  sx={{ mr: 1 }}
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
                   disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}

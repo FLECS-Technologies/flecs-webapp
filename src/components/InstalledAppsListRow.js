@@ -160,10 +160,12 @@ export default function Row (props) {
             data-testid="expand-app-button"
             aria-label="expand row"
             size="small"
+            sx={{ mr: 1 }}
             onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
+
         </TableCell>
         <TableCell data-testid="app-avatar-cell" style={{ borderBottom: 'none' }} component="th" scope="row">
           <Avatar data-testid="app-avatar" src={row.avatar}>{row.title.charAt(0).toUpperCase()}</Avatar>
@@ -173,13 +175,22 @@ export default function Row (props) {
         <TableCell data-testid="app-version-cell" style={{ borderBottom: 'none' }}>{row.version}</TableCell>
         <TableCell data-testid="app-actions-cell" style={{ borderBottom: 'none' }}>
           <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
+            {row.editor &&
+            <Tooltip title={'Open app in new tab'}>
+              <span>
+                <LoadIconButton
+                  aria-label="open-app-button"
+                  color='primary'
+                  onClick={() => openApp(props)}
+                  icon={<LaunchIcon />}/>
+                </span>
+            </Tooltip>}
             <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
               <span>
                 <LoadIconButton
                   label="Start new app instance"
                   data-testid="start-new-instance-icon-button"
                   icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
-                  color="primary"
                   onClick={() => startNewInstance(props)}
                   disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}

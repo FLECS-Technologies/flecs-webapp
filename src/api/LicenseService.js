@@ -17,13 +17,14 @@
  */
 import { MarketplaceAPIConfiguration } from './api-config'
 import axios from 'axios'
-import { authHeaderUseBearer } from './auth-header'
+import { jwt } from './auth-header'
 
 function getCurrentUserLicenses () {
   const url = MarketplaceAPIConfiguration.BETA_BASE_URL
-  const data = undefined
+  const data = new FormData()
+  data.append('aam-jwt', jwt())
   return axios
-    .post(url + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data, { headers: authHeaderUseBearer() })
+    .post(url + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data)
     .then(response => {
       if (response?.data?.response?.licenses) {
         return response.data.response.licenses

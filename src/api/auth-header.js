@@ -25,6 +25,16 @@ function authHeaderUseBearer () {
   }
 }
 
+function authorizationHeaderUseBearer () {
+  const user = JSON.parse(localStorage.getItem('user'))
+
+  if (user && user.jwt && user.jwt.token) {
+    return { Authorization: 'Bearer ' + user.jwt.token }
+  } else {
+    return {}
+  }
+}
+
 function authHeaderUseXAccess () {
   const user = JSON.parse(localStorage.getItem('user'))
 
@@ -36,4 +46,14 @@ function authHeaderUseXAccess () {
   }
 }
 
-export { authHeaderUseBearer, authHeaderUseXAccess }
+function jwt () {
+  const user = JSON.parse(localStorage.getItem('user'))
+
+  if (user && user.jwt && user.jwt.token) {
+    return user.jwt.token
+  } else {
+    return {}
+  }
+}
+
+export { authHeaderUseBearer, authorizationHeaderUseBearer, authHeaderUseXAccess, jwt }

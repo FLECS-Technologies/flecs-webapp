@@ -45,7 +45,7 @@ const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const POST_AUTHENTICATE_URL = '/wp-json/aam/v2/authenticate'
 const POST_VALIDATE_URL = '/wp-json/aam/v2/jwt/validate'
-const POST_GET_CURRENT_USER_LICENSES_URL = '/wp-json/wclm/v3/get-current-user-licenses'
+const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
 const GET_PRODUCTS_URL = '/api/products'
 
 class DeviceAPIConfiguration extends Component {

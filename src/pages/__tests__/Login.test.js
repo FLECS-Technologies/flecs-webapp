@@ -137,7 +137,7 @@ describe('Login', () => {
 
     expect(message).toHaveTextContent('Successfully logged in!')
     expect(axios.post).toHaveBeenCalledTimes(2)
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
     expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
   })
 
@@ -160,6 +160,6 @@ describe('Login', () => {
     const message = getByLabelText('message')
 
     expect(message).toHaveTextContent('Failed to login')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BETA_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
   })
 })

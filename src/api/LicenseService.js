@@ -20,7 +20,12 @@ import axios from 'axios'
 import { jwt } from './auth-header'
 
 function getCurrentUserLicenses () {
-  const url = MarketplaceAPIConfiguration.BETA_BASE_URL
+  let url
+  if (process.env.NODE_ENV === 'development') {
+    url = process.env.REACT_APP_DEV_LOCAL_MP_URL
+  } else {
+    url = MarketplaceAPIConfiguration.BASE_URL
+  }
   const data = new FormData()
   data.append('aam-jwt', jwt())
   return axios

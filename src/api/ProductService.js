@@ -23,6 +23,8 @@ function getProducts (params) {
   const { /* page , per_page, search, order, orderby, */ status } = params || {}
   const reqParams = new URLSearchParams()
   reqParams.append('category', '18')
+  reqParams.append('page', '1')
+  reqParams.append('per_page', '100')
   if (status) {
     reqParams.append('status', status)
   }

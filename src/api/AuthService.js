@@ -26,9 +26,9 @@ class AuthService {
     const issueJWT = true
     // const refreshableJWT = true
     if (process.env.NODE_ENV === 'development') {
-      url = process.env.REACT_APP_DEV_MP_URL
+      url = process.env.REACT_APP_DEV_LOCAL_MP_URL
     } else {
-      url = MarketplaceAPIConfiguration.BETA_BASE_URL
+      url = MarketplaceAPIConfiguration.MP_BASE_URL
     }
     url = url + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL
     return axios
@@ -44,15 +44,18 @@ class AuthService {
 
         return response.data
       })
+      .catch(error => {
+        return Promise.reject(error)
+      })
   }
 
   validate (jwt) {
     let url
 
     if (process.env.NODE_ENV === 'development') {
-      url = process.env.REACT_APP_DEV_MP_URL
+      url = process.env.REACT_APP_DEV_LOCAL_MP_URL
     } else {
-      url = MarketplaceAPIConfiguration.BETA_BASE_URL
+      url = MarketplaceAPIConfiguration.MP_BASE_URL
     }
     url = url + MarketplaceAPIConfiguration.POST_VALIDATE_URL
     return axios

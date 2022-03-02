@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState, Fragment, useContext } from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
@@ -26,25 +26,27 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
 import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
+import InfoIcon from '@mui/icons-material/Info'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
+import InstanceInfo from './InstanceInfo'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
-  const { setUpdateAppList } = useContext(ReferenceDataContext)
-  const [dataDialogOpen, setDataDialogOpen] = useState(false)
-  const [instanceStarting, setInstanceStarting] = useState(false)
-  const [instanceStopping, setInstanceStopping] = useState(false)
-  const [instanceDeleting, setInstanceDeleting] = useState(false)
-  const [instanceNotReady] = useState(
+  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
+  const [instanceStarting, setInstanceStarting] = React.useState(false)
+  const [instanceStopping, setInstanceStopping] = React.useState(false)
+  const [instanceDeleting, setInstanceDeleting] = React.useState(false)
+  const [instanceNotReady] = React.useState(
     props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
   )
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarState, setSnackbarState] = useState({
+  const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false)
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarState, setSnackbarState] = React.useState({
     snackbarText: 'Info',
     snackbarErrorText: '',
     alertSeverity: 'success'
@@ -150,6 +152,15 @@ export default function AppInstanceRow (props) {
                 justify="flex-start"
                 alignItems="flex-start"
             >
+                <Tooltip title="Info to this instance">
+                    <span>
+                    <LoadIconButton
+                        label="instance-info-button"
+                        icon={<InfoIcon />}
+                        onClick={() => setInstanceInfoOpen(true)}
+                    />
+                    </span>
+                </Tooltip>
                 <Tooltip title="Start instance">
                     <span>
                     <LoadIconButton
@@ -195,10 +206,11 @@ export default function AppInstanceRow (props) {
             alertSeverity={alertSeverity}
         />
         <ContentDialog
-          title = {'Data of ' + appInstance.instanceName}
-          open={dataDialogOpen}
-          setOpen={setDataDialogOpen}
+          title = {'Info to ' + appInstance.instanceName}
+          open={instanceInfoOpen}
+          setOpen={setInstanceInfoOpen}
         >
+          <InstanceInfo instance={appInstance}></InstanceInfo>
         </ContentDialog>
     </Fragment>
   )

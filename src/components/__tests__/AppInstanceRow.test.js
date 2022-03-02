@@ -44,12 +44,14 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
+    const infoButton = getByLabelText('instance-info-button')
 
     fireEvent.click(stopButton)
 
     expect(stopButton).toBeDisabled()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
+    expect(infoButton).toBeVisible()
   })
 
   test('render running instance and delete instance', () => {
@@ -63,12 +65,14 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
+    const infoButton = getByLabelText('instance-info-button')
 
     fireEvent.click(deleteButton)
 
     expect(stopButton).toBeVisible()
     expect(startButton).toBeVisible()
     expect(deleteButton).toBeVisible()
+    expect(infoButton).toBeVisible()
   })
 
   test('render stopped instance and start instance', () => {
@@ -82,11 +86,13 @@ describe('AppInstanceRow', () => {
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
     const deleteButton = getByLabelText('delete-instance-button')
+    const infoButton = getByLabelText('instance-info-button')
 
     fireEvent.click(startButton)
 
     expect(stopButton).toBeVisible()
     expect(startButton).toBeDisabled()
     expect(deleteButton).toBeVisible()
+    expect(infoButton).toBeVisible()
   })
 })

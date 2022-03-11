@@ -46,7 +46,7 @@ const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 const POST_AUTHENTICATE_URL = '/api/access/authenticate'
 const POST_VALIDATE_URL = '/api/access/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
-const GET_PRODUCTS_URL = '/api/products'
+const GET_PRODUCTS_URL = '/api/v1/products'
 
 class DeviceAPIConfiguration extends Component {
   static get DEVICE_ROUTE () {

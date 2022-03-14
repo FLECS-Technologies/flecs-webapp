@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, screen /*, fireEvent */ } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ServiceMesh from '../ServiceMesh'
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -37,23 +37,19 @@ describe('ServiceMesh', () => {
       expect(screen.getByTestId('service-mesh')).toBeVisible()
       expect(screen.getByTestId('service-mesh-title')).toBeVisible()
       expect(screen.getByTestId('refresh-button')).toBeVisible()
-      // expect(screen.getByTestId('expand-button')).not.toBeInTheDocument()
     })
   })
 
-  test('Expand all click', async () => {
+  test('Refresh click', async () => {
     await act(async () => {
       render(<Router><ServiceMesh /></Router>)
 
-      /*
-      const expandButton = screen.getByTestId('expand-button')
+      const refreshButton = screen.getByTestId('refresh-button')
 
-      await act(async () => { fireEvent.click(expandButton) })
+      await act(async () => { fireEvent.click(refreshButton) })
       expect(screen.getByTestId('service-mesh')).toBeVisible()
       expect(screen.getByTestId('service-mesh-title')).toBeVisible()
       expect(screen.getByTestId('refresh-button')).toBeVisible()
-      expect(screen.getByTestId('expand-button')).toHaveTextContent('Collapse all')
-      */
     })
   })
 })

@@ -27,7 +27,7 @@ export default class GetBrowseServiceMesh extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_BROWSE_SERVICE_MESH, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER, requestOptions)
     } catch (error) { }
   }
 }

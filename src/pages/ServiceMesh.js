@@ -15,17 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TreeItem, TreeView } from '@mui/lab'
 import { Alert, AlertTitle, Button, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import React from 'react'
 import styled from 'styled-components'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import ReportIcon from '@mui/icons-material/Report'
-import useStateWithLocalStorage from '../components/LocalStorage'
 import DeviceAPI from '../api/DeviceAPI'
+import DataTable from '../components/DataTable'
 
 const Header = styled.div`
   display: 'flex';
@@ -34,20 +31,11 @@ const Header = styled.div`
   padding: 32px 32px;
 `
 export default function ServiceMesh () {
-  const [expanded, setExpanded] = useStateWithLocalStorage('service-mesh-expanded', [])
   const [loading, setLoading] = React.useState(false)
   const [refresh, setRefresh] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
-  const [data, setData] = React.useState([]) // React.useState(['app1.t', 'app1.u', 'app1.v', 'app1.w', 'app1.x', 'app1.y', 'app1.z', 'app2.a', 'app2.b', 'app2.b.b1', 'app2.b.b2', 'app2.c', 'app2.d', 'app2.e', 'app2.f.f0', 'app2.f.f1'])
-  const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds)
-  }
-
-  const result = []
-  const root = { path: 'Service Mesh', name: 'Providers', children: [] }
-  const level = { result }
-  const branches = []
+  const [data, setData] = React.useState([])
 
   const browseServiceMesh = async () => {
     setLoading(true)
@@ -70,38 +58,6 @@ export default function ServiceMesh () {
     }
   }, [refresh])
 
-  if (data) {
-    data.forEach(path => {
-      path.split('.').reduce((r, name, i, a) => {
-        if (!r[name]) {
-          r[name] = { result: [] }
-          r.result.push({ path, name, children: r[name].result })
-        }
-        if (r[name].result.length > 0) {
-          branches.push(name)
-        }
-
-        return r[name]
-      }, level)
-    })
-  }
-
-  root.children = result
-  branches.push(root.name)
-
-  const handleExpandAllClick = () => {
-    setExpanded((oldExpanded) =>
-      oldExpanded.length === 0 ? branches : []
-    )
-  }
-
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes.name} nodeId={nodes.name} label={nodes.name} disabled={loading}>
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  )
   return (
     <>
         <Header aria-label='Header-Placeholder'/>
@@ -110,9 +66,6 @@ export default function ServiceMesh () {
                 <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
                     Service Mesh
                 </Typography>
-                {root.children.length > 0 && <Button variant='outlined' sx={{ mr: 1 }} data-testid='expand-button' onClick={handleExpandAllClick} disabled={loading}>
-                    {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
-                </Button>}
                 <Button variant='outlined' sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => setRefresh(true)}>
                     <RefreshIcon sx={{ mr: 1 }}/> Refresh
                 </Button>
@@ -126,7 +79,7 @@ export default function ServiceMesh () {
                   {loading && <Typography>Loading data from the service mesh...</Typography>}
                   {error &&
                     <Typography>Oops... {errorText}</Typography>}
-                  {(!error && root.children.length === 0) &&
+                  {(!error && data?.length > 0) &&
                     <Alert severity='info'>
                       <AlertTitle>Info</AlertTitle>
                       <Typography>There is no provider that supplies data...</Typography>
@@ -137,16 +90,9 @@ export default function ServiceMesh () {
                     </Alert> }
                 </Grid>
             </Grid>
-            {(!loading && root.children.length > 0) && <TreeView sx={{ pb: { sm: 2 } }}
-                data-testid="app-instances-data-tree"
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
-                expanded={expanded}
-                onNodeToggle={handleToggle}
-                disabledItemsFocusable={loading}
-            >
-                {renderTree(root)}
-            </TreeView>}
+            {(data) &&
+              <DataTable data={data}>
+              </DataTable>}
         </Paper>
     </>
   )

@@ -23,8 +23,9 @@ const APP_ROUTE = '/app'
 const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
+const DATA_LAYER_ROUTE = '/data-layer'
 const GET_INSTALLED_APP_LIST_URL = '/list'
-const GET_BROWSE_SERVICE_MESH = '/browse'
+const GET_BROWSE_DATA_LAYER = '/browse'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UNINSTALL_APP_URL = '/uninstall'
@@ -69,6 +70,10 @@ class DeviceAPIConfiguration extends Component {
     return SYSTEM_ROUTE
   }
 
+  static get DATA_LAYER_ROUTE () {
+    return DATA_LAYER_ROUTE
+  }
+
   // post requests
   static get POST_INSTALL_APP_URL () {
     return POST_INSTALL_APP_URL
@@ -107,8 +112,8 @@ class DeviceAPIConfiguration extends Component {
     return GET_INSTALLED_APP_LIST_URL
   }
 
-  static get GET_BROWSE_SERVICE_MESH () {
-    return GET_BROWSE_SERVICE_MESH
+  static get GET_BROWSE_DATA_LAYER () {
+    return GET_BROWSE_DATA_LAYER
   }
 
   // put requests

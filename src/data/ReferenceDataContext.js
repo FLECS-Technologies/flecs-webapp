@@ -24,8 +24,9 @@ export const ReferenceDataContext = createContext([])
 export const ReferenceDataContextProvider = ({ children }) => {
   const [appList, setAppList] = useState(undefined)
   const [updateAppList, setUpdateAppList] = useState(false)
+  const [appListLoading, setAppListLoading] = useState(false)
   return (
-    <ReferenceDataContext.Provider value={{ appList, setAppList, updateAppList, setUpdateAppList }}>
+    <ReferenceDataContext.Provider value={{ appList, setAppList, updateAppList, setUpdateAppList, appListLoading, setAppListLoading }}>
       {children}
     </ReferenceDataContext.Provider>
   )

@@ -42,6 +42,7 @@ import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
 import { useAuth } from './AuthProvider'
+import { CircularProgress } from '@mui/material'
 
 const headCells = [
 
@@ -147,7 +148,7 @@ function stableSort (array, comparator) {
 }
 
 export default function DeviceAppsList (props) {
-  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
+  const { setUpdateAppList, appListLoading } = React.useContext(ReferenceDataContext)
   const user = useAuth()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
@@ -274,7 +275,7 @@ export default function DeviceAppsList (props) {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
-              {tmpAppList.length === 0 && (
+              {(tmpAppList.length === 0 && !appListLoading) && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <Typography align='center'>
@@ -286,6 +287,16 @@ export default function DeviceAppsList (props) {
                   </TableCell>
                 </TableRow>
               )}
+              {appListLoading &&
+                  <TableRow>
+                  <TableCell colSpan={6} align='center'>
+                    <CircularProgress align='center'></CircularProgress>
+                    <Typography align='center'>
+                      Loading installed apps from the device...
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              }
             </TableBody>
           </Table>
         </TableContainer>

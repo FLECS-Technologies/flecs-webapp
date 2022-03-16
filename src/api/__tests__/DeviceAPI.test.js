@@ -62,18 +62,20 @@ const appList =
       ]
     }
   ]
-const providers = [
 
+const data =
+[
   {
-    provider: 'tech.flecs.mqtt',
-    protocol: 'MQTT',
-    data: []
+    encoding: 'application/integer',
+    key: '/flecs/test/1',
+    timestamp: '2022-03-16T08:49:18.319727532Z/6B8334CE09514036A68256A0E3A9C93F',
+    value: '1234'
   },
-
   {
-    provider: 'tech.flecs.opcua',
-    protocol: 'OPCUA',
-    data: []
+    encoding: 'text/plain',
+    key: '/flecs/test/2',
+    timestamp: '2022-03-16T08:49:02.397920321Z/6B8334CE09514036A68256A0E3A9C93F',
+    value: 'Hello World!'
   }
 ]
 
@@ -119,7 +121,7 @@ describe('DeviceAPI', () => {
   test('calls successfull DeviceAPI.browseServiceMesh', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
-      .reply(200, { providers }, {
+      .reply(200, { data }, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
       })

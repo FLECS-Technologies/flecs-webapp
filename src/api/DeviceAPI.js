@@ -53,9 +53,9 @@ export default class DeviceAPI extends React.Component {
       const browse = new GetBrowseServiceMesh()
       await browse.getBrowseServiceMesh()
 
-      if (browse.state.success && browse.state.responseData.providers) {
+      if (browse.state.success && browse.state.responseData.data) {
         this.lastAPICallSuccessfull = true
-        this.serviceMeshData = browse.state.responseData.providers
+        this.serviceMeshData = browse.state.responseData.data
       } else {
         this.lastAPICallSuccessfull = false
         if (browse.state.errorMessage !== null) {

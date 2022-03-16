@@ -90,7 +90,7 @@ export default function ServiceMesh () {
                     </Alert> }
                 </Grid>
             </Grid>
-            {(data) &&
+            {(data?.length > 0) &&
               <DataTable data={data}>
               </DataTable>}
         </Paper>

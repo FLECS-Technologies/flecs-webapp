@@ -56,6 +56,9 @@ export default function ServiceMesh () {
     if (!loading) {
       browseServiceMesh()
     }
+    if (refresh) {
+      setRefresh(false)
+    }
   }, [refresh])
 
   return (
@@ -79,7 +82,7 @@ export default function ServiceMesh () {
                   {loading && <Typography>Loading data from the service mesh...</Typography>}
                   {error &&
                     <Typography>Oops... {errorText}</Typography>}
-                  {(!error && data?.length > 0) &&
+                  {(!error && data?.length === 0) &&
                     <Alert severity='info'>
                       <AlertTitle>Info</AlertTitle>
                       <Typography>There is no provider that supplies data...</Typography>

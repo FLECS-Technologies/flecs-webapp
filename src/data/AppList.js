@@ -57,7 +57,8 @@ class AppList extends Component {
 
   loadAppList () {
     (async () => {
-      const { setAppList } = this.context
+      const { setAppList, setAppListLoading } = this.context
+      setAppListLoading(true)
 
       let marketplaceAppList = []
       let mergedList = []
@@ -96,8 +97,10 @@ class AppList extends Component {
         })
 
         setAppList(appList => [...mergedList])
+        setAppListLoading(false)
       } else {
         setAppList(appList => [...marketplaceAppList])
+        setAppListLoading(false)
         console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
       }
     })()

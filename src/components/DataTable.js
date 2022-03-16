@@ -52,8 +52,10 @@ export default function DataTable (props) {
     return { key, value, encoding, timestamp }
   }
 
-  if (props.data) {
-    props.data.forEach(date => {
+  if (props.data && props.data.length > 0) {
+    const tmpData = props.data
+    tmpData.sort((a, b) => (a.key > b.key) ? 1 : ((b.key > a.key) ? -1 : 0))
+    tmpData.forEach(date => {
       dataRows.push(createData(date.key, date.value, date.encoding, date.timestamp))
     })
   }

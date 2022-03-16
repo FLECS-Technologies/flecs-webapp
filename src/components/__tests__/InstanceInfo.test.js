@@ -33,6 +33,7 @@ describe('InstanceInfo', () => {
 
     expect(screen.getByText('TestInstance')).toBeVisible()
     expect(screen.getByText('ABCDE')).toBeVisible()
+    expect(screen.getByText('flecs-ABCDE')).toBeVisible()
     expect(screen.getByText('1.0.0')).toBeVisible()
     expect(screen.getByText('running')).toBeVisible()
     expect(screen.getByText('stopped')).toBeVisible()

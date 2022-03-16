@@ -30,6 +30,7 @@ export default function InstanceInfo (props) {
     createData('Instance name', instance?.instanceName),
     createData('Version', instance?.version),
     createData('Instance ID', instance?.instanceId),
+    createData('Hostname', 'flecs-' + instance?.instanceId),
     createData('Status', instance?.status),
     createData('Desired status', instance?.desired)
   ]

@@ -34,7 +34,8 @@ class AppList extends Component {
         search: undefined,
         order: undefined,
         orderby: undefined,
-        status: 'publish'
+        status: 'publish',
+        stock_status: 'instock'
       }
     }
   }

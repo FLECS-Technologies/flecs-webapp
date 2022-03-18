@@ -20,13 +20,16 @@ import axios from 'axios'
 
 function getProducts (params) {
   let url
-  const { /* page , per_page, search, order, orderby, */ status } = params || {}
+  const { /* page , per_page, search, order, orderby, */ status, stock_status } = params || {}
   const reqParams = new URLSearchParams()
   reqParams.append('category', '18')
   reqParams.append('page', '1')
   reqParams.append('per_page', '100')
   if (status) {
     reqParams.append('status', status)
+  }
+  if (stock_status) {
+    reqParams.append('stock_status', stock_status)
   }
 
   if (process.env.NODE_ENV === 'development') {

@@ -42,13 +42,14 @@ export default function MarketplaceList (props) {
     search: undefined,
     order: undefined,
     orderby: undefined,
-    status: undefined
+    status: undefined,
+    stock_status: undefined
   })
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
 
   function setInstalledFilter () {
     setQueryParams(previousState => {
-      return { ...previousState, status: (queryParams.status === 'publish' ? 'any' : 'publish') }
+      return { ...previousState, stock_status: (queryParams.stock_status === 'instock' ? undefined : 'instock') }
     })
     setLoading(true)
   }
@@ -148,7 +149,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={products ? products.map((app) => (app.props.author + ' / ' + app.props.title)).sort() : null} setToggleFilter={toggleFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setInstalled={setInstalledFilter} installed={(queryParams.status === 'publish')}/>
+                <AppFilter open={showFilter} setInstalled={setInstalledFilter} installed={(queryParams.stock_status === 'instock')}/>
               </Collapse>
 
         </Grid>

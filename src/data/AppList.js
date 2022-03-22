@@ -58,7 +58,7 @@ class AppList extends Component {
 
   loadAppList () {
     (async () => {
-      const { setAppList, setAppListLoading } = this.context
+      const { setAppList, setAppListLoading, setAppListError } = this.context
       setAppListLoading(true)
 
       let marketplaceAppList = []
@@ -69,13 +69,8 @@ class AppList extends Component {
           marketplaceAppList = marketplaceAppList.concat(products)
         },
         error => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.reason) ||
-            error.message ||
-            error.toString()
-          console.log(resMessage)
+          console.log(error)
+          setAppListError(true)
         }
       )
 
@@ -99,9 +94,11 @@ class AppList extends Component {
 
         setAppList(appList => [...mergedList])
         setAppListLoading(false)
+        setAppListError(false)
       } else {
         setAppList(appList => [...marketplaceAppList])
         setAppListLoading(false)
+        setAppListError(true)
         console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
       }
     })()

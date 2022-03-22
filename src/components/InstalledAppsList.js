@@ -148,7 +148,7 @@ function stableSort (array, comparator) {
 }
 
 export default function DeviceAppsList (props) {
-  const { setUpdateAppList, appListLoading } = React.useContext(ReferenceDataContext)
+  const { setUpdateAppList, appListLoading, appListError } = React.useContext(ReferenceDataContext)
   const user = useAuth()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
@@ -293,6 +293,15 @@ export default function DeviceAppsList (props) {
                     <CircularProgress align='center'></CircularProgress>
                     <Typography align='center'>
                       Loading installed apps from the device...
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              }
+              {appListError &&
+                  <TableRow>
+                  <TableCell colSpan={6} align='center'>
+                    <Typography align='center'>
+                      Oops! Failed to load installed apps from the device...
                     </Typography>
                   </TableCell>
                 </TableRow>

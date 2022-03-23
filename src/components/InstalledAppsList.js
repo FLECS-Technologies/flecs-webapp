@@ -275,7 +275,7 @@ export default function DeviceAppsList (props) {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
-              {(tmpAppList.length === 0 && !appListLoading) && (
+              {(tmpAppList.length === 0 && !appListLoading && !appListError) && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <Typography align='center'>

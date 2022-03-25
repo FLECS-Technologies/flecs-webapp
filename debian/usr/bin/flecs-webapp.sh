@@ -23,4 +23,17 @@ fi
 /usr/bin/docker stop flecs-webapp 2>/dev/null;
 /usr/bin/docker rm flecs-webapp 2>/dev/null;
 /usr/bin/docker pull flecs/webapp:${CHANNEL}
-/usr/bin/docker run -d -p 80:80 --add-host=host.docker.internal:host-gateway --name flecs-webapp flecs/webapp:${CHANNEL}
+PORTS=(80 8080 8008 none)
+for PORT in ${PORTS[*]}; do
+    if ! netstat -tulpn | grep :${PORT} >/dev/null 2>&1; then
+        break
+    fi
+done
+
+if [ "${PORT}" == "none" ]; then
+    echo "No free port found - exiting"
+    exit 1
+fi
+
+echo "Binding flecs-webapp to port ${PORT}"
+/usr/bin/docker run -d -p ${PORT}:80 --add-host=host.docker.internal:172.17.0.1 --name flecs-webapp flecs/webapp:${CHANNEL}

@@ -25,7 +25,7 @@ fi
 /usr/bin/docker pull flecs/webapp:${CHANNEL}
 PORTS=(80 8080 8008 none)
 for PORT in ${PORTS[*]}; do
-    if ! netstat -tulpn | grep :${PORT} >/dev/null 2>&1; then
+    if ! netstat -tulpn | grep ":${PORT} " >/dev/null 2>&1; then
         break
     fi
 done

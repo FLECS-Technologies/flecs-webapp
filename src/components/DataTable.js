@@ -50,7 +50,7 @@ export default function DataTable (props) {
 
   function createData (key, value, encoding, timestamp) {
     let dataValue = value
-    if (encoding === 'application/octet') {
+    if (encoding === 'application/octet-stream') {
       dataValue = Buffer
         .from(value, 'base64')
         .toString('ascii')

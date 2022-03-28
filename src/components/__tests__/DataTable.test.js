@@ -32,6 +32,12 @@ const testData = [
     value: 'abc',
     encoding: 'plain/json',
     timestamp: '2022-03-11'
+  },
+  {
+    key: 'root/app/3',
+    value: 'SGVsbG8gV29ybGQh',
+    encoding: 'application/octet-stream',
+    timestamp: '2022-03-13'
   }
 ]
 describe('DataTable', () => {
@@ -43,5 +49,6 @@ describe('DataTable', () => {
     expect(screen.getByText('plain/text')).toBeVisible()
     expect(screen.getByText('2022-03-12')).toBeVisible()
     expect(screen.getByText('root/app/2')).toBeVisible()
+    expect(screen.getByText('Hello World!')).toBeVisible()
   })
 })

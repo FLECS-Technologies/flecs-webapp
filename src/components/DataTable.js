@@ -49,7 +49,13 @@ export default function DataTable (props) {
   ]
 
   function createData (key, value, encoding, timestamp) {
-    return { key, value, encoding, timestamp }
+    let dataValue = value
+    if (encoding === 'application/octet') {
+      dataValue = Buffer
+        .from(value, 'base64')
+        .toString('ascii')
+    }
+    return { key, dataValue, encoding, timestamp }
   }
 
   if (props.data && props.data.length > 0) {

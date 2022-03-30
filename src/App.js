@@ -17,23 +17,12 @@
  */
 
 import { React } from 'react'
-// import { BrowserRouter/*, Route, Routes */ } from 'react-router-dom'
-
 import { DarkModeState } from './components/ThemeHandler'
 import Frame from './components/Frame'
-
 import { ReferenceDataContextProvider } from './data/ReferenceDataContext'
-
-// import InstalledApps from './pages/InstalledApps'
-// import Marketplace from './pages/Marketplace'
-// import System from './pages/System'
 import { AppList } from './data/AppList'
-// import Login from './pages/Login'
-// import NotFound from './pages/NotFound'
-import { AuthProvider /*, RequireAuth */ } from './components/AuthProvider'
+import { AuthProvider } from './components/AuthProvider'
 import { UIRoutes } from './pages/ui-routes'
-// import { Router } from 'react-router-dom'
-// import { Router } from 'react-router-dom'
 
 export default function App () {
   return (

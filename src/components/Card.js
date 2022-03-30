@@ -43,7 +43,7 @@ export default function OutlinedCard (props) {
   const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
-    (props.availability === 'available') || (props.availability === 'publish')
+    (props.availability === 'available') || (props.availability === 'instock')
   )
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'

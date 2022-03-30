@@ -87,9 +87,12 @@ export default function ServiceMesh () {
                       <AlertTitle>Info</AlertTitle>
                       <Typography>There is no provider that supplies data...</Typography>
                       <Typography>In order to see data here, you need to install a provider.</Typography>
-                      <Typography>Currently you can use the Mosquitto MQTT Broker from our <Link to="/Marketplace">marketplace</Link>.</Typography>
+                      <Typography>Currently you can use the Mosquitto MQTT Broker and the FLECS MQTT Bridge from our <Link to="/Marketplace">marketplace</Link>.</Typography>
                       <Typography>Just publish MQTT from your app to this broker and you will see the topics here.</Typography>
                       <Typography>Other apps can then easily access and use this data.</Typography>
+                      <Typography>If you want to learn how to do this, just watch this short video on <a href="https://youtu.be/lu0EES_aenA" target='_blank' rel="noopener noreferrer" aria-label='YouTube' >
+                        YouTube
+                        </a>.</Typography>
                     </Alert> }
                 </Grid>
             </Grid>

@@ -25,6 +25,7 @@ import System from './System'
 import NotFound from './NotFound'
 import Login from './Login'
 import { RequireAuth } from '../components/AuthProvider'
+import OpenSource from './OpenSource'
 
 const UIRoutes = () => {
   return useRoutes([
@@ -47,6 +48,10 @@ const UIRoutes = () => {
     {
       path: '/login',
       element: <Login />
+    },
+    {
+      path: '/open-source',
+      element: <OpenSource />
     },
     {
       path: '*',

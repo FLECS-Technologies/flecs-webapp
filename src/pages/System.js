@@ -18,7 +18,8 @@
 
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Divider, Paper, Toolbar, Typography } from '@mui/material'
+import { BottomNavigation, Box, Divider, Paper, Toolbar, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 const Header = styled.div`
   display: 'flex';
@@ -60,6 +61,13 @@ const System = () => {
     <div>
       <Header/>
       {data}
+      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <BottomNavigation>
+          <Toolbar sx={{ p: { xs: 1, sm: 2 } }} >
+            <Link aria-label="open-source" to="/open-source">Open-Source</Link>
+          </Toolbar>
+        </BottomNavigation>
+      </Paper>
     </div>
   )
 }

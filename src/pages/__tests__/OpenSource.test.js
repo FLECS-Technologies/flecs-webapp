@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021 FLECS Technologies GmbH
+ * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Wed Mar 30 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,13 @@
 
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { BrowserRouter as Router } from 'react-router-dom'
 import '@testing-library/jest-dom'
-import System from '../System'
+import OpenSource from '../OpenSource'
 
 describe('System', () => {
   test('renders System page', () => {
-    render(<Router><System /></Router>)
+    render(<OpenSource />)
 
-    expect(screen.getByLabelText('system-page')).toBeVisible()
-
-    expect(screen.getByLabelText('open-source')).toBeVisible()
-    // screen.debug()
+    expect(screen.getByLabelText('licenses')).toBeVisible()
   })
 })

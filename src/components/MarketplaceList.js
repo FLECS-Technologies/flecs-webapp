@@ -63,7 +63,7 @@ export default function MarketplaceList (props) {
         .then(
           (loadedProducts) => {
             try {
-              loadedProducts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+              loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
 
               const productCards = createProductCards(loadedProducts)
               setProducts(productCards)

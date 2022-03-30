@@ -100,7 +100,7 @@ export default function MarketplaceList (props) {
           version={getVersion(app)}
           description={getShortDescription(app)}
           status={appList?.find(o => o.app === getReverseDomainName(app))?.status || 'uninstalled'}
-          availability={app.status}
+          availability={app.stock_status}
           relatedLinks={getCustomLinks(app)}
         />
       ))

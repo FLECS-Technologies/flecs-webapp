@@ -32,7 +32,9 @@ function getCurrentUserLicenses () {
     .post(url + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data)
     .then(response => {
       if (response?.data?.response?.licenses) {
-        return response.data.response.licenses
+        // filter only active licenses
+        const activeLicenses = response.data.response.licenses.filter(e => e?.remaining_activations > 0)
+        return activeLicenses
       }
     })
     .catch(error => {

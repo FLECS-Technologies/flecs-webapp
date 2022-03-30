@@ -27,7 +27,77 @@ const mockLicenses = {
   data:
     {
       response: {
-        licenses: [1, 2, 3]
+        licenses: [
+          {
+            license_id: '497',
+            product_id: '31',
+            variation_id: '0',
+            license_key: '204E-6914-EA60-185E',
+            image_license_key: null,
+            license_status: 'sold',
+            owner_first_name: 'Test',
+            owner_last_name: 'Test',
+            owner_email_address: 'contact@example.com',
+            activation_date: null,
+            creation_date: '2021-04-23',
+            expiration_date: '2021-05-23',
+            valid: '30',
+            order_id: '270',
+            sold_date: '2021-04-23',
+            product_name: 'Product name',
+            variation_name: 'Variation name',
+            delivery_limit: '0',
+            remaining_delivery_times: '0',
+            activation_limit: '1',
+            remaining_activations: '1'
+          },
+          {
+            license_id: '496',
+            product_id: '31',
+            variation_id: '0',
+            license_key: '812A-434E-8805-F24F',
+            image_license_key: null,
+            license_status: 'sold',
+            owner_first_name: 'Test',
+            owner_last_name: 'Test',
+            owner_email_address: 'contact@example.com',
+            activation_date: null,
+            creation_date: '2021-04-23',
+            expiration_date: '2021-05-23',
+            valid: '30',
+            order_id: '270',
+            sold_date: '2021-04-23',
+            product_name: 'Product name',
+            variation_name: 'Variation name',
+            delivery_limit: '0',
+            remaining_delivery_times: '0',
+            activation_limit: '1',
+            remaining_activations: '1'
+          },
+          {
+            license_id: '495',
+            product_id: '31',
+            variation_id: '0',
+            license_key: '2B9D-1F8A-A36B-582D',
+            image_license_key: null,
+            license_status: 'sold',
+            owner_first_name: 'Test',
+            owner_last_name: 'Test',
+            owner_email_address: 'contact@example.com',
+            activation_date: null,
+            creation_date: '2021-04-23',
+            expiration_date: '2021-05-23',
+            valid: '30',
+            order_id: '270',
+            sold_date: '2021-04-23',
+            product_name: 'Product name',
+            variation_name: 'Variation name',
+            delivery_limit: '0',
+            remaining_delivery_times: '0',
+            activation_limit: '1',
+            remaining_activations: '0'
+          }
+        ]
       }
     }
 }
@@ -44,13 +114,13 @@ describe('LicenseService', () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
-    expect(licenses).toHaveLength(3)
+    expect(licenses).toHaveLength(2)
   })
 
   test('calls unsuccessfull getCurrentUserLicenses', async () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
-    expect(licenses).toHaveLength(3)
+    expect(licenses).toHaveLength(2)
   })
 })

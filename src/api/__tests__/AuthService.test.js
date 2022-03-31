@@ -70,14 +70,14 @@ describe('AuthService', () => {
     const user = await waitFor(() => AuthService.login('tester', 'PW123'))
 
     expect(user.user.data.user_nicename).toBe('Tester')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
   })
 
   test('calls unsuccessfull AuthService.login', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to login'))
     await act(async () => { expect(AuthService.login('tester', 'PW123')).rejects.toThrowError() })
 
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
   })
 
   // test cases for validate()
@@ -86,13 +86,13 @@ describe('AuthService', () => {
     const validation = await waitFor(() => AuthService.validate(testUser.data.jwt.token))
 
     expect(validation.isValid).toBeTruthy()
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt: testUser.data.jwt.token })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt: testUser.data.jwt.token })
   })
 
   test('calls unsuccessfull AuthService.validate', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to validate'))
     await act(async () => { expect(AuthService.validate(testUser.data.jwt.token)).rejects.toThrowError() })
 
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.BASE_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt: testUser.data.jwt.token })
+    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt: testUser.data.jwt.token })
   })
 })

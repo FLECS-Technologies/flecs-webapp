@@ -19,7 +19,6 @@ import { MarketplaceAPIConfiguration } from './api-config'
 import axios from 'axios'
 
 function getProducts (params) {
-  let url
   const { /* page , per_page, search, order, orderby, */ status, stock_status } = params || {}
   const reqParams = new URLSearchParams()
   reqParams.append('category', '18')
@@ -32,13 +31,8 @@ function getProducts (params) {
     reqParams.append('stock_status', stock_status)
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    url = process.env.REACT_APP_DEV_LOCAL_MP_URL
-  } else {
-    url = MarketplaceAPIConfiguration.BASE_URL
-  }
   return axios
-    .get(url + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })
+    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })
     .then(response => {
       if (response.data && response.data.success && response.data.products) {
         return response.data.products

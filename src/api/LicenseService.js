@@ -20,16 +20,10 @@ import axios from 'axios'
 import { jwt } from './auth-header'
 
 function getCurrentUserLicenses () {
-  let url
-  if (process.env.NODE_ENV === 'development') {
-    url = process.env.REACT_APP_DEV_LOCAL_MP_URL
-  } else {
-    url = MarketplaceAPIConfiguration.BASE_URL
-  }
   const data = new FormData()
   data.append('aam-jwt', jwt())
   return axios
-    .post(url + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data)
+    .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_GET_CURRENT_USER_LICENSES_URL, data)
     .then(response => {
       if (response?.data?.response?.licenses) {
         // filter only active licenses

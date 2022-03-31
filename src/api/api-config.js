@@ -44,6 +44,14 @@ const MP_CART_ROUTE = '/cart?cocart-load-cart='
 const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
+const MP_PROXY_DEV = 'http://localhost:8000'
+const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8000'
+const MP_PROXY_PRODUCTION = 'https://marketplace.flecs.tech'
+
+const MP_DEV = 'https://mp-dev.flecs.tech'
+const MP_TEST = 'https://mp-dev.flecs.tech'
+const MP_PRODUCTION = 'https://flecs.tech'
+
 const POST_AUTHENTICATE_URL = '/api/access/authenticate'
 const POST_VALIDATE_URL = '/api/access/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
@@ -123,6 +131,42 @@ class DeviceAPIConfiguration extends Component {
 }
 
 class MarketplaceAPIConfiguration {
+  static get MP_PROXY_URL () {
+    let mpUrl = ''
+    switch (process.env.NODE_ENV) {
+      case 'production':
+        mpUrl = MP_PROXY_PRODUCTION
+        break
+      case 'development':
+        mpUrl = MP_PROXY_DEV
+        break
+      case 'test':
+        mpUrl = MP_PROXY_TEST
+        break
+      default:
+        mpUrl = MP_PROXY_PRODUCTION
+    }
+    return mpUrl
+  }
+
+  static get MP_URL () {
+    let mpUrl = ''
+    switch (process.env.NODE_ENV) {
+      case 'production':
+        mpUrl = MP_PRODUCTION
+        break
+      case 'development':
+        mpUrl = MP_DEV
+        break
+      case 'test':
+        mpUrl = MP_TEST
+        break
+      default:
+        mpUrl = MP_PRODUCTION
+    }
+    return mpUrl
+  }
+
   static get BASE_URL () {
     return MP_BASE_URL
   }

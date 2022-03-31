@@ -51,7 +51,7 @@ async function addToCart (appId) {
   const currentUser = AuthService.getCurrentUser()
 
   const CoCart = new CoCartAPI({
-    url: MarketplaceAPIConfiguration.BETA_BASE_URL,
+    url: MarketplaceAPIConfiguration.MP_PROXY_URL,
 
     consumerKey: currentUser?.user?.data?.user_login,
     consumerSecret: currentUser?.jwt?.token

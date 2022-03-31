@@ -18,6 +18,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import base64 from 'base-64'
 
 export default function DataTable (props) {
   const dataRows = []
@@ -50,10 +51,12 @@ export default function DataTable (props) {
 
   function createData (key, dataValue, encoding, timestamp) {
     let value = dataValue
-    if (encoding === 'application/octet-stream') {
-      value = Buffer
-        .from(value, 'base64')
-        .toString('ascii')
+    try {
+      if (encoding === 'application/octet-stream') {
+        value = base64.decode(dataValue)
+      }
+    } catch (error) {
+      console.log(error)
     }
 
     return { key, value, encoding, timestamp }

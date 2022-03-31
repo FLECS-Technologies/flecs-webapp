@@ -19,7 +19,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import AuthService from '../api/AuthService'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { postMPLogout, postMPLogin } from '../api/DeviceAuthAPI'
+import { postMPLogin } from '../api/DeviceAuthAPI'
 
 let SET_USER
 
@@ -39,8 +39,37 @@ const userReducer = (state, action) => {
 
 function AuthProvider (props) {
   React.useEffect(() => {
-    validate()
+    validateUser()
   })
+
+  const validateUser = async () => {
+    const currentUser = AuthService.getCurrentUser()
+    if (currentUser) {
+      AuthService.validate(currentUser?.jwt?.token).then(
+        () => {
+          postMPLogin(currentUser).then(
+            () => {
+              return true
+            },
+            error => {
+              console.log(error)
+              value.user = undefined
+            }
+          )
+        },
+        error => {
+          const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.reason) ||
+          error.message ||
+          error.toString()
+          console.log(resMessage)
+          value.user = undefined
+        }
+      )
+    }
+  }
   const initialState = {
     user: AuthService.getCurrentUser()
   }
@@ -76,35 +105,6 @@ function RequireAuth (props) {
   }
 
   return <Outlet />
-}
-
-function validate () {
-  const currentUser = AuthService.getCurrentUser()
-  if (currentUser) {
-    AuthService.validate(currentUser?.jwt?.token).then(
-      () => {
-        postMPLogin(currentUser).then(
-          () => {
-            // nothing to do here
-          },
-          error => { console.log(error.message) }
-        )
-      },
-      error => {
-        const resMessage =
-        (error.response &&
-          error.response.data &&
-          error.response.data.reason) ||
-        error.message ||
-        error.toString()
-        console.log(resMessage)
-        postMPLogout(currentUser).then(
-          () => { /* successfully logged in at the device */ },
-          error => { console.log(error.message) }
-        )
-      }
-    )
-  }
 }
 
 export { AuthContext, AuthProvider, useAuth, RequireAuth }

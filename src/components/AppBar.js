@@ -62,6 +62,9 @@ export default function ElevateAppBar (props) {
   const user = useAuth()
   const navigate = useNavigate()
 
+  React.useEffect(() => {
+  }, [user])
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }

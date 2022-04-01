@@ -268,13 +268,6 @@ export default function DeviceAppsList (props) {
               rowCount={props.length}
             />
             <TableBody>
-              {tmpAppList}
-              {emptyRows > 0 && (
-
-                <TableRow>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
               {(tmpAppList.length === 0 && !appListLoading && !appListError) && (
                 <TableRow>
                   <TableCell colSpan={6}>
@@ -306,6 +299,13 @@ export default function DeviceAppsList (props) {
                   </TableCell>
                 </TableRow>
               }
+              {tmpAppList}
+              {emptyRows > 0 && (
+
+                <TableRow>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

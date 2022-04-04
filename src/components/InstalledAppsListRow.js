@@ -185,7 +185,7 @@ export default function Row (props) {
                   icon={<LaunchIcon />}/>
                 </span>
             </Tooltip>}
-            <Tooltip title={row.multiInstance ? 'Start new app instance' : 'You can only have one instance of this app'}>
+            <Tooltip title='Start new app instance'>
               <span>
                 <LoadIconButton
                   label="Start new app instance"

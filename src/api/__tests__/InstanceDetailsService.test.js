@@ -1,0 +1,97 @@
+/*
+ * Copyright (c) 2022 FLECS Technologies GmbH
+ *
+ * Created on Thu Apr 07 2022
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import '@testing-library/dom'
+import { waitFor } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
+import axios from 'axios'
+import { getHostname, getInstanceDetails, getIPAddress, getPorts } from '../InstanceDetailsService'
+
+jest.mock('axios')
+
+const mockDetails = {
+  data: {
+    additionalInfo: 'string',
+    app: 'tech.flecs.app',
+    conffiles: [
+      {
+        container: '/etc/conf.d/configuration.cfg',
+        host: '/var/lib/flecs/instances/0123abcd/conf/configuration.cfg'
+      }
+    ],
+    hostname: 'flecs-0123abcd',
+    instanceId: '87654fed',
+    IPAddress: '172.21.0.2',
+    mounts: [
+      {
+        container: '/path/to/dir',
+        host: '/path/to/host/dir'
+      }
+    ],
+    ports: [
+      {
+        container: '8080',
+        host: '18080'
+      }
+    ],
+    version: 'v4.0.6',
+    volumes: [
+      {
+        name: 'var',
+        path: '/var/app'
+      }
+    ]
+  }
+}
+
+describe('InstanceDetailsService', () => {
+  beforeAll(() => {
+    axios.post = jest.fn()
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+  test('calls successfull getInstanceDetails', async () => {
+    axios.post.mockResolvedValueOnce(mockDetails)
+    const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId))
+
+    expect(details.app).toBe(mockDetails.data.app)
+  })
+
+  test('calls unsuccessfull getCurrentUserLicenses', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to load instance details'))
+    await act(async () => {
+      expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError()
+    })
+  })
+
+  test('Get IP Address from Details', () => {
+    const ip = getIPAddress(mockDetails.data)
+    expect(ip).toBe(mockDetails.data.IPAddress)
+  })
+
+  test('Get host from Details', () => {
+    const host = getHostname(mockDetails.data)
+    expect(host).toBe(mockDetails.data.hostname)
+  })
+
+  test('Get ports from Details', () => {
+    const ports = getPorts(mockDetails.data)
+    expect(ports).toHaveLength(1)
+  })
+})

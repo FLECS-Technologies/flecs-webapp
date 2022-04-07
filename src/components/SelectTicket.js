@@ -45,12 +45,7 @@ export default function SelectTicket (props) {
     addToCart(MarketplaceAPIConfiguration.MP_INSTALL_TICKET_ID)
       .then((response) => {
         cartKey = response
-        if (process.env.NODE_ENV === 'development') {
-          url = process.env.REACT_APP_DEV_MP_URL
-        } else {
-          url = MarketplaceAPIConfiguration.BETA_BASE_URL
-        }
-
+        url = MarketplaceAPIConfiguration.MP_URL
         if (cartKey) {
           url = url + MarketplaceAPIConfiguration.MP_CART_ROUTE + cartKey
         }

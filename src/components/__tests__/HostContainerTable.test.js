@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed Mar 02 2022
+ * Created on Thu Apr 07 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,29 @@
  */
 import React from 'react'
 import '@testing-library/jest-dom'
+import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
-import InstanceInfo from '../InstanceInfo'
+import HostContainerTable from '../HostContainerTable'
 
-jest.mock('../../api/InstanceDetailsService')
+const testData = [
+  {
+    host: 'host',
+    container: 'container'
+  },
+  {
+    host: 'host2',
+    container: 'container2'
+  }
+]
+describe('HostContainerTable', () => {
+  test('renders HostContainerTable component', async () => {
+    await act(async () => {
+      render(<HostContainerTable data={testData}></HostContainerTable>)
+    })
 
-const testInstance = {
-  instanceName: 'TestInstance',
-  instanceId: 'ABCDE',
-  version: '1.0.0',
-  status: 'running',
-  desired: 'stopped'
-}
-describe('InstanceInfo', () => {
-  test('renders InstanceInfo component', () => {
-    render(<InstanceInfo instance={testInstance}></InstanceInfo>)
-
-    expect(screen.getByText('TestInstance')).toBeVisible()
-    expect(screen.getByText('ABCDE')).toBeVisible()
-    expect(screen.getByText('1.0.0')).toBeVisible()
-    expect(screen.getByText('running')).toBeVisible()
-    expect(screen.getByText('stopped')).toBeVisible()
+    expect(screen.getByText('host')).toBeVisible()
+    expect(screen.getByText('host2')).toBeVisible()
+    expect(screen.getByText('container')).toBeVisible()
+    expect(screen.getByText('container2')).toBeVisible()
   })
 })

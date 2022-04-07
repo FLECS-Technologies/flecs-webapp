@@ -18,6 +18,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import InstanceDetails from './InstanceDetails'
 
 export default function InstanceInfo (props) {
   const { instance } = props
@@ -30,12 +31,9 @@ export default function InstanceInfo (props) {
     createData('Instance name', instance?.instanceName),
     createData('Version', instance?.version),
     createData('Instance ID', instance?.instanceId),
-    createData('Hostname', 'flecs-' + instance?.instanceId),
     createData('Status', instance?.status),
     createData('Desired status', instance?.desired)
   ]
-
-  const configRows = []
 
   return (
     <TableContainer>
@@ -64,31 +62,7 @@ export default function InstanceInfo (props) {
         </TableBody>
       </Table>
       <Divider></Divider>
-      {configRows.length > 0 &&
-      <Table sx={{ minWidth: 650 }} aria-label="config table">
-        <TableHead>
-            <TableRow>
-                <TableCell colSpan={2}>
-                    <Typography variant='h6'>
-                        Configurations
-                    </Typography>
-                </TableCell>
-            </TableRow>
-        </TableHead>
-        <TableBody>
-          {configRows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row" style={{ borderBottom: 'none' }}>
-                {row.name}
-              </TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>{row.info}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>}
+      <InstanceDetails instance={instance}></InstanceDetails>
     </TableContainer>
   )
 }

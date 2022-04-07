@@ -33,6 +33,7 @@ const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
 const POST_DELETE_APP_INSTANCE_URL = '/delete'
+const POST_INSTANCE_DETAILS_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/details'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 
@@ -58,6 +59,14 @@ const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licens
 const GET_PRODUCTS_URL = '/api/v1/products'
 
 class DeviceAPIConfiguration extends Component {
+  static get TARGET () {
+    let target = ''
+    if (process.env.NODE_ENV === 'development') {
+      target = process.env.REACT_APP_DEV_VM_IP
+    }
+    return target
+  }
+
   static get DEVICE_ROUTE () {
     return DEVICE_ROUTE
   }
@@ -113,6 +122,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get POST_MP_LOGOUT_URL () {
     return POST_MP_LOGOUT_URL
+  }
+
+  static get POST_INSTANCE_DETAILS_URL () {
+    return POST_INSTANCE_DETAILS_URL
   }
 
   // get requests

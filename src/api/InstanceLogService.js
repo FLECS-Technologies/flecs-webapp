@@ -1,7 +1,10 @@
+import axios from 'axios'
+import { DeviceAPIConfiguration } from './api-config'
+
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Thu Apr 07 2022
+ * Created on Fri Apr 08 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +18,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from './api-config'
-async function getInstanceDetails (instanceId) {
+async function getInstanceLog (instanceId) {
   return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.POST_INSTANCE_DETAILS_URL, { instanceId })
+    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.POST_INSTANCE_LOG_URL, { instanceId })
     .then(response => {
       return response.data
     })
@@ -27,14 +28,9 @@ async function getInstanceDetails (instanceId) {
       return Promise.reject(error)
     })
 }
-function getHostname (instance) {
-  return instance?.hostname
-}
-function getIPAddress (instance) {
-  return instance?.IPAddress
-}
-function getPorts (instance) {
-  return instance?.ports
+
+function getLog (data) {
+  return data.log
 }
 
-export { getInstanceDetails, getHostname, getIPAddress, getPorts }
+export { getInstanceLog, getLog }

@@ -17,11 +17,14 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Box, Divider, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { TabContext, TabList, TabPanel } from '@mui/lab'
 import InstanceDetails from './InstanceDetails'
+import InstanceLog from './InstanceLog'
 
 export default function InstanceInfo (props) {
   const { instance } = props
+  const [tab, setTab] = React.useState('1')
 
   function createData (name, info) {
     return { name, info }
@@ -35,35 +38,54 @@ export default function InstanceInfo (props) {
     createData('Desired status', instance?.desired)
   ]
 
+  const handleChange = (event, newValue) => {
+    setTab(newValue)
+  }
+
   return (
-    <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="general info table">
-        <TableHead>
-            <TableRow>
-                <TableCell colSpan={2}>
-                    <Typography variant='h6'>
-                        General information
-                    </Typography>
-                </TableCell>
-            </TableRow>
-        </TableHead>
-        <TableBody>
-          {infoRows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row" style={{ borderBottom: 'none' }}>
-                {row.name}
-              </TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>{row.info}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Divider></Divider>
-      <InstanceDetails instance={instance}></InstanceDetails>
-    </TableContainer>
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={tab}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="General" value="1" />
+            <Tab label="Log" value="2" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+          <TableContainer>
+            <Table sx={{ minWidth: 650 }} aria-label="general info table">
+              <TableHead>
+                  <TableRow>
+                      <TableCell colSpan={2}>
+                          <Typography variant='h6'>
+                              General information
+                          </Typography>
+                      </TableCell>
+                  </TableRow>
+              </TableHead>
+              <TableBody>
+                {infoRows.map((row) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row" style={{ borderBottom: 'none' }}>
+                      {row.name}
+                    </TableCell>
+                    <TableCell style={{ borderBottom: 'none' }}>{row.info}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Divider></Divider>
+            <InstanceDetails instance={instance}></InstanceDetails>
+          </TableContainer>
+        </TabPanel>
+        <TabPanel value="2">
+          <InstanceLog instance={instance}></InstanceLog>
+        </TabPanel>
+      </TabContext>
+    </Box>
   )
 }
 

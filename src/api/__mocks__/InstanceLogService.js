@@ -15,26 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from './api-config'
-async function getInstanceDetails (instanceId) {
-  return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.POST_INSTANCE_DETAILS_URL, { instanceId })
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
-}
-function getHostname (instance) {
-  return instance?.hostname
-}
-function getIPAddress (instance) {
-  return instance?.IPAddress
-}
-function getPorts (instance) {
-  return instance?.ports
+function getInstanceLog (instanceId) {
+  return new Promise((resolve, reject) => {
+    resolve(
+      {
+        additionalInfo: '',
+        log: 'This is my log...'
+      }
+    )
+  })
 }
 
-export { getInstanceDetails, getHostname, getIPAddress, getPorts }
+export { getInstanceLog }

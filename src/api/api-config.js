@@ -34,6 +34,7 @@ const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
 const POST_DELETE_APP_INSTANCE_URL = '/delete'
 const POST_INSTANCE_DETAILS_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/details'
+const POST_INSTANCE_LOG_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/log'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 
@@ -126,6 +127,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get POST_INSTANCE_DETAILS_URL () {
     return POST_INSTANCE_DETAILS_URL
+  }
+
+  static get POST_INSTANCE_LOG_URL () {
+    return POST_INSTANCE_LOG_URL
   }
 
   // get requests

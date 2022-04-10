@@ -17,7 +17,7 @@
  */
 import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
-import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getMultiInstance, getProducts, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getMultiInstance, getProducts, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
 
 jest.mock('axios')
 
@@ -182,7 +182,7 @@ const mockProducts = {
         {
           id: 720,
           key: 'port-requirement',
-          value: ''
+          value: 'amd64'
         },
         {
           id: 721,
@@ -246,5 +246,6 @@ describe('ProductService', () => {
     expect(getShortDescription(products[0])).toBe('Low code programming\n')
     expect(getCustomLinks(products[0])).toHaveLength(2)
     expect(getMultiInstance(products[0])).toBeFalsy()
+    expect(getRequirement(products[0])).toBe('amd64')
   })
 })

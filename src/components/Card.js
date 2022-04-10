@@ -118,7 +118,7 @@ export default function OutlinedCard (props) {
   }
 
   return (
-    <Card data-testid='app-card' sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, mr: 2, mb: 2 }}>
+    <Card data-testid='app-card' sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 260, mr: 2, mb: 2 }}>
       <CardHeader
         avatar={<Avatar src={props.avatar} />}
         title={props.title}
@@ -129,6 +129,9 @@ export default function OutlinedCard (props) {
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Version {props.version}
         </Typography>
+        {available && <Typography data_testid='installable-requirement' sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          Installable on {props?.requirement}
+        </Typography>}
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           {props.description}
         </Typography>
@@ -211,5 +214,6 @@ OutlinedCard.propTypes = {
   status: PropTypes.string,
   availability: PropTypes.string,
   instances: PropTypes.array,
-  relatedLinks: PropTypes.array
+  relatedLinks: PropTypes.array,
+  requirement: PropTypes.string
 }

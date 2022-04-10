@@ -87,4 +87,8 @@ function getMultiInstance (app) {
   return (!!multiInstance)
 }
 
-export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance }
+function getRequirement (app) {
+  return app?.meta_data.find(o => o.key === 'port-requirement')?.value
+}
+
+export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

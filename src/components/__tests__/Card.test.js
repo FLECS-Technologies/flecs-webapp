@@ -18,7 +18,7 @@
 
 import React from 'react'
 import nock from 'nock'
-import { render, fireEvent } from '@testing-library/react'
+import { screen, render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Card from '../Card'
 
@@ -140,5 +140,21 @@ describe('Card', () => {
     const { getByTestId } = render(<Card />)
 
     expect(() => getByTestId('more-vert-icon')).toThrow()
+  })
+
+  test('Card requirements ', async () => {
+    render(<Card
+      app= 'Testapp'
+      avatar= ''
+      title= 'Test App Title'
+      author= 'Test App author'
+      version= 'Test App Version'
+      description= 'Test App Description'
+      status= 'uninstalled'
+      availability='available'
+      instances={[]}
+      requirement='amd64' />)
+
+    expect(screen.getByText('Installable on amd64')).toBeVisible()
   })
 })

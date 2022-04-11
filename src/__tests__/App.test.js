@@ -26,8 +26,8 @@ import '@testing-library/jest-dom'
 import App from '../App'
 
 describe('App', () => {
-  test('renders App component', () => {
-    act(() => {
+  test('renders App component', async () => {
+    await act(async () => {
       render(
         <Router>
           <App />

@@ -90,4 +90,15 @@ function getCurrentUserLicenses () {
   })
 }
 
-export { getCurrentUserLicenses }
+function setLicensedApp (license_key, appTitle) {
+  return new Promise((resolve, reject) => {
+    resolve([{
+      result: 'success',
+      code: '970',
+      message: 'License key meta added',
+      api_timestamp: 'current timestamp'
+    }])
+  })
+}
+
+export { getCurrentUserLicenses, setLicensedApp }

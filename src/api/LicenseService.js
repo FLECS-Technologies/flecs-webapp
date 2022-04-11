@@ -38,4 +38,26 @@ function getCurrentUserLicenses () {
     })
 }
 
-export { getCurrentUserLicenses }
+function setLicensedApp (license_key, appTitle) {
+  const data = new FormData()
+  data.append('aam-jwt', jwt())
+  data.append('license_key', license_key)
+  data.append('meta_key', 'Licensed App')
+  data.append('meta_value', appTitle)
+  // const meta_key = 'Licensed App'
+  // const meta_value = appTitle
+  return axios
+    .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_SET_LICENSE_META_URL, data)
+    .then(response => {
+      if (response?.data?.response?.code === '970') {
+        return response?.data?.response
+      } else {
+        return Promise.reject(new Error(response?.data?.response?.message))
+      }
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+export { getCurrentUserLicenses, setLicensedApp }

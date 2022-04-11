@@ -23,6 +23,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import AppAPI from '../api/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { setLicensedApp } from '../api/LicenseService'
 
 export default function InstallApp (props) {
   const { install, app, tickets } = (props)
@@ -54,9 +55,14 @@ export default function InstallApp (props) {
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
-      setUpdateAppList(true)
-      setSuccess(true)
-      setInstallationMessage('Congratulations! ' + app.title + ' was successfully installed!')
+      setLicensedApp(tickets[0]?.license_key, app.title)
+        .then()
+        .catch()
+        .finally(() => {
+          setUpdateAppList(true)
+          setSuccess(true)
+          setInstallationMessage('Congratulations! ' + app.title + ' was successfully installed!')
+        })
     } else {
       setSuccess(false)
       setError(true)

@@ -22,6 +22,7 @@ import { ReferenceDataContext } from './ReferenceDataContext'
 // import { marketPlaceAppsList } from './MarketplaceAppsList'
 import DeviceAPI from '../api/DeviceAPI'
 import { getAppIcon, getAuthor, getCustomLinks, getEditorAddress, getMultiInstance, getProducts, getReverseDomainName } from '../api/ProductService'
+// import { useSystemContext } from './SystemProvider'
 
 class AppList extends Component {
   constructor (props) {
@@ -59,7 +60,6 @@ class AppList extends Component {
   loadAppList () {
     (async () => {
       const { setAppList, setAppListLoading, setAppListError } = this.context
-      setAppListLoading(true)
 
       let marketplaceAppList = []
       let mergedList = []

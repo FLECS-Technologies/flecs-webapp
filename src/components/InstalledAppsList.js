@@ -43,6 +43,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
 import { useAuth } from './AuthProvider'
 import { CircularProgress } from '@mui/material'
+import { useSystemContext } from '../data/SystemProvider'
 
 const headCells = [
 
@@ -150,6 +151,7 @@ function stableSort (array, comparator) {
 export default function DeviceAppsList (props) {
   const { setUpdateAppList, appListLoading, appListError } = React.useContext(ReferenceDataContext)
   const user = useAuth()
+  const { ping } = useSystemContext()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
   const [page, setPage] = useStateWithLocalStorage('installedApps.paginator.page', 0)
@@ -268,7 +270,16 @@ export default function DeviceAppsList (props) {
               rowCount={props.length}
             />
             <TableBody>
-              {(tmpAppList.length === 0 && !appListLoading && !appListError) && (
+              {(!ping) &&
+                <TableRow>
+                  <TableCell colSpan={6} >
+                    <Typography align='center'>
+                      The FLECS services are not ready. Please try again in a couple of seconds.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              }
+              {(tmpAppList.length === 0 && !appListLoading && !appListError && ping) && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <Typography align='center'>
@@ -280,7 +291,7 @@ export default function DeviceAppsList (props) {
                   </TableCell>
                 </TableRow>
               )}
-              {appListLoading &&
+              {(appListLoading && ping) &&
                   <TableRow>
                   <TableCell colSpan={6} align='center'>
                     <CircularProgress align='center'></CircularProgress>
@@ -290,7 +301,7 @@ export default function DeviceAppsList (props) {
                   </TableCell>
                 </TableRow>
               }
-              {appListError &&
+              {(appListError && ping) &&
                   <TableRow>
                   <TableCell colSpan={6} align='center'>
                     <Typography align='center'>

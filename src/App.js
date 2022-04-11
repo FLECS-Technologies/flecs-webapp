@@ -23,17 +23,23 @@ import { ReferenceDataContextProvider } from './data/ReferenceDataContext'
 import { AppList } from './data/AppList'
 import { AuthProvider } from './components/AuthProvider'
 import { UIRoutes } from './pages/ui-routes'
+import { SystemContextProvider } from './data/SystemProvider'
+import { SystemData } from './data/SystemData'
 
 export default function App () {
   return (
     <DarkModeState>
       <AuthProvider>
         <Frame>
-          <ReferenceDataContextProvider>
-            <AppList>
-              <UIRoutes />
-            </AppList>
-          </ReferenceDataContextProvider>
+          <SystemContextProvider>
+            <SystemData>
+              <ReferenceDataContextProvider>
+                <AppList>
+                  <UIRoutes />
+                </AppList>
+              </ReferenceDataContextProvider>
+            </SystemData>
+          </SystemContextProvider>
         </Frame>
       </AuthProvider>
     </DarkModeState>

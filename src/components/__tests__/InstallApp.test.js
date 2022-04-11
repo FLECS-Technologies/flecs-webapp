@@ -23,6 +23,8 @@ import InstallApp from '../InstallApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import AppAPI from '../../api/AppAPI'
 
+jest.mock('../../api/LicenseService')
+
 const app = {
   app: 'com.codesys.codesyscontrol',
   title: 'test app',

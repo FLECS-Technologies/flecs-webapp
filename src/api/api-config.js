@@ -58,6 +58,7 @@ const MP_PRODUCTION = 'https://flecs.tech'
 const POST_AUTHENTICATE_URL = '/api/access/authenticate'
 const POST_VALIDATE_URL = '/api/access/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
+const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta'
 const GET_PRODUCTS_URL = '/api/v1/products'
 
 class DeviceAPIConfiguration extends Component {
@@ -226,6 +227,10 @@ class MarketplaceAPIConfiguration {
 
   static get POST_GET_CURRENT_USER_LICENSES_URL () {
     return POST_GET_CURRENT_USER_LICENSES_URL
+  }
+
+  static get POST_SET_LICENSE_META_URL () {
+    return POST_SET_LICENSE_META_URL
   }
 }
 

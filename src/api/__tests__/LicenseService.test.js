@@ -17,9 +17,10 @@
  */
 
 import '@testing-library/dom'
+import { act } from 'react-dom/test-utils'
 import { waitFor } from '@testing-library/react'
 import axios from 'axios'
-import { getCurrentUserLicenses } from '../LicenseService'
+import { getCurrentUserLicenses, setLicensedApp } from '../LicenseService'
 
 jest.mock('axios')
 
@@ -102,9 +103,21 @@ const mockLicenses = {
     }
 }
 
-describe('LicenseService', () => {
-  beforeEach(() => {
+const mockMetaResponse = {
+  data: {
+    response: {
+      result: 'success',
+      code: '970',
+      message: 'License key meta added',
+      api_timestamp: 'current timestamp'
+    },
+    signature: 'Signature or OpenSSL error'
+  }
+}
 
+describe('LicenseService', () => {
+  beforeAll(() => {
+    axios.post = jest.fn()
   })
 
   afterAll(() => {
@@ -122,5 +135,19 @@ describe('LicenseService', () => {
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
     expect(licenses).toHaveLength(1)
+  })
+
+  test('calls successfull setLicensedApp', async () => {
+    axios.post.mockResolvedValueOnce(mockMetaResponse)
+    const response = await waitFor(() => setLicensedApp('license', 'app'))
+
+    expect(response.result).toBe(mockMetaResponse.data.response.result)
+  })
+
+  test('calls unsuccessfull setLicensedApp', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to set meta'))
+    await act(async () => {
+      expect(setLicensedApp('license', 'app')).rejects.toThrowError()
+    })
   })
 })

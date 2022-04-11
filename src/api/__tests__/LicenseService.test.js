@@ -39,8 +39,8 @@ const mockLicenses = {
             owner_last_name: 'Test',
             owner_email_address: 'contact@example.com',
             activation_date: null,
-            creation_date: '2021-04-23',
-            expiration_date: '2021-05-23',
+            creation_date: '2021-01-23',
+            expiration_date: '2021-02-23',
             valid: '30',
             order_id: '270',
             sold_date: '2021-04-23',
@@ -63,7 +63,7 @@ const mockLicenses = {
             owner_email_address: 'contact@example.com',
             activation_date: null,
             creation_date: '2021-04-23',
-            expiration_date: '2021-05-23',
+            expiration_date: null,
             valid: '30',
             order_id: '270',
             sold_date: '2021-04-23',
@@ -114,13 +114,13 @@ describe('LicenseService', () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
-    expect(licenses).toHaveLength(2)
+    expect(licenses).toHaveLength(1)
   })
 
   test('calls unsuccessfull getCurrentUserLicenses', async () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
-    expect(licenses).toHaveLength(2)
+    expect(licenses).toHaveLength(1)
   })
 })

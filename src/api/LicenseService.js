@@ -27,7 +27,9 @@ function getCurrentUserLicenses () {
     .then(response => {
       if (response?.data?.response?.licenses) {
         // filter only active licenses
-        const activeLicenses = response.data.response.licenses.filter(e => e?.remaining_activations > 0)
+        let activeLicenses = response.data.response.licenses.filter(e => e?.remaining_activations > 0)
+        const today = new Date()
+        activeLicenses = activeLicenses.filter(e => (e?.expiration_date === null || new Date(e?.expiration_date) > today))
         return activeLicenses
       }
     })

@@ -230,13 +230,13 @@ export default function Login () {
                                 <Grid item xs={6}>
                                     <Typography aria-label='create-account' variant='body'>
                                         Don&apos;t have an account yet?<br/>
-                                        <Link aria-label='create-account-link' href="https://flecs.tech/my-account/" target="_blank">Create an account</Link>
+                                        <Link aria-label='create-account-link' href="https://flecs.tech/my-account" target="_blank">Create an account</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Typography aria-label='forgot-password' variant='body'>
                                         Forgot your password?<br/>
-                                        <Link aria-label='forgot-password-link' href="https://flecs.tech/my-account/lost-password/" target="_blank">Reset password</Link>
+                                        <Link aria-label='forgot-password-link' href="https://flecs.tech/my-account/lost-password" target="_blank">Reset password</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>

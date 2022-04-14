@@ -48,7 +48,7 @@ const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const MP_PROXY_DEV = 'http://localhost:8000'
-const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8000'
+const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8443'
 const MP_PROXY_PRODUCTION = 'https://marketplace.flecs.tech'
 
 const MP_DEV = 'https://mp-dev.flecs.tech'

@@ -53,7 +53,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "sh -ac '. ./.env.${REACT_APP_ENV}; react-scripts build'",
+    "build:test": "REACT_APP_ENVIRONMENT=test npm run build",
+    "build:production": "REACT_APP_ENVIRONMENT=production npm run build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

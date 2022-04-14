@@ -1,7 +1,9 @@
 ifndef NDEBUG
 DOCKER_TAG=develop
+REACT_APP_ENVIRONMENT=test
 else
 DOCKER_TAG=latest
+REACT_APP_ENVIRONMENT=production
 endif
 
 .PHONY: docker
@@ -10,6 +12,7 @@ docker:
 	docker buildx build \
 	--push \
 	--platform linux/amd64,linux/arm/v7,linux/arm64 \
+	--build-arg REACT_APP_ENVIRONMENT=${REACT_APP_ENVIRONMENT} \
 	--tag flecs/webapp:$(DOCKER_TAG) \
 	--file docker/Dockerfile \
 	.

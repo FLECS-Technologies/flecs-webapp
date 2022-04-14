@@ -64,7 +64,7 @@ const GET_PRODUCTS_URL = '/api/v1/products'
 class DeviceAPIConfiguration extends Component {
   static get TARGET () {
     let target = ''
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       target = process.env.REACT_APP_DEV_VM_IP
     }
     return target
@@ -157,7 +157,7 @@ class DeviceAPIConfiguration extends Component {
 class MarketplaceAPIConfiguration {
   static get MP_PROXY_URL () {
     let mpUrl = ''
-    switch (process.env.NODE_ENV) {
+    switch (process.env.REACT_APP_ENVIRONMENT) {
       case 'production':
         mpUrl = MP_PROXY_PRODUCTION
         break
@@ -175,7 +175,7 @@ class MarketplaceAPIConfiguration {
 
   static get MP_URL () {
     let mpUrl = ''
-    switch (process.env.NODE_ENV) {
+    switch (process.env.REACT_APP_ENVIRONMENT) {
       case 'production':
         mpUrl = MP_PRODUCTION
         break

@@ -22,13 +22,7 @@ import { postMPLogout } from './DeviceAuthAPI'
 
 class AuthService {
   login (username, password) {
-    // let url
     const issueJWT = true
-    /* if (process.env.NODE_ENV === 'development') {
-      url = process.env.REACT_APP_DEV_LOCAL_MP_URL
-    } else {
-      url = MarketplaceAPIConfiguration.BASE_URL
-    } */
     const url = MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL
     return axios
       .post(url, {

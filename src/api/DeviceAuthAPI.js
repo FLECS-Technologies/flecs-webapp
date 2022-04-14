@@ -24,7 +24,7 @@ async function postMPLogin (currentUser) {
     const user = currentUser?.user?.data?.user_login
     const token = currentUser?.jwt?.token
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       url = process.env.REACT_APP_DEV_VM_IP
     }
     url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL
@@ -46,7 +46,7 @@ async function postMPLogout (currentUser) {
       let url = ''
       const user = currentUser?.user?.data?.user_login
 
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.REACT_APP_ENVIRONMENT === 'development') {
         url = process.env.REACT_APP_DEV_VM_IP
       }
       url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL

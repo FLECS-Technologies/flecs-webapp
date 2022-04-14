@@ -21,7 +21,7 @@ import axios from 'axios'
 function getProducts (params) {
   const { /* page , per_page, search, order, orderby, */ status, stock_status } = params || {}
   const reqParams = new URLSearchParams()
-  reqParams.append('category', '18')
+  reqParams.append('category', getCategoryID())
   reqParams.append('page', '1')
   reqParams.append('per_page', '100')
   if (status) {
@@ -89,6 +89,24 @@ function getMultiInstance (app) {
 
 function getRequirement (app) {
   return app?.meta_data.find(o => o.key === 'port-requirement')?.value
+}
+
+function getCategoryID () {
+  let catID = ''
+  switch (process.env.REACT_APP_ENVIRONMENT) {
+    case 'production':
+      catID = '27'
+      break
+    case 'development':
+      catID = '18'
+      break
+    case 'test':
+      catID = '27' // Set this to 18 after the release. Otherwise the dev-system will not load any apps
+      break
+    default:
+      catID = '27'
+  }
+  return catID
 }
 
 export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

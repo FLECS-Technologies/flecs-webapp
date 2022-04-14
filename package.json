@@ -41,6 +41,7 @@
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
+    "env-cmd": "^10.1.0",
     "enzyme": "^3.11.0",
     "eslint": "^8.5.0",
     "eslint-config-standard": "^16.0.3",
@@ -53,9 +54,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "sh -ac '. ./.env.${REACT_APP_ENVIRONMENT}; react-scripts build'",
-    "build:test": "REACT_APP_ENVIRONMENT=test npm run build",
-    "build:production": "REACT_APP_ENVIRONMENT=production npm run build",
+    "build": "react-scripts build'",
+    "build:test": "env-cmd -f ./.test.env npm run-script build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

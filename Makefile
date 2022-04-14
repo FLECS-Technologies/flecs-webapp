@@ -18,7 +18,7 @@ docker:
 	.
 
 .PHONY: deb-pkg
-deb-pkg: VERSION=1.0.0-beta.2
+deb-pkg: VERSION=1.0.0-porpoise
 deb-pkg:
 	@sed -i 's/Version:.*/Version: ${VERSION}/g' debian/DEBIAN/control
 	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_${VERSION}_all.deb

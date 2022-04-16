@@ -10,7 +10,7 @@ Wants=containerd.service
 [Service]
 Type=oneshot
 TimeoutStartSec=0
-ExecStart=/usr/bin/flecs-webapp.sh
+ExecStart=/opt/flecs-webapp/bin/flecs-webapp.sh
 ExecStop=docker stop flecs-webapp
 RemainAfterExit=yes
 

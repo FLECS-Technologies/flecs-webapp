@@ -1,24 +1,30 @@
 ifndef NDEBUG
 DOCKER_TAG=develop
-REACT_APP_ENVIRONMENT=test
 else
 DOCKER_TAG=latest
-REACT_APP_ENVIRONMENT=production
 endif
 
+VERSION=1.0.0-porpoise
+
 .PHONY: docker
-docker:
+docker: docker_amd64 docker_armhf docker_arm64
 	@docker login -u $${REGISTRY_USER} -p $${REGISTRY_AUTH}
-	docker buildx build \
+	@docker buildx build \
 	--push \
 	--platform linux/amd64,linux/arm/v7,linux/arm64 \
-	--build-arg REACT_APP_ENVIRONMENT=${REACT_APP_ENVIRONMENT} \
 	--tag flecs/webapp:$(DOCKER_TAG) \
 	--file docker/Dockerfile \
 	.
 
+docker_%:
+	./docker/build-image.sh $(VERSION) $(DOCKER_TAG) $*
+
 .PHONY: deb-pkg
-deb-pkg: VERSION=1.0.0-porpoise
-deb-pkg:
-	@sed -i 's/Version:.*/Version: ${VERSION}/g' debian/DEBIAN/control
-	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_${VERSION}_all.deb
+deb-pkg: docker deb-pkg_amd64 deb-pkg_armhf deb-pkg_arm64
+
+deb-pkg_%: docker_%
+	@sed -i 's/Version:.*/Version: $(VERSION)/g' debian/DEBIAN/control
+	@sed -i 's/Architecture:.*/Architecture: $*/g' debian/DEBIAN/control
+	@mkdir -p debian/opt/flecs-webapp/assets
+	@cp -f flecs-webapp_$(VERSION)_$*.tar.gz debian/opt/flecs-webapp/assets/
+	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_$(VERSION)_$*.deb

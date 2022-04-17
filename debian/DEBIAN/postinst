@@ -4,7 +4,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 case "$1" in
   *)
-    docker load --input /opt/flecs/assets/flecs-webapp_*.tar.gz
+    docker load --input /opt/flecs-webapp/assets/flecs-webapp_*.tar.gz
     systemctl enable --now flecs-webapp
     ;;
 esac

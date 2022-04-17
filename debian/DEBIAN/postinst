@@ -4,7 +4,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 case "$1" in
   *)
-    docker network create flecs-internal >/dev/null 2>&1
+    docker load --input /opt/flecs/assets/flecs-webapp_*.tar.gz
     systemctl enable --now flecs-webapp
     ;;
 esac

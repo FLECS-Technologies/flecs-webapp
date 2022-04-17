@@ -14,15 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CHANNEL=latest
-
-if [ -f /etc/flecs.d/channel ]; then
-    CHANNEL=$(cat /etc/flecs.d/channel);
-fi
+VERSION=
 
 /usr/bin/docker stop flecs-webapp 2>/dev/null;
-/usr/bin/docker rm flecs-webapp 2>/dev/null;
-/usr/bin/docker pull flecs/webapp:${CHANNEL}
+/usr/bin/docker rm -f flecs-webapp 2>/dev/null;
 PORTS=(80 8080 8008 none)
 for PORT in ${PORTS[*]}; do
     if ! netstat -tulpn | grep ":${PORT} " >/dev/null 2>&1; then
@@ -36,4 +31,4 @@ if [ "${PORT}" == "none" ]; then
 fi
 
 echo "Binding flecs-webapp to port ${PORT}"
-/usr/bin/docker run -d -p ${PORT}:80 --add-host=host.docker.internal:172.17.0.1 --name flecs-webapp flecs/webapp:${CHANNEL}
+/usr/bin/docker run -d -p ${PORT}:80 --add-host=host.docker.internal:172.17.0.1 --name flecs-webapp flecs/webapp:${VERSION}

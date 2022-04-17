@@ -1,10 +1,5 @@
-ifndef NDEBUG
-DOCKER_TAG=develop
-else
-DOCKER_TAG=latest
-endif
-
 VERSION=1.0.0-porpoise
+DOCKER_TAG=$(VERSION)
 
 .PHONY: docker
 docker: docker_amd64 docker_armhf docker_arm64
@@ -23,6 +18,7 @@ docker_%:
 deb-pkg: docker deb-pkg_amd64 deb-pkg_armhf deb-pkg_arm64
 
 deb-pkg_%: docker_%
+	@sed -i 's/VERSION=.*/VERSION=$(VERSION)/g' debian/opt/flecs-webapp/bin/flecs-webapp.sh
 	@sed -i 's/Version:.*/Version: $(VERSION)/g' debian/DEBIAN/control
 	@sed -i 's/Architecture:.*/Architecture: $*/g' debian/DEBIAN/control
 	@rm -rf debian/opt/flecs-webapp/assets

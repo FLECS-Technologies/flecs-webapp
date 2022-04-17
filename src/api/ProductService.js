@@ -101,7 +101,7 @@ function getCategoryID () {
       catID = '18'
       break
     case 'test':
-      catID = '27' // Set this to 18 after the release. Otherwise the dev-system will not load any apps
+      catID = '18'
       break
     default:
       catID = '27'

@@ -25,11 +25,12 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import SelectTicket from './SelectTicket'
 import InstallApp from './InstallApp'
+import SideloadApp from './SideloadApp'
 
 const steps = ['Select ticket', 'Install app']
 
 export default function InstallAppStepper (props) {
-  const { app } = props
+  const { app, sideload } = props
   const [activeStep, setActiveStep] = React.useState(0)
   const [skipped, setSkipped] = React.useState(new Set())
   const [tickets, setTickets] = React.useState([])
@@ -95,7 +96,8 @@ export default function InstallAppStepper (props) {
       </Stepper>
         <React.Fragment>
           {(activeStep === 0) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
-          {(activeStep === 1) && <InstallApp app={app} tickets={tickets} install={(activeStep === 1)}/>}
+          {(activeStep === 1 && !sideload) && <InstallApp app={app} tickets={tickets} install={(activeStep === 1)}/>}
+          {(activeStep === 1 && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(activeStep === 1)}/>}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               data-testid='back-button'
@@ -122,5 +124,6 @@ export default function InstallAppStepper (props) {
 }
 
 InstallAppStepper.propTypes = {
-  app: PropTypes.object
+  app: PropTypes.object,
+  sideload: PropTypes.bool
 }

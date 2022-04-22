@@ -53,7 +53,7 @@ describe('PutSideloadAppAPI', () => {
       })
 
     const testSideload = new PutSideloadAppAPI()
-    await testSideload.sideloadApp('')
+    await testSideload.sideloadApp('yaml', 'key')
 
     expect(testSideload.state.success).toBeTruthy()
     expect(testSideload.state.responseData.app).toBe('org.eclipse.mosquitto')
@@ -68,7 +68,7 @@ describe('PutSideloadAppAPI', () => {
       })
 
     const testSideload = new PutSideloadAppAPI()
-    await testSideload.sideloadApp('')
+    await testSideload.sideloadApp('yaml', 'key')
 
     expect(testSideload.state.success).toBeFalsy()
     const errorMsg = testSideload.state.errorMessage.message

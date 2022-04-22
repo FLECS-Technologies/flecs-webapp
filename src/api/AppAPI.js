@@ -243,11 +243,11 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async sideloadApp (appYaml) {
+  async sideloadApp (appYaml, licenseKey) {
     try {
       // sideload app - this request takes the .yml file and tries to install the app
       const sideload = new PutSideloadAppAPI()
-      await sideload.sideloadApp(appYaml)
+      await sideload.sideloadApp(appYaml, licenseKey)
       if (sideload.state.success) {
         this.app.status = 'installed'
       } else {

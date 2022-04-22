@@ -37,13 +37,13 @@ import { visuallyHidden } from '@mui/utils'
 import Yaml from 'js-yaml'
 import Row from './InstalledAppsListRow'
 import FileOpen from './FileOpen'
-import AppAPI from '../api/AppAPI'
-import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
 import { useAuth } from './AuthProvider'
 import { CircularProgress } from '@mui/material'
 import { useSystemContext } from '../data/SystemProvider'
+import InstallAppStepper from './InstallAppStepper'
+import ContentDialog from './ContentDialog'
 
 const headCells = [
 
@@ -149,21 +149,15 @@ function stableSort (array, comparator) {
 }
 
 export default function DeviceAppsList (props) {
-  const { setUpdateAppList, appListLoading, appListError } = React.useContext(ReferenceDataContext)
+  const { appListLoading, appListError } = React.useContext(ReferenceDataContext)
   const user = useAuth()
   const { ping } = useSystemContext()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
   const [page, setPage] = useStateWithLocalStorage('installedApps.paginator.page', 0)
   const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('installedApps.paginator.rowsPerPage', 5)
-  const [sideLoading, setSideLoading] = React.useState(false)
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
-  const [snackbarState, setSnackbarState] = React.useState({
-    snackbarText: 'Info',
-    snackbarErrorText: '',
-    alertSeverity: 'success'
-  })
-  const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
+  const [yaml, setYaml] = React.useState()
+  const [sideloadAppOpen, setSideloadAppOpen] = React.useState(false)
   let tmpAppList = []
   let numberOfInstalledApps = 0
 
@@ -183,32 +177,13 @@ export default function DeviceAppsList (props) {
   }
 
   const handleOnSideloadConfirm = async (text) => {
-    let snackbarText
-    let alertSeverity
     try {
-      setSideLoading(true)
       const doc = Yaml.load(text)
-      const sideloadAPI = new AppAPI(doc)
-
-      await sideloadAPI.sideloadApp(text)
-      if (sideloadAPI.lastAPICallSuccessfull) {
-        setUpdateAppList(true)
-        snackbarText = 'Successully loaded ' + sideloadAPI.app.title + '.'
-        alertSeverity = 'success'
-      } else {
-        snackbarText = 'Failed to load ' + sideloadAPI.app.title + '.'
-        alertSeverity = 'error'
-      }
-      setSnackbarState({
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText,
-        snackbarErrorText: sideloadAPI.lastAPIError
-      })
-      setSnackbarOpen(true)
+      setYaml(doc)
+      setSideloadAppOpen(true)
     } catch (error) {
       console.error(error)
     }
-    setSideLoading(false)
   }
 
   if (props.appData) {
@@ -253,10 +228,8 @@ export default function DeviceAppsList (props) {
               buttonText="Sideload App"
               buttonIcon={<GetAppIcon/>}
               accept='.yml'
-              // setFile={setSideloadFile}
-              loading={sideLoading}
               onConfirm={handleOnSideloadConfirm}
-              disabled={sideLoading || !user?.user}
+              disabled={!user?.user}
             ></FileOpen>
             </div>
           </Tooltip>
@@ -330,13 +303,13 @@ export default function DeviceAppsList (props) {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-        <ActionSnackbar
-            text={snackbarText}
-            errorText={snackbarErrorText}
-            open={snackbarOpen}
-            setOpen={setSnackbarOpen}
-            alertSeverity={alertSeverity}
-        />
+        <ContentDialog
+          open={sideloadAppOpen}
+          setOpen={setSideloadAppOpen}
+          title={'Sideload App'}
+        >
+          <InstallAppStepper app={yaml} sideload={true} />
+        </ContentDialog>
     </Box>
   )
 }

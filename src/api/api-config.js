@@ -44,7 +44,6 @@ const PUT_SIDELOAD_APP = '/sideload'
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
 const MP_CART_ROUTE = '/cart?cocart-load-cart='
-const MP_INSTALL_TICKET_ID = 122
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const MP_PROXY_DEV = 'http://localhost:8000'
@@ -204,7 +203,21 @@ class MarketplaceAPIConfiguration {
   }
 
   static get MP_INSTALL_TICKET_ID () {
-    return MP_INSTALL_TICKET_ID
+    let ticketID = 0
+    switch (process.env.REACT_APP_ENVIRONMENT) {
+      case 'production':
+        ticketID = 737
+        break
+      case 'development':
+        ticketID = 122
+        break
+      case 'test':
+        ticketID = 122
+        break
+      default:
+        ticketID = 737
+    }
+    return ticketID
   }
 
   static get BASE_DEV_URL () {

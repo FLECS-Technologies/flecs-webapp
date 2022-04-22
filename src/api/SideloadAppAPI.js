@@ -21,12 +21,12 @@ import { DeviceAPIConfiguration } from './api-config'
 // import Yaml from 'js-yaml'
 
 export default class PutSideloadAppAPI extends BaseAPI {
-  async sideloadApp (appYaml) {
+  async sideloadApp (appYaml, licenseKey) {
     // PUT request using fetch with error handling
     const requestOptions = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/yaml' },
-      body: appYaml
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, appYaml })
     }
 
     try {

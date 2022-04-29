@@ -34,7 +34,7 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import GetAppIcon from '@mui/icons-material/GetApp'
 import { visuallyHidden } from '@mui/utils'
-// import Yaml from 'js-yaml'
+import Yaml from 'js-yaml'
 import Row from './InstalledAppsListRow'
 import FileOpen from './FileOpen'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
@@ -178,8 +178,8 @@ export default function DeviceAppsList (props) {
 
   const handleOnSideloadConfirm = async (text) => {
     try {
-      // const doc = Yaml.load(text)
-      setYaml(text)
+      const doc = Yaml.load(text)
+      setYaml(doc)
       setSideloadAppOpen(true)
     } catch (error) {
       console.error(error)

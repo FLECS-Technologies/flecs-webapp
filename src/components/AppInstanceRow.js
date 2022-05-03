@@ -27,6 +27,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoIcon from '@mui/icons-material/Info'
+import SettingsIcon from '@mui/icons-material/Settings'
 
 import LoadIconButton from './LoadIconButton'
 import AppAPI from '../api/AppAPI'
@@ -34,6 +35,7 @@ import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
 import InstanceInfo from './InstanceInfo'
+import InstanceConfig from './InstanceConfig'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -45,6 +47,7 @@ export default function AppInstanceRow (props) {
     props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
   )
   const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false)
+  const [instanceSettingsOpen, setInstanceSettingsOpen] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarState, setSnackbarState] = React.useState({
     snackbarText: 'Info',
@@ -184,6 +187,15 @@ export default function AppInstanceRow (props) {
                     />
                     </span>
                 </Tooltip>
+                <Tooltip title="Settings of this instance">
+                    <span>
+                    <LoadIconButton
+                        label="instance-settings-button"
+                        icon={<SettingsIcon />}
+                        onClick={() => setInstanceSettingsOpen(true)}
+                    />
+                    </span>
+                </Tooltip>
                 <Tooltip title="Delete instance">
                     <span>
                     <LoadIconButton
@@ -211,6 +223,13 @@ export default function AppInstanceRow (props) {
           setOpen={setInstanceInfoOpen}
         >
           <InstanceInfo instance={appInstance}></InstanceInfo>
+        </ContentDialog>
+        <ContentDialog
+          title = {'Settings of ' + appInstance.instanceName}
+          open={instanceSettingsOpen}
+          setOpen={setInstanceSettingsOpen}
+        >
+          <InstanceConfig instance={appInstance}></InstanceConfig>
         </ContentDialog>
     </Fragment>
   )

@@ -32,7 +32,7 @@ export default function InstanceConfig (props) {
   const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
-  const [nicConfig, setNicConfig] = React.useState({
+  const [nicConfig, setNicConfig] = React.useState(/* {
 
     nics: [{
       nic: 'eth0',
@@ -42,7 +42,7 @@ export default function InstanceConfig (props) {
       nic: 'eth1',
       enabled: true
     }]
-  })
+  } */)
 
   React.useEffect(() => {
     if (!loadingConfig) {
@@ -55,10 +55,11 @@ export default function InstanceConfig (props) {
 
   const fetchConfig = async (props) => {
     setLoadingConfig(true)
-    getInstanceConfig(instance.instanceId)
+
+    getInstanceConfig(instance?.instanceId)
       .then((response) => {
         if (response) {
-          setNicConfig(response?.nicConfig)
+          setNicConfig(response?.nics)
         }
         setError(false)
         setConfigChanged(false)

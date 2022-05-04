@@ -43,6 +43,7 @@ describe('InstanceConfig', () => {
       render(<InstanceConfig instance={testInstance}></InstanceConfig>)
     })
     expect(screen.getByText('Network interfaces')).toBeVisible()
+
     const saveButton = screen.getByTestId('save-button')
 
     await act(async () => { fireEvent.click(saveButton) })
@@ -53,8 +54,16 @@ describe('InstanceConfig', () => {
       render(<InstanceConfig instance={testInstance}></InstanceConfig>)
     })
     expect(screen.getByText('Network interfaces')).toBeVisible()
+
     const discardButton = screen.getByTestId('discard-button')
 
     await act(async () => { fireEvent.click(discardButton) })
+  })
+
+  test('Fail to load config', async () => {
+    await act(async () => {
+      render(<InstanceConfig instance={undefined}></InstanceConfig>)
+    })
+    expect(screen.getByText('Oops... Mock: Failed to get config')).toBeVisible()
   })
 })

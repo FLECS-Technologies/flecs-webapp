@@ -29,6 +29,7 @@ export default function InstanceConfig (props) {
   const [loadingConfig, setLoadingConfig] = React.useState(false)
   const [savingConfig, setSavingConfig] = React.useState(false)
   const [reloadConfig, setReloadConfig] = React.useState(false)
+  const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
   const [nicConfig, setNicConfig] = React.useState({
@@ -60,6 +61,7 @@ export default function InstanceConfig (props) {
           setNicConfig(response?.nicConfig)
         }
         setError(false)
+        setConfigChanged(false)
       })
       .catch((error) => {
         setErrorText(error.message)
@@ -75,6 +77,7 @@ export default function InstanceConfig (props) {
     putInstanceConfig(instance.instanceId, nicConfig)
       .then(() => {
         setError(false)
+        setConfigChanged(false)
       })
       .catch((error) => {
         setErrorText(error.message)
@@ -88,20 +91,20 @@ export default function InstanceConfig (props) {
   return (
   <Box>
     <Toolbar>
-        <Button variant='contained' sx={{ mr: 1 }} data-testid='save-button' disabled={loadingConfig || savingConfig} onClick={() => saveConfig()}>
+        <Button variant='contained' sx={{ mr: 1 }} data-testid='save-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => saveConfig()}>
             <SaveIcon sx={{ mr: 1 }}/> Save
         </Button>
-        <Button variant='outlined' sx={{ mr: 1 }} data-testid='discard-button' disabled={loadingConfig || savingConfig} onClick={() => setReloadConfig(true)}>
+        <Button variant='outlined' sx={{ mr: 1 }} data-testid='discard-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => setReloadConfig(true)}>
             <ClearIcon sx={{ mr: 1 }}/> Discard changes
         </Button>
     </Toolbar>
     <Box alignContent='center'>
-        {(error && !(loadingConfig || savingConfig)) && <Typography>Oops... {errorText}</Typography>}
+        {(error && !(loadingConfig || savingConfig)) && <Typography align='center'>Oops... {errorText}</Typography>}
         {(loadingConfig || savingConfig) && <LinearProgress color="primary"/>}
         {(loadingConfig) && <Typography align='center'>Loading configuration...</Typography>}
         {(savingConfig) && <Typography align='center'>Saving configuration...</Typography>}
     </Box>
-    {(nicConfig && !error) && <NICConfig nicConfig={nicConfig} setNicConfig={setNicConfig}></NICConfig>}
+    {(nicConfig && !error) && <NICConfig nicConfig={nicConfig} setNicConfig={setNicConfig} setConfigChanged={setConfigChanged}></NICConfig>}
   </Box>)
 }
 

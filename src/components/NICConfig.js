@@ -57,7 +57,7 @@ export default function NICConfig (props) {
               </TableHead>
               <TableBody>
                   {nicConfig?.nics?.map((row) => (
-                      <TableRow key={row.nic}>
+                      <TableRow key={row?.nic}>
                           <TableCell>
                               {row?.nic}
                           </TableCell>

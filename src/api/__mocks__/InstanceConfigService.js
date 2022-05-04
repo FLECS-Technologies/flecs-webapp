@@ -17,18 +17,20 @@
  */
 function getInstanceConfig (instanceId) {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        nicConfig: [{
-          nic: 'eth0',
-          enabled: false
-        },
+    instanceId
+      ? resolve(
         {
-          nic: 'eth1',
-          enabled: true
-        }]
-      }
-    )
+          nics: [{
+            nic: 'eth0',
+            enabled: false
+          },
+          {
+            nic: 'eth1',
+            enabled: true
+          }]
+        }
+      )
+      : reject(new Error('Mock: Failed to get config'))
   })
 }
 

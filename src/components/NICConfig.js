@@ -21,7 +21,7 @@ import { Box } from '@mui/system'
 import { Alert, AlertTitle, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 
 export default function NICConfig (props) {
-  const { nicConfig, setNicConfig } = props
+  const { nicConfig, setNicConfig, setConfigChanged } = props
 
   const handleChange = (event) => {
     setNicConfig(prevState => ({
@@ -30,6 +30,7 @@ export default function NICConfig (props) {
         nic => nic.nic === event.target.name ? { ...nic, enabled: event.target.checked } : nic
       )
     }))
+    setConfigChanged(true)
   }
 
   return (
@@ -74,5 +75,6 @@ export default function NICConfig (props) {
 
 NICConfig.propTypes = {
   nicConfig: PropTypes.object,
-  setNicConfig: PropTypes.func
+  setNicConfig: PropTypes.func,
+  setConfigChanged: PropTypes.func
 }

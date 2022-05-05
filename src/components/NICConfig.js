@@ -18,7 +18,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/system'
-import { Alert, AlertTitle, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import { Alert, AlertTitle, FormControl, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import IpMaskInput from './IpMaskInput'
 
 export default function NICConfig (props) {
   const { nicConfig, setNicConfig, setConfigChanged } = props
@@ -33,19 +34,29 @@ export default function NICConfig (props) {
     setConfigChanged(true)
   }
 
+  const handleIPChange = (event) => {
+    setNicConfig(prevState => ({
+      ...prevState,
+      nics: prevState.nics.map(
+        nic => nic.nic === event.target.name ? { ...nic, ip: event.target.value } : nic
+      )
+    }))
+    setConfigChanged(true)
+  }
+
   return (
       <Box>
           <Table>
               <TableHead>
                 <TableRow>
-                    <TableCell colSpan={2}>
+                    <TableCell colSpan={4}>
                         <Typography variant='h6'>
                             Network interfaces
                         </Typography>
                     </TableCell>
                 </TableRow>
                 <TableRow>
-                    <TableCell colSpan={2}>
+                    <TableCell colSpan={4}>
                         <Alert sx={{ mb: 2 }} severity='info'>
                             <AlertTitle>Info</AlertTitle>
                             <Typography variant='body2'>Here you can enable the access to the network interfaces of your controller for the app.</Typography>
@@ -59,7 +70,27 @@ export default function NICConfig (props) {
                   {nicConfig?.nics?.map((row) => (
                       <TableRow key={row?.nic}>
                           <TableCell>
-                              {row?.nic}
+                            {row?.nic}
+                          </TableCell>
+                          <TableCell>
+                              <FormControl>
+                                <IpMaskInput
+                                    defaultValue={row?.ip}
+                                    onChange={handleIPChange}
+                                    name={row?.nic}
+                                    id="ip-textmask"
+                                />
+                              </FormControl>
+                          </TableCell>
+                          <TableCell>
+                              <FormControl>
+                                <IpMaskInput
+                                    defaultValue={row?.subnet}
+                                    // onChange={handleIPChange}
+                                    name={row?.nic}
+                                    id="sub-textmask"
+                                />
+                              </FormControl>
                           </TableCell>
                           <TableCell>
                               <Switch aria-label={row?.nic} checked={row?.enabled} onChange={handleChange} name={row?.nic}>

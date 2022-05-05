@@ -98,10 +98,10 @@ function getCategoryID () {
       catID = '27'
       break
     case 'development':
-      catID = '18'
+      catID = '27'
       break
     case 'test':
-      catID = '18'
+      catID = '27'
       break
     default:
       catID = '27'

@@ -32,17 +32,21 @@ export default function InstanceConfig (props) {
   const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
-  const [nicConfig, setNicConfig] = React.useState(/* {
+  const [nicConfig, setNicConfig] = React.useState({
 
     nics: [{
       nic: 'eth0',
+      ip: '192.168.100.1',
+      subnet: '255.255.255.0',
       enabled: false
     },
     {
       nic: 'eth1',
+      ip: '192.168.100.2',
+      subnet: '255.255.255.0',
       enabled: true
     }]
-  } */)
+  })
 
   React.useEffect(() => {
     if (!loadingConfig) {
@@ -66,7 +70,7 @@ export default function InstanceConfig (props) {
       })
       .catch((error) => {
         setErrorText(error.message)
-        setError(true)
+        // setError(true)
       })
       .finally(() => {
         setLoadingConfig(false)

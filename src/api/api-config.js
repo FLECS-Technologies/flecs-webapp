@@ -219,10 +219,10 @@ class MarketplaceAPIConfiguration {
         ticketID = 737
         break
       case 'development':
-        ticketID = 122
+        ticketID = 737
         break
       case 'test':
-        ticketID = 122
+        ticketID = 737
         break
       default:
         ticketID = 737

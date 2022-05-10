@@ -28,9 +28,9 @@ async function getInstanceConfig (instanceId) {
     })
 }
 
-async function putInstanceConfig (instanceId, config) {
+async function putInstanceConfig (instanceId, networkAdapters) {
   return axios
-    .put(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.PUT_INSTANCE_CONFIG_URL, { instanceId, config })
+    .put(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.PUT_INSTANCE_CONFIG_URL, { instanceId, networkAdapters })
     .then(response => {
       return response.data
     })

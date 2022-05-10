@@ -22,23 +22,27 @@ import { Alert, AlertTitle, FormControl, Switch, Table, TableBody, TableCell, Ta
 import IpMaskInput from './IpMaskInput'
 
 export default function NICConfig (props) {
-  const { nicConfig, setNicConfig, setConfigChanged } = props
+  const { nicConfig, setNicConfig, setConfigChanged, saveConfig } = props
 
   const handleChange = (event) => {
     setNicConfig(prevState => ({
       ...prevState,
-      nics: prevState.nics.map(
-        nic => nic.nic === event.target.name ? { ...nic, enabled: event.target.checked } : nic
+      networkAdapters: prevState.networkAdapters.map(
+        nic => nic.name === event.target.name ? { ...nic, active: event.target.checked } : nic
       )
     }))
+    // save config to activate the network adapter and receive recommendations for ip and subnetmask
+    if (event.target.checked) {
+      saveConfig(true)
+    }
     setConfigChanged(true)
   }
 
-  const handleIPChange = (event) => {
+  function handleIPChange (name, ip) {
     setNicConfig(prevState => ({
       ...prevState,
-      nics: prevState.nics.map(
-        nic => nic.nic === event.target.name ? { ...nic, ip: event.target.value } : nic
+      networkAdapters: prevState.networkAdapters.map(
+        nic => nic.name === name ? { ...nic, ipAddress: ip } : nic
       )
     }))
     setConfigChanged(true)
@@ -49,35 +53,42 @@ export default function NICConfig (props) {
           <Table>
               <TableHead>
                 <TableRow>
-                    <TableCell colSpan={4}>
+                    <TableCell colSpan={5}>
                         <Typography variant='h6'>
                             Network interfaces
                         </Typography>
                     </TableCell>
                 </TableRow>
                 <TableRow>
-                    <TableCell colSpan={4}>
+                    <TableCell colSpan={5}>
                         <Alert sx={{ mb: 2 }} severity='info'>
                             <AlertTitle>Info</AlertTitle>
-                            <Typography variant='body2'>Here you can enable the access to the network interfaces of your controller for the app.</Typography>
+                            <Typography variant='body2'>Here you can activate the access to the network interfaces of your controller for the app.</Typography>
                             <Typography variant='body2'>This means that the app can then access layer 2 (Ethernet) of this interface.</Typography>
                             <Typography variant='body2'>You need this if the app is used for fieldbus protocols like EtherCAT, or PROFINET.</Typography>
                         </Alert>
                     </TableCell>
                 </TableRow>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>IP Address</TableCell>
+                  <TableCell>Subnet Mask</TableCell>
+                  <TableCell>Gateway</TableCell>
+                  <TableCell>Activate in app</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
-                  {nicConfig?.nics?.map((row) => (
-                      <TableRow key={row?.nic}>
+                  {nicConfig?.networkAdapters?.map((row) => (
+                      <TableRow key={row?.name}>
                           <TableCell>
-                            {row?.nic}
+                            {row?.name}
                           </TableCell>
                           <TableCell>
                               <FormControl>
                                 <IpMaskInput
-                                    defaultValue={row?.ip}
-                                    onChange={handleIPChange}
-                                    name={row?.nic}
+                                    defaultValue={row?.ipAddress}
+                                    changeIP={handleIPChange}
+                                    name={row?.name}
                                     id="ip-textmask"
                                 />
                               </FormControl>
@@ -85,15 +96,25 @@ export default function NICConfig (props) {
                           <TableCell>
                               <FormControl>
                                 <IpMaskInput
-                                    defaultValue={row?.subnet}
-                                    // onChange={handleIPChange}
-                                    name={row?.nic}
+                                    defaultValue={row?.subnetMask}
+                                    name={row?.name}
                                     id="sub-textmask"
+                                    disabled="true"
                                 />
                               </FormControl>
                           </TableCell>
                           <TableCell>
-                              <Switch aria-label={row?.nic} checked={row?.enabled} onChange={handleChange} name={row?.nic}>
+                              <FormControl>
+                                <IpMaskInput
+                                    defaultValue={row?.gateway}
+                                    name={row?.name}
+                                    id="gateway-textmask"
+                                    disabled="true"
+                                />
+                              </FormControl>
+                          </TableCell>
+                          <TableCell>
+                              <Switch aria-label={row?.name + '-switch'} checked={row?.active} onChange={handleChange} name={row?.name}>
                               </Switch>
                           </TableCell>
                       </TableRow>
@@ -107,5 +128,6 @@ export default function NICConfig (props) {
 NICConfig.propTypes = {
   nicConfig: PropTypes.object,
   setNicConfig: PropTypes.func,
-  setConfigChanged: PropTypes.func
+  setConfigChanged: PropTypes.func,
+  saveConfig: PropTypes.func
 }

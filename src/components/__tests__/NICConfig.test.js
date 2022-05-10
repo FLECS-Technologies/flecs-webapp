@@ -22,13 +22,17 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import NICConfig from '../NICConfig'
 
 const testConfig = {
-  nics: [{
-    nic: 'eth0',
-    enabled: false
+  networkAdapters: [{
+    name: 'eth0',
+    ipAddress: '192.168.100.1',
+    subnetMask: '255.255.255.0',
+    active: false
   },
   {
-    nic: 'eth1',
-    enabled: true
+    name: 'eth1',
+    ipAddress: '192.168.100.2',
+    subnetMask: '255.255.255.0',
+    active: true
   }]
 }
 
@@ -44,10 +48,11 @@ describe('NICConfig', () => {
 
   test('click on enable', async () => {
     act(async () => {
-      render(<NICConfig nicConfig={testConfig} setNicConfig={jest.fn()}></NICConfig>)
+      render(<NICConfig nicConfig={testConfig} setNicConfig={jest.fn()} saveConfig={jest.fn()} setConfigChanged={jest.fn()}></NICConfig>)
     })
 
-    const switchButton = screen.getByLabelText('eth0')
-    await act(async () => { fireEvent.click(switchButton) })
+    const switchButton = screen.getByLabelText('eth0-switch')
+
+    await act(async () => { fireEvent.change(switchButton, { target: { checked: 'true' } }) })
   })
 })

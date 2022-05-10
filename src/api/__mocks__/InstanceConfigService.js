@@ -20,13 +20,18 @@ function getInstanceConfig (instanceId) {
     instanceId
       ? resolve(
         {
-          nics: [{
-            nic: 'eth0',
-            enabled: false
+          instanceId: instanceId,
+          networkAdapters: [{
+            name: 'eth0',
+            ipAddress: '192.168.100.1',
+            subnetMask: '255.255.255.0',
+            active: false
           },
           {
-            nic: 'eth1',
-            enabled: true
+            name: 'eth1',
+            ipAddress: '192.168.100.2',
+            subnetMask: '255.255.255.0',
+            active: true
           }]
         }
       )

@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 import { Input } from '@mui/material'
+import PropTypes from 'prop-types'
 import React from 'react'
 
-const IpMaskInput = ({ ...other }) => {
+const IpMaskInput = ({ ip, changeIP, name, ...other }) => {
   const [valid, setValid] = React.useState(true)
   const handleIPChange = (event) => {
     const subips = event.target.value.split('.')
@@ -26,15 +27,26 @@ const IpMaskInput = ({ ...other }) => {
       ip = parseInt(ip)
       return ip < 0 || ip > 255
     })
-    setValid((invalidSubips.length === 0 && subips.length === 4))
+    if (invalidSubips.length === 0 && subips.length === 4) {
+      changeIP(name, event.target.value)
+      setValid(true)
+    }
   }
 
   return (
     <Input
         {...other}
+        aria-label='IpInputMask'
         onChange={handleIPChange}
         color={valid ? 'primary' : 'error'}
+        value={ip}
     />)
+}
+
+IpMaskInput.propTypes = {
+  ip: PropTypes.string,
+  changeIP: PropTypes.func,
+  name: PropTypes.string
 }
 
 export default IpMaskInput

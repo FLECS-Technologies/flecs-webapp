@@ -29,24 +29,31 @@ export default function InstanceConfig (props) {
   const [loadingConfig, setLoadingConfig] = React.useState(false)
   const [savingConfig, setSavingConfig] = React.useState(false)
   const [reloadConfig, setReloadConfig] = React.useState(false)
+  const [triggerSaveConfig, setSaveConfig] = React.useState(false)
   const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
   const [nicConfig, setNicConfig] = React.useState({
 
-    nics: [{
-      nic: 'eth0',
-      ip: '192.168.100.1',
-      subnet: '255.255.255.0',
-      enabled: false
+    networkAdapters: [{
+      name: 'eth0',
+      ipAddress: '192.168.100.1',
+      subnetMask: '255.255.255.0',
+      active: false
     },
     {
-      nic: 'eth1',
-      ip: '192.168.100.2',
-      subnet: '255.255.255.0',
-      enabled: true
+      name: 'eth1',
+      ipAddress: '192.168.100.2',
+      subnetMask: '255.255.255.0',
+      active: true
     }]
   })
+
+  React.useEffect(() => {
+    if (!savingConfig && triggerSaveConfig) {
+      saveConfig()
+    }
+  }, [triggerSaveConfig])
 
   React.useEffect(() => {
     if (!loadingConfig) {
@@ -54,6 +61,7 @@ export default function InstanceConfig (props) {
     }
     if (reloadConfig) {
       setReloadConfig(false)
+      setConfigChanged(false)
     }
   }, [reloadConfig])
 
@@ -63,14 +71,14 @@ export default function InstanceConfig (props) {
     getInstanceConfig(instance?.instanceId)
       .then((response) => {
         if (response) {
-          setNicConfig(response?.nics)
+          setNicConfig(response)
         }
         setError(false)
         setConfigChanged(false)
       })
       .catch((error) => {
         setErrorText(error.message)
-        // setError(true)
+        setError(true)
       })
       .finally(() => {
         setLoadingConfig(false)
@@ -80,9 +88,17 @@ export default function InstanceConfig (props) {
   const saveConfig = async (props) => {
     setSavingConfig(true)
     putInstanceConfig(instance.instanceId, nicConfig)
-      .then(() => {
+      .then((response) => {
+        if (response) {
+          // read back the saved configuration
+          setNicConfig(response)
+        }
         setError(false)
-        setConfigChanged(false)
+        if (triggerSaveConfig) {
+          setSaveConfig(false)
+        } else {
+          setConfigChanged(false)
+        }
       })
       .catch((error) => {
         setErrorText(error.message)
@@ -109,7 +125,7 @@ export default function InstanceConfig (props) {
         {(loadingConfig) && <Typography align='center'>Loading configuration...</Typography>}
         {(savingConfig) && <Typography align='center'>Saving configuration...</Typography>}
     </Box>
-    {(nicConfig && !error) && <NICConfig nicConfig={nicConfig} setNicConfig={setNicConfig} setConfigChanged={setConfigChanged}></NICConfig>}
+    {(nicConfig && !error) && <NICConfig nicConfig={nicConfig} setNicConfig={setNicConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>}
   </Box>)
 }
 

@@ -33,21 +33,7 @@ export default function InstanceConfig (props) {
   const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
-  const [nicConfig, setNicConfig] = React.useState({
-
-    networkAdapters: [{
-      name: 'eth0',
-      ipAddress: '192.168.100.1',
-      subnetMask: '255.255.255.0',
-      active: false
-    },
-    {
-      name: 'eth1',
-      ipAddress: '192.168.100.2',
-      subnetMask: '255.255.255.0',
-      active: true
-    }]
-  })
+  const [nicConfig, setNicConfig] = React.useState()
 
   React.useEffect(() => {
     if (!savingConfig && triggerSaveConfig) {

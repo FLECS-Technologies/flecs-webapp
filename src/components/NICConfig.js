@@ -90,6 +90,7 @@ export default function NICConfig (props) {
                                     changeIP={handleIPChange}
                                     name={row?.name}
                                     id="ip-textmask"
+                                    disabled={!row?.active}
                                 />
                               </FormControl>
                           </TableCell>

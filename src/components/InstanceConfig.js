@@ -78,7 +78,7 @@ export default function InstanceConfig (props) {
       })
       .catch((error) => {
         setErrorText(error.message)
-        setError(true)
+        // setError(true)
       })
       .finally(() => {
         setLoadingConfig(false)

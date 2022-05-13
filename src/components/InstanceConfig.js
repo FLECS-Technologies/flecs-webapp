@@ -78,7 +78,7 @@ export default function InstanceConfig (props) {
       })
       .catch((error) => {
         setErrorText(error.message)
-        // setError(true)
+        setError(true)
       })
       .finally(() => {
         setLoadingConfig(false)
@@ -87,7 +87,7 @@ export default function InstanceConfig (props) {
 
   const saveConfig = async (props) => {
     setSavingConfig(true)
-    putInstanceConfig(instance.instanceId, nicConfig)
+    putInstanceConfig(instance.instanceId, nicConfig.networkAdapters)
       .then((response) => {
         if (response) {
           // read back the saved configuration

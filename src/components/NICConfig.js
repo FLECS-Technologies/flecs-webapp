@@ -86,31 +86,31 @@ export default function NICConfig (props) {
                           <TableCell>
                               <FormControl>
                                 <IpMaskInput
-                                    defaultValue={row?.ipAddress}
+                                    ip={row?.ipAddress}
                                     changeIP={handleIPChange}
                                     name={row?.name}
                                     id="ip-textmask"
-                                    disabled={!row?.active}
+                                    readOnly={!row?.active}
                                 />
                               </FormControl>
                           </TableCell>
                           <TableCell>
                               <FormControl>
                                 <IpMaskInput
-                                    defaultValue={row?.subnetMask}
+                                    ip={row?.subnetMask}
                                     name={row?.name}
                                     id="sub-textmask"
-                                    disabled="true"
+                                    readOnly={true}
                                 />
                               </FormControl>
                           </TableCell>
                           <TableCell>
                               <FormControl>
                                 <IpMaskInput
-                                    defaultValue={row?.gateway}
+                                    ip={row?.gateway}
                                     name={row?.name}
                                     id="gateway-textmask"
-                                    disabled="true"
+                                    readOnly={true}
                                 />
                               </FormControl>
                           </TableCell>

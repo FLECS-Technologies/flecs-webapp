@@ -17,10 +17,9 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box } from '@mui/system'
 import { getInstanceConfig, putInstanceConfig } from '../api/InstanceConfigService'
 import NICConfig from './NICConfig'
-import { Button, LinearProgress, Toolbar, Typography } from '@mui/material'
+import { Box, Button, LinearProgress, Toolbar, Typography } from '@mui/material'
 import SaveIcon from '@mui/icons-material/Save'
 import ClearIcon from '@mui/icons-material/Clear'
 

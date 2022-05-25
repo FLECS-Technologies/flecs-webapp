@@ -19,8 +19,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Editor, EditorState, ContentState, Modifier } from 'draft-js'
 import { getInstanceLog, getLog } from '../api/InstanceLogService'
-import { Button } from '@mui/material'
-import { Box } from '@mui/system'
+import { Box, Button } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 export default function InstanceLog (props) {
   const { instance } = props

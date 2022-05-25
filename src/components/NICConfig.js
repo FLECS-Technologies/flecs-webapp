@@ -17,8 +17,7 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box } from '@mui/system'
-import { Alert, AlertTitle, FormControl, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import { Alert, AlertTitle, Box, FormControl, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import IpMaskInput from './IpMaskInput'
 
 export default function NICConfig (props) {

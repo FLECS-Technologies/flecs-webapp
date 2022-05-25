@@ -36,7 +36,7 @@ describe('SearchBar', () => {
     const searchField = getByLabelText('search-field')
     const clearSearch = getByLabelText('clear-all')
     const searchIcon = getByLabelText('search-icon')
-    const input = within(autocomplete).getByRole('textbox')
+    const input = within(autocomplete).getByRole('combobox')
 
     expect(() => getByLabelText('filter')).toThrow()
     expect(searchIcon).toBeVisible()
@@ -55,13 +55,13 @@ describe('SearchBar', () => {
 
     const autocomplete = getByLabelText('autocomplete')
 
-    const input = within(autocomplete).getByRole('textbox')
+    const input = within(autocomplete).getByRole('combobox')
 
     fireEvent.change(input, { target: { value: 'Homer' } })
     fireEvent.keyDown(autocomplete, { key: 'ArrowDown' })
     fireEvent.keyDown(autocomplete, { key: 'Enter' })
 
-    const inputt = within(autocomplete).getByRole('textbox')
+    const inputt = within(autocomplete).getByRole('combobox')
 
     expect(inputt.value).toEqual('Homer')
     expect(searchFunc).toBeCalledTimes(2)
@@ -73,12 +73,12 @@ describe('SearchBar', () => {
 
     const autocomplete = getByLabelText('autocomplete')
 
-    const input = within(autocomplete).getByRole('textbox')
+    const input = within(autocomplete).getByRole('combobox')
 
     fireEvent.change(input, { target: { value: 'Flanders' } })
     fireEvent.keyPress(autocomplete, { key: 'Enter' })
 
-    const inputt = within(autocomplete).getByRole('textbox')
+    const inputt = within(autocomplete).getByRole('combobox')
 
     expect(inputt.value).toEqual('Flanders')
     expect(searchFunc).toBeCalledTimes(1)
@@ -90,13 +90,13 @@ describe('SearchBar', () => {
 
     const autocomplete = getByLabelText('autocomplete')
 
-    const input = within(autocomplete).getByRole('textbox')
+    const input = within(autocomplete).getByRole('combobox')
     const clearSearch = getByLabelText('clear-all')
 
     fireEvent.change(input, { target: { value: 'Flanders' } })
     fireEvent.click(clearSearch)
 
-    const inputt = within(autocomplete).getByRole('textbox')
+    const inputt = within(autocomplete).getByRole('combobox')
 
     expect(inputt.value).toEqual('')
 

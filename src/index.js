@@ -17,17 +17,18 @@
  */
 
 import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+// import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
+
+import { createRoot } from 'react-dom/client'
 
 import App from './App'
 
-const rootElement = document.getElementById('root')
-ReactDOM.render(
+const container = document.getElementById('root')
+const root = createRoot(container)
+root.render(
   <StrictMode>
     <Router basename='ui'>
       <App />
     </Router>
-  </StrictMode>,
-  rootElement
-)
+  </StrictMode>)

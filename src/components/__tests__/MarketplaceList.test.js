@@ -159,7 +159,7 @@ describe('Marketplace List', () => {
     const { getByTestId, queryAllByTestId } = render(<MPList appData={installedApps} />)
 
     const searchBar = await waitFor(() => getByTestId('search-bar'))
-    const input = within(searchBar).getByRole('textbox')
+    const input = within(searchBar).getByRole('combobox')
 
     fireEvent.change(input, { target: { value: 'control' } })
 

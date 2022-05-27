@@ -36,42 +36,42 @@ describe('Test InstallAppStepper', () => {
   test('renders InstallAppStepper component', async () => {
     await act(async () => {
       render(<InstallAppStepper />)
-      const stepper = screen.getByTestId('install-app-stepper')
-
-      expect(stepper).toBeVisible()
     })
+    const stepper = screen.getByTestId('install-app-stepper')
+
+    expect(stepper).toBeVisible()
   })
 
   test('one step forward, one step back', async () => {
     await act(async () => {
       render(<InstallAppStepper />)
-
-      await screen.findByText('3 Tickets available.')
-      const stepper = screen.getByTestId('install-app-stepper')
-
-      expect(stepper).toBeVisible()
-
-      const nextButton = screen.getByTestId('next-button')
-      const backButton = screen.getByTestId('back-button')
-      let selectTicket = screen.getByTestId('select-ticket-step')
-      expect(nextButton).toBeEnabled()
-      expect(backButton).toBeDisabled()
-      expect(selectTicket).toBeVisible()
-
-      // next step
-      await act(async () => { fireEvent.click(nextButton) })
-
-      const installApp = await waitFor(() => screen.getByTestId('install-app-step'))
-
-      expect(nextButton).toBeDisabled()
-      expect(backButton).toBeEnabled()
-      expect(installApp).toBeVisible()
-
-      // step back
-      await act(async () => { fireEvent.click(backButton) })
-
-      selectTicket = await waitFor(() => screen.getByTestId('select-ticket-step'))
     })
+    await screen.findByText('3 Tickets available.')
+    const stepper = screen.getByTestId('install-app-stepper')
+
+    expect(stepper).toBeVisible()
+
+    const nextButton = screen.getByTestId('next-button')
+    const backButton = screen.getByTestId('back-button')
+    let selectTicket = screen.getByTestId('select-ticket-step')
+    expect(nextButton).toBeEnabled()
+    expect(backButton).toBeDisabled()
+    expect(selectTicket).toBeVisible()
+
+    // next step
+    await act(async () => { fireEvent.click(nextButton) })
+
+    const installApp = await waitFor(() => screen.getByTestId('install-app-step'))
+
+    expect(nextButton).toBeDisabled()
+    expect(backButton).toBeEnabled()
+    expect(installApp).toBeVisible()
+
+    // step back
+    await act(async () => { fireEvent.click(backButton) })
+
+    selectTicket = await waitFor(() => screen.getByTestId('select-ticket-step'))
+
     expect(screen.getByTestId('next-button')).toBeEnabled()
     expect(screen.getByTestId('back-button')).toBeDisabled()
     expect(screen.getByTestId('select-ticket-step')).toBeVisible()

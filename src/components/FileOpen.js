@@ -40,6 +40,12 @@ const FileOpen = (props) => {
     inputFile.current.click()
   }
 
+  const onClick = e => {
+    if (e.target.value) {
+      e.target.value = null
+    }
+  }
+
   return (
     <div>
       <input
@@ -49,7 +55,7 @@ const FileOpen = (props) => {
         ref={inputFile}
         onChange={(e) => handleFileOpen(e)}
         // the onClick event is necessary to null the current file. Otherwise there will be no onChange event if the user selects the same file again.
-        onClick={(event) => { event.target.value = null }}
+        onClick={(event) => { onClick(event) }}
         type="file"
       />
       <LoadButton

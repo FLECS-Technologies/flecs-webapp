@@ -22,6 +22,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import NICConfig from '../NICConfig'
 
 const testConfig = {
+  instanceId: 12345,
   networkAdapters: [{
     name: 'eth0',
     ipAddress: '192.168.100.1',
@@ -37,17 +38,18 @@ const testConfig = {
 }
 
 describe('NICConfig', () => {
-  test('renders NICConfig component', () => {
-    act(async () => {
+  test('renders NICConfig component', async () => {
+    await act(async () => {
       render(<NICConfig nicConfig={testConfig} setNicConfig={jest.fn()}></NICConfig>)
     })
+
     expect(screen.getByText('Network interfaces')).toBeVisible()
     expect(screen.getByText('eth0')).toBeVisible()
     expect(screen.getByText('eth1')).toBeVisible()
   })
 
   test('click on enable', async () => {
-    act(async () => {
+    await act(async () => {
       render(<NICConfig nicConfig={testConfig} setNicConfig={jest.fn()} saveConfig={jest.fn()} setConfigChanged={jest.fn()}></NICConfig>)
     })
 

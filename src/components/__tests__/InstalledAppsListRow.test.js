@@ -17,10 +17,10 @@
  */
 
 import React from 'react'
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Row from '../InstalledAppsListRow'
 import { act } from 'react-dom/test-utils'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react'
+import Row from '../InstalledAppsListRow'
 
 jest.mock('../../api/AppAPI')
 
@@ -49,8 +49,10 @@ describe('Test Installed Apps List row', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('renders installed apps list row component', () => {
-    render(<Row key = {app.app} row = {app} />)
+  test('renders installed apps list row component', async () => {
+    await act(async () => {
+      render(<Row key = {app.app} row = {app} />)
+    })
 
     const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = screen.getByTestId('DeleteIcon')
@@ -62,49 +64,48 @@ describe('Test Installed Apps List row', () => {
   test('create new instance', async () => {
     await act(async () => {
       render(<Row key = {app.app} row = {app} />)
-
-      const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
-      const deleteButton = screen.getByTestId('DeleteIcon')
-
-      fireEvent.click(crtInstnButton)
-
-      expect(crtInstnButton).toBeVisible()
-      expect(deleteButton).toBeVisible()
     })
+    const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const deleteButton = screen.getByTestId('DeleteIcon')
+
+    fireEvent.click(crtInstnButton)
+
+    expect(crtInstnButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
   })
 
   test('test delete app', async () => {
     await act(async () => {
       render(<Row key = {app.app} row = {app} />)
-
-      const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon')
-      const deleteButton = screen.getByTestId('DeleteIcon')
-
-      fireEvent.click(deleteButton)
-
-      const yesButton = await waitFor(() => screen.getByText('Yes'))
-      fireEvent.click(yesButton)
-
-      expect(createInstanceButton).toBeVisible()
-      expect(deleteButton).toBeVisible()
     })
+    const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const deleteButton = screen.getByTestId('DeleteIcon')
+
+    fireEvent.click(deleteButton)
+
+    const yesButton = await waitFor(() => screen.getByText('Yes'))
+    fireEvent.click(yesButton)
+
+    expect(createInstanceButton).toBeVisible()
+    expect(deleteButton).toBeVisible()
   })
 
-  test('test app with relatedLinks', () => {
+  test('test app with relatedLinks', async () => {
     app.relatedLinks = [
       {
         text: 'Buy',
         link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
       }
     ]
-    const { getByTestId /*, getByLabelText */ } = render(<Row
-        key = {app.app}
-        row = {app}
-   />)
+    await act(async () => {
+      render(<Row key = {app.app} row = {app} />)
+    })
 
-    const relatedLinks = getByTestId('more-horiz-icon')
+    const relatedLinks = screen.getByTestId('more-horiz-icon')
 
-    fireEvent.click(relatedLinks)
+    await act(async () => {
+      fireEvent.click(relatedLinks)
+    })
 
     expect(relatedLinks).toBeVisible()
     expect(relatedLinks).toBeEnabled()

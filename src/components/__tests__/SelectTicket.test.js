@@ -42,36 +42,36 @@ describe('Test SelectTicket', () => {
   test('renders SelectTicket component', async () => {
     await act(async () => {
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
-      const selectTicket = screen.getByTestId('select-ticket-step')
-      expect(selectTicket).toBeVisible()
     })
+    const selectTicket = screen.getByTestId('select-ticket-step')
+    expect(selectTicket).toBeVisible()
   })
 
   test('Click on the open-cart card', async () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+
+    addToCart.mockReturnValue(Promise.resolve('my-cart-key'))
     await act(async () => {
-      const closeSpy = jest.fn()
-      window.open = jest.fn().mockReturnValue({ close: closeSpy })
-
-      addToCart.mockReturnValue(Promise.resolve('my-cart-key'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
-      const openCartCard = screen.getByTestId('open-cart-card-action')
-      await act(async () => { fireEvent.click(openCartCard) })
-
-      await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
-      expect(window.open).toHaveBeenCalled()
     })
+    const openCartCard = screen.getByTestId('open-cart-card-action')
+    await act(async () => { fireEvent.click(openCartCard) })
+
+    await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
+    expect(window.open).toHaveBeenCalled()
   })
 
   test('Failed to load cart', async () => {
+    const closeSpy = jest.fn()
+    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+    addToCart.mockRejectedValue(new Error('failed to load cart'))
     await act(async () => {
-      const closeSpy = jest.fn()
-      window.open = jest.fn().mockReturnValue({ close: closeSpy })
-      addToCart.mockRejectedValue(new Error('failed to load cart'))
       render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
-      const openCartCard = screen.getByTestId('open-cart-card-action')
-      await act(async () => { fireEvent.click(openCartCard) })
-      await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
-      expect(window.open).not.toHaveBeenCalled()
     })
+    const openCartCard = screen.getByTestId('open-cart-card-action')
+    await act(async () => { fireEvent.click(openCartCard) })
+    await waitFor(() => expect(screen.getByTestId('open-cart-card-action')).toBeEnabled())
+    expect(window.open).not.toHaveBeenCalled()
   })
 })

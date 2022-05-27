@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
+import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -53,8 +54,10 @@ describe('Login', () => {
     jest.resetAllMocks()
   })
 
-  test('renders Login page', () => {
-    render(<Router><Login /></Router>)
+  test('renders Login page', async () => {
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
     expect(screen.getByLabelText('user-name')).toBeVisible()
     expect(screen.getByLabelText('password')).toBeVisible()
@@ -64,53 +67,75 @@ describe('Login', () => {
     expect(screen.getByLabelText('privacy-policy-link')).toBeVisible()
   })
 
-  test('Enter Username', () => {
-    const { getByLabelText } = render(<Router><Login /></Router>)
+  test('Enter Username', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
-    const goButton = getByLabelText('login-button')
-    const userInput = getByLabelText('user-name')
-    const input = within(userInput).getByRole('textbox')
+    const goButton = screen.getByLabelText('login-button')
 
-    fireEvent.change(input, { target: { value: 'Homer' } })
-
-    expect(goButton).toBeDisabled()
-  })
-
-  test('Enter Password', () => {
-    const { getByLabelText } = render(<Router><Login /></Router>)
-
-    const goButton = getByLabelText('login-button')
-    const passwordInput = getByLabelText('password-input')
-    userEvent.type(passwordInput, 'pass1234')
+    // enter user
+    await user.keyboard('Homer')
+    // move to password field
+    await user.keyboard('{Tab}')
+    // delete password
+    await user.keyboard('{Backspace}')
 
     expect(goButton).toBeDisabled()
   })
 
-  test('Show Password', () => {
-    const { getByLabelText } = render(<Router><Login /></Router>)
+  test('Enter Password', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
-    const goButton = getByLabelText('login-button')
-    const showPassword = getByLabelText('toggle password visibility')
-    const passwordInput = getByLabelText('password-input')
-    userEvent.type(passwordInput, 'pass1234')
+    const goButton = screen.getByLabelText('login-button')
+
+    // delete the user
+    await user.keyboard('{Backspace}')
+    // move to password field
+    await user.keyboard('{Tab}')
+    // enter password
+    await user.keyboard('pass1234')
 
     expect(goButton).toBeDisabled()
+    screen.debug()
+  })
+
+  test('Show Password', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
+
+    const showPassword = screen.getByLabelText('toggle password visibility')
+
+    // move to password field
+    await user.keyboard('{Tab}')
+    // enter password
+    await user.keyboard('pass1234')
+
     expect(showPassword).toBeEnabled()
 
-    fireEvent.mouseDown(showPassword)
-    fireEvent.click(showPassword)
+    await user.click(showPassword)
   })
 
-  test('Enter Username and Password', () => {
-    const { getByLabelText } = render(<Router><Login /></Router>)
+  test('Enter Username and Password', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
-    const goButton = getByLabelText('login-button')
-    const passwordInput = getByLabelText('password-input')
-    const userInput = getByLabelText('user-name')
-    const input = within(userInput).getByRole('textbox')
+    const goButton = screen.getByLabelText('login-button')
 
-    fireEvent.change(input, { target: { value: 'Homer' } })
-    userEvent.type(passwordInput, 'pass1234')
+    // enter user
+    await user.keyboard('Homer')
+    // move to password field
+    await user.keyboard('{Tab}')
+    // enter password
+    await user.keyboard('pass1234')
 
     expect(goButton).toBeEnabled()
   })
@@ -119,21 +144,27 @@ describe('Login', () => {
     axios.post.mockResolvedValueOnce(homer)
     axios.post.mockResolvedValueOnce()
     useAuth.mockReturnValue(homer)
-    const { getByLabelText } = render(<Router><Login /></Router>)
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
-    const goButton = getByLabelText('login-button')
-    const passwordInput = getByLabelText('password-input')
-    const userInput = getByLabelText('user-name')
-    const input = within(userInput).getByRole('textbox')
+    const goButton = screen.getByLabelText('login-button')
 
-    fireEvent.change(input, { target: { value: 'homer-simpson' } })
-    userEvent.type(passwordInput, 'pass1234')
+    // enter user
+    await user.keyboard('homer-simpson')
+    // move to password field
+    await user.keyboard('{Tab}')
+    // enter password
+    await user.keyboard('pass1234')
 
     expect(goButton).toBeEnabled()
-    fireEvent.click(goButton)
+    await act(async () => {
+      user.click(goButton)
+    })
 
-    await waitFor(() => getByLabelText('message'))
-    const message = getByLabelText('message')
+    await waitFor(() => screen.getByLabelText('message'))
+    const message = screen.getByLabelText('message')
 
     expect(message).toHaveTextContent('Successfully logged in!')
     expect(axios.post).toHaveBeenCalledTimes(2)
@@ -143,21 +174,26 @@ describe('Login', () => {
 
   test('Unsuccessfull Login', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to login'))
-    const { getByLabelText } = render(<Router><Login /></Router>)
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<Router><Login /></Router>)
+    })
 
-    const goButton = getByLabelText('login-button')
-    const passwordInput = getByLabelText('password-input')
-    const userInput = getByLabelText('user-name')
-    const input = within(userInput).getByRole('textbox')
+    const goButton = screen.getByLabelText('login-button')
 
-    fireEvent.change(input, { target: { value: 'homer-simpson' } })
-    userEvent.type(passwordInput, 'pass1234')
+    // enter user
+    await user.keyboard('homer-simpson')
+    // move to password field
+    await user.keyboard('{Tab}')
+    // enter password
+    await user.keyboard('pass1234')
 
     expect(goButton).toBeEnabled()
-    fireEvent.click(goButton)
 
-    await waitFor(() => getByLabelText('message'))
-    const message = getByLabelText('message')
+    await user.click(goButton)
+
+    await waitFor(() => screen.getByLabelText('message'))
+    const message = screen.getByLabelText('message')
 
     expect(message).toHaveTextContent('Failed to login')
     expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })

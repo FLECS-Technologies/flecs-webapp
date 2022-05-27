@@ -30,8 +30,8 @@ const networkAdapter = {
 }
 
 describe('IpMaskInput', () => {
-  test('renders IpMaskInput component', () => {
-    act(async () => {
+  test('renders IpMaskInput component', async () => {
+    await act(async () => {
       render(<IpMaskInput ip={networkAdapter.ipAddress} changeIP={jest.fn()} name={networkAdapter.name}></IpMaskInput>)
     })
 
@@ -39,7 +39,7 @@ describe('IpMaskInput', () => {
   })
 
   test('Set IP', async () => {
-    act(async () => {
+    await act(async () => {
       render(<IpMaskInput ip={networkAdapter.ipAddress} changeIP={jest.fn()} name={networkAdapter.name}></IpMaskInput>)
     })
 

@@ -20,6 +20,7 @@ import PropTypes from 'prop-types'
 import AuthService from '../api/AuthService'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { postMPLogin } from '../api/DeviceAuthAPI'
+import { useEffectOnce } from './useEffectOnce'
 
 let SET_USER
 
@@ -38,7 +39,7 @@ const userReducer = (state, action) => {
 }
 
 function AuthProvider (props) {
-  React.useEffect(() => {
+  useEffectOnce(() => {
     validateUser()
   })
 

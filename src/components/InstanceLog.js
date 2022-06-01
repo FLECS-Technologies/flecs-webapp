@@ -21,6 +21,7 @@ import { Editor, EditorState, ContentState, Modifier } from 'draft-js'
 import { getInstanceLog, getLog } from '../api/InstanceLogService'
 import { Box, Button } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import { useEffectOnce } from './useEffectOnce'
 export default function InstanceLog (props) {
   const { instance } = props
   const [loadingLog, setLoadingLog] = React.useState(false)
@@ -30,7 +31,7 @@ export default function InstanceLog (props) {
     () => EditorState.createWithContent(content)
   )
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!loadingLog) {
       fetchLog()
     }

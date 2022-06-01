@@ -19,12 +19,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { getInstanceConfig, putInstanceConfig } from '../api/InstanceConfigService'
 import NICConfig from './NICConfig'
-import { Box, Button, LinearProgress, Toolbar, Typography } from '@mui/material'
+import { Box, Button, LinearProgress, Tab, Toolbar, Typography } from '@mui/material'
+import { TabContext, TabList, TabPanel } from '@mui/lab'
 import SaveIcon from '@mui/icons-material/Save'
 import ClearIcon from '@mui/icons-material/Clear'
+import InstanceDevicesConfig from './InstanceDevicesConfig'
+import { useEffectOnce } from './useEffectOnce'
 
 export default function InstanceConfig (props) {
   const { instance } = props
+  const [tab, setTab] = React.useState('1')
   const [loadingConfig, setLoadingConfig] = React.useState(false)
   const [savingConfig, setSavingConfig] = React.useState(false)
   const [reloadConfig, setReloadConfig] = React.useState(false)
@@ -32,15 +36,15 @@ export default function InstanceConfig (props) {
   const [configChanged, setConfigChanged] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
-  const [nicConfig, setNicConfig] = React.useState()
+  const [instanceConfig, setInstanceConfig] = React.useState()
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!savingConfig && triggerSaveConfig) {
       saveConfig()
     }
   }, [triggerSaveConfig])
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!loadingConfig) {
       fetchConfig()
     }
@@ -56,7 +60,7 @@ export default function InstanceConfig (props) {
     getInstanceConfig(instance?.instanceId)
       .then((response) => {
         if (response) {
-          setNicConfig(response)
+          setInstanceConfig(response)
         }
         setError(false)
         setConfigChanged(false)
@@ -72,11 +76,11 @@ export default function InstanceConfig (props) {
 
   const saveConfig = async (props) => {
     setSavingConfig(true)
-    putInstanceConfig(instance.instanceId, nicConfig.networkAdapters)
+    putInstanceConfig(instance.instanceId, instanceConfig.networkAdapters)
       .then((response) => {
         if (response) {
           // read back the saved configuration
-          setNicConfig(response)
+          setInstanceConfig(response)
         }
         setError(false)
         if (triggerSaveConfig) {
@@ -92,6 +96,10 @@ export default function InstanceConfig (props) {
       .finally(() => {
         setSavingConfig(false)
       })
+  }
+
+  const handleChange = (event, newValue) => {
+    setTab(newValue)
   }
 
   return (
@@ -110,7 +118,22 @@ export default function InstanceConfig (props) {
         {(loadingConfig) && <Typography align='center'>Loading configuration...</Typography>}
         {(savingConfig) && <Typography align='center'>Saving configuration...</Typography>}
     </Box>
-    {(nicConfig && !error) && <NICConfig nicConfig={nicConfig} setNicConfig={setNicConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>}
+    {(!error) &&
+    <TabContext value={tab}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Network" value="1" />
+            <Tab label="Devices" value="2" />
+          </TabList>
+        </Box>
+
+        <TabPanel value="1">
+          <NICConfig nicConfig={instanceConfig} setNicConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>
+        </TabPanel>
+        <TabPanel value="2">
+          <InstanceDevicesConfig instanceConfig={instanceConfig} setDevicesConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig} ></InstanceDevicesConfig>
+        </TabPanel>
+      </TabContext>}
   </Box>)
 }
 

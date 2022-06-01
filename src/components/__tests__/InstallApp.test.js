@@ -71,7 +71,6 @@ describe('Test Install App', () => {
 
     expect(spyInstall).toHaveBeenCalled()
 
-    await screen.findByText('Installing...')
     await screen.findByText('Oops... Error during the installation of ' + app.title + '.')
 
     const icon = getByTestId('error-icon')
@@ -80,7 +79,6 @@ describe('Test Install App', () => {
     const retry = screen.getByRole('button', { name: 'Retry' })
     fireEvent.click(retry)
 
-    await screen.findByText('Installing...')
     await screen.findByText('Oops... Error during the installation of ' + app.title + '.')
   })
 })

@@ -28,6 +28,7 @@ import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { useEffectOnce } from './useEffectOnce'
 
 export default function MarketplaceList (props) {
   const [products, setProducts] = useState()
@@ -128,11 +129,11 @@ export default function MarketplaceList (props) {
     }
   }
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     loadProducts()
   }, [loadProducts])
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!loading) {
       updateProductCards()
     }

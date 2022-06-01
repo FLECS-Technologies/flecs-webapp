@@ -36,6 +36,7 @@ import AuthService from '../api/AuthService'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from 'react-router-dom'
+import { useEffectOnce } from './useEffectOnce'
 
 function ElevationScroll (props) {
   const { children, window } = props
@@ -62,7 +63,7 @@ export default function ElevateAppBar (props) {
   const user = useAuth()
   const navigate = useNavigate()
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
   }, [user])
 
   const handleMenu = (event) => {

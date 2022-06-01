@@ -1,5 +1,3 @@
-import React, { useContext, useEffect } from 'react'
-
 /*
  * Copyright (c) 2021 FLECS Technologies GmbH
  *
@@ -18,17 +16,18 @@ import React, { useContext, useEffect } from 'react'
  * limitations under the License.
  */
 import PropTypes from 'prop-types'
-
+import React, { useContext } from 'react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { darkTheme, lightTheme } from './Theme'
 import { darkModeContext } from './ThemeHandler'
+import { useEffectOnce } from './useEffectOnce'
 
 const Layout = ({ children }) => {
   const DarkModeContext = useContext(darkModeContext)
   const { darkMode, setDarkMode } = DarkModeContext
 
-  useEffect(() => {
+  useEffectOnce(() => {
     const theme = localStorage.getItem('preferred-theme')
     if (theme) {
       const themePreference = localStorage.getItem('preferred-theme')

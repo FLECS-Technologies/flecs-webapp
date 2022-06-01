@@ -22,6 +22,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typog
 import CollapsableRow from './CollapsableRow'
 import VolumesTable from './VolumesTable'
 import HostContainerTable from './HostContainerTable'
+import { useEffectOnce } from './useEffectOnce'
 
 export default function InstanceDetails (props) {
   const { instance } = props
@@ -42,7 +43,7 @@ export default function InstanceDetails (props) {
     setNetworkDetails(tmpnetworkDetails)
   }
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!loadingDetails) {
       fetchDetails()
     }

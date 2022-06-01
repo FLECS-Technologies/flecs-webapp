@@ -19,10 +19,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSystemContext } from './SystemProvider'
 import { SystemPing } from '../api/SystemPingService'
+import { useEffectOnce } from '../components/useEffectOnce'
 function SystemData (props) {
   const { setPing, loading, setLoading } = useSystemContext()
 
-  React.useEffect(() => {
+  useEffectOnce(() => {
     if (!loading) {
       fetchPing()
     }

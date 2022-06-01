@@ -35,7 +35,9 @@ describe('InstanceConfig', () => {
     await act(async () => {
       render(<InstanceConfig instance={testInstance}></InstanceConfig>)
     })
-    expect(screen.getByText('Network interfaces')).toBeVisible()
+    expect(screen.getByText('Network')).toBeVisible()
+    expect(screen.getByText('Devices')).toBeVisible()
+    expect(screen.getByText('Here you can activate the access to the network interfaces of your controller for the app.')).toBeVisible()
   })
 
   test('Click on save-button', async () => {
@@ -44,9 +46,12 @@ describe('InstanceConfig', () => {
     })
     expect(screen.getByText('Network interfaces')).toBeVisible()
 
-    const saveButton = screen.getByTestId('save-button')
+    const saveButton = screen.getByText('Save')
 
     await act(async () => { fireEvent.click(saveButton) })
+
+    expect(screen.getByText('Save')).toBeDisabled()
+    expect(screen.getByText('Discard changes')).toBeDisabled()
   })
 
   test('Click on discard-button', async () => {
@@ -55,9 +60,25 @@ describe('InstanceConfig', () => {
     })
     expect(screen.getByText('Network interfaces')).toBeVisible()
 
-    const discardButton = screen.getByTestId('discard-button')
+    const discardButton = screen.getByText('Discard changes')
 
     await act(async () => { fireEvent.click(discardButton) })
+
+    expect(screen.getByText('Save')).toBeDisabled()
+    expect(screen.getByText('Discard changes')).toBeDisabled()
+  })
+
+  test('Click on devices', async () => {
+    await act(async () => {
+      render(<InstanceConfig instance={testInstance}></InstanceConfig>)
+    })
+    expect(screen.getByText('Network interfaces')).toBeVisible()
+
+    const devicesTab = screen.getByText('Devices')
+
+    await act(async () => { fireEvent.click(devicesTab) })
+
+    expect(screen.getByText('Here you can activate the access to devices of your controller for the app.')).toBeVisible()
   })
 
   test('Fail to load config', async () => {

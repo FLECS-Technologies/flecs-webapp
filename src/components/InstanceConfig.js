@@ -128,10 +128,10 @@ export default function InstanceConfig (props) {
         </Box>
 
         <TabPanel value="1">
-          <NICConfig nicConfig={instanceConfig} setNicConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>
+          <NICConfig testID='nic-config' nicConfig={instanceConfig} setNicConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>
         </TabPanel>
         <TabPanel value="2">
-          <InstanceDevicesConfig instanceConfig={instanceConfig} setDevicesConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig} ></InstanceDevicesConfig>
+          <InstanceDevicesConfig testID='devices-config' instanceConfig={instanceConfig} setDevicesConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig} ></InstanceDevicesConfig>
         </TabPanel>
       </TabContext>}
   </Box>)

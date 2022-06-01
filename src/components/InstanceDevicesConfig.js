@@ -64,6 +64,9 @@ export default function InstanceDevicesConfig (props) {
                 </TableRow>
               </TableHead>
               <TableBody>
+                <TableRow key='next-version' colSpan={3}>
+                  <Typography variant='body2' align='center'>Work in progress... stay curious for our next version 😉</Typography>
+                </TableRow>
                   {instanceConfig?.devices?.map((row) => (
                       <TableRow key={row?.name}>
                           <TableCell>

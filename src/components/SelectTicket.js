@@ -26,7 +26,6 @@ import { MarketplaceAPIConfiguration } from '../api/api-config'
 import { addToCart } from '../api/Cart'
 import ActionSnackbar from './ActionSnackbar'
 import { getCurrentUserLicenses } from '../api/LicenseService'
-import { useEffectOnce } from './useEffectOnce'
 
 export default function SelectTicket (props) {
   const { app, tickets, setTickets } = (props)
@@ -64,7 +63,7 @@ export default function SelectTicket (props) {
       })
   }
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (!loadingTickets) {
       fetchTickets()
     }

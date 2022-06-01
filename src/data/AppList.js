@@ -16,109 +16,87 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { ReferenceDataContext } from './ReferenceDataContext'
+import { useReferenceDataContext } from './ReferenceDataContext'
 import DeviceAPI from '../api/DeviceAPI'
 import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/ProductService'
 
-class AppList extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      updateNow: false,
-      queryParams: {
-        page: undefined,
-        per_page: undefined,
-        search: undefined,
-        order: undefined,
-        orderby: undefined,
-        status: 'publish',
-        stock_status: 'instock'
-      }
+function AppList (props) {
+  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading } = useReferenceDataContext()
+  const [queryParams] = React.useState({
+    page: undefined,
+    per_page: undefined,
+    search: undefined,
+    order: undefined,
+    orderby: undefined,
+    status: 'publish',
+    stock_status: 'instock'
+  })
+
+  React.useEffect(() => {
+    if (!appListLoading) {
+      loadAppList()
     }
-  }
+  }, [updateAppList])
 
-  componentDidMount () {
-    this.loadAppList()
-  }
+  const loadAppList = async (props) => {
+    let marketplaceAppList = []
+    let mergedList = []
 
-  componentDidUpdate () {
-    const { updateAppList, setUpdateAppList } = this.context
-    if (updateAppList) {
-      setUpdateAppList(false)
-      this.loadAppList()
-    }
-  }
-
-  handleUpdateAppList () {
-    this.loadAppList()
-  }
-
-  loadAppList () {
-    (async () => {
-      const { setAppList, setAppListLoading, setAppListError } = this.context
-
-      let marketplaceAppList = []
-      let mergedList = []
-
-      await getProducts(this.state.queryParams).then(
-        (products) => {
-          marketplaceAppList = marketplaceAppList.concat(products)
-        },
-        error => {
-          console.log(error)
-          setAppListError(true)
-        }
-      )
-
-      // call api from the device to get all installed apps
-      const deviceAPI = new DeviceAPI()
-      await deviceAPI.getInstalledApps()
-      if (deviceAPI.lastAPICallSuccessfull) {
-        mergedList = deviceAPI.appList
-
-        mergedList.forEach((app) => {
-          const mpApp = this.findApp(app.app, marketplaceAppList)
-          if (mpApp) {
-            app.avatar = getAppIcon(mpApp)
-            app.title = mpApp?.name
-            app.author = getAuthor(mpApp)
-            app.relatedLinks = getCustomLinks(mpApp)
-          }
-        })
-
-        setAppList(appList => [...mergedList])
-        setAppListLoading(false)
-        setAppListError(false)
-      } else {
-        setAppList(appList => [...marketplaceAppList])
-        setAppListLoading(false)
+    setAppListLoading(true)
+    await getProducts(queryParams).then(
+      (products) => {
+        marketplaceAppList = marketplaceAppList.concat(products)
+      },
+      error => {
+        console.log(error)
         setAppListError(true)
-        console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
       }
-    })()
-      .catch(error => { console.log(error) })
+    )
+
+    // call api from the device to get all installed apps
+    const deviceAPI = new DeviceAPI()
+    await deviceAPI.getInstalledApps()
+    if (deviceAPI.lastAPICallSuccessfull) {
+      mergedList = deviceAPI.appList
+
+      mergedList.forEach((app) => {
+        const mpApp = findApp(app.app, marketplaceAppList)
+        if (mpApp) {
+          app.avatar = getAppIcon(mpApp)
+          app.title = mpApp?.name
+          app.author = getAuthor(mpApp)
+          app.relatedLinks = getCustomLinks(mpApp)
+        }
+      })
+
+      setAppList(appList => [...mergedList])
+      setAppListLoading(false)
+      setAppListError(false)
+    } else {
+      setAppList(appList => [...marketplaceAppList])
+      setAppListLoading(false)
+      setAppListError(true)
+      console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
+    }
   }
 
-  findApp (app, list) {
-    let result
-    list.forEach((product) => {
-      if (app === getReverseDomainName(product)) {
-        result = product
-      }
-    })
-
-    return result
-  }
-
-  render () {
-    return (<>{this.props.children}</>)
-  }
+  return (<>{props.children}</>)
 }
-AppList.contextType = ReferenceDataContext
 AppList.propTypes = {
   children: PropTypes.any
+}
+
+function findApp (app, list) {
+  let result
+  list.forEach((product) => {
+    if (app === getReverseDomainName(product)) {
+      result = product
+    }
+  })
+
+  return result
 }
 
 export { AppList }

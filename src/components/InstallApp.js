@@ -24,7 +24,6 @@ import React from 'react'
 import AppAPI from '../api/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/LicenseService'
-import { useEffectOnce } from './useEffectOnce'
 
 export default function InstallApp (props) {
   const { install, app, tickets } = (props)
@@ -72,7 +71,7 @@ export default function InstallApp (props) {
     setInstalling(false)
   })
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (tickets?.length > 0 && app && install && !installing && (!success || !error)) {
       setRetry(false)
       installApp(app)

@@ -23,7 +23,6 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ReportIcon from '@mui/icons-material/Report'
 import DeviceAPI from '../api/DeviceAPI'
 import DataTable from '../components/DataTable'
-import { useEffectOnce } from '../components/useEffectOnce'
 
 const Header = styled.div`
   display: 'flex';
@@ -53,7 +52,7 @@ export default function ServiceMesh () {
     }
     setLoading(false)
   }
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (!loading) {
       browseServiceMesh()
     }

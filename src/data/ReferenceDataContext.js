@@ -33,6 +33,10 @@ export const ReferenceDataContextProvider = ({ children }) => {
   )
 }
 
+export function useReferenceDataContext () {
+  return React.useContext(ReferenceDataContext)
+}
+
 ReferenceDataContextProvider.propTypes = {
   children: PropTypes.any
 }

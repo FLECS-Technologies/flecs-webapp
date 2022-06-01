@@ -17,7 +17,6 @@
  */
 import React from 'react'
 import { Box, LinearProgress, Typography } from '@mui/material'
-import { useEffectOnce } from './useEffectOnce'
 import VersionsTable from './VersionsTable'
 import { getVersion } from '../api/VersionService'
 
@@ -27,7 +26,7 @@ export default function Version () {
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (!loadingVersion) {
       fetchVersion()
     }

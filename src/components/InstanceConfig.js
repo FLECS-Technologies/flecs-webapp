@@ -24,7 +24,6 @@ import { TabContext, TabList, TabPanel } from '@mui/lab'
 import SaveIcon from '@mui/icons-material/Save'
 import ClearIcon from '@mui/icons-material/Clear'
 import InstanceDevicesConfig from './InstanceDevicesConfig'
-import { useEffectOnce } from './useEffectOnce'
 
 export default function InstanceConfig (props) {
   const { instance } = props
@@ -38,13 +37,13 @@ export default function InstanceConfig (props) {
   const [errorText, setErrorText] = React.useState()
   const [instanceConfig, setInstanceConfig] = React.useState()
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (!savingConfig && triggerSaveConfig) {
       saveConfig()
     }
   }, [triggerSaveConfig])
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     if (!loadingConfig) {
       fetchConfig()
     }

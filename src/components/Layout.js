@@ -21,13 +21,12 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { darkTheme, lightTheme } from './Theme'
 import { darkModeContext } from './ThemeHandler'
-import { useEffectOnce } from './useEffectOnce'
 
 const Layout = ({ children }) => {
   const DarkModeContext = useContext(darkModeContext)
   const { darkMode, setDarkMode } = DarkModeContext
 
-  useEffectOnce(() => {
+  React.useEffect(() => {
     const theme = localStorage.getItem('preferred-theme')
     if (theme) {
       const themePreference = localStorage.getItem('preferred-theme')

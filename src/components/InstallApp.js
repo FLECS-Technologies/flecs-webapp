@@ -33,6 +33,7 @@ export default function InstallApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -72,10 +73,12 @@ export default function InstallApp (props) {
   })
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (tickets?.length > 0 && app && install && !installing && (!success || !error)) {
       setRetry(false)
       installApp(app)
     }
+    executedRef.current = true
   }, [retry])
 
   return (

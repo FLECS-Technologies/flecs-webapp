@@ -24,6 +24,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 
 export default function InstanceLog (props) {
   const { instance } = props
+  const executedRef = React.useRef(false)
   const [loadingLog, setLoadingLog] = React.useState(false)
   const [reloadLog, setReloadLog] = React.useState(false)
   const content = ContentState.createFromText('No log available...')
@@ -32,12 +33,14 @@ export default function InstanceLog (props) {
   )
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loadingLog) {
       fetchLog()
     }
     if (reloadLog) {
       setReloadLog(false)
     }
+    executedRef.current = true
   }, [reloadLog])
 
   const fetchLog = async (props) => {
@@ -62,9 +65,14 @@ export default function InstanceLog (props) {
       })
   }
 
+  const handleReloadLogClick = (event) => {
+    setReloadLog(true)
+    executedRef.current = false
+  }
+
   return (
     <Box data-testid='log-editor'>
-        <Button variant='outlined' sx={{ mr: 1, mb: 1 }} data-testid='refresh-button' disabled={loadingLog} onClick={() => setReloadLog(true)}>
+        <Button variant='outlined' sx={{ mr: 1, mb: 1 }} data-testid='refresh-button' disabled={loadingLog} onClick={() => handleReloadLogClick()}>
             <RefreshIcon sx={{ mr: 1 }}/> Refresh
         </Button>
         <Editor editorState={editorState} onChange={setEditorState} readOnly={true} placeholder='No log available...' />

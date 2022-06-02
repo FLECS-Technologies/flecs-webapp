@@ -31,6 +31,7 @@ const Header = styled.div`
   padding: 32px 32px;
 `
 export default function ServiceMesh () {
+  const executedRef = React.useRef(false)
   const [loading, setLoading] = React.useState(false)
   const [refresh, setRefresh] = React.useState(false)
   const [error, setError] = React.useState(false)
@@ -53,14 +54,20 @@ export default function ServiceMesh () {
     setLoading(false)
   }
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loading) {
       browseServiceMesh()
     }
     if (refresh) {
       setRefresh(false)
     }
+    executedRef.current = true
   }, [refresh])
 
+  function handleRefreshClick () {
+    setRefresh(true)
+    executedRef.current = false
+  }
   return (
     <>
         <Header aria-label='Header-Placeholder'/>
@@ -69,7 +76,7 @@ export default function ServiceMesh () {
                 <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
                     Service Mesh
                 </Typography>
-                <Button variant='outlined' sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => setRefresh(true)}>
+                <Button variant='outlined' sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => handleRefreshClick()}>
                     <RefreshIcon sx={{ mr: 1 }}/> Refresh
                 </Button>
             </Toolbar>

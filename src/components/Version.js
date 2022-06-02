@@ -21,15 +21,18 @@ import VersionsTable from './VersionsTable'
 import { getVersion } from '../api/VersionService'
 
 export default function Version () {
+  const executedRef = React.useRef(false)
   const [loadingVersion, setLoadingVersion] = React.useState(false)
   const [version, setVersion] = React.useState()
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loadingVersion) {
       fetchVersion()
     }
+    executedRef.current = true
   }, [])
 
   const fetchVersion = async (props) => {

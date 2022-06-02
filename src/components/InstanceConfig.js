@@ -27,6 +27,7 @@ import InstanceDevicesConfig from './InstanceDevicesConfig'
 
 export default function InstanceConfig (props) {
   const { instance } = props
+  const executedRef = React.useRef(false)
   const [tab, setTab] = React.useState('1')
   const [loadingConfig, setLoadingConfig] = React.useState(false)
   const [savingConfig, setSavingConfig] = React.useState(false)
@@ -44,6 +45,7 @@ export default function InstanceConfig (props) {
   }, [triggerSaveConfig])
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loadingConfig) {
       fetchConfig()
     }
@@ -51,6 +53,7 @@ export default function InstanceConfig (props) {
       setReloadConfig(false)
       setConfigChanged(false)
     }
+    executedRef.current = true
   }, [reloadConfig])
 
   const fetchConfig = async (props) => {
@@ -101,13 +104,18 @@ export default function InstanceConfig (props) {
     setTab(newValue)
   }
 
+  const handleReloadConfigClick = (event) => {
+    setReloadConfig(true)
+    executedRef.current = false
+  }
+
   return (
   <Box>
     <Toolbar>
         <Button variant='contained' sx={{ mr: 1 }} data-testid='save-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => saveConfig()}>
             <SaveIcon sx={{ mr: 1 }}/> Save
         </Button>
-        <Button variant='outlined' sx={{ mr: 1 }} data-testid='discard-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => setReloadConfig(true)}>
+        <Button variant='outlined' sx={{ mr: 1 }} data-testid='discard-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => handleReloadConfigClick()}>
             <ClearIcon sx={{ mr: 1 }}/> Discard changes
         </Button>
     </Toolbar>

@@ -27,6 +27,7 @@ import { setLicensedApp } from '../api/LicenseService'
 
 export default function SideloadApp (props) {
   const { install, yaml, tickets } = (props)
+  const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -72,11 +73,18 @@ export default function SideloadApp (props) {
   })
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (tickets?.length > 0 && yaml && install && !installing && (!success || !error)) {
       setRetry(false)
       sideloadApp(yaml)
     }
+    executedRef.current = true
   }, [retry])
+
+  const handleRetryClick = (event) => {
+    setRetry(true)
+    executedRef.current = false
+  }
 
   return (
     <div>
@@ -91,7 +99,7 @@ export default function SideloadApp (props) {
         </Grid>
         {(error) &&
         <Grid item >
-          <Button onClick={() => setRetry(true)} startIcon={<ReplayIcon />}>Retry</Button>
+          <Button onClick={() => handleRetryClick()} startIcon={<ReplayIcon />}>Retry</Button>
         </Grid>}
       </Grid>
     </div>

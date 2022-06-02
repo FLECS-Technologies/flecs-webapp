@@ -25,6 +25,7 @@ import HostContainerTable from './HostContainerTable'
 
 export default function InstanceDetails (props) {
   const { instance } = props
+  const executedRef = React.useRef(false)
   const [loadingDetails, setLoadingDetails] = React.useState(false)
   const [reloadDetails, setReloadDetails] = React.useState(false)
   const [networkDetails, setNetworkDetails] = React.useState([])
@@ -43,12 +44,14 @@ export default function InstanceDetails (props) {
   }
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loadingDetails) {
       fetchDetails()
     }
     if (reloadDetails) {
       setReloadDetails(false)
     }
+    executedRef.current = true
   }, [reloadDetails])
 
   const fetchDetails = async (props) => {

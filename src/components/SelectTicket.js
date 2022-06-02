@@ -29,6 +29,7 @@ import { getCurrentUserLicenses } from '../api/LicenseService'
 
 export default function SelectTicket (props) {
   const { app, tickets, setTickets } = (props)
+  const executedRef = React.useRef(false)
   const [reloadTickets, setReloadTickets] = React.useState(false)
   const [loadingCart, setLoadingCart] = React.useState(false)
   const [loadingTickets, setLoadingTickets] = React.useState(false)
@@ -64,12 +65,14 @@ export default function SelectTicket (props) {
   }
 
   React.useEffect(() => {
+    if (executedRef.current) { return }
     if (!loadingTickets) {
       fetchTickets()
     }
     if (reloadTickets) {
       setReloadTickets(false)
     }
+    executedRef.current = true
   }, [reloadTickets])
 
   const fetchTickets = async (props) => {
@@ -88,6 +91,11 @@ export default function SelectTicket (props) {
       .finally(() => {
         setLoadingTickets(false)
       })
+  }
+
+  function onRefreshTicketsClick () {
+    setReloadTickets(true)
+    executedRef.current = false
   }
   return (
     <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
@@ -133,7 +141,7 @@ export default function SelectTicket (props) {
                     }
                   </CardContent>
                   <CardActions>
-                    <Button onClick={() => setReloadTickets(true)} disabled={loadingTickets}>Refresh</Button>
+                    <Button onClick={() => onRefreshTicketsClick()} disabled={loadingTickets}>Refresh</Button>
                   </CardActions>
                 </CardContent>
             </Card>

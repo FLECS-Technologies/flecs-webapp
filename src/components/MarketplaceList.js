@@ -122,7 +122,11 @@ export default function MarketplaceList (props) {
     if (products && appList) {
       const updatedProducts = products.map((app) => ({
         ...app,
-        props: { ...app.props, status: appList?.find(o => o.app === app.props.app)?.status || 'uninstalled' }
+        props: {
+          ...app.props,
+          status: appList?.find(o => o.app === app.props.app)?.status || 'uninstalled',
+          version: appList?.find(o => o.app === app.props.app)?.version
+        }
       }))
 
       setProducts(updatedProducts)

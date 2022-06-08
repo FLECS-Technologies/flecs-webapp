@@ -73,15 +73,16 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (licenseKey) {
+  async installFromMarketplace (version, licenseKey) {
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
         const startInstanceAPI = new PostStartAppInstanceAPI()
 
-        await installAPI.installApp(this.app.app, this.app.version, licenseKey)
+        await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
         if (installAPI.state.success) {
           this.app.status = 'installed'
+          this.app.version = version || this.app.version
         } else {
           this.lastAPICallSuccessfull = false
           if (installAPI.state.errorMessage !== null) {

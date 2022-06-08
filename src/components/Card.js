@@ -35,11 +35,12 @@ import ActionSnackbar from './ActionSnackbar'
 import AppLinksMenu from './AppLinksMenu'
 import ContentDialog from './ContentDialog'
 import InstallAppStepper from './InstallAppStepper'
+import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const installed = (props.status === 'installed')
-  // const [installing, setInstalling] = useState(false)
+  const [selectedVersion, setSelectedVersion] = useState(createVersion((props.version ? props.version : getLatestVersion(props.versions)), null, null, props.version))
   const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
@@ -126,15 +127,13 @@ export default function OutlinedCard (props) {
         action={[props.relatedLinks && <AppLinksMenu data_testid='relatedLinks' key='relatedLinks' vertIcon={true} appLinks={props.relatedLinks}/>]}
       ></CardHeader>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Version {props.version}
-        </Typography>
-        {available && <Typography data_testid='installable-requirement' sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Installable on {props?.requirement}
-        </Typography>}
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           {props.description}
         </Typography>
+        <VersionSelector availableVersions={createVersions(props.versions, props.version)} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion}></VersionSelector>
+        {available && <Typography data_testid='installable-requirement' sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          Installable on {props?.requirement}
+        </Typography>}
       </CardContent>
       <CardActions>
         <Button
@@ -197,7 +196,7 @@ export default function OutlinedCard (props) {
           setOpen={setInstallAppOpen}
           title={'Install ' + props.title}
         >
-          <InstallAppStepper app={props} />
+          <InstallAppStepper app={props} version={selectedVersion.version} />
         </ContentDialog>
       </CardActions>
     </Card>
@@ -210,6 +209,7 @@ OutlinedCard.propTypes = {
   title: PropTypes.string,
   author: PropTypes.string,
   version: PropTypes.string,
+  versions: PropTypes.array,
   description: PropTypes.string,
   status: PropTypes.string,
   availability: PropTypes.string,

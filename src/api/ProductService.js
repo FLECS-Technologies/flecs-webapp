@@ -67,6 +67,15 @@ function getVersion (app) {
   return app?.meta_data.find(o => o.key === 'port-version')?.value
 }
 
+function getVersions (app) {
+  const versions = app?.attributes?.find(o => o.name === 'versions')?.options
+  if (versions) {
+    versions.sort()
+    versions.reverse()
+  }
+  return versions
+}
+
 function getShortDescription (app) {
   return app?.short_description?.replace(/<[^>]+>/g, '')
 }
@@ -109,4 +118,4 @@ function getCategoryID () {
   return catID
 }
 
-export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

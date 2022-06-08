@@ -23,7 +23,7 @@ import DeviceAPI from '../api/DeviceAPI'
 import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/ProductService'
 
 function AppList (props) {
-  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading } = useReferenceDataContext()
+  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList } = useReferenceDataContext()
   const [queryParams] = React.useState({
     page: undefined,
     per_page: undefined,
@@ -37,6 +37,7 @@ function AppList (props) {
   React.useEffect(() => {
     if (!appListLoading) {
       loadAppList()
+      setUpdateAppList(false)
     }
   }, [updateAppList])
 

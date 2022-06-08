@@ -26,7 +26,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/LicenseService'
 
 export default function InstallApp (props) {
-  const { install, app, tickets } = (props)
+  const { install, app, version, tickets } = (props)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -52,7 +52,7 @@ export default function InstallApp (props) {
     setInstallationMessage('Installing...')
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    await appAPI.installFromMarketplace(tickets[0]?.license_key)
+    await appAPI.installFromMarketplace(version, tickets[0]?.license_key)
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
@@ -67,7 +67,7 @@ export default function InstallApp (props) {
     } else {
       setSuccess(false)
       setError(true)
-      setInstallationMessage('Oops... ' + (appAPI?.lastAPIError?.additionalInfo || 'Error during the installation of ' + appAPI.app.title + '.'))
+      setInstallationMessage('Oops... ' + (appAPI?.lastAPIError || 'Error during the installation of ' + appAPI.app.title + '.'))
     }
     setInstalling(false)
   })
@@ -80,6 +80,11 @@ export default function InstallApp (props) {
     }
     executedRef.current = true
   }, [retry])
+
+  const onRetryButtonClick = (event) => {
+    executedRef.current = false
+    setRetry(true)
+  }
 
   return (
     <div>
@@ -94,7 +99,7 @@ export default function InstallApp (props) {
         </Grid>
         {(error) &&
         <Grid item >
-          <Button onClick={() => setRetry(true)} startIcon={<ReplayIcon />}>Retry</Button>
+          <Button onClick={onRetryButtonClick} startIcon={<ReplayIcon />}>Retry</Button>
         </Grid>}
       </Grid>
     </div>
@@ -104,5 +109,6 @@ export default function InstallApp (props) {
 InstallApp.propTypes = {
   install: PropTypes.bool,
   app: PropTypes.object,
+  version: PropTypes.string,
   tickets: PropTypes.array
 }

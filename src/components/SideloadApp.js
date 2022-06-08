@@ -67,7 +67,7 @@ export default function SideloadApp (props) {
     } else {
       setSuccess(false)
       setError(true)
-      setInstallationMessage('Oops... ' + (appAPI?.lastAPIError?.additionalInfo || 'Error during the installation of ' + appAPI.app.title + '.'))
+      setInstallationMessage('Oops... ' + (appAPI?.lastAPIError || 'Error during the installation of ' + appAPI.app.title + '.'))
     }
     setInstalling(false)
   })

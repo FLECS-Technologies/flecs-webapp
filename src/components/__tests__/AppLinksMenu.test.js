@@ -17,12 +17,12 @@
  */
 
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
-import { shallow } from 'enzyme'
+import { render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import userEvent from '@testing-library/user-event'
 import AppLinksMenu from '../AppLinksMenu'
-import Menu from '@mui/material/Menu'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { act } from 'react-dom/test-utils'
 
 describe('AppLinksMenu', () => {
   const relatedLinks = [
@@ -55,10 +55,14 @@ describe('AppLinksMenu', () => {
     // screen.debug()
   })
 
-  test('test close AppLinksMenu', () => {
-    const wrapper = shallow(<AppLinksMenu />)
+  test('test close AppLinksMenu', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<AppLinksMenu />)
+    })
 
-    wrapper.find(Menu).invoke('onClose')()
-    expect(wrapper.find(Menu).prop('open')).toBeFalsy()
+    const menuButton = screen.getByTestId('more-horiz-icon')
+
+    await user.click(menuButton)
   })
 })

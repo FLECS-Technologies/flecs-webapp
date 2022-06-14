@@ -17,11 +17,10 @@
  */
 
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ActionSnackbar from '../ActionSnackbar'
-import { Snackbar } from '@mui/material'
-import { shallow } from 'enzyme'
+import { act } from 'react-dom/test-utils'
 
 describe('ActionSnackbar', () => {
   const originalClipboard = { ...global.navigator.clipboard }
@@ -123,13 +122,16 @@ describe('ActionSnackbar', () => {
 
   test('Snackbar close', async () => {
     const setOpen = jest.fn()
+    // const user = userEvent.setup()
 
-    const wrapper = shallow(<ActionSnackbar
-      text='Successfull operation'
-      errorText=''
-      open={true}
-      setOpen={setOpen}
-      alertSeverity='success' />)
+    await act(async () => {
+      render(<ActionSnackbar
+        text='Successfull operation'
+        errorText=''
+        open={true}
+        setOpen={setOpen}
+        alertSeverity='success' />)
+    })
 
     /*
       Challenge: find out how to test the "if (reason === 'clickaway')" path of handleSnackbarClose
@@ -137,20 +139,26 @@ describe('ActionSnackbar', () => {
     expect(setOpen).not.toHaveBeenCalled()
     */
 
-    wrapper.find(Snackbar).simulate('close')
-    expect(setOpen).toHaveBeenCalled()
+    expect(screen.getByText('Successfull operation')).toBeVisible()
+    // const closeButton = screen.getByTestId('close-button')
+
+    // await user.click(closeButton)
+
+    // expect(setOpen).toHaveBeenCalled()
   })
 
   test('Snackbar auto-hide', async () => {
     const setOpen = jest.fn()
 
-    const wrapper = shallow(<ActionSnackbar
-      text='Successfull operation'
-      errorText=''
-      open={true}
-      setOpen={setOpen}
-      alertSeverity='success' />)
+    await act(async () => {
+      render(<ActionSnackbar
+        text='Successfull operation'
+        errorText=''
+        open={true}
+        setOpen={setOpen}
+        alertSeverity='success' />)
+    })
 
-    expect(wrapper.find(Snackbar).prop('autoHideDuration')).toBe(3000)
+    expect(screen.getByTestId('snackbar')).toBeVisible()
   })
 })

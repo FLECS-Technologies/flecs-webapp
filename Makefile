@@ -1,4 +1,4 @@
-VERSION=1.1.0-porpoise
+VERSION=1.2.0-porpoise
 DOCKER_TAG=$(VERSION)
 
 .PHONY: docker

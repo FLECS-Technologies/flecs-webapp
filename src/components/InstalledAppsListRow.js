@@ -105,8 +105,8 @@ export default function Row (props) {
     }
 
     setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText
+      alertSeverity,
+      snackbarText
     })
     setSnackbarOpen(true)
     setUninstalling(false)
@@ -132,8 +132,8 @@ export default function Row (props) {
       alertSeverity = 'error'
     }
     setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText
+      alertSeverity,
+      snackbarText
     })
     setSnackbarOpen(true)
     setNewInstanceStarting(false)

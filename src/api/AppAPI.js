@@ -143,7 +143,7 @@ export default class AppAPI extends React.Component {
           this.app.instances.push(
             {
               instanceId: createInstanceAPI.state.responseData.instanceId,
-              instanceName: instanceName,
+              instanceName,
               status: 'stopped',
               version: this.app.version
             }

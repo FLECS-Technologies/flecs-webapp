@@ -72,8 +72,8 @@ export default function AppInstanceRow (props) {
       snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'success'
       setSnackbarState({
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText,
+        alertSeverity,
+        snackbarText,
         snackbarErrorText: appAPI.lastAPIError
       })
       setSnackbarOpen(true)
@@ -97,8 +97,8 @@ export default function AppInstanceRow (props) {
       snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
       setSnackbarState({
-        alertSeverity: alertSeverity,
-        snackbarText: snackbarText,
+        alertSeverity,
+        snackbarText,
         snackbarErrorText: appAPI.lastAPIError
       })
       setSnackbarOpen(true)
@@ -124,8 +124,8 @@ export default function AppInstanceRow (props) {
       alertSeverity = 'error'
     }
     setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText,
+      alertSeverity,
+      snackbarText,
       snackbarErrorText: appAPI.lastAPIError
     })
     setSnackbarOpen(true)

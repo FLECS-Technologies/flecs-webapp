@@ -91,10 +91,10 @@ export default function OutlinedCard (props) {
     }
 
     setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText,
+      alertSeverity,
+      snackbarText,
       displayCopyState: displayCopyIcon,
-      clipBoardContent: clipBoardContent
+      clipBoardContent
     })
     setSnackbarOpen(true)
     setUninstalling(false)
@@ -111,8 +111,8 @@ export default function OutlinedCard (props) {
     }
 
     setSnackbarState({
-      alertSeverity: alertSeverity,
-      snackbarText: snackbarText,
+      alertSeverity,
+      snackbarText,
       displayCopyState: displayCopyIcon
     })
     setSnackbarOpen(true)

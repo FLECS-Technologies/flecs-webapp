@@ -20,19 +20,19 @@ import PropTypes from 'prop-types'
 import { Alert, AlertTitle, Box, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 
 export default function InstanceDevicesConfig (props) {
-  const { instanceConfig, setDevicesConfig, setConfigChanged, saveConfig } = props
+  const { instanceConfig, setDevicesConfig, setConfigChanged } = props
 
-  const handleChange = (event) => {
+  const handleUSBChange = (event) => {
+    const newUSBConfig = instanceConfig.devices.usb.map(
+      device => device.port === event.target.port ? { ...device, active: event.target.checked } : device
+    )
     setDevicesConfig(prevState => ({
       ...prevState,
-      devices: prevState.devices.map(
-        device => device.name === event.target.name ? { ...device, active: event.target.checked } : device
-      )
+      devices: {
+        ...prevState.devices,
+        usb: newUSBConfig
+      }
     }))
-    // save config to activate the network adapter and receive recommendations for ip and subnetmask
-    if (event.target.checked) {
-      saveConfig(true)
-    }
     setConfigChanged(true)
   }
 
@@ -58,25 +58,18 @@ export default function InstanceDevicesConfig (props) {
                     </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Identifier</TableCell>
+                  <TableCell>USB Device</TableCell>
                   <TableCell>Activate in app</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow key='next-version' colSpan={3}>
-                  <Typography variant='body2' align='center'>Work in progress... stay curious for our next version 😉</Typography>
-                </TableRow>
-                  {instanceConfig?.devices?.map((row) => (
-                      <TableRow key={row?.name}>
+                  {instanceConfig?.devices?.usb?.map((row) => (
+                      <TableRow key={row?.port}>
                           <TableCell>
-                            {row?.name}
+                            {row?.device} ({row?.vendor})
                           </TableCell>
                           <TableCell>
-                            {row?.identifier}
-                          </TableCell>
-                          <TableCell>
-                              <Switch aria-label={row?.name + '-switch'} checked={row?.active} onChange={handleChange} name={row?.name}>
+                              <Switch aria-label={row?.port + '-switch'} checked={row?.active} onChange={handleUSBChange} name={row?.port}>
                               </Switch>
                           </TableCell>
                       </TableRow>

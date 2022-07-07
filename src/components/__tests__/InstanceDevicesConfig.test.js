@@ -18,20 +18,63 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import InstanceDevicesConfig from '../InstanceDevicesConfig'
 
 const testConfig = {
-  instanceId: 12345,
-  devices: [{}]
+  instanceId: 'ABCDEF',
+  networkAdapters: [{
+    name: 'eth0',
+    ipAddress: '192.168.100.1',
+    subnetMask: '255.255.255.0',
+    active: false
+  },
+  {
+    name: 'eth1',
+    ipAddress: '192.168.100.2',
+    subnetMask: '255.255.255.0',
+    active: true
+  }],
+  devices: {
+    usb: [
+      {
+        device: '3.0 root hub',
+        pid: 3,
+        port: 'usb4',
+        vendor: 'Linux Foundation',
+        vid: 7531
+      },
+      {
+        device: 'license dongle',
+        pid: 5,
+        port: 'usb1',
+        vendor: 'wibu',
+        vid: 7512
+      }
+    ]
+  }
 }
 
 describe('InstanceDevicesConfig', () => {
   test('renders InstanceDevicesConfig component', async () => {
     await act(async () => {
-      render(<InstanceDevicesConfig instanceConfig={testConfig} setNicConfig={jest.fn()}></InstanceDevicesConfig>)
+      render(<InstanceDevicesConfig instanceConfig={testConfig} setDevicesConfig={jest.fn()} setConfigChanged={jest.fn()} saveConfig={jest.fn()}></InstanceDevicesConfig>)
     })
 
     expect(screen.getByText('Devices')).toBeVisible()
+    expect(screen.getByText('license dongle ' + '(' + 'wibu' + ')')).toBeVisible()
+    expect(screen.getByText('3.0 root hub ' + '(' + 'Linux Foundation' + ')')).toBeVisible()
+  })
+
+  test('click on activate', async () => {
+    await act(async () => {
+      render(<InstanceDevicesConfig instanceConfig={testConfig} setDevicesConfig={jest.fn()} setConfigChanged={jest.fn()}></InstanceDevicesConfig>)
+    })
+
+    const activateButton = screen.getByLabelText('usb4-switch')
+
+    await act(async () => { fireEvent.change(activateButton, { target: { checked: 'true' } }) })
+
+    expect(screen.getByText('3.0 root hub ' + '(' + 'Linux Foundation' + ')')).toBeVisible()
   })
 })

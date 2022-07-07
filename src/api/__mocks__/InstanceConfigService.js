@@ -20,7 +20,7 @@ function getInstanceConfig (instanceId) {
     instanceId
       ? resolve(
         {
-          instanceId: instanceId,
+          instanceId,
           networkAdapters: [{
             name: 'eth0',
             ipAddress: '192.168.100.1',
@@ -32,7 +32,27 @@ function getInstanceConfig (instanceId) {
             ipAddress: '192.168.100.2',
             subnetMask: '255.255.255.0',
             active: true
-          }]
+          }],
+          devices: {
+            usb: [
+              {
+                device: '3.0 root hub',
+                pid: 3,
+                port: 'usb4',
+                vendor: 'Linux Foundation',
+                vid: 7531,
+                active: true
+              },
+              {
+                device: 'license dongle',
+                pid: 5,
+                port: 'usb1',
+                vendor: 'wibu',
+                vid: 7512,
+                active: false
+              }
+            ]
+          }
         }
       )
       : reject(new Error('Mock: Failed to get config'))

@@ -18,7 +18,8 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import NICConfig from '../NICConfig'
 
 const testConfig = {
@@ -49,12 +50,15 @@ describe('NICConfig', () => {
   })
 
   test('click on enable', async () => {
+    const user = userEvent.setup()
     await act(async () => {
       render(<NICConfig nicConfig={testConfig} setNicConfig={jest.fn()} saveConfig={jest.fn()} setConfigChanged={jest.fn()}></NICConfig>)
     })
 
-    const switchButton = screen.getByLabelText('eth0-switch')
+    const switchButton = screen.getAllByRole('checkbox')
 
-    await act(async () => { fireEvent.change(switchButton, { target: { checked: 'true' } }) })
+    await user.click(switchButton[0])
+
+    expect(switchButton[0]).toHaveProperty('value', 'on')
   })
 })

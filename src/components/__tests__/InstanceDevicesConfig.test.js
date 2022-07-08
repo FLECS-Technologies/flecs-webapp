@@ -18,7 +18,8 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import InstanceDevicesConfig from '../InstanceDevicesConfig'
 
 const testConfig = {
@@ -42,14 +43,16 @@ const testConfig = {
         pid: 3,
         port: 'usb4',
         vendor: 'Linux Foundation',
-        vid: 7531
+        vid: 7531,
+        active: false
       },
       {
         device: 'license dongle',
         pid: 5,
         port: 'usb1',
         vendor: 'wibu',
-        vid: 7512
+        vid: 7512,
+        active: true
       }
     ]
   }
@@ -67,14 +70,15 @@ describe('InstanceDevicesConfig', () => {
   })
 
   test('click on activate', async () => {
+    const user = userEvent.setup()
     await act(async () => {
       render(<InstanceDevicesConfig instanceConfig={testConfig} setDevicesConfig={jest.fn()} setConfigChanged={jest.fn()}></InstanceDevicesConfig>)
     })
 
-    const activateButton = screen.getByLabelText('usb4-switch')
+    const activateButton = screen.getAllByRole('checkbox')
 
-    await act(async () => { fireEvent.change(activateButton, { target: { checked: 'true' } }) })
+    await user.click(activateButton[0])
 
-    expect(screen.getByText('3.0 root hub ' + '(' + 'Linux Foundation' + ')')).toBeVisible()
+    expect(activateButton[0]).toHaveProperty('value', 'on')
   })
 })

@@ -89,7 +89,7 @@ const darkTheme = createTheme({
 
     background: {
       default: '#212121',
-      paper: '#121212'
+      paper: '#313131'
     },
 
     divider: 'rgba(255, 255, 255, 0.12)'

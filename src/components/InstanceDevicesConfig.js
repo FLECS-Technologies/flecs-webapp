@@ -66,7 +66,7 @@ export default function InstanceDevicesConfig (props) {
                   {instanceConfig?.devices?.usb?.map((row) => (
                       <TableRow key={row?.port}>
                           <TableCell>
-                            {row?.device} ({row?.vendor})
+                          {row?.vendor} {row?.device}
                           </TableCell>
                           <TableCell>
                               <Switch aria-label={row?.port + '-switch'} checked={row?.active} onChange={handleUSBChange} name={row?.port}>

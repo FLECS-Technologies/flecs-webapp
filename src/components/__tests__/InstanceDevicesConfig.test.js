@@ -65,8 +65,8 @@ describe('InstanceDevicesConfig', () => {
     })
 
     expect(screen.getByText('Devices')).toBeVisible()
-    expect(screen.getByText('license dongle ' + '(' + 'wibu' + ')')).toBeVisible()
-    expect(screen.getByText('3.0 root hub ' + '(' + 'Linux Foundation' + ')')).toBeVisible()
+    expect(screen.getByText('wibu license dongle')).toBeVisible()
+    expect(screen.getByText('Linux Foundation 3.0 root hub' )).toBeVisible()
   })
 
   test('click on activate', async () => {

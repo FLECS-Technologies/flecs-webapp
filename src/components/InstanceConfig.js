@@ -78,7 +78,7 @@ export default function InstanceConfig (props) {
 
   const saveConfig = async (props) => {
     setSavingConfig(true)
-    putInstanceConfig(instance.instanceId, instanceConfig.networkAdapters)
+    putInstanceConfig(instance.instanceId, instanceConfig.networkAdapters, instanceConfig?.devices)
       .then((response) => {
         if (response) {
           // read back the saved configuration

@@ -24,7 +24,7 @@ export default function InstanceDevicesConfig (props) {
 
   const handleUSBChange = (event) => {
     const newUSBConfig = instanceConfig.devices.usb.map(
-      device => device.port === event.target.port ? { ...device, active: event.target.checked } : device
+      device => device.port === event.target.name ? { ...device, active: event.target.checked } : device
     )
     setDevicesConfig(prevState => ({
       ...prevState,

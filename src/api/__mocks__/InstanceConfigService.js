@@ -41,7 +41,8 @@ function getInstanceConfig (instanceId) {
                 port: 'usb4',
                 vendor: 'Linux Foundation',
                 vid: 7531,
-                active: true
+                active: true,
+                connected: true
               },
               {
                 device: 'license dongle',
@@ -49,7 +50,8 @@ function getInstanceConfig (instanceId) {
                 port: 'usb1',
                 vendor: 'wibu',
                 vid: 7512,
-                active: false
+                active: false,
+                connected: true
               }
             ]
           }

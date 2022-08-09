@@ -19,6 +19,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Alert, AlertTitle, Box, FormControl, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import IpMaskInput from './IpMaskInput'
+import Tooltip from '@mui/material/Tooltip'
+import WifiIcon from '@mui/icons-material/Wifi'
+import WifiOffIcon from '@mui/icons-material/WifiOff'
 
 export default function NICConfig (props) {
   const { nicConfig, setNicConfig, setConfigChanged, saveConfig } = props
@@ -52,14 +55,14 @@ export default function NICConfig (props) {
           <Table>
               <TableHead>
                 <TableRow>
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={6}>
                         <Typography variant='h6'>
                             Network interfaces
                         </Typography>
                     </TableCell>
                 </TableRow>
                 <TableRow>
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={6}>
                         <Alert sx={{ mb: 2 }} severity='info'>
                             <AlertTitle>Info</AlertTitle>
                             <Typography variant='body2'>Here you can activate the access to the network interfaces of your controller for the app.</Typography>
@@ -69,6 +72,7 @@ export default function NICConfig (props) {
                     </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>Network status</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>IP Address</TableCell>
                   <TableCell>Subnet Mask</TableCell>
@@ -80,6 +84,20 @@ export default function NICConfig (props) {
                   {nicConfig?.networkAdapters?.map((row) => (
                       <TableRow key={row?.name}>
                           <TableCell>
+                            {row?.connected
+                              ? (
+                              <Tooltip title={'Adapter ' + row?.name + ' connected'}>
+                                <WifiIcon/>
+                              </Tooltip>
+                                )
+                              : (
+                              <Tooltip title={'Adapter ' + row?.name + ' not connected'}>
+                                <WifiOffIcon/>
+                              </Tooltip>
+                                )
+                            }
+                          </TableCell>
+                          <TableCell>
                             {row?.name}
                           </TableCell>
                           <TableCell>
@@ -89,7 +107,7 @@ export default function NICConfig (props) {
                                     changeIP={handleIPChange}
                                     name={row?.name}
                                     id="ip-textmask"
-                                    readOnly={!row?.active}
+                                    readOnly={!row?.active || !row?.connected}
                                 />
                               </FormControl>
                           </TableCell>
@@ -114,7 +132,7 @@ export default function NICConfig (props) {
                               </FormControl>
                           </TableCell>
                           <TableCell>
-                              <Switch aria-label={row?.name + '-switch'} checked={row?.active} onChange={handleChange} name={row?.name}>
+                              <Switch aria-label={row?.name + '-switch'} disabled={!row?.active && !row?.connected} checked={row?.active} onChange={handleChange} name={row?.name}>
                               </Switch>
                           </TableCell>
                       </TableRow>

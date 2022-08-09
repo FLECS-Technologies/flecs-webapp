@@ -25,13 +25,15 @@ function getInstanceConfig (instanceId) {
             name: 'eth0',
             ipAddress: '192.168.100.1',
             subnetMask: '255.255.255.0',
-            active: false
+            active: false,
+            connected: true
           },
           {
             name: 'eth1',
             ipAddress: '192.168.100.2',
             subnetMask: '255.255.255.0',
-            active: true
+            active: true,
+            connected: true
           }],
           devices: {
             usb: [

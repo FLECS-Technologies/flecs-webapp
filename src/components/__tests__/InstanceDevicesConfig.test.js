@@ -44,7 +44,8 @@ const testConfig = {
         port: 'usb4',
         vendor: 'Linux Foundation',
         vid: 7531,
-        active: false
+        active: false,
+        connected: true
       },
       {
         device: 'license dongle',
@@ -52,7 +53,8 @@ const testConfig = {
         port: 'usb1',
         vendor: 'wibu',
         vid: 7512,
-        active: true
+        active: true,
+        connected: true
       }
     ]
   }

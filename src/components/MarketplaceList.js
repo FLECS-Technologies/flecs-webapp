@@ -32,8 +32,6 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 export default function MarketplaceList (props) {
   const [products, setProducts] = useState()
   const { appList } = useContext(ReferenceDataContext)
-  const [searchValue, setSearch] = useState('')
-  const [searchAuthor, searchTitle] = searchValue.split(' / ')
   const [loading, setLoading] = useState(true)
   const [loadingError, setLoadingError] = useState(false)
   const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
@@ -50,6 +48,13 @@ export default function MarketplaceList (props) {
   function setInstalledFilter () {
     setQueryParams(previousState => {
       return { ...previousState, stock_status: (queryParams.stock_status === 'instock' ? undefined : 'instock') }
+    })
+    setLoading(true)
+  }
+
+  function setSearchFilter (event, reason) {
+    setQueryParams(previousState => {
+      return { ...previousState, search: reason }
     })
     setLoading(true)
   }
@@ -107,13 +112,6 @@ export default function MarketplaceList (props) {
         />
       ))
 
-      // this filters the users search
-      if (searchAuthor.length > 0 && !searchTitle) {
-        productCards = productCards.filter(app => (app.props.title.toLowerCase().includes(searchAuthor.toLowerCase()) || app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
-      } else if (searchAuthor.length > 0 && (searchTitle && searchTitle.length > 0)) {
-        productCards = productCards.filter(app => (app.props.title.toLowerCase().includes(searchTitle.toLowerCase()) && app.props.author.toLowerCase().includes(searchAuthor.toLowerCase())))
-      }
-
       return productCards
     }
   }
@@ -153,7 +151,7 @@ export default function MarketplaceList (props) {
       >
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
 
-              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={searchValue} setSearch={setSearch} searchTitle='Search apps' searchAutocomplete={products ? products.map((app) => (app.props.author + ' / ' + app.props.title)).sort() : null} setToggleFilter={toggleFilter}/>
+              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
                 <AppFilter open={showFilter} setInstalled={setInstalledFilter} installed={(queryParams.stock_status === 'instock')}/>
               </Collapse>

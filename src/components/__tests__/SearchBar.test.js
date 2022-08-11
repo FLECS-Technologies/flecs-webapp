@@ -16,24 +16,23 @@
  * limitations under the License.
  */
 import React from 'react'
-import { render, within, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { render, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SearchBar from '../SearchBar'
 
 describe('SearchBar', () => {
   const searchFunc = jest.fn()
-  const searchOptions = ['Homer', 'Marge', 'Bart', 'Lisa', 'Maggie']
 
   afterEach(() => {
     jest.resetAllMocks()
   })
 
   test('renders SearchBar', () => {
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' searchAutocomplete={searchOptions} setSearch={searchFunc} />)
+    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' search={searchFunc} />)
 
     const autocomplete = getByLabelText('autocomplete')
     const searchField = getByLabelText('search-field')
-    const clearSearch = getByLabelText('clear-all')
     const searchIcon = getByLabelText('search-icon')
     const input = within(autocomplete).getByRole('combobox')
 
@@ -42,63 +41,20 @@ describe('SearchBar', () => {
     expect(searchField).toBeVisible()
     expect(searchField).toBeEnabled()
     expect(input).toHaveFocus()
-    expect(clearSearch).toBeVisible()
-    expect(clearSearch).toBeEnabled()
-    // expect(search).toBe('')
-
-    // screen.debug()
   })
 
-  test('Search with autocomplete', () => {
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' searchAutocomplete={searchOptions} setSearch={searchFunc} />)
+  test('Search', async () => {
+    const user = userEvent.setup()
+    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' search={searchFunc} />)
 
     const autocomplete = getByLabelText('autocomplete')
 
-    const input = within(autocomplete).getByRole('combobox')
-
-    fireEvent.change(input, { target: { value: 'Homer' } })
-    fireEvent.keyDown(autocomplete, { key: 'ArrowDown' })
-    fireEvent.keyDown(autocomplete, { key: 'Enter' })
-
-    const inputt = within(autocomplete).getByRole('combobox')
-
-    expect(inputt.value).toEqual('Homer')
-    expect(searchFunc).toBeCalledTimes(2)
-    expect(searchFunc).toHaveBeenCalledWith('Homer')
-  })
-
-  test('Search without autocomplete', () => {
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' searchAutocomplete={searchOptions} setSearch={searchFunc} />)
-
-    const autocomplete = getByLabelText('autocomplete')
-
-    const input = within(autocomplete).getByRole('combobox')
-
-    fireEvent.change(input, { target: { value: 'Flanders' } })
-    fireEvent.keyPress(autocomplete, { key: 'Enter' })
+    await user.keyboard('Flanders')
+    await user.keyboard('{Enter}')
 
     const inputt = within(autocomplete).getByRole('combobox')
 
     expect(inputt.value).toEqual('Flanders')
     expect(searchFunc).toBeCalledTimes(1)
-    expect(searchFunc).toHaveBeenCalledWith('Flanders')
-  })
-
-  test('Clear Search', () => {
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' searchAutocomplete={searchOptions} setSearch={searchFunc} />)
-
-    const autocomplete = getByLabelText('autocomplete')
-
-    const input = within(autocomplete).getByRole('combobox')
-    const clearSearch = getByLabelText('clear-all')
-
-    fireEvent.change(input, { target: { value: 'Flanders' } })
-    fireEvent.click(clearSearch)
-
-    const inputt = within(autocomplete).getByRole('combobox')
-
-    expect(inputt.value).toEqual('')
-
-    expect(searchFunc).toHaveBeenCalledWith('')
   })
 })

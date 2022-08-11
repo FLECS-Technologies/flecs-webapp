@@ -225,6 +225,8 @@ describe('ProductService', () => {
   test('calls successfull getProducts with status param', async () => {
     const queryParam = {}
     queryParam.status = 'publish'
+    queryParam.search = 'opc'
+    queryParam.stock_status = 'in stock'
 
     axios.get.mockResolvedValueOnce(mockProducts)
     const products = await waitFor(() => getProducts(queryParam))

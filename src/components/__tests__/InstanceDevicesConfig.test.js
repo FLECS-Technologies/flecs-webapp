@@ -22,6 +22,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import InstanceDevicesConfig from '../InstanceDevicesConfig'
 
+jest.mock('../../api/InstanceConfigService')
+
 const testConfig = {
   instanceId: 'ABCDEF',
   networkAdapters: [{
@@ -70,7 +72,7 @@ describe('InstanceDevicesConfig', () => {
 
     expect(screen.getByText('Devices')).toBeVisible()
     expect(screen.getByText('wibu license dongle')).toBeVisible()
-    expect(screen.getByText('Linux Foundation 3.0 root hub' )).toBeVisible()
+    expect(screen.getByText('Linux Foundation 3.0 root hub')).toBeVisible()
   })
 
   test('click on activate', async () => {

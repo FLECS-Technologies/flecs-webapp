@@ -103,6 +103,10 @@ function getRequirement (app) {
   return app?.meta_data.find(o => o.key === 'port-requirement')?.value
 }
 
+function getId (app) {
+  return app?.id
+}
+
 function getCategoryID () {
   let catID = ''
   switch (process.env.REACT_APP_ENVIRONMENT) {
@@ -121,4 +125,12 @@ function getCategoryID () {
   return catID
 }
 
-export { getProducts, getReverseDomainName, getEditorAddress, getAppIcon, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+function getAverageRating (app) {
+  return app?.average_rating
+}
+
+function getRatingCount (app) {
+  return app?.rating_count
+}
+
+export { getProducts, getAverageRating, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

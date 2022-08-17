@@ -36,6 +36,7 @@ import AppLinksMenu from './AppLinksMenu'
 import ContentDialog from './ContentDialog'
 import InstallAppStepper from './InstallAppStepper'
 import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
+import AppRating from './AppRating'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -123,9 +124,10 @@ export default function OutlinedCard (props) {
       <CardHeader
         avatar={<Avatar src={props.avatar} />}
         title={props.title}
-        subheader={props.author}
+        subheader={<div><div>{props.author}</div><AppRating app={props}/></div>}
         action={[props.relatedLinks && <AppLinksMenu data_testid='relatedLinks' key='relatedLinks' vertIcon={true} appLinks={props.relatedLinks}/>]}
-      ></CardHeader>
+      >
+      </CardHeader>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           {props.description}
@@ -215,5 +217,8 @@ OutlinedCard.propTypes = {
   availability: PropTypes.string,
   instances: PropTypes.array,
   relatedLinks: PropTypes.array,
-  requirement: PropTypes.string
+  requirement: PropTypes.string,
+  id: PropTypes.number,
+  average_rating: PropTypes.string,
+  rating_count: PropTypes.number
 }

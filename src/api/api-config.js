@@ -62,6 +62,7 @@ const POST_VALIDATE_URL = '/api/access/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
 const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta'
 const GET_PRODUCTS_URL = '/api/v1/products'
+const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews'
 
 class DeviceAPIConfiguration extends Component {
   static get TARGET () {
@@ -259,6 +260,10 @@ class MarketplaceAPIConfiguration {
 
   static get POST_SET_LICENSE_META_URL () {
     return POST_SET_LICENSE_META_URL
+  }
+
+  static get POST_PRODUCT_RATING_URL () {
+    return POST_PRODUCT_RATING_URL
   }
 }
 

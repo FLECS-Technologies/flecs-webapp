@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ServiceMesh from '../ServiceMesh'
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -36,18 +36,5 @@ describe('ServiceMesh', () => {
     })
     expect(screen.getByTestId('service-mesh')).toBeVisible()
     expect(screen.getByTestId('service-mesh-title')).toBeVisible()
-    expect(screen.getByTestId('refresh-button')).toBeVisible()
-  })
-
-  test('Refresh click', async () => {
-    await act(async () => {
-      render(<Router><ServiceMesh /></Router>)
-    })
-    const refreshButton = screen.getByTestId('refresh-button')
-
-    await act(async () => { fireEvent.click(refreshButton) })
-    expect(screen.getByTestId('service-mesh')).toBeVisible()
-    expect(screen.getByTestId('service-mesh-title')).toBeVisible()
-    expect(screen.getByTestId('refresh-button')).toBeVisible()
   })
 })

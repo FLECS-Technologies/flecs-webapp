@@ -15,11 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Alert, AlertTitle, Button, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
+import { Alert, AlertTitle, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import React from 'react'
 import styled from 'styled-components'
-import RefreshIcon from '@mui/icons-material/Refresh'
 import ReportIcon from '@mui/icons-material/Report'
 import DeviceAPI from '../api/DeviceAPI'
 import DataTable from '../components/DataTable'
@@ -64,10 +63,14 @@ export default function ServiceMesh () {
     executedRef.current = true
   }, [refresh])
 
-  function handleRefreshClick () {
-    setRefresh(true)
-    executedRef.current = false
-  }
+  React.useEffect(() => {
+    const interval = window.setInterval(() => {
+      setRefresh(true)
+      executedRef.current = false
+    }, 5000)
+    return () => window.clearInterval(interval)
+  }, [])
+
   return (
     <>
         <Header aria-label='Header-Placeholder'/>
@@ -76,13 +79,10 @@ export default function ServiceMesh () {
                 <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
                     Service Mesh
                 </Typography>
-                <Button variant='outlined' sx={{ mr: 1 }} data-testid='refresh-button' disabled={loading} onClick={() => handleRefreshClick()}>
-                    <RefreshIcon sx={{ mr: 1 }}/> Refresh
-                </Button>
+                {loading && <CircularProgress color="primary" />}
             </Toolbar>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ pb: { sm: 2 } }} >
                 <Grid item>
-                  {loading && <CircularProgress color="primary" />}
                   {error && <ReportIcon fontSize='large' color='error'/> }
                 </Grid>
                 <Grid item>

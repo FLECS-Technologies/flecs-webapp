@@ -16,14 +16,17 @@
  * limitations under the License.
  */
 import React from 'react'
-import { Box, LinearProgress, Typography } from '@mui/material'
+import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/material'
 import VersionsTable from './VersionsTable'
-import { getVersion } from '../api/VersionService'
+import { getLatestVersion, getVersion, isLaterThan } from '../api/VersionService'
+import { VersionSelector } from './VersionSelector'
 
 export default function Version () {
   const executedRef = React.useRef(false)
   const [loadingVersion, setLoadingVersion] = React.useState(false)
   const [version, setVersion] = React.useState()
+  const [loadingLatestVersion, setLoadingLatestVersion] = React.useState(false)
+  const [latestVersion, setLatestVersion] = React.useState()
   const [error, setError] = React.useState(false)
   const [errorText, setErrorText] = React.useState()
 
@@ -31,6 +34,9 @@ export default function Version () {
     if (executedRef.current) { return }
     if (!loadingVersion) {
       fetchVersion()
+    }
+    if (!loadingLatestVersion) {
+      fetchLatestVersion()
     }
     executedRef.current = true
   }, [])
@@ -54,12 +60,41 @@ export default function Version () {
       })
   }
 
+  const fetchLatestVersion = async (props) => {
+    setLoadingLatestVersion(true)
+
+    getLatestVersion()
+      .then((response) => {
+        if (response) {
+          setLatestVersion(response)
+        }
+        setError(false)
+      })
+      .catch((error) => {
+        setErrorText(error.message)
+        setError(true)
+      })
+      .finally(() => {
+        setLoadingLatestVersion(false)
+      })
+  }
+
   return (
     <Box>
         <Box alignContent='center'>
-            {(error && !loadingVersion) && <Typography align='center'>Oops... {errorText}</Typography>}
-            {loadingVersion && <LinearProgress color="primary"/>}
-            {loadingVersion && <Typography align='center'>Loading configuration...</Typography>}
+            {(error && (loadingVersion || loadingLatestVersion)) && <Typography align='center'>Oops... {errorText}</Typography>}
+            {(loadingVersion || loadingLatestVersion) && <LinearProgress color="primary"/>}
+            {(loadingVersion || loadingLatestVersion) && <Typography align='center'>Loading configuration...</Typography>}
+        </Box>
+        <Box>
+          {isLaterThan(latestVersion?.version, version?.core) &&
+            <Alert sx={{ mb: 2 }} severity='info'>
+              <AlertTitle>Info</AlertTitle>
+              <Typography variant='body2'>There is a newer version for FLECS available:</Typography>
+              <VersionSelector availableVersions={[latestVersion]} selectedVersion={latestVersion}></VersionSelector>
+              <Typography variant='body2'>Install this update by running <i>curl -L marketplace.flecs.tech/install.sh | sudo bash</i> in the terminal of this device ({window.location.hostname}).</Typography>
+            </Alert>
+          }
         </Box>
         <VersionsTable coreVersion={version} webappVersion={process.env.REACT_APP_VERSION}></VersionsTable>
     </Box>

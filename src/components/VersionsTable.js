@@ -58,6 +58,6 @@ export default function VersionsTable (props) {
 }
 
 VersionsTable.propTypes = {
-  coreVersion: PropTypes.string,
+  coreVersion: PropTypes.object,
   webappVersion: PropTypes.string
 }

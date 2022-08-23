@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import axios from 'axios'
-import { DeviceAPIConfiguration } from './api-config'
+import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from './api-config'
 
 async function getVersion () {
   return axios
@@ -29,4 +29,28 @@ async function getVersion () {
     })
 }
 
-export { getVersion }
+async function getLatestVersion () {
+  return axios
+    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_LATEST_VERSION_URL)
+    .then(response => {
+      return response.data
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+function isLaterThan (version1, version2) {
+  if (version1 && version2) {
+    const v1 = version1.split('-')
+    const v2 = version2.split('-')
+    if (v1[0] > v2[0]) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+}
+export { getVersion, getLatestVersion, isLaterThan }

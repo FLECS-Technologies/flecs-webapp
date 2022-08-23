@@ -26,4 +26,20 @@ async function getVersion () {
   })
 }
 
-export { getVersion }
+async function getLatestVersion () {
+  return new Promise((resolve, reject) => {
+    resolve(
+      {
+        success: true,
+        version: '1.1.0-porpoise-475591c',
+        release_notes: 'www.release-notes.com'
+      }
+    )
+  })
+}
+
+function isLaterThan (version1, version2) {
+  return true
+}
+
+export { getVersion, getLatestVersion, isLaterThan }

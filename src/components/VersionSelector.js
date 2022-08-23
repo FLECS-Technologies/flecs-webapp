@@ -35,7 +35,7 @@ function VersionSelector (props) {
   }
   return (
     <Box sx={{ mt: 1, mb: 1 }}>
-        {(availableVersions?.length === 1 && availableVersions[0].version) &&
+        {(availableVersions?.length === 1 && availableVersions[0]?.version) &&
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             Version {availableVersions[0]?.version}
         </Typography>}

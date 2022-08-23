@@ -103,7 +103,6 @@ export default function SelectTicket (props) {
             <Alert sx={{ mb: 2 }} severity='info'>
                 <AlertTitle>Info</AlertTitle>
                 <Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>
-                <Typography variant='body2'>Get started with 3 (three) included tickets per month.</Typography>
                 <Typography variant='body2'>To purchase a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
                 <Typography variant='body2'>If you already have a ticket, you can simply continue with the &apos;next&apos;.</Typography>
             </Alert>

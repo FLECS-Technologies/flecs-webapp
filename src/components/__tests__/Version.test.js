@@ -29,5 +29,6 @@ describe('Version', () => {
     expect(screen.getByText('Versions')).toBeVisible()
     expect(screen.getByText('Core')).toBeVisible()
     expect(screen.getByText('UI')).toBeVisible()
+    expect(screen.getByText('Info')).toBeVisible()
   })
 })

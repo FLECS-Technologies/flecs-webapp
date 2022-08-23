@@ -19,7 +19,7 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { getVersion } from '../VersionService'
+import { getLatestVersion, getVersion, isLaterThan } from '../VersionService'
 
 jest.mock('axios')
 
@@ -45,9 +45,34 @@ describe('VersionService', () => {
   })
 
   test('calls unsuccessfull getVersion', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load config details'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load version'))
     await act(async () => {
       expect(getVersion()).rejects.toThrowError()
     })
+  })
+
+  test('calls successfull getLatestVersion', async () => {
+    axios.get.mockResolvedValueOnce(mockVersion)
+    const version = await waitFor(() => getLatestVersion())
+
+    expect(version.core).toBe(mockVersion.data.core)
+  })
+
+  test('calls unsuccessfull getLatestVersion', async () => {
+    axios.get.mockRejectedValueOnce(new Error('Failed to load latest version'))
+    await act(async () => {
+      expect(getLatestVersion()).rejects.toThrowError()
+    })
+  })
+
+  test('calls isLaterThan function', () => {
+    const later = isLaterThan('1.3.0-porpoise', '1.2.0-porpoise')
+    expect(later).toBeTruthy()
+
+    const notLater = isLaterThan('1.3.0-porpoise', '1.4.0-porpoise')
+    expect(notLater).toBeFalsy()
+
+    const noResult = isLaterThan(undefined, undefined)
+    expect(noResult).toBeFalsy()
   })
 })

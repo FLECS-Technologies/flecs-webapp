@@ -49,11 +49,12 @@ describe('Test SelectTicket', () => {
 
   test('Click on the open-cart card', async () => {
     const closeSpy = jest.fn()
+    const noTickets = []
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
     addToCart.mockReturnValue(Promise.resolve('my-cart-key'))
     await act(async () => {
-      render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
+      render(<SelectTicket setTickets={setTickets} tickets={noTickets}/>)
     })
     const openCartCard = screen.getByTestId('open-cart-card-action')
     await act(async () => { fireEvent.click(openCartCard) })
@@ -64,10 +65,11 @@ describe('Test SelectTicket', () => {
 
   test('Failed to load cart', async () => {
     const closeSpy = jest.fn()
+    const noTickets = []
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
     addToCart.mockRejectedValue(new Error('failed to load cart'))
     await act(async () => {
-      render(<SelectTicket setTickets={setTickets} tickets={tickets}/>)
+      render(<SelectTicket setTickets={setTickets} tickets={noTickets}/>)
     })
     const openCartCard = screen.getByTestId('open-cart-card-action')
     await act(async () => { fireEvent.click(openCartCard) })

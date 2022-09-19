@@ -213,15 +213,11 @@ describe('AppRating', () => {
 
     const rating = screen.getAllByRole('radio')
 
-    await act(async () => {
-      user.click(rating[0])
-    })
+    await user.click(rating[0])
 
     const saveButton = screen.getAllByRole('button')
 
-    await act(async () => {
-      user.click(saveButton[0])
-    })
+    await user.click(saveButton[0])
   })
 
   test('Cancel a rating', async () => {
@@ -231,14 +227,10 @@ describe('AppRating', () => {
     })
     const rating = screen.getAllByRole('radio')
 
-    await act(async () => {
-      user.click(rating[0])
-    })
+    await user.click(rating[0])
 
     const cancelButton = screen.getAllByRole('button')
 
-    await act(async () => {
-      user.click(cancelButton[1])
-    })
+    await user.click(cancelButton[1])
   })
 })

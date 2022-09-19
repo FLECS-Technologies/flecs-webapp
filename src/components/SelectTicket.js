@@ -21,7 +21,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import CheckIcon from '@mui/icons-material/CheckCircle'
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber'
 import ErrorIcon from '@mui/icons-material/Error'
-import { Alert, AlertTitle, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, LinearProgress, Typography } from '@mui/material'
+import { Alert, AlertTitle, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, CircularProgress, Grid, LinearProgress, Typography } from '@mui/material'
 import { MarketplaceAPIConfiguration } from '../api/api-config'
 import { addToCart } from '../api/Cart'
 import ActionSnackbar from './ActionSnackbar'
@@ -98,17 +98,33 @@ export default function SelectTicket (props) {
     executedRef.current = false
   }
   return (
-    <Grid data-testid='select-ticket-step' container direction="row" style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
-        <Grid item xs={12}>
+    <Grid data-testid='select-ticket-step' container direction="row" alignItems='center' style={{ minHeight: 350, marginTop: 16 }} justifyContent="space-around">
+        {(tickets.length === 0) && (!loadingTickets) && <Grid item xs={12}>
             <Alert sx={{ mb: 2 }} severity='info'>
                 <AlertTitle>Info</AlertTitle>
                 <Typography variant='body2'>To install or update an app, an installation ticket is required.</Typography>
                 <Typography variant='body2'>To purchase a ticket please select &apos;Purchase installation ticket&apos;.</Typography>
                 <Typography variant='body2'>If you already have a ticket, you can simply continue with the &apos;next&apos;.</Typography>
             </Alert>
-        </Grid>
-        <Grid item>
-            <Card data-testid='open-cart-card' sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 230 }}>
+        </Grid>}
+        { // Card which is shown while the tickets are being loaded
+        loadingTickets && <Grid item>
+          <Card sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 230 }}>
+              <CardContent sx={{ p: 0, minHeight: 230, maxHeight: 230 }}>
+                  <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Card sx={{ p: 3 }} variant='outlined' >
+                      <CircularProgress/>
+                    </Card>
+                  </CardMedia>
+                  <CardContent sx={{ m: 2, p: '2px 4px', display: 'flex', alignItems: 'center' }}>
+                   <Typography sx={{ ml: 1, flex: 1 }}>Loading installation tickets...</Typography>
+                  </CardContent>
+                </CardContent>
+            </Card>
+        </Grid>}
+        { // Card which is shown when there are no tickets available
+        (tickets.length === 0) && (!loadingTickets) && <Grid item>
+            <Card data-testid='open-cart-card' sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 300 }}>
                 <CardActionArea data-testid='open-cart-card-action' sx={{ minHeight: 230, maxHeight: 230 }} onClick={redirectToCart} disabled={loadingCart}>
                   <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>
                     <Card sx={{ p: 3 }} variant='outlined'>
@@ -120,16 +136,20 @@ export default function SelectTicket (props) {
                       <Typography align='center' sx={{ ml: 1, flex: 1 }}>Purchase installation ticket for {app?.title}.</Typography>
                   </CardContent>
                 </CardActionArea>
+                <CardActions>
+                  <Button onClick={() => onRefreshTicketsClick()} disabled={loadingTickets}>Refresh</Button>
+                </CardActions>
             </Card>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        { // Card which is shown when tickets are available and the user can continue with the installation
+        (tickets.length > 0) && <Grid item>
             <Card sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 230 }}>
               <CardContent sx={{ p: 0, minHeight: 230, maxHeight: 230 }}>
                   <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>
-                  <Badge badgeContent={(tickets.length > 0) ? <CheckIcon fontSize='small' color='success'/> : <ErrorIcon fontSize='small' color='error'/>}>
-                    <Card sx={{ p: 3 }} variant='outlined' >
-                        <ConfirmationNumberIcon color='primary' fontSize='large'/>
-                    </Card>
+                    <Badge badgeContent={(tickets.length > 0) ? <CheckIcon fontSize='small' color='success'/> : <ErrorIcon fontSize='small' color='error'/>}>
+                      <Card sx={{ p: 3 }} variant='outlined' >
+                          <ConfirmationNumberIcon color='primary' fontSize='large'/>
+                      </Card>
                     </Badge>
                   </CardMedia>
                   {loadingTickets && <LinearProgress></LinearProgress>}
@@ -139,12 +159,9 @@ export default function SelectTicket (props) {
                       : (<Typography align='center' sx={{ ml: 1, flex: 1 }}>No tickets available.</Typography>)
                     }
                   </CardContent>
-                  <CardActions>
-                    <Button onClick={() => onRefreshTicketsClick()} disabled={loadingTickets}>Refresh</Button>
-                  </CardActions>
                 </CardContent>
             </Card>
-        </Grid>
+        </Grid>}
         <ActionSnackbar
           text={snackbarState.snackbarText}
           open={snackbarOpen}

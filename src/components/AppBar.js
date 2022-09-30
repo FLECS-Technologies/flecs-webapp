@@ -29,7 +29,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
-import { ReactComponent as Logo } from '../img/Flecs.svg'
+import Logo from '../whitelabeling/Logo'
 import { Stack } from '@mui/material'
 import { useAuth } from './AuthProvider'
 import AuthService from '../api/AuthService'
@@ -106,12 +106,7 @@ export default function ElevateAppBar (props) {
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
           <Toolbar >
-            <IconButton aria-label='FLECS-Logo' disabled={true}>
-              <Logo width="24" height="24" />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              FLECS
-            </Typography>
+            <Logo></Logo>
             <IconButton aria-label='change-theme-button' sx={{ ml: 1, mr: 1 }} onClick={handleThemeChange}>
               {darkMode ? <LightModeIcon aria-label='LightModeIcon' /> : <DarkModeIcon aria-label='DarkModeIcon'/>}
             </IconButton>

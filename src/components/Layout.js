@@ -19,7 +19,7 @@ import PropTypes from 'prop-types'
 import React, { useContext } from 'react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
-import { darkTheme, lightTheme } from './Theme'
+import { darkTheme, lightTheme } from '../whitelabeling/Theme'
 import { darkModeContext } from './ThemeHandler'
 
 const Layout = ({ children }) => {

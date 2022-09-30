@@ -61,7 +61,7 @@ describe('AppBar', () => {
   test('renders AppBar component', () => {
     const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
     // test if logo is there
-    expect(getByLabelText('FLECS-Logo')).toBeVisible()
+    expect(getByLabelText('logo')).toBeVisible()
     // test if FLECS brand name is there
     expect(getByText('FLECS')).toBeVisible()
     // screen.debug()

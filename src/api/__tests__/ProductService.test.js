@@ -17,7 +17,7 @@
  */
 import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
-import { getAppIcon, getAuthor, getAverageRating, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
+import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
 
 jest.mock('axios')
 
@@ -252,5 +252,6 @@ describe('ProductService', () => {
     expect(getId(products[0])).toBe(37)
     expect(getAverageRating(products[0])).toBe('0.00')
     expect(getRatingCount(products[0])).toBe(0)
+    expect(getBlacklist(products[0])).toBeUndefined()
   })
 })

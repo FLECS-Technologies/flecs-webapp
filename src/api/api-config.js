@@ -27,6 +27,7 @@ const DATA_LAYER_ROUTE = '/data-layer'
 const GET_INSTALLED_APP_LIST_URL = '/list'
 const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/ping'
+const GET_SYSTEM_INFO_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/version'
 
 const POST_INSTALL_APP_URL = '/install'
@@ -154,6 +155,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_PING_URL () {
     return GET_PING_URL
+  }
+
+  static get GET_SYSTEM_INFO_URL () {
+    return GET_SYSTEM_INFO_URL
   }
 
   static get GET_VERSION_URL () {

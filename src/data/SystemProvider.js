@@ -24,8 +24,9 @@ const SystemContextProvider = ({ children }) => {
   // ping === TRUE: Deamon is available. ping === FALSE: Deamon is currently not available
   const [ping, setPing] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  const [systemInfo, setSystemInfo] = React.useState()
   return (
-    <SystemContext.Provider value={{ ping, setPing, loading, setLoading }}>
+    <SystemContext.Provider value={{ ping, setPing, loading, setLoading, systemInfo, setSystemInfo }}>
       {children}
     </SystemContext.Provider>
   )

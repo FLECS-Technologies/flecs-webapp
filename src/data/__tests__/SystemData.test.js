@@ -24,13 +24,16 @@ import { SystemData } from '../SystemData'
 import { useSystemContext } from '../SystemProvider'
 
 jest.mock('../../api/SystemPingService')
+jest.mock('../../api/SystemInfoService')
 jest.mock('../SystemProvider', () => ({ useSystemContext: jest.fn() }))
 
 const mockSystem = {
   ping: true,
   setPing: jest.fn(),
   loading: false,
-  setLoading: jest.fn()
+  setLoading: jest.fn(),
+  systemInfo: undefined,
+  setSystemInfo: jest.fn()
 }
 
 jest.mock('react', () => {

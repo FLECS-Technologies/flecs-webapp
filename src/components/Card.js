@@ -37,9 +37,13 @@ import ContentDialog from './ContentDialog'
 import InstallAppStepper from './InstallAppStepper'
 import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
 import AppRating from './AppRating'
+import { useSystemContext } from '../data/SystemProvider'
+import { isBlacklisted } from '../api/ProductService'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
+  const { systemInfo } = useSystemContext()
+  const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist))
   const installed = (props.status === 'installed')
   const [selectedVersion, setSelectedVersion] = useState(createVersion((props.version ? props.version : getLatestVersion(props.versions)), null, null, props.version))
   const uninstalled = (props.status !== 'installed')
@@ -154,7 +158,7 @@ export default function OutlinedCard (props) {
           variant="contained"
           color="success"
           label="install-app-button"
-          disabled={installed}
+          disabled={installed || blackListed}
           onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
           // loading={installing || false}
@@ -220,5 +224,6 @@ OutlinedCard.propTypes = {
   requirement: PropTypes.string,
   id: PropTypes.number,
   average_rating: PropTypes.string,
-  rating_count: PropTypes.number
+  rating_count: PropTypes.number,
+  blacklist: PropTypes.array
 }

@@ -79,6 +79,21 @@ function getVersions (app) {
   return versions
 }
 
+function getBlacklist (app) {
+  const blacklist = app?.attributes?.find(o => o.name === 'blacklist')?.options
+
+  return blacklist
+}
+
+function isBlacklisted (systemInfo, blacklist) {
+  let isListed = false
+  if (blacklist && systemInfo.vendor) {
+    isListed = blacklist.includes(systemInfo?.vendor)
+  }
+
+  return isListed
+}
+
 function getShortDescription (app) {
   return app?.short_description?.replace(/<[^>]+>/g, '')
 }
@@ -133,4 +148,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getAverageRating, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

@@ -19,13 +19,21 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSystemContext } from './SystemProvider'
 import { SystemPing } from '../api/SystemPingService'
+import { SystemInfo } from '../api/SystemInfoService'
 
 function SystemData (props) {
-  const { setPing, loading, setLoading } = useSystemContext()
+  const { setPing, loading, setLoading, setSystemInfo } = useSystemContext()
+  const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false)
 
   React.useEffect(() => {
     if (!loading) {
       fetchPing()
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (!loadingSystemInfo) {
+      fetchSystemInfo()
     }
   }, [])
 
@@ -40,6 +48,20 @@ function SystemData (props) {
       })
       .finally(() => {
         setLoading(false)
+      })
+  }
+
+  const fetchSystemInfo = async (props) => {
+    setLoadingSystemInfo(true)
+    SystemInfo()
+      .then((response) => {
+        setSystemInfo(response)
+      })
+      .catch(() => {
+        setSystemInfo(undefined)
+      })
+      .finally(() => {
+        setLoadingSystemInfo(false)
       })
   }
 

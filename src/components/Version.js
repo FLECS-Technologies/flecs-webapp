@@ -20,9 +20,11 @@ import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/materia
 import VersionsTable from './VersionsTable'
 import { getLatestVersion, getVersion, isLaterThan } from '../api/VersionService'
 import { VersionSelector } from './VersionSelector'
+import { useSystemContext } from '../data/SystemProvider'
 
 export default function Version () {
   const executedRef = React.useRef(false)
+  const { systemInfo } = useSystemContext()
   const [loadingVersion, setLoadingVersion] = React.useState(false)
   const [version, setVersion] = React.useState()
   const [loadingLatestVersion, setLoadingLatestVersion] = React.useState(false)
@@ -96,7 +98,7 @@ export default function Version () {
             </Alert>
           }
         </Box>
-        <VersionsTable coreVersion={version} webappVersion={process.env.REACT_APP_VERSION}></VersionsTable>
+        <VersionsTable coreVersion={version} webappVersion={process.env.REACT_APP_VERSION} distro={systemInfo?.distro} kernel={systemInfo?.kernel}></VersionsTable>
     </Box>
   )
 }

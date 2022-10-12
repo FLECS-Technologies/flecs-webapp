@@ -20,7 +20,7 @@ import PropTypes from 'prop-types'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 
 export default function VersionsTable (props) {
-  const { coreVersion, webappVersion } = props
+  const { coreVersion, webappVersion, distro, kernel } = props
   const versions = []
 
   function createData (component, version) {
@@ -29,6 +29,8 @@ export default function VersionsTable (props) {
 
   versions.push(createData('Core', coreVersion?.core))
   versions.push(createData('UI', webappVersion))
+  versions.push(createData(distro?.name, distro?.version))
+  versions.push(createData('Kernel', kernel?.version))
 
   return (
         <Table data-testid="versions-table" size="small" aria-label="versions-table">
@@ -59,5 +61,7 @@ export default function VersionsTable (props) {
 
 VersionsTable.propTypes = {
   coreVersion: PropTypes.object,
-  webappVersion: PropTypes.string
+  webappVersion: PropTypes.string,
+  distro: PropTypes.object,
+  kernel: PropTypes.object
 }

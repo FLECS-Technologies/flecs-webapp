@@ -19,6 +19,7 @@
 import { Component } from 'react'
 
 const DEVICE_ROUTE = '/api'
+const DEVICE_V2_ROUTE = '/api/v2'
 const APP_ROUTE = '/app'
 const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
@@ -27,7 +28,7 @@ const DATA_LAYER_ROUTE = '/data-layer'
 const GET_INSTALLED_APP_LIST_URL = '/list'
 const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/ping'
-const GET_SYSTEM_INFO_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/info'
+const GET_SYSTEM_INFO_URL = DEVICE_V2_ROUTE + SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/version'
 
 const POST_INSTALL_APP_URL = '/install'

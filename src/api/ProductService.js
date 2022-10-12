@@ -87,11 +87,17 @@ function getBlacklist (app) {
 
 function isBlacklisted (systemInfo, blacklist) {
   let isListed = false
-  if (blacklist && systemInfo.vendor) {
-    isListed = blacklist.includes(systemInfo?.vendor)
+  if (blacklist && systemInfo.platform) {
+    isListed = blacklist.includes(systemInfo?.platform)
   }
 
   return isListed
+}
+
+function getSupportedArchs (app) {
+  const supportedArchs = app?.attributes?.find(o => o.name === 'archs')?.options
+
+  return supportedArchs
 }
 
 function getShortDescription (app) {
@@ -148,4 +154,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getSupportedArchs, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

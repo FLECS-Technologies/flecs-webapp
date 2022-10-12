@@ -25,9 +25,7 @@ async function SystemInfo () {
       return response.data
     })
     .catch(error => {
-      console.log(error)
-      return Promise.resolve({ vendor: 'weidmüller' })
-      // return Promise.reject(error)
+      return Promise.reject(error)
     })
 }
 

@@ -25,8 +25,7 @@ jest.mock('axios')
 
 const mockSystemInfo = {
   data: {
-    additionalInfo: 'Ok',
-    vendor: 'Weidmüller'
+    platform: 'Weidmüller'
   }
 }
 
@@ -42,7 +41,7 @@ describe('SystemInfo', () => {
     axios.get.mockResolvedValueOnce(mockSystemInfo)
     const response = await waitFor(() => SystemInfo())
 
-    expect(response.vendor).toBe(mockSystemInfo.data.vendor)
+    expect(response.platform).toBe(mockSystemInfo.data.platform)
   })
 
   test('calls unsuccessfull SystemInfo', async () => {

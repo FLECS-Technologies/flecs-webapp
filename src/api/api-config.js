@@ -35,6 +35,7 @@ const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UNINSTALL_APP_URL = '/uninstall'
+const POST_UPDATE_APP_URL = DEVICE_V2_ROUTE + APP_ROUTE + '/update'
 const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
@@ -155,6 +156,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get POST_INSTANCE_CONFIG_URL () {
     return POST_INSTANCE_CONFIG_URL
+  }
+
+  static get POST_UPDATE_APP_URL () {
+    return POST_UPDATE_APP_URL
   }
 
   // get requests

@@ -42,6 +42,24 @@ describe('Test InstallAppStepper', () => {
     expect(stepper).toBeVisible()
   })
 
+  test('renders InstallAppStepper component for sideload', async () => {
+    await act(async () => {
+      render(<InstallAppStepper sideload={true}/>)
+    })
+    const stepper = screen.getByTestId('install-app-stepper')
+
+    expect(stepper).toBeVisible()
+  })
+
+  test('renders InstallAppStepper component for update', async () => {
+    await act(async () => {
+      render(<InstallAppStepper update={true}/>)
+    })
+    const stepper = screen.getByTestId('install-app-stepper')
+
+    expect(stepper).toBeVisible()
+  })
+
   test('one step forward, one step back', async () => {
     await act(async () => {
       render(<InstallAppStepper />)

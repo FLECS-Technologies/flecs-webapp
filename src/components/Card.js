@@ -63,6 +63,7 @@ export default function OutlinedCard (props) {
   })
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
   const [installAppOpen, setInstallAppOpen] = useState(false)
+  const [updateAppOpen, setUpdateAppOpen] = useState(false)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -153,7 +154,7 @@ export default function OutlinedCard (props) {
         >
           Request
         </Button>
-        <LoadButton
+        {!installed && <LoadButton
           text="Install"
           variant="contained"
           color="success"
@@ -162,7 +163,16 @@ export default function OutlinedCard (props) {
           onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
           // loading={installing || false}
-        />
+        />}
+        {(selectedVersion.version !== props.version) && installed && <LoadButton
+          text= {selectedVersion.version > props.version ? 'Update' : 'Downgrade'}
+          variant="contained"
+          color="primary"
+          label="update-app-button"
+          disabled={blackListed}
+          onClick={() => setUpdateAppOpen(true)}
+          displaystate={displayState}
+        />}
         <LoadButton
           text="Uninstall"
           variant="outlined"
@@ -203,6 +213,13 @@ export default function OutlinedCard (props) {
           title={'Install ' + props.title}
         >
           <InstallAppStepper app={props} version={selectedVersion.version} />
+        </ContentDialog>
+        <ContentDialog
+          open={updateAppOpen}
+          setOpen={setUpdateAppOpen}
+          title={((selectedVersion.version > props.version) ? 'Update ' : 'Downgrade ') + props.title + ' from ' + props.version + ' to ' + selectedVersion.version}
+        >
+          <InstallAppStepper app={props} version={selectedVersion.version} update={true}/>
         </ContentDialog>
       </CardActions>
     </Card>

@@ -25,19 +25,19 @@ const testData = [
     key: 'root/app/1',
     value: 'xyz',
     encoding: 'plain/text',
-    timestamp: '2022-03-12'
+    timestamp: '1666011327519825920'
   },
   {
     key: 'root/app/2',
     value: 'abc',
     encoding: 'plain/json',
-    timestamp: '2022-03-11'
+    timestamp: '1666011337519825920'
   },
   {
     key: 'root/app/3',
-    value: 'SGVsbG8gV29ybGQh',
+    value: 'Hello World!',
     encoding: 'application/octet-stream',
-    timestamp: '2022-03-13'
+    timestamp: '1666011347519825920'
   }
 ]
 describe('DataTable', () => {
@@ -47,7 +47,7 @@ describe('DataTable', () => {
     expect(screen.getByText('root/app/1')).toBeVisible()
     expect(screen.getByText('xyz')).toBeVisible()
     expect(screen.getByText('plain/text')).toBeVisible()
-    expect(screen.getByText('2022-03-12')).toBeVisible()
+    expect(screen.getByText('17.10.2022, 14:55:27')).toBeVisible()
     expect(screen.getByText('root/app/2')).toBeVisible()
     expect(screen.getByText('Hello World!')).toBeVisible()
   })

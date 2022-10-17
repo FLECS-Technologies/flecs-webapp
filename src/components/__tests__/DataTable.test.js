@@ -47,7 +47,7 @@ describe('DataTable', () => {
     expect(screen.getByText('root/app/1')).toBeVisible()
     expect(screen.getByText('xyz')).toBeVisible()
     expect(screen.getByText('plain/text')).toBeVisible()
-    expect(screen.getByText('17.10.2022, 14:55:27')).toBeVisible()
+    expect(screen.getByText(new Date(1666011327519825920 / 1000000).toLocaleString())).toBeVisible()
     expect(screen.getByText('root/app/2')).toBeVisible()
     expect(screen.getByText('Hello World!')).toBeVisible()
   })

@@ -18,7 +18,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import base64 from 'base-64'
 
 export default function DataTable (props) {
   const dataRows = []
@@ -49,15 +48,9 @@ export default function DataTable (props) {
     }
   ]
 
-  function createData (key, dataValue, encoding, timestamp) {
-    let value = dataValue
-    try {
-      if (encoding === 'application/octet-stream') {
-        value = base64.decode(dataValue)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  function createData (key, value, encoding, unixTimestamp) {
+    // convert timestamp from unix to a human readable date.
+    const timestamp = new Date(Number(unixTimestamp) / 1000000).toLocaleString()
 
     return { key, value, encoding, timestamp }
   }
@@ -89,7 +82,7 @@ export default function DataTable (props) {
                 <TableBody>
                 {dataRows.map((row) => (
                     <TableRow
-                        key={row.name}
+                        key={row.key}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
                         <TableCell component="th" scope="row" >{row.key}</TableCell>
@@ -105,5 +98,5 @@ export default function DataTable (props) {
 }
 
 DataTable.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.array
 }

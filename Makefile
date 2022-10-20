@@ -25,3 +25,4 @@ deb-pkg_%: docker_%
 	@mkdir -p debian/opt/flecs-webapp/assets
 	@cp -f flecs-webapp_$(VERSION)_$*.tar.gz debian/opt/flecs-webapp/assets/
 	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_$(VERSION)_$*.deb
+	@echo $(VERSION) >latest_flecs-webapp_$*

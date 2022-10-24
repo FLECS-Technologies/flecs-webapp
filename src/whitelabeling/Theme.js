@@ -21,7 +21,7 @@ import './Theme.css'
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: "'Quicksand'"
+    fontFamily: ["'Source Sans Pro'", "'Quicksand', sans-serif"].join(',')
     // fontFamilySecondary: "'Roboto Condensed', sans-serif"
   },
 
@@ -30,21 +30,21 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#ff2e63',
+            color: '#082D43',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#F9B000'
             }
           },
           '&$selected:hover': {
-            color: 'ff2e63',
+            color: '#082D43',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#F9B000'
             }
           },
           '&:hover': {
-            color: '#08D9D6',
+            color: '#F9B000',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#F9B000'
             }
           }
         },
@@ -64,13 +64,13 @@ const darkTheme = createTheme({
     type: 'dark',
 
     primary: {
-      // pink
-      main: '#FF2E63'
+      // yellow
+      main: '#F9B000'
     },
 
-    // cyan
+    // dark blue
     secondary: {
-      main: '#08D9D6'
+      main: '#082D43'
     },
 
     text: {
@@ -102,16 +102,16 @@ const lightTheme = createTheme({
     type: 'light',
 
     primary: {
-      // cyan
-      main: '#08D9D6'
+      // dark blue
+      main: '#082D43'
     },
-    // pink
+    // yellow
     secondary: {
-      main: '#FF2E63'
+      main: '#F9B000'
     },
 
     background: {
-      default: '#FAFAFA',
+      default: '#F4F4F5',
       paper: '#fff'
     }
   }

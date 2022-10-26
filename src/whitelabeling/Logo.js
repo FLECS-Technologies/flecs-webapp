@@ -17,16 +17,16 @@
  */
 
 import React from 'react'
-import { IconButton, Typography } from '@mui/material'
+import { Avatar, IconButton, Typography } from '@mui/material'
 import { ReactComponent as LogoSVG } from './logo.svg'
 import { ReactComponent as SDALogo } from './sda-logo.svg'
 
 export default function Logo () {
   return (
         <React.Fragment>
-            <IconButton aria-label='SDA-Logo' disabled={true}>
-              <SDALogo width="48" height="48" />
-            </IconButton>
+            <Avatar sx={{ bgcolor: 'rgb(0, 0, 0)' }} aria-label='SDA-Logo' disabled={true}>
+              <SDALogo width="32" height="32" />
+            </Avatar>
             <Typography variant="h5" sx={{ padding: 1 }}>
               TechOps
             </Typography>

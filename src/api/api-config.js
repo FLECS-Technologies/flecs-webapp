@@ -18,8 +18,9 @@
 
 import { Component } from 'react'
 
-const DEVICE_ROUTE = '/api'
-const DEVICE_V2_ROUTE = '/api/v2'
+const DEVICE_ROUTE = '../api'
+const DEVICE_ROUTE_TEST = '/api'
+const DEVICE_V2_ROUTE = '../api/v2'
 const APP_ROUTE = '/app'
 const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
@@ -77,6 +78,9 @@ class DeviceAPIConfiguration extends Component {
   }
 
   static get DEVICE_ROUTE () {
+    if ((process.env.REACT_APP_ENVIRONMENT === 'test') || (process.env.REACT_APP_ENVIRONMENT === 'development')) {
+      return DEVICE_ROUTE_TEST
+    }
     return DEVICE_ROUTE
   }
 

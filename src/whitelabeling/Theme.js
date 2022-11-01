@@ -21,8 +21,7 @@ import './Theme.css'
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: "'Quicksand'"
-    // fontFamilySecondary: "'Roboto Condensed', sans-serif"
+    fontFamily: ["'Neue Haas Unica Pro'", "'Helvetica', sans-serif"].join(',')
   },
 
   components: {
@@ -30,21 +29,21 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#ff2e63',
+            color: '#0AADFF',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#0AADFF'
             }
           },
           '&$selected:hover': {
-            color: 'ff2e63',
+            color: '0AADFF',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#0AADFF'
             }
           },
           '&:hover': {
-            color: '#08D9D6',
+            color: '#0AADFF',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#0AADFF'
             }
           }
         },
@@ -64,18 +63,18 @@ const darkTheme = createTheme({
     type: 'dark',
 
     primary: {
-      // pink
-      main: '#FF2E63'
+      // dark grey
+      main: '#868E96'
     },
 
-    // cyan
+    // blue
     secondary: {
-      main: '#08D9D6'
+      main: '#0AADFF'
     },
 
     text: {
       primary: '#fff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
+      secondary: '#6c757d',
       disabled: 'rgba(255, 255, 255, 0.5)'
     },
 
@@ -88,8 +87,8 @@ const darkTheme = createTheme({
     },
 
     background: {
-      default: '#212121',
-      paper: '#313131'
+      default: '#343a40',
+      paper: '#383E44'
     },
 
     divider: 'rgba(255, 255, 255, 0.12)'
@@ -103,11 +102,11 @@ const lightTheme = createTheme({
 
     primary: {
       // cyan
-      main: '#08D9D6'
+      main: '#383E44'
     },
     // pink
     secondary: {
-      main: '#FF2E63'
+      main: '#0AADFF'
     },
 
     background: {

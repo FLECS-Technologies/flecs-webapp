@@ -62,14 +62,14 @@ const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const DELETE_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
 
-const MP_BASE_URL = 'https://marketplace.flecs.tech'
+const MP_BASE_URL = 'https://console.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
 const MP_CART_ROUTE = '/cart?cocart-load-cart='
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
 const MP_PROXY_DEV = 'http://localhost:8001'
 const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8443'
-const MP_PROXY_PRODUCTION = 'https://marketplace.flecs.tech'
+const MP_PROXY_PRODUCTION = 'https://console.flecs.tech'
 
 const MP_DEV = 'https://mp-dev.flecs.tech'
 const MP_TEST = 'https://mp-dev.flecs.tech'
@@ -79,7 +79,7 @@ const POST_AUTHENTICATE_URL = '/api/access/authenticate'
 const POST_VALIDATE_URL = '/api/access/jwt/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
 const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta'
-const GET_PRODUCTS_URL = '/api/v1/products'
+const GET_PRODUCTS_URL = '/api/v1/products?store_id=51'
 const GET_LATEST_VERSION_URL = '/api/v1/core/version/latest'
 const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews'
 

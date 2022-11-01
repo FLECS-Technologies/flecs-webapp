@@ -16,18 +16,16 @@ arch_to_platform() {
   esac
 }
 
-VERSION=${1}
-DOCKER_TAG=${2}
-ARCH=${3}
+DOCKER_TAG=${1}
+ARCH=${2}
 PLATFORM=$(arch_to_platform ${ARCH})
 
 echo "Building tag ${DOCKER_TAG} for arch ${ARCH} (${PLATFORM})"
 
-#	@docker login -u $${REGISTRY_USER} -p $${REGISTRY_AUTH}
+docker login -u ${REGISTRY_USER} -p ${REGISTRY_AUTH}
 docker buildx build \
-  --load \
+  --push \
   --platform ${PLATFORM} \
-  --tag flecs/webapp:${DOCKER_TAG} \
+  --tag flecs/webapp:${DOCKER_TAG}-${ARCH} \
   --file docker/Dockerfile \
-  . && \
-docker save flecs/webapp:${DOCKER_TAG} --output flecs-webapp_${VERSION}_${ARCH}.tar.gz
+  .

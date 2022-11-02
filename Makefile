@@ -9,6 +9,10 @@ version:
 ci:
 	@npm ci
 
+.PHONY: dev-build
+dev-build: ci
+	@npm run build:test --if-present
+
 .PHONY: build
 build: ci
 	@npm run build:production --if-present

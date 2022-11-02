@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 12.x
       - name: build
-        run: make build
+        run: make dev-build
       - name: archive raw artifacts
         uses: actions/upload-artifact@v3
         with:

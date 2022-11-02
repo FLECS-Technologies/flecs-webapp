@@ -20,7 +20,7 @@ docker_%:
 	./docker/build-image.sh $(DOCKER_TAG) $*
 
 deb-pkg_%:
-	@sed -i 's/VERSION=.*/VERSION=$(VERSION)/g' debian/opt/flecs-webapp/bin/flecs-webapp.sh
+	@sed -i 's/DOCKER_TAG=.*/DOCKER_TAG=$(DOCKER_TAG)/g' debian/opt/flecs-webapp/bin/flecs-webapp.sh
 	@sed -i 's/Version:.*/Version: $(VERSION)/g' debian/DEBIAN/control
 	@sed -i 's/Architecture:.*/Architecture: $*/g' debian/DEBIAN/control
 	@rm -rf debian/opt/flecs-webapp/assets

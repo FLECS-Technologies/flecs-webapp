@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=
+DOCKER_TAG=
 
 /usr/bin/docker stop flecs-webapp 2>/dev/null;
 /usr/bin/docker rm -f flecs-webapp 2>/dev/null;
@@ -31,4 +31,4 @@ if [ "${PORT}" == "none" ]; then
 fi
 
 echo "Binding flecs-webapp to port ${PORT}"
-/usr/bin/docker run -d -p ${PORT}:80 --add-host=host.docker.internal:172.17.0.1 --name flecs-webapp flecs/webapp:${VERSION}
+/usr/bin/docker run -d -p ${PORT}:80 --add-host=host.docker.internal:172.17.0.1 --name flecs-webapp flecs/webapp:${DOCKER_TAG}

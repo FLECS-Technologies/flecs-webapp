@@ -102,7 +102,7 @@ const MiniDrawer = (props) => {
     // setSelectedIndex(index)
     switch (index) {
       case 0:
-        navigate('//')
+        navigate('/')
         break
       case 1:
         navigate('/marketplace')
@@ -114,7 +114,7 @@ const MiniDrawer = (props) => {
         navigate('/system')
         break
       default:
-        navigate('//')
+        navigate('/')
         break
     }
   }

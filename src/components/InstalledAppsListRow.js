@@ -140,7 +140,7 @@ export default function Row (props) {
   }
 
   function openApp () {
-    let editorURL = window.location.protocol + '//'
+    let editorURL = 'http://'
 
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       editorURL = process.env.REACT_APP_DEV_VM_IP

@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration } from './api-config'
  */
 async function getInstanceLog (instanceId) {
   return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.POST_INSTANCE_LOG_URL, { instanceId })
+    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_INSTANCE_LOG_URL, { instanceId })
     .then(response => {
       return response.data
     })

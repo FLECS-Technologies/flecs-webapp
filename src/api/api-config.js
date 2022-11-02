@@ -21,6 +21,7 @@ import { Component } from 'react'
 const DEVICE_ROUTE = '../api'
 const DEVICE_ROUTE_TEST = '/api'
 const DEVICE_V2_ROUTE = '../api/v2'
+const DEVICE_V2_ROUTE_TEST = '/api/v2'
 const APP_ROUTE = '/app'
 const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
@@ -28,9 +29,9 @@ const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
 const GET_INSTALLED_APP_LIST_URL = '/list'
 const GET_BROWSE_DATA_LAYER = '/browse'
-const GET_PING_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/ping'
-const GET_SYSTEM_INFO_URL = DEVICE_V2_ROUTE + SYSTEM_ROUTE + '/info'
-const GET_VERSION_URL = DEVICE_ROUTE + SYSTEM_ROUTE + '/version'
+const GET_PING_URL = SYSTEM_ROUTE + '/ping'
+const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
+const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UNINSTALL_APP_URL = '/uninstall'
@@ -38,14 +39,14 @@ const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
 const POST_DELETE_APP_INSTANCE_URL = '/delete'
-const POST_INSTANCE_DETAILS_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/details'
-const POST_INSTANCE_LOG_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/log'
-const POST_INSTANCE_CONFIG_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/config'
+const POST_INSTANCE_DETAILS_URL = INSTANCE_ROUTE + '/details'
+const POST_INSTANCE_LOG_URL = INSTANCE_ROUTE + '/log'
+const POST_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 
 const PUT_SIDELOAD_APP = '/sideload'
-const PUT_INSTANCE_CONFIG_URL = DEVICE_ROUTE + INSTANCE_ROUTE + '/config'
+const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -82,6 +83,13 @@ class DeviceAPIConfiguration extends Component {
       return DEVICE_ROUTE_TEST
     }
     return DEVICE_ROUTE
+  }
+
+  static get DEVICE_V2_ROUTE () {
+    if ((process.env.REACT_APP_ENVIRONMENT === 'test') || (process.env.REACT_APP_ENVIRONMENT === 'development')) {
+      return DEVICE_V2_ROUTE_TEST
+    }
+    return DEVICE_V2_ROUTE
   }
 
   static get APP_ROUTE () {

@@ -19,7 +19,7 @@ import axios from 'axios'
 import { DeviceAPIConfiguration } from './api-config'
 async function getInstanceDetails (instanceId) {
   return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.POST_INSTANCE_DETAILS_URL, { instanceId })
+    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_INSTANCE_DETAILS_URL, { instanceId })
     .then(response => {
       return response.data
     })

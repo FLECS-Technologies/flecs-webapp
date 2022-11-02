@@ -29,7 +29,7 @@ import OpenSource from './OpenSource'
 
 const UIRoutes = () => {
   return useRoutes([
-    { path: '/', element: <InstalledApps /> },
+    { path: '//', element: <InstalledApps /> },
     {
       path: '/marketplace',
       element: <RequireAuth />,

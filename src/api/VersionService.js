@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from './api-confi
 
 async function getVersion () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.GET_VERSION_URL)
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_VERSION_URL)
     .then(response => {
       return response.data
     })

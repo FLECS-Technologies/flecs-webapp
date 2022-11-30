@@ -48,6 +48,7 @@ const POST_MP_LOGOUT_URL = '/logout'
 
 const PUT_SIDELOAD_APP = '/sideload'
 const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
+const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCE_ROUTE + `/${instanceId}/update`
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -190,6 +191,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get PUT_INSTANCE_CONFIG_URL () {
     return PUT_INSTANCE_CONFIG_URL
+  }
+
+  static get PUT_INSTANCE_UPDATE_URL () {
+    return PUT_INSTANCE_UPDATE_URL
   }
 }
 

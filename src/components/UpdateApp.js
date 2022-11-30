@@ -28,7 +28,7 @@ import { UpdateAppService } from '../api/UpdateAppService'
 export default function UpdateApp (props) {
   const { update, app, from, to, tickets } = (props)
   const executedRef = React.useRef(false)
-  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
+  const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [updating, setUpdating] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
   const [error, setError] = React.useState(false)
@@ -36,13 +36,15 @@ export default function UpdateApp (props) {
   const [installationMessage, setInstallationMessage] = React.useState('')
 
   const updateApp = React.useCallback(async (app, from, to, tickets) => {
+    const installedApp = appList?.filter(obj => { return (obj.app === app.app && obj.version === from) }) || []
+
     setUpdating(true)
     setSuccess(false)
     setError(false)
     setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
 
     // call update endpoint
-    UpdateAppService(app?.app, from, to, tickets[0]?.license_key)
+    UpdateAppService(app?.app, from, to, tickets[0]?.license_key, installedApp[0]?.instances)
       .then(() => {
         // trigger a reload of all installed apps
         setLicensedApp(tickets[0]?.license_key, app?.title)

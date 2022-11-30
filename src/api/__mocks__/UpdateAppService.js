@@ -15,29 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PostInstallAppAPI from './InstallAppAPI'
-import { UpdateInstanceService } from './UpdateInstanceService'
 
 async function UpdateAppService (app, from, to, licenseKey, instances) {
-  // install new version
-  const installAPI = new PostInstallAppAPI()
-
-  await installAPI.installApp(app, to, licenseKey)
-  if (!installAPI.state.success) {
-    return Promise.reject(Error(installAPI.state.errorMessage.message))
-  }
-
-  // migrate instances to the new version
-  let responses = Promise.resolve('App successfully updated.')
-  if (instances && instances.length > 0) {
-    responses = await Promise.all(
-      instances.map(async instance => {
-        await UpdateInstanceService(app, instance.instanceId, '', to)
-      })
-    )
-  }
-
-  return responses
+  return new Promise((resolve, reject) => {
+    app === 'pass'
+      ? resolve()
+      : reject(new Error('Mock: Failed to update app.'))
+  })
 }
 
 export { UpdateAppService }

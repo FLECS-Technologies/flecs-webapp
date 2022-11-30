@@ -26,10 +26,11 @@ import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import axios from 'axios'
 
 jest.mock('../../api/LicenseService')
+jest.mock('../../api/UpdateAppService')
 jest.mock('axios')
 
 const app = {
-  app: 'org.mosquitto.broker',
+  app: 'pass',
   title: 'test app',
   status: 'installed',
   version: '4.2.0',
@@ -55,7 +56,7 @@ describe('Test Update App', () => {
 
   test('Successfully update app', async () => {
     // mock update service
-    axios.post.mockResolvedValueOnce()
+    // axios.post.mockResolvedValueOnce()
     await act(async () => {
       render(
       <ReferenceDataContextProvider>
@@ -66,12 +67,13 @@ describe('Test Update App', () => {
 
   test('Failed to update app', async () => {
     const user = userEvent.setup()
-    axios.post.mockRejectedValueOnce(new Error('Failed to update'))
+    // axios.put.mockRejectedValueOnce(new Error('Failed to update'))
 
+    app.app = 'fail'
     await act(async () => {
       render(
       <ReferenceDataContextProvider>
-        <UpdateApp update={true} app={app} from={app.version} to="4.3.0" tickets={[{ license_key: 'abc' }]}></UpdateApp>
+        <UpdateApp update={true} app={app} from={app.version} to='4.3.0' tickets={[{ license_key: 'abc' }]}></UpdateApp>
       </ReferenceDataContextProvider>)
     })
     // 1. check error icon
@@ -79,8 +81,8 @@ describe('Test Update App', () => {
     expect(icon).toBeVisible()
 
     // 2. click on retry
-    const menuButton = screen.getByRole('button', { name: 'Retry' })
+    const retryButton = screen.getByRole('button', { name: 'Retry' })
 
-    await user.click(menuButton)
+    await user.click(retryButton)
   })
 })

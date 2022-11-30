@@ -64,7 +64,7 @@ export default function Row (props) {
 
   function loadReferenceData (props) {
     const tmpApp = appList?.find(obj => {
-      return obj.app === props.app
+      return (obj.app === props.app && obj.version === props.version)
     })
 
     return tmpApp
@@ -285,6 +285,7 @@ export default function Row (props) {
 Row.propTypes = {
   row: PropTypes.any,
   app: PropTypes.string,
+  version: PropTypes.string,
   instanceId: PropTypes.string,
   instances: PropTypes.array
 }

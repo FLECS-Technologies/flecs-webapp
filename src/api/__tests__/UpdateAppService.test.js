@@ -18,34 +18,26 @@
 import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import axios from 'axios'
 import { UpdateAppService } from '../UpdateAppService'
 
-jest.mock('axios')
-
-const mockUpdateAppService = {
-  data: {
-    additionalInfo: 'Ok'
-  }
-}
+jest.mock('../../api/InstallAppAPI')
+jest.mock('../../api/UpdateInstanceService')
 
 describe('UpdateAppService', () => {
-  beforeAll(() => {
-    axios.get = jest.fn()
-  })
-
-  afterAll(() => {
-    jest.resetAllMocks()
-  })
+  const mockInstances = [{ instanceId: '123' }, { instanceId: '456' }]
   test('calls successfull UpdateAppService', async () => {
-    axios.post.mockResolvedValueOnce(mockUpdateAppService)
-    const response = await waitFor(() => UpdateAppService())
+    const response = await waitFor(() => UpdateAppService('app'))
 
-    expect(response.additionalInfo).toBe(mockUpdateAppService.data.additionalInfo)
+    expect(response).toBe('App successfully updated.')
+  })
+
+  test('calls successfull UpdateAppService with instances', async () => {
+    const response = await waitFor(() => UpdateAppService('app', '1.0.0', '2.0.0', 'ABC', mockInstances))
+
+    expect(response).toHaveLength(2)
   })
 
   test('calls unsuccessfull UpdateAppService', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to update app'))
     await act(async () => {
       expect(UpdateAppService()).rejects.toThrowError()
     })

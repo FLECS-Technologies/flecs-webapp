@@ -87,7 +87,7 @@ function getBlacklist (app) {
 
 function isBlacklisted (systemInfo, blacklist) {
   let isListed = false
-  if (blacklist && systemInfo.platform) {
+  if (blacklist && systemInfo?.platform) {
     isListed = blacklist.includes(systemInfo?.platform)
   }
 

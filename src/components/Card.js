@@ -68,7 +68,7 @@ export default function OutlinedCard (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return obj.app === props.app
+        return (obj.app === props.app && obj.app === props.version)
       })
 
       return tmpApp

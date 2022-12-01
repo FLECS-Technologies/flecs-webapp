@@ -28,6 +28,7 @@ import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { getInstalledVersions } from '../data/AppList'
 
 export default function MarketplaceList (props) {
   const [products, setProducts] = useState()
@@ -113,6 +114,7 @@ export default function MarketplaceList (props) {
           average_rating={getAverageRating(app)}
           rating_count={getRatingCount(app)}
           blacklist={getBlacklist(app)}
+          installedVersions={getInstalledVersions(appList, getReverseDomainName(app))}
         />
       ))
 
@@ -127,7 +129,8 @@ export default function MarketplaceList (props) {
         props: {
           ...app.props,
           status: appList?.find(o => o.app === app.props.app)?.status || 'uninstalled',
-          version: appList?.find(o => o.app === app.props.app)?.version
+          version: appList?.find(o => o.app === app.props.app)?.version,
+          installedVersions: getInstalledVersions(appList, app.props.app)
         }
       }))
 

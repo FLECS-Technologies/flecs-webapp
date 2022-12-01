@@ -20,11 +20,11 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
-import { getProducts } from '../../api/ProductService'
+import { getProducts } from '../../api/marketplace/ProductService'
 import { render, fireEvent, within, waitFor, screen } from '@testing-library/react'
 
-jest.mock('../../api/ProductService', () => ({
-  ...jest.requireActual('../../api/ProductService'),
+jest.mock('../../api/marketplace/ProductService', () => ({
+  ...jest.requireActual('../../api/marketplace/ProductService'),
   getProducts: jest.fn()
 }))
 

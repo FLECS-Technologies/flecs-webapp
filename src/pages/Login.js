@@ -20,12 +20,11 @@ import React, { useRef } from 'react'
 import styled from 'styled-components'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-// import LoadButton from '../components/LoadButton'
-import AuthService from '../api/AuthService'
+import AuthService from '../api/marketplace/AuthService'
 import { useAuth } from '../components/AuthProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
-import { postMPLogin } from '../api/DeviceAuthAPI'
+import { postMPLogin } from '../api/device/DeviceAuthAPI'
 
 const Header = styled.div`
   display: 'flex';

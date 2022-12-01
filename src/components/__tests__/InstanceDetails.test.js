@@ -21,7 +21,7 @@ import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
 import InstanceDetails from '../InstanceDetails'
 
-jest.mock('../../api/InstanceDetailsService')
+jest.mock('../../api/device/InstanceDetailsService')
 
 const testInstance = {
   instanceName: 'TestInstance',

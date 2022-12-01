@@ -22,7 +22,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import InstanceDevicesConfig from '../InstanceDevicesConfig'
 
-jest.mock('../../api/InstanceConfigService')
+jest.mock('../../api/device/InstanceConfigService')
 
 const testConfig = {
   instanceId: 'ABCDEF',

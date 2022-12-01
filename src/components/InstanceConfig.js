@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getInstanceConfig, putInstanceConfig } from '../api/InstanceConfigService'
+import { getInstanceConfig, putInstanceConfig } from '../api/device/InstanceConfigService'
 import NICConfig from './NICConfig'
 import { Box, Button, LinearProgress, Tab, Toolbar, Typography } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'

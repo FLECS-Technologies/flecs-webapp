@@ -25,8 +25,8 @@ import UpdateApp from '../UpdateApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import axios from 'axios'
 
-jest.mock('../../api/LicenseService')
-jest.mock('../../api/UpdateAppService')
+jest.mock('../../api/marketplace/LicenseService')
+jest.mock('../../api/device/UpdateAppService')
 jest.mock('axios')
 
 const app = {

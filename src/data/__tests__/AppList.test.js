@@ -22,8 +22,8 @@ import '@testing-library/jest-dom'
 import { AppList } from '../AppList'
 import { useReferenceDataContext } from '../ReferenceDataContext'
 
-jest.mock('../../api/ProductService')
-jest.mock('../../api/DeviceAPI')
+jest.mock('../../api/marketplace/ProductService')
+jest.mock('../../api/device/DeviceAPI')
 jest.mock('../ReferenceDataContext', () => ({ useReferenceDataContext: jest.fn() }))
 
 const mockReferenceDataContext = {

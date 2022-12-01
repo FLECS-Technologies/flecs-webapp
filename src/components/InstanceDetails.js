@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getHostname, getInstanceDetails, getIPAddress } from '../api/InstanceDetailsService'
+import { getHostname, getInstanceDetails, getIPAddress } from '../api/device/InstanceDetailsService'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import CollapsableRow from './CollapsableRow'
 import VolumesTable from './VolumesTable'

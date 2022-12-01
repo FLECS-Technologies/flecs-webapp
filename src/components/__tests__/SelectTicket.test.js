@@ -20,12 +20,12 @@ import React from 'react'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SelectTicket from '../SelectTicket'
-import { addToCart } from '../../api/Cart'
+import { addToCart } from '../../api/marketplace/Cart'
 import { act } from 'react-dom/test-utils'
 
-jest.mock('../../api/LicenseService')
-jest.mock('../../api/Cart', () => ({
-  ...jest.requireActual('../../api/Cart'),
+jest.mock('../../api/marketplace/LicenseService')
+jest.mock('../../api/marketplace/Cart', () => ({
+  ...jest.requireActual('../../api/marketplace/Cart'),
   addToCart: jest.fn()
 }))
 

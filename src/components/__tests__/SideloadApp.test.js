@@ -21,9 +21,9 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SideloadApp from '../SideloadApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import AppAPI from '../../api/AppAPI'
+import AppAPI from '../../api/device/AppAPI'
 
-jest.mock('../../api/LicenseService')
+jest.mock('../../api/marketplace/LicenseService')
 
 const yaml = {
   app: 'com.codesys.codesyscontrol',

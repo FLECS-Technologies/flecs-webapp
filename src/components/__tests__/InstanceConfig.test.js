@@ -20,7 +20,7 @@ import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import { render, screen, fireEvent } from '@testing-library/react'
 import InstanceConfig from '../InstanceConfig'
-jest.mock('../../api/InstanceConfigService')
+jest.mock('../../api/device/InstanceConfigService')
 
 const testInstance = {
   instanceName: 'TestInstance',

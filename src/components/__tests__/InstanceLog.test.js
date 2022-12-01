@@ -21,7 +21,7 @@ import { act } from 'react-dom/test-utils'
 import { render, screen, fireEvent } from '@testing-library/react'
 import InstanceLog from '../InstanceLog'
 
-jest.mock('../../api/InstanceLogService')
+jest.mock('../../api/device/InstanceLogService')
 
 const testInstance = {
   instanceName: 'TestInstance',

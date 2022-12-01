@@ -22,8 +22,8 @@ import ReportIcon from '@mui/icons-material/Report'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { setLicensedApp } from '../api/LicenseService'
-import { UpdateAppService } from '../api/UpdateAppService'
+import { setLicensedApp } from '../api/marketplace/LicenseService'
+import { UpdateAppService } from '../api/device/UpdateAppService'
 
 export default function UpdateApp (props) {
   const { update, app, from, to, tickets } = (props)

@@ -21,7 +21,7 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Marketplace from '../Marketplace'
 
-jest.mock('../../api/ProductService', () => ({
+jest.mock('../../api/marketplace/ProductService', () => ({
   getProducts: jest.fn()
     .mockReturnValue(Promise.resolve())
 }))

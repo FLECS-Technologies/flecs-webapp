@@ -23,9 +23,9 @@ import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber'
 import ErrorIcon from '@mui/icons-material/Error'
 import { Alert, AlertTitle, Badge, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, CircularProgress, Grid, LinearProgress, Typography } from '@mui/material'
 import { MarketplaceAPIConfiguration } from '../api/api-config'
-import { addToCart } from '../api/Cart'
+import { addToCart } from '../api/marketplace/Cart'
 import ActionSnackbar from './ActionSnackbar'
-import { getCurrentUserLicenses } from '../api/LicenseService'
+import { getCurrentUserLicenses } from '../api/marketplace/LicenseService'
 
 export default function SelectTicket (props) {
   const { app, tickets, setTickets } = (props)

@@ -20,7 +20,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import InstanceInfo from '../InstanceInfo'
 
-jest.mock('../../api/InstanceDetailsService')
+jest.mock('../../api/device/InstanceDetailsService')
 
 const testInstance = {
   instanceName: 'TestInstance',

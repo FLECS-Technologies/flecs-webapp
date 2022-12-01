@@ -23,8 +23,8 @@ import '@testing-library/jest-dom'
 import { SystemData } from '../SystemData'
 import { useSystemContext } from '../SystemProvider'
 
-jest.mock('../../api/SystemPingService')
-jest.mock('../../api/SystemInfoService')
+jest.mock('../../api/device/SystemPingService')
+jest.mock('../../api/device/SystemInfoService')
 jest.mock('../SystemProvider', () => ({ useSystemContext: jest.fn() }))
 
 const mockSystem = {

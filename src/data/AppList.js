@@ -19,8 +19,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useReferenceDataContext } from './ReferenceDataContext'
-import DeviceAPI from '../api/DeviceAPI'
-import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/ProductService'
+import DeviceAPI from '../api/device/DeviceAPI'
+import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
 
 function AppList (props) {
   const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList } = useReferenceDataContext()

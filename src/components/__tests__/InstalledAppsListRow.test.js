@@ -22,7 +22,7 @@ import { act } from 'react-dom/test-utils'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import Row from '../InstalledAppsListRow'
 
-jest.mock('../../api/AppAPI')
+jest.mock('../../api/device/AppAPI')
 
 describe('Test Installed Apps List row', () => {
   const app = {

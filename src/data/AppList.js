@@ -70,6 +70,11 @@ function AppList (props) {
           app.author = getAuthor(mpApp)
           app.relatedLinks = getCustomLinks(mpApp)
         }
+        if (typeof app === 'object' && app !== null) {
+          app.installedVersions = getInstalledVersions(mergedList, app.app)
+          app.installedVersions.sort()
+          app.installedVersions.reverse()
+        }
       })
 
       setAppList(appList => [...mergedList])
@@ -100,4 +105,15 @@ function findApp (app, list) {
   return result
 }
 
-export { AppList }
+function getInstalledVersions (apps, app) {
+  let result
+  if (apps && app) {
+    const installedApps = apps.filter(obj => obj.app === app)
+    if (installedApps) {
+      result = installedApps.map(obj => obj.version)
+    }
+  }
+  return result
+}
+
+export { AppList, getInstalledVersions }

@@ -67,15 +67,17 @@ function createVersion (version, release_notes, breaking_changes, installed) {
   return { version, release_notes, breaking_changes, installed }
 }
 
-function createVersions (versions, installedVersion) {
+function createVersions (versions, installedVersions) {
   const versionsArray = []
 
   if (versions) {
     versions.forEach(version => {
-      versionsArray.push(createVersion(version, undefined, undefined, version === installedVersion))
+      versionsArray.push(createVersion(version, undefined, undefined, installedVersions?.includes(version)))
     })
-  } else {
-    versionsArray.push(createVersion(installedVersion, null, null, null))
+  } else if (installedVersions) {
+    installedVersions.forEach(version => {
+      versionsArray.push(createVersion(version, null, null, true))
+    })
   }
   return versionsArray
 }

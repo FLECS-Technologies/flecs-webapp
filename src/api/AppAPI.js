@@ -64,6 +64,10 @@ export default class AppAPI extends React.Component {
     }
   }
 
+  setVersion (version) {
+    this.app.version = version
+  }
+
   get lastAPICallSuccessfull () {
     return this._lastAPICallSuccessfull
   }

@@ -45,7 +45,7 @@ export default function OutlinedCard (props) {
   const { systemInfo } = useSystemContext()
   const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist))
   const installed = (props.status === 'installed')
-  const [selectedVersion, setSelectedVersion] = useState(createVersion((props.version ? props.version : getLatestVersion(props.versions)), null, null, props.version))
+  const [selectedVersion, setSelectedVersion] = useState(createVersion((props.installedVersions?.length > 0 ? getLatestVersion(props.installedVersions) : getLatestVersion(props.versions)), null, null, props.version))
   const uninstalled = (props.status !== 'installed')
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
@@ -68,7 +68,7 @@ export default function OutlinedCard (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.app === props.app && obj.app === props.version)
+        return (obj.app === props.app && obj.version === props.version)
       })
 
       return tmpApp
@@ -79,6 +79,7 @@ export default function OutlinedCard (props) {
     setUninstalling(true)
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
+    appAPI.setVersion(selectedVersion.version)
     await appAPI.uninstall()
 
     const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
@@ -137,7 +138,7 @@ export default function OutlinedCard (props) {
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           {props.description}
         </Typography>
-        <VersionSelector availableVersions={createVersions(props.versions, props.version)} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion}></VersionSelector>
+        <VersionSelector availableVersions={createVersions(props.versions, props.installedVersions)} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion}></VersionSelector>
         {available && <Typography data_testid='installable-requirement' sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Installable on {props?.requirement}
         </Typography>}
@@ -162,10 +163,9 @@ export default function OutlinedCard (props) {
           disabled={installed || blackListed}
           onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
-          // loading={installing || false}
         />}
-        {(selectedVersion.version !== props.version) && installed && <LoadButton
-          text= {selectedVersion.version > props.version ? 'Update' : 'Downgrade'}
+        {(!props.installedVersions?.includes(selectedVersion.version)) && installed && <LoadButton
+          text= 'Update'
           variant="contained"
           color="primary"
           label="update-app-button"
@@ -217,7 +217,7 @@ export default function OutlinedCard (props) {
         <ContentDialog
           open={updateAppOpen}
           setOpen={setUpdateAppOpen}
-          title={((selectedVersion.version > props.version) ? 'Update ' : 'Downgrade ') + props.title + ' from ' + props.version + ' to ' + selectedVersion.version}
+          title={'Update ' + props.title + ' to ' + selectedVersion.version}
         >
           <InstallAppStepper app={props} version={selectedVersion.version} update={true}/>
         </ContentDialog>
@@ -242,5 +242,6 @@ OutlinedCard.propTypes = {
   id: PropTypes.number,
   average_rating: PropTypes.string,
   rating_count: PropTypes.number,
-  blacklist: PropTypes.array
+  blacklist: PropTypes.array,
+  installedVersions: PropTypes.array
 }

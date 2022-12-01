@@ -22,7 +22,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import AppRating from '../AppRating'
 
-jest.mock('../../api/AppRatingService')
+jest.mock('../../api/marketplace/AppRatingService')
 jest.mock('../../api/auth-header')
 
 const mockApp = {

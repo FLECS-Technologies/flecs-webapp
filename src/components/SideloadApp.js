@@ -21,9 +21,9 @@ import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
 import PropTypes from 'prop-types'
 import React from 'react'
-import AppAPI from '../api/AppAPI'
+import AppAPI from '../api/device/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { setLicensedApp } from '../api/LicenseService'
+import { setLicensedApp } from '../api/marketplace/LicenseService'
 
 export default function SideloadApp (props) {
   const { install, yaml, tickets } = (props)

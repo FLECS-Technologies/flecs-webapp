@@ -21,9 +21,9 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallApp from '../InstallApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import AppAPI from '../../api/AppAPI'
+import AppAPI from '../../api/device/AppAPI'
 
-jest.mock('../../api/LicenseService')
+jest.mock('../../api/marketplace/LicenseService')
 
 const app = {
   app: 'com.codesys.codesyscontrol',

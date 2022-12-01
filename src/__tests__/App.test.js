@@ -25,7 +25,7 @@ import '@testing-library/jest-dom'
 
 import App from '../App'
 
-jest.mock('../api/SystemPingService')
+jest.mock('../api/device/SystemPingService')
 
 describe('App', () => {
   test('renders App component', async () => {

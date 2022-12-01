@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom'
 import React from 'react'
 import styled from 'styled-components'
 import ReportIcon from '@mui/icons-material/Report'
-import DeviceAPI from '../api/DeviceAPI'
+import DeviceAPI from '../api/device/DeviceAPI'
 import DataTable from '../components/DataTable'
 
 const Header = styled.div`

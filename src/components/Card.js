@@ -28,7 +28,7 @@ import Avatar from '@mui/material/Avatar'
 
 import LoadButton from './LoadButton'
 import ConfirmDialog from './ConfirmDialog'
-import AppAPI from '../api/AppAPI'
+import AppAPI from '../api/device/AppAPI'
 import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
@@ -38,7 +38,7 @@ import InstallAppStepper from './InstallAppStepper'
 import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
 import AppRating from './AppRating'
 import { useSystemContext } from '../data/SystemProvider'
-import { isBlacklisted } from '../api/ProductService'
+import { isBlacklisted } from '../api/marketplace/ProductService'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)

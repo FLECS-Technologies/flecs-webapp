@@ -22,7 +22,7 @@ import '@testing-library/jest-dom'
 import ServiceMesh from '../ServiceMesh'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-jest.mock('../../api/DeviceAPI')
+jest.mock('../../api/device/DeviceAPI')
 
 describe('ServiceMesh', () => {
   beforeAll(() => {

@@ -22,7 +22,7 @@ import '@testing-library/jest-dom'
 import InstallAppStepper from '../InstallAppStepper'
 import { act } from 'react-dom/test-utils'
 
-jest.mock('../../api/LicenseService')
+jest.mock('../../api/marketplace/LicenseService')
 
 describe('Test InstallAppStepper', () => {
   beforeAll(() => {

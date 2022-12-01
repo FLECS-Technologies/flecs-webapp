@@ -30,7 +30,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 import LoadIconButton from './LoadIconButton'
-import AppAPI from '../api/AppAPI'
+import AppAPI from '../api/device/AppAPI'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'

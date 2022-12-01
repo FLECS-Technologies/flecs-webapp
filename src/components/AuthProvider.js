@@ -17,9 +17,9 @@
  */
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import AuthService from '../api/AuthService'
+import AuthService from '../api/marketplace/AuthService'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { postMPLogin } from '../api/DeviceAuthAPI'
+import { postMPLogin } from '../api/device/DeviceAuthAPI'
 
 let SET_USER
 

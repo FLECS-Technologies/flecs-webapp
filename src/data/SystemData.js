@@ -18,8 +18,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSystemContext } from './SystemProvider'
-import { SystemPing } from '../api/SystemPingService'
-import { SystemInfo } from '../api/SystemInfoService'
+import { SystemPing } from '../api/device/SystemPingService'
+import { SystemInfo } from '../api/device/SystemInfoService'
 
 function SystemData (props) {
   const { setPing, loading, setLoading, setSystemInfo } = useSystemContext()

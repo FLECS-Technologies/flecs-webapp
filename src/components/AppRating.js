@@ -18,7 +18,7 @@
 import PropTypes from 'prop-types'
 import React, { Fragment } from 'react'
 import { IconButton, Rating, Typography } from '@mui/material'
-import { createAppRating } from '../api/AppRatingService'
+import { createAppRating } from '../api/marketplace/AppRatingService'
 import { Cancel, CheckCircle } from '@mui/icons-material'
 import { useAuth } from '../components/AuthProvider'
 import ActionSnackbar from './ActionSnackbar'

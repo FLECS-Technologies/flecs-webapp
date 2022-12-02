@@ -71,9 +71,10 @@ function getVersion (app) {
 }
 
 function getVersions (app) {
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
   const versions = app?.attributes?.find(o => o.name === 'versions')?.options
   if (versions) {
-    versions.sort()
+    versions.sort((a, b) => collator.compare(a, b))
     versions.reverse()
   }
   return versions

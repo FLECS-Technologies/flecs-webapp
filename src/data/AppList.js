@@ -44,6 +44,7 @@ function AppList (props) {
   const loadAppList = async (props) => {
     let marketplaceAppList = []
     let mergedList = []
+    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
 
     setAppListLoading(true)
     await getProducts(queryParams).then(
@@ -72,7 +73,7 @@ function AppList (props) {
         }
         if (typeof app === 'object' && app !== null) {
           app.installedVersions = getInstalledVersions(mergedList, app.app)
-          app.installedVersions.sort()
+          app.installedVersions.sort((a, b) => collator.compare(a, b))
           app.installedVersions.reverse()
         }
       })

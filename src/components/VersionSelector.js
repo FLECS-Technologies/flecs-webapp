@@ -18,11 +18,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/system'
-import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { Badge, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import NewReleasesIcon from '@mui/icons-material/NewReleases'
 
 function VersionSelector (props) {
   const { availableVersions, setSelectedVersion, selectedVersion } = props
+  const [newVersionAvailable] = React.useState(
+    (!getLatestVersion(availableVersions)?.installed) &&
+      (availableVersions?.filter(version => version?.installed).length > 0)
+  )
+
   const handleChange = (event) => {
     setSelectedVersion(availableVersions?.find(version => version.version === event.target.value))
   }
@@ -40,20 +46,22 @@ function VersionSelector (props) {
             Version {availableVersions[0]?.version}
         </Typography>}
         {availableVersions?.length > 1 &&
-        <FormControl fullWidth size="small">
-            <InputLabel id="version-label">Version</InputLabel>
-            <Select
-            labelId="version-select-label"
-            id="version-select"
-            value={selectedVersion.version}
-            label="Version"
-            onChange={handleChange}
-            >
-                {availableVersions?.map((version) => (
-                <MenuItem key={version.version} value={version.version}>{version.version} {version.installed ? '(installed)' : ''}</MenuItem>
-                ))}
-            </Select>
-        </FormControl>
+        <Badge sx={{ width: '100%' }} invisible={!newVersionAvailable} badgeContent={<NewReleasesIcon color='primary' fontSize='small'></NewReleasesIcon>}>
+          <FormControl fullWidth size="small">
+              <InputLabel id="version-label">Version</InputLabel>
+              <Select
+              labelId="version-select-label"
+              id="version-select"
+              value={selectedVersion.version}
+              label="Version"
+              onChange={handleChange}
+              >
+                  {availableVersions?.map((version) => (
+                  <MenuItem key={version.version} value={version.version}>{version.version} {version.installed ? '(installed)' : ''}</MenuItem>
+                  ))}
+              </Select>
+          </FormControl>
+        </Badge>
         }
         {selectedVersion?.release_notes &&
         <Button size="small" onClick={onReleaseNoteButtonClick} endIcon={<OpenInNewIcon/>}>What&apos;s new?</Button>}

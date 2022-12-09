@@ -32,7 +32,7 @@ import Paper from '@mui/material/Paper'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
-import GetAppIcon from '@mui/icons-material/GetApp'
+import DeveloperModeIcon from '@mui/icons-material/DeveloperMode'
 import { visuallyHidden } from '@mui/utils'
 import Yaml from 'js-yaml'
 import Row from './InstalledAppsListRow'
@@ -44,6 +44,8 @@ import { CircularProgress } from '@mui/material'
 import { useSystemContext } from '../data/SystemProvider'
 import InstallAppStepper from './InstallAppStepper'
 import ContentDialog from './ContentDialog'
+import Export from './Export'
+import Import from './Import'
 
 const headCells = [
 
@@ -226,11 +228,21 @@ export default function DeviceAppsList (props) {
             <FileOpen
               data-testid="sideload-app-button"
               buttonText="Sideload App"
-              buttonIcon={<GetAppIcon/>}
+              buttonIcon={<DeveloperModeIcon/>}
               accept='.yml'
               onConfirm={handleOnSideloadConfirm}
               disabled={!user?.user}
             ></FileOpen>
+            </div>
+          </Tooltip>
+          <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
+            <div>
+              <Export disabled={!user?.user} sx={{ ml: 1 }}></Export>
+            </div>
+          </Tooltip>
+          <Tooltip title={user?.user ? 'Import apps' : 'Please log in to be able to import apps'}>
+            <div>
+              <Import disabled={!user?.user} sx={{ ml: 1 }}></Import>
             </div>
           </Tooltip>
         </Toolbar>

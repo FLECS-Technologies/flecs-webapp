@@ -26,7 +26,7 @@ describe('Test Installed Apps List', () => {
   test('renders installed apps list component', () => {
     const { getByTestId } = render(<Router><DeviceAppsList /></Router>)
 
-    const sideloadButton = getByTestId('GetAppIcon')
+    const sideloadButton = getByTestId('DeveloperModeIcon')
 
     fireEvent.click(sideloadButton)
 

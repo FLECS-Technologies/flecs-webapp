@@ -21,18 +21,20 @@ import PropTypes from 'prop-types'
 import LoadButton from './LoadButton'
 
 const FileOpen = (props) => {
-  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm, disabled } = props
+  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm, disabled, wholeFile } = props
   const inputFile = useRef(null)
 
   const handleFileOpen = e => {
     const { files } = e.target
-    if (files && files.length) {
+    if (files && files.length && !wholeFile) {
       e.preventDefault()
       const reader = new FileReader()
       reader.onload = async (e) => {
         onConfirm(e.target.result)
       }
       reader.readAsText(files[0])
+    } else if (files && files.length) {
+      onConfirm(files[0])
     }
   }
 
@@ -79,7 +81,8 @@ FileOpen.propTypes = {
   setFile: PropTypes.any,
   loading: PropTypes.bool,
   onConfirm: PropTypes.func,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  wholeFile: PropTypes.bool
 }
 
 export default FileOpen

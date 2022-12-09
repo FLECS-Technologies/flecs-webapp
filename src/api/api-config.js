@@ -32,6 +32,7 @@ const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
+const GET_APP_EXPORT_URL = APP_ROUTE + '/export'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UNINSTALL_APP_URL = '/uninstall'
@@ -45,6 +46,7 @@ const POST_INSTANCE_LOG_URL = INSTANCE_ROUTE + '/log'
 const POST_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
+const POST_APP_IMPORT_URL = APP_ROUTE + '/import'
 
 const PUT_SIDELOAD_APP = '/sideload'
 const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
@@ -163,6 +165,10 @@ class DeviceAPIConfiguration extends Component {
     return POST_UPDATE_APP_URL
   }
 
+  static get POST_APP_IMPORT_URL () {
+    return POST_APP_IMPORT_URL
+  }
+
   // get requests
   static get GET_INSTALLED_APP_LIST_URL () {
     return GET_INSTALLED_APP_LIST_URL
@@ -182,6 +188,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_VERSION_URL () {
     return GET_VERSION_URL
+  }
+
+  static get GET_APP_EXPORT_URL () {
+    return GET_APP_EXPORT_URL
   }
 
   // put requests

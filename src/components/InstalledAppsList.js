@@ -223,26 +223,27 @@ export default function DeviceAppsList (props) {
           >
             Installed Apps
           </Typography>
+          <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
+            <div>
+              <Export disabled={!user?.user} sx={{ ml: 1 }}></Export>
+            </div>
+          </Tooltip>
+          <Tooltip title={user?.user ? 'Import apps from file' : 'Please log in to be able to import apps'}>
+            <div>
+              <Import disabled={!user?.user} sx={{ ml: 1 }}></Import>
+            </div>
+          </Tooltip>
           <Tooltip title={user?.user ? 'Install your own app on this device' : 'Please log in to be able to sideload apps'}>
             <div>
             <FileOpen
               data-testid="sideload-app-button"
+              sx={{ ml: 1 }}
               buttonText="Sideload App"
               buttonIcon={<DeveloperModeIcon/>}
               accept='.yml'
               onConfirm={handleOnSideloadConfirm}
               disabled={!user?.user}
             ></FileOpen>
-            </div>
-          </Tooltip>
-          <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
-            <div>
-              <Export disabled={!user?.user} sx={{ ml: 1 }}></Export>
-            </div>
-          </Tooltip>
-          <Tooltip title={user?.user ? 'Import apps' : 'Please log in to be able to import apps'}>
-            <div>
-              <Import disabled={!user?.user} sx={{ ml: 1 }}></Import>
             </div>
           </Tooltip>
         </Toolbar>

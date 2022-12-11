@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import LoadButton from './LoadButton'
 
 const FileOpen = (props) => {
-  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm, disabled, wholeFile } = props
+  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm, disabled, wholeFile, ...buttonProps } = props
   const inputFile = useRef(null)
 
   const handleFileOpen = e => {
@@ -61,6 +61,7 @@ const FileOpen = (props) => {
         type="file"
       />
       <LoadButton
+      {...buttonProps}
         startIcon={buttonIcon}
         text={buttonText}
         variant='outlined'

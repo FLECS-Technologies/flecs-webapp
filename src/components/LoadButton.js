@@ -11,7 +11,6 @@ const LoadButton = (props) => {
         <Box sx={{ position: 'relative' }}>
           <Button
             {...buttonProps}
-            sx={{ width: { width } }}
             data-testid="button"
             aria-label={label}
             startIcon={startIcon}

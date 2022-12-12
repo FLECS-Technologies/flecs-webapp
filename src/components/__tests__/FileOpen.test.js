@@ -39,4 +39,18 @@ describe('Test FileOpen', () => {
     expect(input.files.item(0)).toBe(file)
     expect(input.files).toHaveLength(1)
   })
+
+  test('upload whole file', async () => {
+    const user = userEvent.setup()
+    await act(async () => {
+      render(<FileOpen onConfirm = {onConfirm} wholeFile={true}/>)
+    })
+    const input = await waitFor(() => screen.getByTestId('fileInput'))
+
+    await user.upload(input, file)
+
+    expect(input.files[0]).toBe(file)
+    expect(input.files.item(0)).toBe(file)
+    expect(input.files).toHaveLength(1)
+  })
 })

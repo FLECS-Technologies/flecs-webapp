@@ -19,11 +19,11 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { postImportApps } from '../ImportAppsService'
+import { putImportApps } from '../ImportAppsService'
 
 jest.mock('axios')
 
-const mockPostImportApps = {
+const mockPutImportApps = {
   data: {
     additionalInfo: 'Ok'
   }
@@ -37,18 +37,18 @@ describe('ImportAppsService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull postImportApps', async () => {
-    axios.post.mockResolvedValueOnce(mockPostImportApps)
+  test('calls successfull putImportApps', async () => {
+    axios.put.mockResolvedValueOnce(mockPutImportApps)
     const file = new File([], 'flecs-export.tar')
-    const response = await waitFor(() => postImportApps(file))
+    const response = await waitFor(() => putImportApps(file))
 
-    expect(response.additionalInfo).toBe(mockPostImportApps.data.additionalInfo)
+    expect(response.additionalInfo).toBe(mockPutImportApps.data.additionalInfo)
   })
 
-  test('calls unsuccessfull postImportApps', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to import apps.'))
+  test('calls unsuccessfull putImportApps', async () => {
+    axios.put.mockRejectedValueOnce(new Error('Failed to import apps.'))
     await act(async () => {
-      expect(postImportApps()).rejects.toThrowError()
+      expect(putImportApps()).rejects.toThrowError()
     })
   })
 })

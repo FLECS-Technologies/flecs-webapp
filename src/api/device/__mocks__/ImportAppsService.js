@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-async function postImportApps () {
+async function putImportApps () {
   return new Promise((resolve, reject) => {
     resolve('Mock: Apps successfully imported')
   })
 }
 
-export { postImportApps }
+export { putImportApps }

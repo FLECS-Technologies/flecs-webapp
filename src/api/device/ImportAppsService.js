@@ -18,10 +18,10 @@
 import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 
-async function postImportApps (formData) {
+async function putImportApps (formData) {
   return axios
-    .post(
-      DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL,
+    .put(
+      DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.PUT_APP_IMPORT_URL,
       formData,
       {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -35,4 +35,4 @@ async function postImportApps (formData) {
     })
 }
 
-export { postImportApps }
+export { putImportApps }

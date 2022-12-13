@@ -27,12 +27,15 @@ const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
+const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
+
 const GET_INSTALLED_APP_LIST_URL = '/list'
 const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
-const GET_APP_EXPORT_URL = APP_ROUTE + '/export'
+const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
+const GET_EXPORTS_URL = APP_ROUTE + '/exports'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UNINSTALL_APP_URL = '/uninstall'
@@ -46,11 +49,12 @@ const POST_INSTANCE_LOG_URL = INSTANCE_ROUTE + '/log'
 const POST_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
-const POST_APP_IMPORT_URL = APP_ROUTE + '/import'
+const POST_APP_EXPORT_URL = APP_ROUTE + '/exports'
 
 const PUT_SIDELOAD_APP = '/sideload'
 const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCE_ROUTE + `/${instanceId}/update`
+const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -165,8 +169,8 @@ class DeviceAPIConfiguration extends Component {
     return POST_UPDATE_APP_URL
   }
 
-  static get POST_APP_IMPORT_URL () {
-    return POST_APP_IMPORT_URL
+  static get POST_APP_EXPORT_URL () {
+    return POST_APP_EXPORT_URL
   }
 
   // get requests
@@ -190,8 +194,12 @@ class DeviceAPIConfiguration extends Component {
     return GET_VERSION_URL
   }
 
-  static get GET_APP_EXPORT_URL () {
-    return GET_APP_EXPORT_URL
+  static get GET_DOWNLOAD_URL () {
+    return GET_DOWNLOAD_URL
+  }
+
+  static get GET_EXPORTS_URL () {
+    return GET_EXPORTS_URL
   }
 
   // put requests
@@ -205,6 +213,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get PUT_INSTANCE_UPDATE_URL () {
     return PUT_INSTANCE_UPDATE_URL
+  }
+
+  static get PUT_APP_IMPORT_URL () {
+    return PUT_APP_IMPORT_URL
   }
 }
 

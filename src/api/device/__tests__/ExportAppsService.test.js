@@ -19,35 +19,77 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { getExportApps } from '../ExportAppsService'
+import { downloadLatestExport, getDownloadExport, getExports, postExportApps } from '../ExportAppsService'
 
 jest.mock('axios')
 
-const mockPostImportApps = {
+const mockGetExports = {
   data: {
-    additionalInfo: 'Ok'
+    exports: ['latest', 'mid', 'oldest']
   }
 }
 
 describe('ExportAppsService', () => {
   beforeAll(() => {
+    axios.post = jest.fn()
     axios.get = jest.fn()
   })
 
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getExportApps', async () => {
-    axios.get.mockResolvedValueOnce(mockPostImportApps)
-    const response = await waitFor(() => getExportApps())
 
-    expect(response.additionalInfo).toBe(mockPostImportApps.data.additionalInfo)
+  test('calls successfull postExportApps', async () => {
+    axios.post.mockResolvedValueOnce('wonderful')
+    await waitFor(() => postExportApps())
+
+    // expect(response.additionalInfo).toBe(mockPostImportApps.data.additionalInfo)
   })
 
-  test('calls unsuccessfull getExportApps', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to export apps.'))
+  test('calls unsuccessfull postExportApps', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to export apps.'))
     await act(async () => {
-      expect(getExportApps()).rejects.toThrowError()
+      expect(postExportApps()).rejects.toThrowError()
+    })
+  })
+
+  test('calls successfull getExports', async () => {
+    axios.get.mockResolvedValueOnce(mockGetExports)
+    const response = await waitFor(() => getExports())
+
+    expect(response.exports).toBe(mockGetExports.data.exports)
+  })
+
+  test('calls unsuccessfull getExports', async () => {
+    axios.get.mockRejectedValueOnce(new Error('Failed to list all exports.'))
+    await act(async () => {
+      expect(getExports()).rejects.toThrowError()
+    })
+  })
+
+  test('calls successfull getDownloadExport', async () => {
+    axios.get.mockResolvedValueOnce(new Blob())
+    await waitFor(() => getDownloadExport('latest'))
+  })
+
+  test('calls unsuccessfull getDownloadExport', async () => {
+    axios.get.mockRejectedValueOnce(new Error('Failed to download an export.'))
+    await act(async () => {
+      expect(getDownloadExport()).rejects.toThrowError()
+    })
+  })
+
+  test('calls successfull downloadLatestExport', async () => {
+    axios.post.mockResolvedValueOnce('wonderful')
+    axios.get.mockResolvedValueOnce(mockGetExports)
+    axios.get.mockResolvedValueOnce(new Blob())
+    await waitFor(() => downloadLatestExport('latest'))
+  })
+
+  test('calls unsuccessfull downloadLatestExport', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to export apps.'))
+    await act(async () => {
+      expect(downloadLatestExport()).rejects.toThrowError()
     })
   })
 })

@@ -58,7 +58,7 @@ export default function Import (props) {
         data-testid="import-apps-button"
         buttonText="Import"
         buttonIcon={<DownloadIcon/>}
-        accept='.tar'
+        accept='.tar*'
         onConfirm={importApps}
         loading={importing}
         wholeFile={true}

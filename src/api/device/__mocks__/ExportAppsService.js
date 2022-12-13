@@ -16,11 +16,34 @@
  * limitations under the License.
  */
 
-async function getExportApps () {
+async function postExportApps (apps, instances) {
   return new Promise((resolve, reject) => {
-    const blob = new Blob()
+    (apps && instances)
+
+      ? resolve('successfully exported all apps and instances. You may download them now.')
+      : reject(new Error('apps and instances are missing'))
+  })
+}
+
+async function getExports () {
+  return new Promise((resolve, reject) => { resolve(['latestExport', 'midExport', 'oldestExport']) })
+}
+
+async function getDownloadExport (exportFile) {
+  const blob = new Blob()
+  return new Promise((resolve, reject) => {
+    (exportFile)
+
+      ? resolve(blob)
+      : reject(new Error('exportFile is missing'))
+  })
+}
+
+async function downloadLatestExport (apps, instances) {
+  const blob = new Blob()
+  return new Promise((resolve, reject) => {
     resolve(blob)
   })
 }
 
-export { getExportApps }
+export { postExportApps, getExports, getDownloadExport, downloadLatestExport }

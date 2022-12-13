@@ -18,9 +18,9 @@
 import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 
-async function getExportApps () {
+async function postExportApps (apps, instances) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.GET_APP_EXPORT_URL, { responseType: 'blob' })
+    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL, { apps, instances })
     .then(response => {
       return response.data
     })
@@ -29,4 +29,46 @@ async function getExportApps () {
     })
 }
 
-export { getExportApps }
+async function getExports () {
+  return axios
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
+    .then(response => {
+      return response.data
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+async function getDownloadExport (exportFile) {
+  return axios
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
+    .then(response => {
+      return response.data
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+async function downloadLatestExport (apps, instances) {
+  // 1. export apps & instances
+  return postExportApps(apps, instances)
+
+  // 2. get all exports
+    .then(response => {
+      return getExports()
+    })
+  // 3. download latest export
+    .then(response => {
+    // 3.1 get export list from response
+      const lastExport = response?.exports?.shift()
+      // 3.2 call download endpoint with the latest export file
+      return getDownloadExport(lastExport)
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+export { postExportApps, getExports, getDownloadExport, downloadLatestExport }

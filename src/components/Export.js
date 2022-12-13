@@ -18,11 +18,13 @@
 import React from 'react'
 import { LoadingButton } from '@mui/lab'
 import UploadIcon from '@mui/icons-material/Upload'
-import { getExportApps } from '../api/device/ExportAppsService'
+import { downloadLatestExport } from '../api/device/ExportAppsService'
 import ActionSnackbar from './ActionSnackbar'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
 export default function Export (props) {
   const { ...buttonProps } = props
+  const { appList } = React.useContext(ReferenceDataContext)
   const [exporting, setExporting] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarState, setSnackbarState] = React.useState({
@@ -32,7 +34,10 @@ export default function Export (props) {
   const exportApps = async (props) => {
     setExporting(true)
 
-    getExportApps()
+    const apps = appList?.map(app => { return { app: app.app, version: app.version } })
+    const instances = appList?.map(app => { return app?.instances }).flat()
+
+    downloadLatestExport(apps, instances)
       .then((response) => {
         /*
             alternative:

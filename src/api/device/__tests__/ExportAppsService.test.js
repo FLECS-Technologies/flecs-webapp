@@ -42,8 +42,6 @@ describe('ExportAppsService', () => {
   test('calls successfull postExportApps', async () => {
     axios.post.mockResolvedValueOnce('wonderful')
     await waitFor(() => postExportApps())
-
-    // expect(response.additionalInfo).toBe(mockPostImportApps.data.additionalInfo)
   })
 
   test('calls unsuccessfull postExportApps', async () => {

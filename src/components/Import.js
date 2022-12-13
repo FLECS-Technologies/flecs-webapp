@@ -18,7 +18,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DownloadIcon from '@mui/icons-material/Download'
-import { postImportApps } from '../api/device/ImportAppsService'
+import { putImportApps } from '../api/device/ImportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import FileOpen from './FileOpen'
 
@@ -36,7 +36,7 @@ export default function Import (props) {
     const formData = new FormData()
     formData.append('file', props)
 
-    postImportApps(formData)
+    putImportApps(formData)
       .then(() => {
 
       })

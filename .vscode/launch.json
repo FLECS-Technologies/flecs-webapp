@@ -13,6 +13,14 @@
             "runtimeArgs": ["--disable-web-security"]
         },
         {
+            "type": "firefox",
+            "request": "launch",
+            "name": "Launch Firefox against localhost",
+            "url": "http://localhost:3000/ui/",
+            "webRoot": "${workspaceFolder}",
+            "firefoxExecutable": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+        },
+        {
             "name": "Debug tests single run",
             "type": "node",
             "request": "launch",

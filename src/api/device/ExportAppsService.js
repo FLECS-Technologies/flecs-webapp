@@ -17,6 +17,7 @@
  */
 import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI'
 
 async function postExportApps (apps, instances) {
   return axios
@@ -53,7 +54,11 @@ async function getDownloadExport (exportFile) {
 
 async function downloadLatestExport (apps, instances) {
   // 1. export apps & instances
-  return postExportApps(apps, instances)
+  // return postExportApps(apps, instances)
+
+  // alternative with fetch instead of axios
+  const exportAPI = new ExportApps()
+  return exportAPI.postExportApps(apps, instances)
 
   // 2. get all exports
     .then(response => {
@@ -69,6 +74,21 @@ async function downloadLatestExport (apps, instances) {
     .catch(error => {
       return Promise.reject(error)
     })
+}
+
+class ExportApps extends BaseAPI {
+  async postExportApps (apps, instances) {
+    // POST request using fetch with error handling
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apps, instances })
+    }
+
+    try {
+      await this.callAPI('/v2' + DeviceAPIConfiguration.POST_APP_EXPORT_URL, requestOptions)
+    } catch (error) { }
+  }
 }
 
 export { postExportApps, getExports, getDownloadExport, downloadLatestExport }

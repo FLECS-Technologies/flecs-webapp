@@ -190,7 +190,7 @@ export default function DeviceAppsList (props) {
 
   if (props.appData) {
     // filter on only installed apps
-    tmpAppList = props.appData.filter(app => app.status === 'installed')
+    tmpAppList = props.appData.filter(app => app?.status === 'installed')
     numberOfInstalledApps = tmpAppList.length
     tmpAppList = stableSort(tmpAppList, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

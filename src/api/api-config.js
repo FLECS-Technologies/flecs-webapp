@@ -81,7 +81,7 @@ class DeviceAPIConfiguration extends Component {
   static get TARGET () {
     let target = ''
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-      target = process.env.REACT_APP_DEV_VM_IP
+      target = process.env.REACT_APP_DEV_CORE_URL
     }
     return target
   }

@@ -61,7 +61,7 @@ const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
 const MP_CART_ROUTE = '/cart?cocart-load-cart='
 const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
-const MP_PROXY_DEV = 'http://localhost:8000'
+const MP_PROXY_DEV = 'http://localhost:8001'
 const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8443'
 const MP_PROXY_PRODUCTION = 'https://marketplace.flecs.tech'
 
@@ -81,7 +81,7 @@ class DeviceAPIConfiguration extends Component {
   static get TARGET () {
     let target = ''
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-      target = process.env.REACT_APP_DEV_VM_IP
+      target = process.env.REACT_APP_DEV_CORE_URL
     }
     return target
   }

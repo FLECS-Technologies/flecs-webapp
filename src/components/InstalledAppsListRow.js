@@ -143,7 +143,7 @@ export default function Row (props) {
     let editorURL = 'http://'
 
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-      editorURL = process.env.REACT_APP_DEV_VM_IP
+      editorURL = process.env.REACT_APP_DEV_CORE_URL
     } else {
       editorURL = editorURL + window.location.hostname
     }

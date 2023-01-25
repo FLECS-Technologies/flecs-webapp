@@ -22,7 +22,7 @@ import PostInstallAppAPI from './InstallAppAPI'
 import PostCreateAppInstanceAPI from './CreateAppInstanceAPI'
 import PostStartAppInstanceAPI from './StartAppInstanceAPI'
 import PostStopAppInstanceAPI from './StopAppInstanceAPI'
-import PostUninstallAppAPI from './UninstallAppAPI'
+import DeleteUninstallAppAPI from './UninstallAppAPI'
 import PostDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
 import PutSideloadAppAPI from './SideloadAppAPI'
 
@@ -81,12 +81,13 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
-        const startInstanceAPI = new PostStartAppInstanceAPI()
+        // const startInstanceAPI = new PostStartAppInstanceAPI()
 
         await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
         if (installAPI.state.success) {
           this.app.status = 'installed'
           this.app.version = version || this.app.version
+          this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
         } else {
           this.lastAPICallSuccessfull = false
           if (installAPI.state.errorMessage !== null) {
@@ -95,19 +96,20 @@ export default class AppAPI extends React.Component {
           throw Error('failed to install app.')
         }
 
-        await this.createInstance(this.createInstanceName())
-        if (!this.lastAPICallSuccessfull) {
-          throw Error('failed to create instance after installing the app.')
-        }
+        // TODO: uncomment the lines below when the instances API has been implemented
+        // await this.createInstance(this.createInstanceName())
+        // if (!this.lastAPICallSuccessfull) {
+        //   throw Error('failed to create instance after installing the app.')
+        // }
 
-        await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
-        if (this.lastAPICallSuccessfull) {
-          this.app.instances[this.app.instances.length - 1].status = 'running'
-          // pop this instance, because it'll be automatically reloaded from the device. Leaving it in the list leads to double entries in the instance list
-          this.app.instances.pop()
-        } else {
-          throw Error('failed to start instance after installing the app.')
-        }
+        // await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
+        // if (this.lastAPICallSuccessfull) {
+        //   this.app.instances[this.app.instances.length - 1].status = 'running'
+        //   // pop this instance, because it'll be automatically reloaded from the device. Leaving it in the list leads to double entries in the instance list
+        //   this.app.instances.pop()
+        // } else {
+        //   throw Error('failed to start instance after installing the app.')
+        // }
       }
     } catch (error) {
       console.error(error)
@@ -117,7 +119,7 @@ export default class AppAPI extends React.Component {
   async uninstall () {
     try {
       if (this.app) {
-        const uninstallAPI = new PostUninstallAppAPI()
+        const uninstallAPI = new DeleteUninstallAppAPI()
         await uninstallAPI.uninstallApp(this.app.app, this.app.version)
         this.lastAPICallSuccessfull = uninstallAPI.state.success
         if (this.lastAPICallSuccessfull) {
@@ -298,6 +300,7 @@ export default class AppAPI extends React.Component {
   static get propTypes () {
     return {
       app: PropTypes.string,
+      app_key: PropTypes.object,
       avatar: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,

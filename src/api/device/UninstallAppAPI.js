@@ -21,15 +21,13 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 export default class PostUninstallAppAPI extends BaseAPI {
   async uninstallApp (app, version) {
-    // POST request using fetch with error handling
+    // DELETE request using fetch with error handling
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version })
+      method: 'DELETE'
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_UNINSTALL_APP_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL + '/' + app + '?version=' + version, requestOptions)
     } catch (error) { }
   }
 }

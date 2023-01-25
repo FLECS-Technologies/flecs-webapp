@@ -38,7 +38,7 @@ export default function InstallApp (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.app === props.app && obj.version === props.version)
+        return (obj.app_key.name === props.app && obj.app_key.version === props.version)
       })
 
       return tmpApp

@@ -40,7 +40,7 @@ import LoadIconButton from './LoadIconButton'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/device/AppAPI'
-import AppInstanceRow from './AppInstanceRow'
+// import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import AppLinksMenu from './AppLinksMenu'
@@ -71,7 +71,7 @@ export default function Row (props) {
   }
 
   // set defaults
-  const appId = props.row.app.split('.')
+  const appId = props.row.app_key.name.split('.')
   if (!('title' in row)) {
     row.title = appId[2]
   }
@@ -89,6 +89,8 @@ export default function Row (props) {
     setUninstalling(true)
     let snackbarText
     let alertSeverity
+    props.row.app = props.row.app_key.name
+    props.row.version = props.row.app_key.version
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
 
@@ -192,7 +194,7 @@ export default function Row (props) {
                   data-testid="start-new-instance-icon-button"
                   icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
                   onClick={() => startNewInstance(props)}
-                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
+                  // disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </span>
@@ -236,7 +238,7 @@ export default function Row (props) {
                   sx={{ mr: 1 }}
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
-                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
+                  // disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </Toolbar>
@@ -250,14 +252,14 @@ export default function Row (props) {
                   </TableRow>
                 </TableHead>
                 <TableBody data-testid="instances-table-body">
-                  {row.instances.map((appInstance) => (
+                  {/* {row.instances.map((appInstance) => (
                     <AppInstanceRow
                       key={appInstance.instanceId}
                       app={row}
                       appInstance={appInstance}
                       loadAppReferenceData={loadReferenceData}
                     />
-                  ))}
+                  ))} */}
                 </TableBody>
               </Table>
             </Box>

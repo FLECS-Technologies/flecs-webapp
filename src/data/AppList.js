@@ -64,15 +64,16 @@ function AppList (props) {
       mergedList = deviceAPI.appList
 
       mergedList.forEach((app) => {
-        const mpApp = findApp(app.app, marketplaceAppList)
+        const mpApp = findApp(app.app_key, marketplaceAppList)
         if (mpApp) {
           app.avatar = getAppIcon(mpApp)
           app.title = mpApp?.name
+          app.name = mpApp?.name
           app.author = getAuthor(mpApp)
           app.relatedLinks = getCustomLinks(mpApp)
         }
         if (typeof app === 'object' && app !== null) {
-          app.installedVersions = getInstalledVersions(mergedList, app.app)
+          app.installedVersions = getInstalledVersions(mergedList, app.app_key)
           app.installedVersions.sort((a, b) => collator.compare(a, b))
           app.installedVersions.reverse()
         }
@@ -98,7 +99,7 @@ AppList.propTypes = {
 function findApp (app, list) {
   let result
   list.forEach((product) => {
-    if (app === getReverseDomainName(product)) {
+    if (app.name === getReverseDomainName(product)) {
       result = product
     }
   })
@@ -109,9 +110,9 @@ function findApp (app, list) {
 function getInstalledVersions (apps, app) {
   let result
   if (apps && app) {
-    const installedApps = apps.filter(obj => obj.app === app)
+    const installedApps = apps.filter(obj => (obj.app_key.name === app.name && obj.app_key.version === app.version))
     if (installedApps) {
-      result = installedApps.map(obj => obj.version)
+      result = installedApps.map(obj => obj.app_key.version)
     }
   }
   return result

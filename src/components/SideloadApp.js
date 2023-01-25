@@ -35,7 +35,7 @@ export default function SideloadApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
-  const { fetchJobs } = React.useContext(JobsContext)
+  const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -54,12 +54,12 @@ export default function SideloadApp (props) {
     setInstallationMessage('Installing...')
     const appAPI = new AppAPI(yaml)
     appAPI.setAppData(loadReferenceData(yaml))
-    await appAPI.sideloadApp(yaml, tickets[0]?.license_key)
+    await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key)
     fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
-      setLicensedApp(tickets[0]?.license_key, yaml?.title)
+      setLicensedApp(tickets[currentInstallations()]?.license_key, yaml?.title)
         .then()
         .catch()
         .finally(() => {

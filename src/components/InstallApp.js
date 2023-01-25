@@ -15,7 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Button, CircularProgress, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
+import CircularStatic from './CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
@@ -33,6 +34,7 @@ export default function InstallApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const [completion, setCompletion] = React.useState(0)
   const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
@@ -81,6 +83,19 @@ export default function InstallApp (props) {
     executedRef.current = true
   }, [retry])
 
+  React.useEffect(() => {
+    const timer = setInterval(
+      () =>
+        installationMessage === 'Installing...'
+          ? setCompletion(completion + 1)
+          : null,
+      200
+    )
+    return () => {
+      clearInterval(timer)
+    }
+  })
+
   const onRetryButtonClick = (event) => {
     executedRef.current = false
     setRetry(true)
@@ -90,7 +105,7 @@ export default function InstallApp (props) {
     <div>
       <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          {installing && <CircularProgress></CircularProgress>}
+        {installing && CircularStatic(completion)}
           {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>

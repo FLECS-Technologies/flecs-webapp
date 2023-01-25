@@ -36,7 +36,7 @@ export default function InstallApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
-  const { fetchJobs } = React.useContext(JobsContext)
+  const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
   const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
@@ -56,12 +56,12 @@ export default function InstallApp (props) {
     setInstallationMessage('Installing...')
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    await appAPI.installFromMarketplace(version, tickets[0]?.license_key)
+    await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key)
     fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
-      setLicensedApp(tickets[0]?.license_key, app.title)
+      setLicensedApp(tickets[currentInstallations()]?.license_key, app.title)
         .then()
         .catch()
         .finally(() => {

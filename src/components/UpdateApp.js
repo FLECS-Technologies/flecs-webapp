@@ -35,7 +35,7 @@ export default function UpdateApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
-  const { fetchJobs } = React.useContext(JobsContext)
+  const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
 
   const updateApp = React.useCallback(async (app, from, to, tickets) => {
     const installedApp = appList?.filter(obj => { return (obj.app === app.app && obj.version === from) }) || []
@@ -46,10 +46,10 @@ export default function UpdateApp (props) {
     setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
 
     // call update endpoint
-    UpdateAppService(app?.app, from, to, tickets[0]?.license_key, installedApp[0]?.instances)
+    UpdateAppService(app?.app, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances)
       .then(() => {
         // trigger a reload of all installed apps
-        setLicensedApp(tickets[0]?.license_key, app?.title)
+        setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
           .then()
           .catch()
           .finally(() => {

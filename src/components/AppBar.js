@@ -27,6 +27,14 @@ import CssBaseline from '@mui/material/CssBaseline'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
+import Badge from '@mui/material/Badge'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
+import AssignmentLateIcon from '@mui/icons-material/AssignmentLate'
+import Popover from '@mui/material/Popover'
+import Button from '@mui/material/Button'
+import ClearIcon from '@mui/icons-material/Clear'
+import ClearAllIcon from '@mui/icons-material/ClearAll'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
 import Logo from '../whitelabeling/Logo'
@@ -36,6 +44,7 @@ import AuthService from '../api/marketplace/AuthService'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from 'react-router-dom'
+import { JobsContext } from '../data/JobsContext'
 
 function ElevationScroll (props) {
   const { children, window } = props
@@ -58,26 +67,35 @@ ElevationScroll.propTypes = {
 }
 
 export default function ElevateAppBar (props) {
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorElMenu, setAnchorElMenu] = React.useState(null)
+  const [anchorElPopover, setAnchorElPopover] = React.useState(null)
   const user = useAuth()
   const navigate = useNavigate()
+  const { jobs, hiddenJobs, hideJobs } = React.useContext(JobsContext)
+  const open = Boolean(anchorElPopover)
+  const id = open ? 'simple-popover' : undefined
 
-  React.useEffect(() => {
-  }, [user])
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget)
+  const handleClickPopover = (event) => {
+    setAnchorElPopover(event.currentTarget)
   }
 
-  const handleClose = () => {
-    setAnchorEl(null)
+  const handleClosePopover = () => {
+    setAnchorElPopover(null)
+  }
+
+  const handleMenu = (event) => {
+    setAnchorElMenu(event.currentTarget)
+  }
+
+  const handleCloseMenu = () => {
+    setAnchorElMenu(null)
   }
 
   const handleSignout = () => {
     AuthService.logout()
     user?.setUser(null)
 
-    setAnchorEl(null)
+    setAnchorElMenu(null)
   }
 
   const handleSignIn = () => {
@@ -97,6 +115,17 @@ export default function ElevateAppBar (props) {
     }
   }
 
+  const filteredJobs = jobs.filter(j => !hiddenJobs.includes(j.id))
+  const filteredJobsNotCompleted = filteredJobs.filter(j => (j.status !== 'successful' && j.status !== 'failed' && j.status !== 'cancelled'))
+
+  const cleanAllFilteredJobsCompleted = () => {
+    const jobsToBeRemoved = filteredJobs.filter(j => (j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled')).map(j => j.id)
+    hideJobs(jobsToBeRemoved)
+  }
+
+  React.useEffect(() => {
+  }, [user])
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -107,9 +136,42 @@ export default function ElevateAppBar (props) {
         >
           <Toolbar >
             <Logo></Logo>
+
+            <Button sx={{ display: filteredJobs.length > 0 ? 'block' : 'none', minWidth: '24px' }} aria-describedby={id} variant="text" onClick={handleClickPopover}>
+              <Badge badgeContent={filteredJobsNotCompleted.length > 0 ? filteredJobsNotCompleted.length : null } sx={{ '& .MuiBadge-badge': { color: 'white', backgroundColor: '#868686' } }} >
+                  {filteredJobs?.filter(j => j.status !== 'successful').length > 0
+                    ? (filteredJobs?.filter(j => (j.status === 'failed' || j.status === 'cancelled')).length > 0
+                        ? <AssignmentLateIcon color='action' /> // at least one job failed or cancelled
+                        : <AssignmentIcon color='action' />) // still running some jobs
+                    : <AssignmentTurnedInIcon color='action' />}
+                </Badge>
+            </Button>
+
+            <Popover
+              id={id}
+              open={Boolean(open && filteredJobs.length)} // if there are no more jobs to show, then close it
+              anchorEl={anchorElPopover}
+              onClose={handleClosePopover}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+            >
+              <ClearAllIcon onClick={() => cleanAllFilteredJobsCompleted()}></ClearAllIcon>Clear All
+              <Typography component={'div'} sx={{ p: 2 }}>
+                {filteredJobs.map(j =>
+                  (<div key={j.id}>
+                    <p>{j.id}: {j.description}: {j.status}{j.status !== 'running' ? <ClearIcon fontSize='small' onClick={() => hideJobs(j.id)}></ClearIcon> : null}</p>
+                  </div>)
+                )
+                }
+              </Typography>
+            </Popover>
+
             <IconButton aria-label='change-theme-button' sx={{ ml: 1, mr: 1 }} onClick={handleThemeChange}>
               {darkMode ? <LightModeIcon aria-label='LightModeIcon' /> : <DarkModeIcon aria-label='DarkModeIcon'/>}
             </IconButton>
+
               <div>
                 <IconButton
                   aria-label='avatar-button'
@@ -125,10 +187,10 @@ export default function ElevateAppBar (props) {
                 <Menu
                   id="user-menu"
                   aria-label="user-menu"
-                  anchorEl={anchorEl}
+                  anchorEl={anchorElMenu}
                   keepMounted
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
+                  open={Boolean(anchorElMenu)}
+                  onClose={handleCloseMenu}
                 >
                   <MenuItem divider={true} style={{ pointerEvents: 'none' }}>
                     <Stack>
@@ -138,7 +200,7 @@ export default function ElevateAppBar (props) {
                       </Typography>
                     </Stack>
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
                   <MenuItem onClick={handleSignout}>Sign out</MenuItem>
                 </Menu>
               </div>

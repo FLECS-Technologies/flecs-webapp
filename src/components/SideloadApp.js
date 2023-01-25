@@ -24,6 +24,7 @@ import React from 'react'
 import AppAPI from '../api/device/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/marketplace/LicenseService'
+import { JobsContext } from '../data/JobsContext'
 
 export default function SideloadApp (props) {
   const { install, yaml, tickets } = (props)
@@ -34,6 +35,7 @@ export default function SideloadApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const { fetchJobs } = React.useContext(JobsContext)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -53,6 +55,7 @@ export default function SideloadApp (props) {
     const appAPI = new AppAPI(yaml)
     appAPI.setAppData(loadReferenceData(yaml))
     await appAPI.sideloadApp(yaml, tickets[0]?.license_key)
+    fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps

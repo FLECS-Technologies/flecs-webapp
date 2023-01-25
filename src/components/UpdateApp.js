@@ -24,6 +24,7 @@ import React from 'react'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { UpdateAppService } from '../api/device/UpdateAppService'
+import { JobsContext } from '../data/JobsContext'
 
 export default function UpdateApp (props) {
   const { update, app, from, to, tickets } = (props)
@@ -34,6 +35,7 @@ export default function UpdateApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const { fetchJobs } = React.useContext(JobsContext)
 
   const updateApp = React.useCallback(async (app, from, to, tickets) => {
     const installedApp = appList?.filter(obj => { return (obj.app === app.app && obj.version === from) }) || []
@@ -65,6 +67,7 @@ export default function UpdateApp (props) {
         setUpdating(false)
       }
       )
+    fetchJobs()
   })
 
   React.useEffect(() => {

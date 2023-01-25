@@ -21,7 +21,7 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 export default class GetInstalledAppsListAPI extends BaseAPI {
   async getAppList () {
-    // POST request using fetch with error handling
+    // GET request using fetch with error handling
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }

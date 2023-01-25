@@ -48,7 +48,7 @@ export default class BaseAPI extends React.Component {
 
       }
 
-      if (response.ok && response.status === 200) {
+      if (response.ok && (response.status === 200 || response.status === 202)) {
         this.state.responseData = data
         this.state.success = true
       } else {

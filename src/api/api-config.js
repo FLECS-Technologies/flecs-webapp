@@ -18,18 +18,18 @@
 
 import { Component } from 'react'
 
-const DEVICE_ROUTE = '../api'
-const DEVICE_ROUTE_TEST = '/api'
+const DEVICE_ROUTE = '../api/v2'
+const DEVICE_ROUTE_TEST = '/api/v2'
 const DEVICE_V2_ROUTE = '../api/v2'
 const DEVICE_V2_ROUTE_TEST = '/api/v2'
-const APP_ROUTE = '/app'
+const APP_ROUTE = '/apps'
 const INSTANCE_ROUTE = '/instance'
 const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
 
-const GET_INSTALLED_APP_LIST_URL = '/list'
+const GET_INSTALLED_APP_LIST_URL = ''
 const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
@@ -38,7 +38,6 @@ const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
 const GET_EXPORTS_URL = APP_ROUTE + '/exports'
 
 const POST_INSTALL_APP_URL = '/install'
-const POST_UNINSTALL_APP_URL = '/uninstall'
 const POST_UPDATE_APP_URL = DEVICE_V2_ROUTE + APP_ROUTE + '/update'
 const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
@@ -55,6 +54,8 @@ const PUT_SIDELOAD_APP = '/sideload'
 const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCE_ROUTE + `/${instanceId}/update`
 const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
+
+const DELETE_UNINSTALL_APP_URL = ''
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -123,10 +124,6 @@ class DeviceAPIConfiguration extends Component {
   // post requests
   static get POST_INSTALL_APP_URL () {
     return POST_INSTALL_APP_URL
-  }
-
-  static get POST_UNINSTALL_APP_URL () {
-    return POST_UNINSTALL_APP_URL
   }
 
   static get POST_START_INSTANCE_URL () {
@@ -217,6 +214,11 @@ class DeviceAPIConfiguration extends Component {
 
   static get PUT_APP_IMPORT_URL () {
     return PUT_APP_IMPORT_URL
+  }
+
+  // delete requests
+  static get DELETE_UNINSTALL_APP_URL () {
+    return DELETE_UNINSTALL_APP_URL
   }
 }
 

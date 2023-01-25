@@ -39,6 +39,7 @@ import { createVersion, createVersions, getLatestVersion, VersionSelector } from
 import AppRating from './AppRating'
 import { useSystemContext } from '../data/SystemProvider'
 import { isBlacklisted } from '../api/marketplace/ProductService'
+import { JobsContext } from '../data/JobsContext'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -64,6 +65,7 @@ export default function OutlinedCard (props) {
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
   const [installAppOpen, setInstallAppOpen] = useState(false)
   const [updateAppOpen, setUpdateAppOpen] = useState(false)
+  const { fetchJobs } = useContext(JobsContext)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -81,6 +83,7 @@ export default function OutlinedCard (props) {
     appAPI.setAppData(loadReferenceData(props))
     appAPI.setVersion(selectedVersion.version)
     await appAPI.uninstall()
+    fetchJobs()
 
     const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
     const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'

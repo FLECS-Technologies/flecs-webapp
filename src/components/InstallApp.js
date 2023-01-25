@@ -25,6 +25,7 @@ import React from 'react'
 import AppAPI from '../api/device/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/marketplace/LicenseService'
+import { JobsContext } from '../data/JobsContext'
 
 export default function InstallApp (props) {
   const { install, app, version, tickets } = (props)
@@ -35,6 +36,7 @@ export default function InstallApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
+  const { fetchJobs } = React.useContext(JobsContext)
   const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
@@ -55,6 +57,7 @@ export default function InstallApp (props) {
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
     await appAPI.installFromMarketplace(version, tickets[0]?.license_key)
+    fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps

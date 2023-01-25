@@ -46,6 +46,7 @@ import ConfirmDialog from './ConfirmDialog'
 import AppLinksMenu from './AppLinksMenu'
 import useStateWithLocalStorage from './LocalStorage'
 import { LoadingButton } from '@mui/lab'
+import { JobsContext } from '../data/JobsContext'
 
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -61,6 +62,7 @@ export default function Row (props) {
   })
   const { alertSeverity, snackbarText, snackbarErrorText } = snackbarState
   const [newInstanceStarting, setNewInstanceStarting] = useState(false)
+  const { fetchJobs } = useContext(JobsContext)
 
   function loadReferenceData (props) {
     const tmpApp = appList?.find(obj => {
@@ -93,6 +95,7 @@ export default function Row (props) {
     props.row.version = props.row.app_key.version
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
+    fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       if (setUpdateAppList) {

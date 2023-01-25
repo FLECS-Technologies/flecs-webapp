@@ -142,7 +142,7 @@ export default function SelectTicket (props) {
             </Card>
         </Grid>}
         { // Card which is shown when tickets are available and the user can continue with the installation
-        (tickets.length > 0) && <Grid item>
+        (tickets.length > 0) && !loadingTickets && <Grid item>
             <Card sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 230, maxHeight: 230 }}>
               <CardContent sx={{ p: 0, minHeight: 230, maxHeight: 230 }}>
                   <CardMedia sx={{ m: 2, display: 'flex', justifyContent: 'center' }}>

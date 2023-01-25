@@ -25,11 +25,13 @@ import { AuthProvider } from './components/AuthProvider'
 import { UIRoutes } from './pages/ui-routes'
 import { SystemContextProvider } from './data/SystemProvider'
 import { SystemData } from './data/SystemData'
+import { JobsContextProvider } from './data/JobsContext'
 
 export default function App () {
   return (
     <DarkModeState>
       <AuthProvider>
+      <JobsContextProvider>
         <Frame>
           <SystemContextProvider>
             <SystemData>
@@ -41,6 +43,7 @@ export default function App () {
             </SystemData>
           </SystemContextProvider>
         </Frame>
+        </JobsContextProvider>
       </AuthProvider>
     </DarkModeState>
   )

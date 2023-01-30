@@ -19,7 +19,7 @@
 import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
-export default class PostUninstallAppAPI extends BaseAPI {
+export default class DeleteUninstallAppAPI extends BaseAPI {
   async uninstallApp (app, version) {
     // DELETE request using fetch with error handling
     const requestOptions = {

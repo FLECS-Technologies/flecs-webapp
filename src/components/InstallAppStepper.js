@@ -27,14 +27,16 @@ import SelectTicket from './SelectTicket'
 import InstallApp from './InstallApp'
 import SideloadApp from './SideloadApp'
 import UpdateApp from './UpdateApp'
+import { JobsContext } from '../data/JobsContext'
 
-const steps = ['Select ticket', 'Install app']
+const steps = ['Checking tickets', 'Getting ready', 'Installing', 'All done']
 
 export default function InstallAppStepper (props) {
   const { app, version, sideload, update } = props
   const [activeStep, setActiveStep] = React.useState(0)
   const [skipped, setSkipped] = React.useState(new Set())
   const [tickets, setTickets] = React.useState([])
+  const { jobs } = React.useContext(JobsContext)
 
   const isStepOptional = (step) => {
     return false // step === 0
@@ -55,9 +57,9 @@ export default function InstallAppStepper (props) {
     setSkipped(newSkipped)
   }
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1)
-  }
+  // const handleBack = () => {
+  //   setActiveStep((prevActiveStep) => prevActiveStep - 1)
+  // }
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
@@ -73,6 +75,27 @@ export default function InstallAppStepper (props) {
       return newSkipped
     })
   }
+
+  const getLatestJobStatus = () => {
+    const status = jobs[jobs.length - 1].status
+    if (status === 'pending') return 1
+    else if (status === 'running') return 2
+    else if (status === 'successful') return 4
+    else if (status === 'failed') return -1
+  }
+
+  React.useEffect(() => {
+    const timer = setInterval(
+      () =>
+        (activeStep > 0 && activeStep !== getLatestJobStatus())
+          ? setActiveStep(getLatestJobStatus)
+          : null,
+      500
+    )
+    return () => {
+      clearInterval(timer)
+    }
+  })
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -97,11 +120,17 @@ export default function InstallAppStepper (props) {
       </Stepper>
         <React.Fragment>
           {(activeStep === 0) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
-          {(activeStep === 1 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)}/>}
-          {(activeStep === 1 && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(activeStep === 1)}/>}
+          {(activeStep === 1 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 2 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 4 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === -1 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 1 && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 2 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 4 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === -1 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
           {(activeStep === 1 && update) && <UpdateApp app={app} from={app.version} to={version} tickets={tickets} update={(activeStep === 1)}/>}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Button
+            {/* <Button
               data-testid='back-button'
               color="inherit"
               disabled={activeStep === 0}
@@ -109,16 +138,19 @@ export default function InstallAppStepper (props) {
               sx={{ mr: 1 }}
             >
               Back
-            </Button>
+            </Button> */}
             <Box sx={{ flex: '1 1 auto' }} />
             {isStepOptional(activeStep) && (
               <Button data-testid='skip-button' color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
                 Skip
               </Button>
             )}
-            <Button data-testid='next-button' variant='contained' onClick={handleNext} disabled={(activeStep === steps.length - 1) || (tickets.length === 0)} >
-              Next
-            </Button>
+            {activeStep === 0
+              ? <Button data-testid='next-button' variant='contained' onClick={handleNext} disabled={(activeStep === steps.length - 1) || (tickets.length === 0)} >
+                  Next
+                </Button>
+              : null
+            }
           </Box>
         </React.Fragment>
     </Box>

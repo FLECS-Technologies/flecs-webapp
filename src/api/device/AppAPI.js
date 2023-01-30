@@ -24,7 +24,7 @@ import PostStartAppInstanceAPI from './StartAppInstanceAPI'
 import PostStopAppInstanceAPI from './StopAppInstanceAPI'
 import DeleteUninstallAppAPI from './UninstallAppAPI'
 import PostDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
-import PutSideloadAppAPI from './SideloadAppAPI'
+import PostSideloadAppAPI from './SideloadAppAPI'
 
 export default class AppAPI extends React.Component {
   constructor (props) {
@@ -253,10 +253,11 @@ export default class AppAPI extends React.Component {
   async sideloadApp (appYaml, licenseKey) {
     try {
       // sideload app - this request takes the .yml file and tries to install the app
-      const sideload = new PutSideloadAppAPI()
+      const sideload = new PostSideloadAppAPI()
       await sideload.sideloadApp(appYaml, licenseKey)
       if (sideload.state.success) {
         this.app.status = 'installed'
+        this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
       } else {
         this.lastAPICallSuccessfull = false
         if (sideload.state.errorMessage !== null) {
@@ -265,19 +266,20 @@ export default class AppAPI extends React.Component {
         throw Error('failed to install app.')
       }
 
-      // create new instance
-      await this.createInstance(this.createInstanceName())
-      if (!this.lastAPICallSuccessfull) {
-        throw Error('failed to create instance after installing the app.')
-      }
+      // TODO: uncomment the lines below when the instances API has been implemented
+      // // create new instance
+      // await this.createInstance(this.createInstanceName())
+      // if (!this.lastAPICallSuccessfull) {
+      //   throw Error('failed to create instance after installing the app.')
+      // }
 
-      // start new instance
-      await this.startInstance(this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
-      if (this.lastAPICallSuccessfull) {
-        this.app.instances[this.app.instances.length - 1].status = 'running'
-      } else {
-        throw Error('failed to start instance after installing the app.')
-      }
+      // // start new instance
+      // await this.startInstance(this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
+      // if (this.lastAPICallSuccessfull) {
+      //   this.app.instances[this.app.instances.length - 1].status = 'running'
+      // } else {
+      //   throw Error('failed to start instance after installing the app.')
+      // }
     } catch (error) {
       console.error(error)
     }

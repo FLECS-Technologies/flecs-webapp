@@ -28,7 +28,7 @@ import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 
 export default function InstallApp (props) {
-  const { install, app, version, tickets } = (props)
+  const { install, app, version, tickets, activeStep } = (props)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -37,6 +37,7 @@ export default function InstallApp (props) {
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
   const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
+  const [startProgress, setStartProgress] = React.useState(false)
   const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
@@ -53,11 +54,12 @@ export default function InstallApp (props) {
     setInstalling(true)
     setSuccess(false)
     setError(false)
-    setInstallationMessage('Installing...')
+    // setInstallationMessage('Installing...')
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
     await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key)
     fetchJobs()
+    // setStartProgress(true)
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
@@ -67,7 +69,7 @@ export default function InstallApp (props) {
         .finally(() => {
           setUpdateAppList(true)
           setSuccess(true)
-          setInstallationMessage('Congratulations! ' + app.title + ' was successfully installed!')
+          // setInstallationMessage('Congratulations! ' + app.title + ' was successfully installed!')
         })
     } else {
       setSuccess(false)
@@ -83,13 +85,24 @@ export default function InstallApp (props) {
       setRetry(false)
       installApp(app)
     }
+    if (activeStep === 1) {
+      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
+    } else if (activeStep === 2) {
+      setStartProgress(true)
+      setInstallationMessage('Installing ' + app.title + '.')
+    } else if (activeStep === 4) {
+      setStartProgress(false)
+      setInstallationMessage(app.title + ' successfully installed.')
+    } else if (activeStep === -1) {
+      setInstallationMessage('Error during the installation of ' + app.title + '.')
+    }
     executedRef.current = true
   }, [retry])
 
   React.useEffect(() => {
     const timer = setInterval(
       () =>
-        installationMessage === 'Installing...'
+        installationMessage.includes('Installing ')
           ? setCompletion(completion + 1)
           : null,
       200
@@ -108,8 +121,8 @@ export default function InstallApp (props) {
     <div>
       <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-        {installing && CircularStatic(completion)}
-          {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
+          {startProgress && CircularStatic(completion)}
+          {activeStep === 4 && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>
         <Grid item >
@@ -128,5 +141,6 @@ InstallApp.propTypes = {
   install: PropTypes.bool,
   app: PropTypes.object,
   version: PropTypes.string,
-  tickets: PropTypes.array
+  tickets: PropTypes.array,
+  activeStep: PropTypes.number
 }

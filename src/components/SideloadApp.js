@@ -15,7 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Button, CircularProgress, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
+import CircularStatic from './CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
@@ -27,7 +28,7 @@ import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 
 export default function SideloadApp (props) {
-  const { install, yaml, tickets } = (props)
+  const { install, yaml, tickets, activeStep } = (props)
   const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
@@ -35,12 +36,14 @@ export default function SideloadApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const [completion, setCompletion] = React.useState(0)
   const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
+  const [startProgress, setStartProgress] = React.useState(false)
 
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.app === yaml?.app && obj.version === yaml?.version)
+        return (obj.app_key.name === yaml?.app && obj.app_key.version === yaml?.version)
       })
 
       return tmpApp
@@ -51,7 +54,7 @@ export default function SideloadApp (props) {
     setInstalling(true)
     setSuccess(false)
     setError(false)
-    setInstallationMessage('Installing...')
+    // setInstallationMessage('Installing...')
     const appAPI = new AppAPI(yaml)
     appAPI.setAppData(loadReferenceData(yaml))
     await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key)
@@ -65,7 +68,7 @@ export default function SideloadApp (props) {
         .finally(() => {
           setUpdateAppList(true)
           setSuccess(true)
-          setInstallationMessage('Congratulations! ' + yaml?.title + ' was successfully installed!')
+          // setInstallationMessage('Congratulations! ' + yaml?.title + ' was successfully installed!')
         })
     } else {
       setSuccess(false)
@@ -81,8 +84,32 @@ export default function SideloadApp (props) {
       setRetry(false)
       sideloadApp(yaml)
     }
+    if (activeStep === 1) {
+      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${yaml.title} will begin soon.`)
+    } else if (activeStep === 2) {
+      setStartProgress(true)
+      setInstallationMessage('Installing ' + yaml.title + '.')
+    } else if (activeStep === 4) {
+      setStartProgress(false)
+      setInstallationMessage(yaml.title + ' successfully installed.')
+    } else if (activeStep === -1) {
+      setInstallationMessage('Error during the installation of ' + yaml.title + '.')
+    }
     executedRef.current = true
   }, [retry])
+
+  React.useEffect(() => {
+    const timer = setInterval(
+      () =>
+        installationMessage.includes('Installing ')
+          ? setCompletion(completion + 1)
+          : null,
+      200
+    )
+    return () => {
+      clearInterval(timer)
+    }
+  })
 
   const handleRetryClick = (event) => {
     setRetry(true)
@@ -93,8 +120,8 @@ export default function SideloadApp (props) {
     <div>
       <Grid data-testid='sideload-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          {installing && <CircularProgress></CircularProgress>}
-          {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
+          {startProgress && CircularStatic(completion)}
+          {activeStep === 4 && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>
         <Grid item >
@@ -112,5 +139,6 @@ export default function SideloadApp (props) {
 SideloadApp.propTypes = {
   install: PropTypes.bool,
   yaml: PropTypes.object,
-  tickets: PropTypes.array
+  tickets: PropTypes.array,
+  activeStep: PropTypes.number
 }

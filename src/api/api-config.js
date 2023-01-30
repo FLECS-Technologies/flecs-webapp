@@ -51,7 +51,7 @@ const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_APP_EXPORT_URL = APP_ROUTE + '/exports'
 
-const PUT_SIDELOAD_APP = '/sideload'
+const POST_SIDELOAD_APP = '/sideload'
 const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
 const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCE_ROUTE + `/${instanceId}/update`
 const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
@@ -143,6 +143,10 @@ class DeviceAPIConfiguration extends Component {
     return POST_DELETE_APP_INSTANCE_URL
   }
 
+  static get POST_SIDELOAD_APP () {
+    return POST_SIDELOAD_APP
+  }
+
   static get POST_MP_LOGIN_URL () {
     return POST_MP_LOGIN_URL
   }
@@ -205,10 +209,6 @@ class DeviceAPIConfiguration extends Component {
   }
 
   // put requests
-  static get PUT_SIDELOAD_APP () {
-    return PUT_SIDELOAD_APP
-  }
-
   static get PUT_INSTANCE_CONFIG_URL () {
     return PUT_INSTANCE_CONFIG_URL
   }

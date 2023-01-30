@@ -20,18 +20,18 @@ import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 import Yaml from 'js-yaml'
 
-export default class PutSideloadAppAPI extends BaseAPI {
+export default class PostSideloadAppAPI extends BaseAPI {
   async sideloadApp (yml, licenseKey) {
-    // PUT request using fetch with error handling
+    // POST request using fetch with error handling
     const appYaml = Yaml.dump(yml)
     const requestOptions = {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ licenseKey, appYaml })
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP, requestOptions)
     } catch (error) { }
   }
 }

@@ -17,7 +17,7 @@
  */
 import React, { createContext } from 'react'
 import PropTypes from 'prop-types'
-import axios from 'axios'
+import GetJobsAPI from '../api/device/JobsAPI'
 
 const JobsContext = createContext([])
 
@@ -60,13 +60,9 @@ function JobsContextProvider (props) {
   })
 
   const fetchJobs = async () => {
-    const answer = await axios
-      .get('http://localhost/api/v2/jobs') // TODO change URL
-      .then((response) => response.data)
-      .catch((error) => {
-        console.log(error)
-      })
-    setJobs(answer)
+    const getJobs = new GetJobsAPI()
+    await getJobs.getJobs()
+    setJobs(getJobs.state.responseData)
   }
 
   const hideJobs = (jobs) => {

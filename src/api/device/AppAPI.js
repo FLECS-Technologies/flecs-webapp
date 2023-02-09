@@ -25,6 +25,10 @@ import PostStopAppInstanceAPI from './StopAppInstanceAPI'
 import DeleteUninstallAppAPI from './UninstallAppAPI'
 import DeleteDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
 import PostSideloadAppAPI from './SideloadAppAPI'
+import DeviceAPI from './DeviceAPI'
+import { getAppInstances } from '../../data/AppList' // is this the best approach?
+import GetJobsAPI from './JobsAPI'
+import { sleep } from '../../utils/sleep'
 
 export default class AppAPI extends React.Component {
   constructor (props) {
@@ -45,6 +49,9 @@ export default class AppAPI extends React.Component {
 
     this._lastAPICallSuccessfull = false
     this.lastAPIError = null
+    this.jobId = null
+    this.jobStatus = null
+    this.instances = []
   }
 
   setAppData (props) {
@@ -80,36 +87,14 @@ export default class AppAPI extends React.Component {
   async installFromMarketplace (version, licenseKey) {
     try {
       if (this.app) {
-        const installAPI = new PostInstallAppAPI()
-        // const startInstanceAPI = new PostStartAppInstanceAPI()
-
-        await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
-        if (installAPI.state.success) {
-          this.app.status = 'installed'
-          this.app.version = version || this.app.version
-          this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
-        } else {
-          this.lastAPICallSuccessfull = false
-          if (installAPI.state.errorMessage !== null) {
-            this.lastAPIError = installAPI.state.errorMessage.message
+        await this.installApp(version, licenseKey)
+        if (this.jobStatus === 'successful') { // app has been installed
+          await this.createInstance(this.createInstanceName())
+          await this.fetchInstances()
+          if (this.jobStatus === 'successful') { // instance has been created
+            await this.startInstance(this.instances[this.instances.length - 1].instanceId)
           }
-          throw Error('failed to install app.')
         }
-
-        // TODO: uncomment the lines below when the instances API has been implemented
-        // await this.createInstance(this.createInstanceName())
-        // if (!this.lastAPICallSuccessfull) {
-        //   throw Error('failed to create instance after installing the app.')
-        // }
-
-        // await startInstanceAPI.startAppInstance(this.app.app, this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
-        // if (this.lastAPICallSuccessfull) {
-        //   this.app.instances[this.app.instances.length - 1].status = 'running'
-        //   // pop this instance, because it'll be automatically reloaded from the device. Leaving it in the list leads to double entries in the instance list
-        //   this.app.instances.pop()
-        // } else {
-        //   throw Error('failed to start instance after installing the app.')
-        // }
       }
     } catch (error) {
       console.error(error)
@@ -121,6 +106,10 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const uninstallAPI = new DeleteUninstallAppAPI()
         await uninstallAPI.uninstallApp(this.app.app, this.app.version)
+        this.jobId = uninstallAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
+
+        // TODO: check job success, not state.success
         this.lastAPICallSuccessfull = uninstallAPI.state.success
         if (this.lastAPICallSuccessfull) {
           this.app.status = 'uninstalled'
@@ -137,23 +126,66 @@ export default class AppAPI extends React.Component {
     }
   }
 
+  async fetchInstances () {
+    try {
+      const deviceAPI = new DeviceAPI()
+      await deviceAPI.getInstances()
+      if (deviceAPI.lastAPICallSuccessfull) {
+        this.instances = await getAppInstances(this.app, deviceAPI.instances)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async waitUntilJobIsComplete (jobId) {
+    const getJobsAPI = new GetJobsAPI()
+    await getJobsAPI.getJob(jobId)
+    this.jobStatus = getJobsAPI.state.responseData[0].status
+
+    while (this.jobStatus !== 'successful' && this.jobStatus !== 'failed' && this.jobStatus !== 'cancelled') {
+      await getJobsAPI.getJob(jobId)
+      this.jobStatus = getJobsAPI.state.responseData[0].status
+      sleep(10000)
+    }
+  }
+
+  async installApp (version, licenseKey) {
+    try {
+      if (this.app) {
+        const installAPI = new PostInstallAppAPI()
+        await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
+        this.jobId = installAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
+
+        // TODO: check job success, not state.success
+        if (installAPI.state.success) {
+          this.app.status = 'installed'
+          this.app.version = version || this.app.version
+          this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
+        } else {
+          this.lastAPICallSuccessfull = false
+          if (installAPI.state.errorMessage !== null) {
+            this.lastAPIError = installAPI.state.errorMessage.message
+          }
+          throw Error('failed to install app.')
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   async createInstance (instanceName) {
     try {
       if (this.app) {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
         await createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)
+        this.jobId = createInstanceAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
+
+        // TODO: check job success, not state.success
         if (createInstanceAPI.state.success) {
-          if (this.app.instances == null) {
-            this.app.instances = []
-          }
-          this.app.instances.push(
-            {
-              instanceId: createInstanceAPI.state.responseData.instanceId,
-              instanceName,
-              status: 'stopped',
-              version: this.app.version
-            }
-          )
           this.lastAPICallSuccessfull = true
         } else {
           this.lastAPICallSuccessfull = false
@@ -166,6 +198,7 @@ export default class AppAPI extends React.Component {
     } catch (error) {
       console.error(error)
       this.lastAPICallSuccessfull = false
+      throw Error('failed to create instance after installing the app.')
     }
   }
 
@@ -174,13 +207,11 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const startInstanceAPI = new PostStartAppInstanceAPI()
         await startInstanceAPI.startAppInstance(instanceId)
+        this.jobId = startInstanceAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
 
+        // TODO: check job success, not state.success
         if (startInstanceAPI.state.success) {
-          this.app.instances = this.app.instances.map(item =>
-            item.instanceId === instanceId
-              ? { ...item, status: 'running' }
-              : item)
-
           this.lastAPICallSuccessfull = true
         } else {
         // catch response of start app instance was not OK
@@ -194,6 +225,7 @@ export default class AppAPI extends React.Component {
     } catch (error) {
       console.error(error)
       this.lastAPICallSuccessfull = false
+      throw Error('failed to start instance after installing the app.')
     }
   }
 
@@ -202,7 +234,10 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
         await stopInstanceAPI.stopAppInstance(instanceId)
+        this.jobId = stopInstanceAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
 
+        // TODO: check job success, not state.success
         if (stopInstanceAPI.state.success) {
           this.app.instances = this.app.instances.map(item =>
             item.instanceId === instanceId
@@ -230,6 +265,10 @@ export default class AppAPI extends React.Component {
       if (this.app) {
         const deleteInstanceAPI = new DeleteDeleteAppInstanceAPI()
         await deleteInstanceAPI.deleteAppInstance(instanceId)
+        this.jobId = deleteInstanceAPI.state.responseData.jobId
+        await this.waitUntilJobIsComplete(this.jobId)
+
+        // TODO: check job success, not state.success
         if (deleteInstanceAPI.state.success) {
           // remove instance from array
           this.app.instances = this.app.instances.filter(instance => instance.instanceId !== instanceId)
@@ -255,6 +294,10 @@ export default class AppAPI extends React.Component {
       // sideload app - this request takes the .yml file and tries to install the app
       const sideload = new PostSideloadAppAPI()
       await sideload.sideloadApp(appYaml, licenseKey)
+      this.jobId = sideload.state.responseData.jobId
+      await this.waitUntilJobIsComplete(this.jobId)
+
+      // TODO: check job success, not state.success
       if (sideload.state.success) {
         this.app.status = 'installed'
         this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
@@ -267,19 +310,19 @@ export default class AppAPI extends React.Component {
       }
 
       // TODO: uncomment the lines below when the instances API has been implemented
-      // // create new instance
-      // await this.createInstance(this.createInstanceName())
-      // if (!this.lastAPICallSuccessfull) {
-      //   throw Error('failed to create instance after installing the app.')
-      // }
+      // create new instance
+      await this.createInstance(this.createInstanceName())
+      if (!this.lastAPICallSuccessfull) {
+        throw Error('failed to create instance after installing the app.')
+      }
 
-      // // start new instance
-      // await this.startInstance(this.app.version, this.app.instances[this.app.instances.length - 1].instanceId)
-      // if (this.lastAPICallSuccessfull) {
-      //   this.app.instances[this.app.instances.length - 1].status = 'running'
-      // } else {
-      //   throw Error('failed to start instance after installing the app.')
-      // }
+      // start new instance
+      await this.startInstance(this.app.instances[this.app.instances.length - 1].instanceId)
+      if (this.lastAPICallSuccessfull) {
+        this.app.instances[this.app.instances.length - 1].status = 'running'
+      } else {
+        throw Error('failed to start instance after installing the app.')
+      }
     } catch (error) {
       console.error(error)
     }

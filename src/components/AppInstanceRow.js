@@ -22,7 +22,7 @@ import TableCell from '@mui/material/TableCell'
 import Tooltip from '@mui/material/Tooltip'
 import Grid from '@mui/material/Grid'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
-import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
+import StopCircleIcon from '@mui/icons-material/StopCircle'
 import CircleIcon from '@mui/icons-material/Circle'
 import ErrorIcon from '@mui/icons-material/Error'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -180,7 +180,7 @@ export default function AppInstanceRow (props) {
                     <span>
                     <LoadIconButton
                         label="stop-instance-button"
-                        icon={<PauseCircleFilledIcon />}
+                        icon={<StopCircleIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
                         onClick={() => stopInstance(appInstance.instanceId)}
                         loading={instanceStopping}

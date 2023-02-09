@@ -51,9 +51,9 @@ import { JobsContext } from '../data/JobsContext'
 export default function Row (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { row } = props
-  const [open, setOpen] = useStateWithLocalStorage(props.row.app + '.row.collapsed', false)
+  const [open, setOpen] = useStateWithLocalStorage(props.row.appKey.name + '.row.collapsed', false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [uninstalling, setUninstalling] = useStateWithLocalStorage(props.row.app + '.row.uninstalling', false) // useState(false)
+  const [uninstalling, setUninstalling] = useStateWithLocalStorage(props.row.appKey.name + '.row.uninstalling', false) // useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
@@ -73,7 +73,7 @@ export default function Row (props) {
   }
 
   // set defaults
-  const appId = props.row.app_key.name.split('.')
+  const appId = props.row.appKey.name.split('.')
   if (!('title' in row)) {
     row.title = appId[2]
   }
@@ -91,8 +91,8 @@ export default function Row (props) {
     setUninstalling(true)
     let snackbarText
     let alertSeverity
-    props.row.app = props.row.app_key.name
-    props.row.version = props.row.app_key.version
+    props.row.app = props.row.appKey.name
+    props.row.version = props.row.appKey.version
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
     fetchJobs()

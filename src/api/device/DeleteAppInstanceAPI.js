@@ -20,16 +20,14 @@ import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
 export default class DeleteAppInstanceAPI extends BaseAPI {
-  async deleteAppInstance (app, version, instanceId) {
-    // POST request using fetch with error handling
+  async deleteAppInstance (instanceId) {
+    // DELETE request using fetch with error handling
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version, instanceId })
+      method: 'DELETE'
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId, requestOptions)
     } catch (error) { }
   }
 }

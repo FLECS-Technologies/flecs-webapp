@@ -56,13 +56,13 @@ export default function AppInstanceRow (props) {
   })
   const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
 
-  const stopInstance = async (app, version, instanceId) => {
+  const stopInstance = async (instanceId) => {
     setInstanceStopping(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.stopInstance(version, instanceId)
+    await appAPI.stopInstance(instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
@@ -81,13 +81,13 @@ export default function AppInstanceRow (props) {
     setInstanceStopping(false)
   }
 
-  const startInstance = async (app, version, instanceId) => {
+  const startInstance = async (instanceId) => {
     setInstanceStarting(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.startInstance(version, instanceId)
+    await appAPI.startInstance(instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
@@ -106,13 +106,13 @@ export default function AppInstanceRow (props) {
     setInstanceStarting(false)
   }
 
-  const deleteInstance = async (app, version, instanceId) => {
+  const deleteInstance = async (instanceId) => {
     setInstanceDeleting(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.deleteInstance(version, instanceId)
+    await appAPI.deleteInstance(instanceId)
 
     if (appAPI.lastAPICallSuccessfull) {
       setUpdateAppList(true)
@@ -171,7 +171,7 @@ export default function AppInstanceRow (props) {
                         icon={<PlayCircleIcon />}
                         color="success"
                         disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting || instanceNotReady}
-                        onClick={() => startInstance(app, appInstance.version, appInstance.instanceId)}
+                        onClick={() => startInstance(appInstance.instanceId)}
                         loading={instanceStarting}
                     />
                     </span>
@@ -182,7 +182,7 @@ export default function AppInstanceRow (props) {
                         label="stop-instance-button"
                         icon={<PauseCircleFilledIcon />}
                         disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
-                        onClick={() => stopInstance(app, appInstance.version, appInstance.instanceId)}
+                        onClick={() => stopInstance(appInstance.instanceId)}
                         loading={instanceStopping}
                     />
                     </span>
@@ -202,7 +202,7 @@ export default function AppInstanceRow (props) {
                         label="delete-instance-button"
                         icon={<DeleteIcon />}
                         disabled={instanceDeleting || instanceStopping || instanceStarting}
-                        onClick={() => deleteInstance(app, appInstance.version, appInstance.instanceId)}
+                        onClick={() => deleteInstance(appInstance.instanceId)}
                         loading={instanceDeleting}
                     />
                     </span>

@@ -43,7 +43,7 @@ export default function SideloadApp (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.app_key.name === yaml?.app && obj.app_key.version === yaml?.version)
+        return (obj.appKey.name === yaml?.app && obj.appKey.version === yaml?.version)
       })
 
       return tmpApp

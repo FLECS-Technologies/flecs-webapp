@@ -196,7 +196,7 @@ export default function DeviceAppsList (props) {
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
         return (<Row
-          key={app.app_key.name + app.app_key.version}
+          key={app.appKey.name + app.appKey.version}
           row={app}
         />)
       })

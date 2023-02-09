@@ -59,6 +59,7 @@ function AppList (props) {
 
     // call api from the device to get all installed apps
     const deviceAPI = new DeviceAPI()
+    await deviceAPI.getInstances()
     await deviceAPI.getInstalledApps()
     if (deviceAPI.lastAPICallSuccessfull) {
       mergedList = deviceAPI.appList
@@ -76,6 +77,7 @@ function AppList (props) {
           app.installedVersions = getInstalledVersions(mergedList, app.appKey)
           app.installedVersions.sort((a, b) => collator.compare(a, b))
           app.installedVersions.reverse()
+          app.instances = getAppInstances(app, deviceAPI.instances)
         }
       })
 
@@ -118,4 +120,10 @@ function getInstalledVersions (apps, app) {
   return result
 }
 
-export { AppList, getInstalledVersions }
+function getAppInstances (app, instances) {
+  if (app && instances) {
+    return instances.filter(i => ((i.appKey.name === app.appKey?.name || i.appKey.name === app.app) && (i.appKey?.version === app.appKey?.version || i.appKey.version === app.version)))
+  }
+}
+
+export { AppList, getInstalledVersions, getAppInstances }

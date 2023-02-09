@@ -19,26 +19,16 @@
 import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
-export default class GetJobsAPI extends BaseAPI {
-  async getJobs () {
+export default class GetInstancesAPI extends BaseAPI {
+  async getInstances () {
+    console.log('inside InstancesAPI.js/GetInstancesAPI/getInstances()')
     // GET request using fetch with error handling
     const requestOptions = {
       method: 'GET'
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL, requestOptions)
-    } catch (error) { }
-  }
-
-  async getJob (jobId) {
-    // GET request using fetch with error handling
-    const requestOptions = {
-      method: 'GET'
-    }
-
-    try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobId, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE, requestOptions)
     } catch (error) { }
   }
 }

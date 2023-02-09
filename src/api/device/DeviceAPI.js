@@ -20,6 +20,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import GetInstalledAppsListAPI from './InstalledAppsListAPI'
 import GetBrowseServiceMesh from './BrowseServiceMeshAPI'
+import GetInstancesAPI from './InstancesAPI'
 
 export default class DeviceAPI extends React.Component {
   constructor (props) {
@@ -28,6 +29,25 @@ export default class DeviceAPI extends React.Component {
     this.lastAPICallSuccessfull = false
     this.lastAPIError = null
     this.serviceMeshData = null
+    this.instances = null
+  }
+
+  async getInstances () {
+    try {
+      const getInstances = new GetInstancesAPI()
+      await getInstances.getInstances()
+      this.lastAPICallSuccessfull = getInstances.state.success
+      if (this.lastAPICallSuccessfull) {
+        this.instances = getInstances.state.responseData
+      } else {
+        if (getInstances.state.errorMessage !== null) {
+          this.lastAPIError = getInstances.state.errorMessage
+        }
+      }
+    } catch (error) {
+      this.lastAPICallSuccessfull = false
+      this.lastAPIError = error
+    }
   }
 
   async getInstalledApps () {

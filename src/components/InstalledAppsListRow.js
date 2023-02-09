@@ -40,7 +40,7 @@ import LoadIconButton from './LoadIconButton'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/device/AppAPI'
-// import AppInstanceRow from './AppInstanceRow'
+import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import AppLinksMenu from './AppLinksMenu'
@@ -255,14 +255,14 @@ export default function Row (props) {
                   </TableRow>
                 </TableHead>
                 <TableBody data-testid="instances-table-body">
-                  {/* {row.instances.map((appInstance) => (
+                  {row.instances.map((appInstance) => (
                     <AppInstanceRow
                       key={appInstance.instanceId}
                       app={row}
                       appInstance={appInstance}
                       loadAppReferenceData={loadReferenceData}
                     />
-                  ))} */}
+                  ))}
                 </TableBody>
               </Table>
             </Box>

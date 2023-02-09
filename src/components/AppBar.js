@@ -33,8 +33,6 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate'
 import Popover from '@mui/material/Popover'
 import Button from '@mui/material/Button'
-import ClearIcon from '@mui/icons-material/Clear'
-import ClearAllIcon from '@mui/icons-material/ClearAll'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
 import Logo from '../whitelabeling/Logo'
@@ -45,6 +43,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from 'react-router-dom'
 import { JobsContext } from '../data/JobsContext'
+import BasicTable from './AppBarTable'
 
 function ElevationScroll (props) {
   const { children, window } = props
@@ -157,14 +156,8 @@ export default function ElevateAppBar (props) {
                 horizontal: 'left'
               }}
             >
-              <ClearAllIcon onClick={() => cleanAllFilteredJobsCompleted()}></ClearAllIcon>Clear All
               <Typography component={'div'} sx={{ p: 2 }}>
-                {filteredJobs.map(j =>
-                  (<div key={j.id}>
-                    <p>{j.id}: {j.description}: {j.status}{j.status !== 'running' ? <ClearIcon fontSize='small' onClick={() => hideJobs(j.id)}></ClearIcon> : null}</p>
-                  </div>)
-                )
-                }
+                {BasicTable(filteredJobs, hideJobs, cleanAllFilteredJobsCompleted)}
               </Typography>
             </Popover>
 

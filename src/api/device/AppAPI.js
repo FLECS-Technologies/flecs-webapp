@@ -23,7 +23,7 @@ import PostCreateAppInstanceAPI from './CreateAppInstanceAPI'
 import PostStartAppInstanceAPI from './StartAppInstanceAPI'
 import PostStopAppInstanceAPI from './StopAppInstanceAPI'
 import DeleteUninstallAppAPI from './UninstallAppAPI'
-import PostDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
+import DeleteDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
 import PostSideloadAppAPI from './SideloadAppAPI'
 
 export default class AppAPI extends React.Component {
@@ -50,11 +50,11 @@ export default class AppAPI extends React.Component {
   setAppData (props) {
     if (props) {
       this.app = {
-        app: props.app,
+        app: props.appKey.name,
         avatar: props.avatar,
         title: props.title,
         author: props.author,
-        version: props.version,
+        version: props.appKey.version,
         description: props.description,
         status: props.status,
         availability: props.availability,
@@ -169,11 +169,11 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async startInstance (version, instanceId) {
+  async startInstance (instanceId) {
     try {
       if (this.app) {
         const startInstanceAPI = new PostStartAppInstanceAPI()
-        await startInstanceAPI.startAppInstance(this.app.app, version, instanceId)
+        await startInstanceAPI.startAppInstance(instanceId)
 
         if (startInstanceAPI.state.success) {
           this.app.instances = this.app.instances.map(item =>
@@ -197,11 +197,11 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async stopInstance (version, instanceId) {
+  async stopInstance (instanceId) {
     try {
       if (this.app) {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
-        await stopInstanceAPI.stopAppInstance(this.app.app, version, instanceId)
+        await stopInstanceAPI.stopAppInstance(instanceId)
 
         if (stopInstanceAPI.state.success) {
           this.app.instances = this.app.instances.map(item =>
@@ -225,11 +225,11 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async deleteInstance (version, instanceId) {
+  async deleteInstance (instanceId) {
     try {
       if (this.app) {
-        const deleteInstanceAPI = new PostDeleteAppInstanceAPI()
-        await deleteInstanceAPI.deleteAppInstance(this.app.app, version, instanceId)
+        const deleteInstanceAPI = new DeleteDeleteAppInstanceAPI()
+        await deleteInstanceAPI.deleteAppInstance(instanceId)
         if (deleteInstanceAPI.state.success) {
           // remove instance from array
           this.app.instances = this.app.instances.filter(instance => instance.instanceId !== instanceId)
@@ -302,7 +302,7 @@ export default class AppAPI extends React.Component {
   static get propTypes () {
     return {
       app: PropTypes.string,
-      app_key: PropTypes.object,
+      appKey: PropTypes.object,
       avatar: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,

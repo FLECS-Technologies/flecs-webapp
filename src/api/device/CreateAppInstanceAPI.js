@@ -25,11 +25,18 @@ export default class CreateAppInstanceAPI extends BaseAPI {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version, instanceName })
+      body: JSON.stringify(
+        {
+          appKey: {
+            name: app,
+            version
+          },
+          instanceName
+        })
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL, requestOptions)
     } catch (error) { }
   }
 }

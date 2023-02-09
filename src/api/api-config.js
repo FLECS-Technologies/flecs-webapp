@@ -23,7 +23,7 @@ const DEVICE_ROUTE_TEST = '/api/v2'
 const DEVICE_V2_ROUTE = '../api/v2'
 const DEVICE_V2_ROUTE_TEST = '/api/v2'
 const APP_ROUTE = '/apps'
-const INSTANCE_ROUTE = '/instance'
+const INSTANCES_ROUTE = '/instances'
 const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
@@ -43,17 +43,17 @@ const POST_UPDATE_APP_URL = DEVICE_V2_ROUTE + APP_ROUTE + '/update'
 const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
-const POST_DELETE_APP_INSTANCE_URL = '/delete'
-const POST_INSTANCE_DETAILS_URL = INSTANCE_ROUTE + '/details'
-const POST_INSTANCE_LOG_URL = INSTANCE_ROUTE + '/log'
-const POST_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
+// const POST_DELETE_APP_INSTANCE_URL = '/delete'
+// const POST_INSTANCE_DETAILS_URL = INSTANCES_ROUTE + '/details'
+// const POST_INSTANCE_LOG_URL = INSTANCES_ROUTE + '/log'
+// const POST_INSTANCE_COdNFIG_URL = INSTANCES_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_APP_EXPORT_URL = APP_ROUTE + '/exports'
-
 const POST_SIDELOAD_APP = '/sideload'
-const PUT_INSTANCE_CONFIG_URL = INSTANCE_ROUTE + '/config'
-const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCE_ROUTE + `/${instanceId}/update`
+
+const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
+const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}/update`
 const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
 
 const DELETE_UNINSTALL_APP_URL = ''
@@ -106,8 +106,8 @@ class DeviceAPIConfiguration extends Component {
     return APP_ROUTE
   }
 
-  static get INSTANCE_ROUTE () {
-    return INSTANCE_ROUTE
+  static get INSTANCES_ROUTE () {
+    return INSTANCES_ROUTE
   }
 
   static get MARKETPLACE_ROUTE () {
@@ -139,9 +139,9 @@ class DeviceAPIConfiguration extends Component {
     return POST_CREATE_APP_INSTANCE_URL
   }
 
-  static get POST_DELETE_APP_INSTANCE_URL () {
-    return POST_DELETE_APP_INSTANCE_URL
-  }
+  // static get POST_DELETE_APP_INSTANCE_URL () {
+  //   return POST_DELETE_APP_INSTANCE_URL
+  // }
 
   static get POST_SIDELOAD_APP () {
     return POST_SIDELOAD_APP
@@ -155,17 +155,17 @@ class DeviceAPIConfiguration extends Component {
     return POST_MP_LOGOUT_URL
   }
 
-  static get POST_INSTANCE_DETAILS_URL () {
-    return POST_INSTANCE_DETAILS_URL
-  }
+  // static get POST_INSTANCE_DETAILS_URL () {
+  //   return POST_INSTANCE_DETAILS_URL
+  // }
 
-  static get POST_INSTANCE_LOG_URL () {
-    return POST_INSTANCE_LOG_URL
-  }
+  // static get POST_INSTANCE_LOG_URL () {
+  //   return POST_INSTANCE_LOG_URL
+  // }
 
-  static get POST_INSTANCE_CONFIG_URL () {
-    return POST_INSTANCE_CONFIG_URL
-  }
+  // static get POST_INSTANCE_CONFIG_URL () {
+  //   return POST_INSTANCE_CONFIG_URL
+  // }
 
   static get POST_UPDATE_APP_URL () {
     return POST_UPDATE_APP_URL

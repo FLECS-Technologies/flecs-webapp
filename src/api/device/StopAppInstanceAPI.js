@@ -20,16 +20,14 @@ import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
 export default class StopAppInstanceAPI extends BaseAPI {
-  async stopAppInstance (app, version, instanceId) {
+  async stopAppInstance (instanceId) {
     // POST request using fetch with error handling
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version, instanceId })
+      method: 'POST'
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/stop', requestOptions)
     } catch (error) { }
   }
 }

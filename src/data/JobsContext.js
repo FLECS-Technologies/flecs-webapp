@@ -74,7 +74,7 @@ function JobsContextProvider (props) {
   }
 
   const currentInstallations = () => {
-    return jobs.filter(j => (j.description.includes('Installing') && (j.status === 'running' || j.status === 'queued' || j.status === 'pending'))).length
+    return jobs.filter(j => (j.description.includes('Installation') && (j.status === 'running' || j.status === 'queued' || j.status === 'pending'))).length
   }
 
   return (

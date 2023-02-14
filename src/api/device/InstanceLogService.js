@@ -19,7 +19,7 @@ import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 async function getInstanceLog (instanceId) {
   return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_INSTANCE_LOG_URL, { instanceId })
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/logs')
     .then(response => {
       return response.data
     })
@@ -29,7 +29,7 @@ async function getInstanceLog (instanceId) {
 }
 
 function getLog (data) {
-  return data.log
+  return '--- stdout\n\n' + data.stdout + '--- stderr\n\n' + data.stderr
 }
 
 export { getInstanceLog, getLog }

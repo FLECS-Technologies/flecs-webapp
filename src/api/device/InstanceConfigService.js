@@ -19,7 +19,7 @@ import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 async function getInstanceConfig (instanceId) {
   return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_INSTANCE_CONFIG_URL, { instanceId })
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/config')
     .then(response => {
       return response.data
     })
@@ -28,9 +28,9 @@ async function getInstanceConfig (instanceId) {
     })
 }
 
-async function putInstanceConfig (instanceId, networkAdapters, devices) {
+async function postInstanceConfig (instanceId, networkAdapters, devices) {
   return axios
-    .put(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.PUT_INSTANCE_CONFIG_URL, { instanceId, networkAdapters, devices })
+    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/config', { instanceId, networkAdapters, devices })
     .then(response => {
       return response.data
     })
@@ -39,4 +39,4 @@ async function putInstanceConfig (instanceId, networkAdapters, devices) {
     })
 }
 
-export { getInstanceConfig, putInstanceConfig }
+export { getInstanceConfig, postInstanceConfig }

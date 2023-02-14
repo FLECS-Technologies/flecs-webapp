@@ -32,7 +32,7 @@ export default function InstanceInfo (props) {
 
   const infoRows = [
     createData('Instance name', instance?.instanceName),
-    createData('Version', instance?.version),
+    createData('Version', instance?.appKey.version),
     createData('Instance ID', instance?.instanceId),
     createData('Status', instance?.status),
     createData('Desired status', instance?.desired)

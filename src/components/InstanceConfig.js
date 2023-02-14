@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getInstanceConfig, putInstanceConfig } from '../api/device/InstanceConfigService'
+import { getInstanceConfig, postInstanceConfig } from '../api/device/InstanceConfigService'
 import NICConfig from './NICConfig'
 import { Box, Button, LinearProgress, Tab, Toolbar, Typography } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
@@ -78,7 +78,7 @@ export default function InstanceConfig (props) {
 
   const saveConfig = async (props) => {
     setSavingConfig(true)
-    putInstanceConfig(instance.instanceId, instanceConfig.networkAdapters, instanceConfig?.devices)
+    postInstanceConfig(instance.instanceId, instanceConfig.networkAdapters, instanceConfig?.devices)
       .then((response) => {
         if (response) {
           // read back the saved configuration

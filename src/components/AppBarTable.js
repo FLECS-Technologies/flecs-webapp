@@ -9,11 +9,11 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { Button } from '@mui/material'
 
 export default function BasicTable (filteredJobs, hideJobs, cleanAllFilteredJobsCompleted) {
-  const rows = filteredJobs.map(j => ({ id: j.id, description: j.description, status: j.status }))
+  const rows = filteredJobs?.map(j => ({ id: j.id, description: j.description, status: j.status }))
 
   return (
     <React.Fragment>
-      <Button style={{ float: 'right', fontWeight: 'bold' }} variant='text' sx={{ mr: 1 }} data-testid='clear-all-button' onClick={() => cleanAllFilteredJobsCompleted()}>
+      <Button style={{ float: 'right', fontWeight: 'bold' }} variant='outlined' sx={{ mr: 1 }} data-testid='clear-all-button' onClick={() => cleanAllFilteredJobsCompleted()}>
       Clear All
       </Button>
       <TableContainer>

@@ -66,7 +66,7 @@ export default function Row (props) {
 
   function loadReferenceData (props) {
     const tmpApp = appList?.find(obj => {
-      return (obj.app === props.app && obj.version === props.version)
+      return (obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version)
     })
 
     return tmpApp
@@ -177,7 +177,7 @@ export default function Row (props) {
         </TableCell>
         <TableCell data-testid="app-title-cell" style={{ borderBottom: 'none' }}>{row.title}</TableCell>
         <TableCell data-testid="app-author-cell" style={{ borderBottom: 'none' }}>{row.author}</TableCell>
-        <TableCell data-testid="app-version-cell" style={{ borderBottom: 'none' }}>{row.version}</TableCell>
+        <TableCell data-testid="app-version-cell" style={{ borderBottom: 'none' }}>{row.appKey.version}</TableCell>
         <TableCell data-testid="app-actions-cell" style={{ borderBottom: 'none' }}>
           <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
             {row.editor &&
@@ -289,8 +289,7 @@ export default function Row (props) {
 
 Row.propTypes = {
   row: PropTypes.any,
-  app: PropTypes.string,
-  version: PropTypes.string,
+  appKey: PropTypes.string,
   instanceId: PropTypes.string,
   instances: PropTypes.array
 }

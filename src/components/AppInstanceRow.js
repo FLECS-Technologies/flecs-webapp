@@ -147,7 +147,7 @@ export default function AppInstanceRow (props) {
         </Tooltip>
         </TableCell>
         <TableCell>{appInstance.instanceName}</TableCell>
-        <TableCell>{appInstance.version}</TableCell>
+        <TableCell>{appInstance.appKey.version}</TableCell>
         <TableCell>
             <Grid
                 container

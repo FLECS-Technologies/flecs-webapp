@@ -37,6 +37,11 @@ export default function InstallAppStepper (props) {
   const [skipped, setSkipped] = React.useState(new Set())
   const [tickets, setTickets] = React.useState([])
   const { jobs } = React.useContext(JobsContext)
+  const [currentJob, setCurrentJob] = React.useState(undefined)
+
+  const handleCurrentJob = (id) => {
+    setCurrentJob(id)
+  }
 
   const isStepOptional = (step) => {
     return false // step === 0
@@ -77,18 +82,19 @@ export default function InstallAppStepper (props) {
   }
 
   const getLatestJobStatus = () => {
-    const status = jobs[jobs.length - 1].status
+    const status = jobs.filter(j => j.id === currentJob)[0]?.status
     if (status === 'pending') return 1
     else if (status === 'running') return 2
     else if (status === 'successful') return 4
     else if (status === 'failed') return -1
+    else return 0
   }
 
   React.useEffect(() => {
     const timer = setInterval(
       () =>
-        (activeStep > 0 && activeStep !== getLatestJobStatus())
-          ? setActiveStep(getLatestJobStatus)
+        ((activeStep === 1 || activeStep === 2) && activeStep !== getLatestJobStatus() && getLatestJobStatus() !== 0)
+          ? setActiveStep(getLatestJobStatus())
           : null,
       500
     )
@@ -120,14 +126,14 @@ export default function InstallAppStepper (props) {
       </Stepper>
         <React.Fragment>
           {(activeStep === 0) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
-          {(activeStep === 1 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === 2 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === 4 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 1 && !(sideload || update)) && <InstallApp handleCurrentJob={handleCurrentJob} app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 2 && !(sideload || update)) && <InstallApp handleCurrentJob={handleCurrentJob} app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 4 && !(sideload || update)) && <InstallApp handleCurrentJob={handleCurrentJob} app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
           {(activeStep === -1 && !(sideload || update)) && <InstallApp app={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === 1 && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === 2 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === 4 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
-          {(activeStep === -1 && sideload) && <SideloadApp yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 1 && sideload) && <SideloadApp handleCurrentJob={handleCurrentJob} yaml={app} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 2 && sideload) && <SideloadApp handleCurrentJob={handleCurrentJob} yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === 4 && sideload) && <SideloadApp handleCurrentJob={handleCurrentJob} yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
+          {(activeStep === -1 && sideload) && <SideloadApp handleCurrentJob={handleCurrentJob} yaml={app} version={version || app?.version} tickets={tickets} install={(activeStep === 1)} activeStep={activeStep} />}
           {(activeStep === 1 && update) && <UpdateApp app={app} from={app.version} to={version} tickets={tickets} update={(activeStep === 1)}/>}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             {/* <Button

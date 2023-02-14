@@ -28,7 +28,7 @@ import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 
 export default function SideloadApp (props) {
-  const { install, yaml, tickets, activeStep } = (props)
+  const { install, yaml, tickets, activeStep, handleCurrentJob } = (props)
   const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
@@ -37,7 +37,7 @@ export default function SideloadApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
-  const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
+  const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
   const [startProgress, setStartProgress] = React.useState(false)
 
   function loadReferenceData (props) {
@@ -54,11 +54,11 @@ export default function SideloadApp (props) {
     setInstalling(true)
     setSuccess(false)
     setError(false)
+    setFetchingJobs(true)
     // setInstallationMessage('Installing...')
     const appAPI = new AppAPI(yaml)
     appAPI.setAppData(loadReferenceData(yaml))
-    await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key)
-    fetchJobs()
+    await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key, handleCurrentJob)
 
     if (appAPI.lastAPICallSuccessfull) {
       // trigger a reload of all installed apps
@@ -76,6 +76,7 @@ export default function SideloadApp (props) {
       setInstallationMessage('Oops... ' + (appAPI?.lastAPIError || 'Error during the installation of ' + appAPI.app.title + '.'))
     }
     setInstalling(false)
+    setFetchingJobs(false)
   })
 
   React.useEffect(() => {
@@ -140,5 +141,6 @@ SideloadApp.propTypes = {
   install: PropTypes.bool,
   yaml: PropTypes.object,
   tickets: PropTypes.array,
-  activeStep: PropTypes.number
+  activeStep: PropTypes.number,
+  handleCurrentJob: PropTypes.func
 }

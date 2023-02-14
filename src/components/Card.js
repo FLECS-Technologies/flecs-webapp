@@ -65,7 +65,7 @@ export default function OutlinedCard (props) {
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState
   const [installAppOpen, setInstallAppOpen] = useState(false)
   const [updateAppOpen, setUpdateAppOpen] = useState(false)
-  const { fetchJobs } = useContext(JobsContext)
+  const { setFetchingJobs } = useContext(JobsContext)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -79,11 +79,11 @@ export default function OutlinedCard (props) {
 
   const uninstallApp = async (props) => {
     setUninstalling(true)
+    setFetchingJobs(true)
     const appAPI = new AppAPI(props)
     appAPI.setAppData(loadReferenceData(props))
     appAPI.setVersion(selectedVersion.version)
     await appAPI.uninstall()
-    fetchJobs()
 
     const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
     const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
@@ -108,6 +108,7 @@ export default function OutlinedCard (props) {
     })
     setSnackbarOpen(true)
     setUninstalling(false)
+    setFetchingJobs(false)
   }
 
   function requestApp (props, success) {

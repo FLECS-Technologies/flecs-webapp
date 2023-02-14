@@ -36,6 +36,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
 import InstanceInfo from './InstanceInfo'
 import InstanceConfig from './InstanceConfig'
+import { JobsContext } from '../data/JobsContext'
 
 export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -55,9 +56,11 @@ export default function AppInstanceRow (props) {
     alertSeverity: 'success'
   })
   const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
+  const { setFetchingJobs } = React.useContext(JobsContext)
 
   const stopInstance = async (instanceId) => {
     setInstanceStopping(true)
+    setFetchingJobs(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
@@ -79,10 +82,12 @@ export default function AppInstanceRow (props) {
       setSnackbarOpen(true)
     }
     setInstanceStopping(false)
+    setFetchingJobs(false)
   }
 
   const startInstance = async (instanceId) => {
     setInstanceStarting(true)
+    setFetchingJobs(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
@@ -104,10 +109,12 @@ export default function AppInstanceRow (props) {
       setSnackbarOpen(true)
     }
     setInstanceStarting(false)
+    setFetchingJobs(false)
   }
 
   const deleteInstance = async (instanceId) => {
     setInstanceDeleting(true)
+    setFetchingJobs(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
@@ -130,6 +137,7 @@ export default function AppInstanceRow (props) {
     })
     setSnackbarOpen(true)
     setInstanceDeleting(false)
+    setFetchingJobs(false)
   }
 
   return (

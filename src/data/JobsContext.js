@@ -23,41 +23,23 @@ const JobsContext = createContext([])
 
 function JobsContextProvider (props) {
   const [jobs, setJobs] = React.useState([])
+  const [fetchingJobs, setFetchingJobs] = React.useState(false)
   const [hiddenJobs, setHiddenJobs] = React.useState([])
 
   React.useEffect(() => {
     if (jobs?.length === 0) {
       fetchJobs()
     }
-  }, [setJobs])
+  }, [])
 
   React.useEffect(() => {
-    if (jobs.length > 0) {
-      if (jobs.filter(j => j.status === 'running').length > 0) {
-        const timer = setInterval(
-          () =>
-            fetchJobs(),
-          500
-        )
-        return () => {
-          clearInterval(timer)
-        }
+    if (fetchingJobs) {
+      const timer = setInterval(() => fetchJobs(), 500)
+      return () => {
+        clearInterval(timer)
       }
     }
-  }, [setJobs])
-
-  React.useEffect(() => {
-    const timer = setInterval(
-      () =>
-        jobs.filter(j => (j.status === 'queued' || j.status === 'pending' || j.status === 'running')).length > 0
-          ? fetchJobs()
-          : null,
-      500
-    )
-    return () => {
-      clearInterval(timer)
-    }
-  })
+  }, [fetchingJobs])
 
   const fetchJobs = async () => {
     const getJobs = new GetJobsAPI()
@@ -78,7 +60,7 @@ function JobsContextProvider (props) {
   }
 
   return (
-    <JobsContext.Provider value={{ jobs, setJobs, fetchJobs, hiddenJobs, hideJobs, currentInstallations }}>
+    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, hiddenJobs, hideJobs, currentInstallations }}>
       {props.children}
     </JobsContext.Provider>
   )

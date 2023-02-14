@@ -28,7 +28,7 @@ import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 
 export default function InstallApp (props) {
-  const { install, app, version, tickets, activeStep } = (props)
+  const { install, app, version, tickets, activeStep, handleCurrentJob } = (props)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -36,7 +36,7 @@ export default function InstallApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
-  const { fetchJobs, currentInstallations } = React.useContext(JobsContext)
+  const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
   const [startProgress, setStartProgress] = React.useState(false)
   const executedRef = React.useRef(false)
 
@@ -54,11 +54,12 @@ export default function InstallApp (props) {
     setInstalling(true)
     setSuccess(false)
     setError(false)
+    setFetchingJobs(true)
+
     // setInstallationMessage('Installing...')
     const appAPI = new AppAPI(app)
     appAPI.setAppData(loadReferenceData(app))
-    await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key)
-    fetchJobs()
+    await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key, handleCurrentJob)
     // setStartProgress(true)
 
     if (appAPI.lastAPICallSuccessfull) {
@@ -77,6 +78,7 @@ export default function InstallApp (props) {
       setInstallationMessage('Oops... ' + (appAPI?.lastAPIError || 'Error during the installation of ' + appAPI.app.title + '.'))
     }
     setInstalling(false)
+    setFetchingJobs(false)
   })
 
   React.useEffect(() => {
@@ -142,5 +144,6 @@ InstallApp.propTypes = {
   app: PropTypes.object,
   version: PropTypes.string,
   tickets: PropTypes.array,
-  activeStep: PropTypes.number
+  activeStep: PropTypes.number,
+  handleCurrentJob: PropTypes.func
 }

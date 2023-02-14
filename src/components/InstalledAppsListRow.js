@@ -62,7 +62,7 @@ export default function Row (props) {
   })
   const { alertSeverity, snackbarText, snackbarErrorText } = snackbarState
   const [newInstanceStarting, setNewInstanceStarting] = useState(false)
-  const { fetchJobs } = useContext(JobsContext)
+  const { setFetchingJobs } = useContext(JobsContext)
 
   function loadReferenceData (props) {
     const tmpApp = appList?.find(obj => {
@@ -89,13 +89,14 @@ export default function Row (props) {
 
   const uninstallApp = async (props) => {
     setUninstalling(true)
+    setFetchingJobs(true)
     let snackbarText
     let alertSeverity
+    // TODO: find a better way to implement the two lines below
     props.row.app = props.row.appKey.name
     props.row.version = props.row.appKey.version
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
-    fetchJobs()
 
     if (appAPI.lastAPICallSuccessfull) {
       if (setUpdateAppList) {
@@ -114,16 +115,23 @@ export default function Row (props) {
       snackbarText
     })
     setSnackbarOpen(true)
+    setFetchingJobs(false)
     setUninstalling(false)
   }
 
   const startNewInstance = async (props) => {
     setNewInstanceStarting(true)
+    setFetchingJobs(true)
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(props.row)
     appAPI.setAppData(loadReferenceData(props.row))
     await appAPI.createInstance(appAPI.createInstanceName())
+
+    if (appAPI.jobStatus === 'successful') { // instance has been created
+      await appAPI.fetchInstances()
+      await appAPI.startInstance(appAPI.instances[appAPI.instances.length - 1].instanceId)
+    }
 
     if (appAPI.lastAPICallSuccessfull) {
       if (setUpdateAppList) {
@@ -142,6 +150,7 @@ export default function Row (props) {
     })
     setSnackbarOpen(true)
     setNewInstanceStarting(false)
+    setFetchingJobs(false)
   }
 
   function openApp () {
@@ -197,7 +206,7 @@ export default function Row (props) {
                   data-testid="start-new-instance-icon-button"
                   icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
                   onClick={() => startNewInstance(props)}
-                  // disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </span>
@@ -241,7 +250,7 @@ export default function Row (props) {
                   sx={{ mr: 1 }}
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
-                  // disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting || uninstalling}
                   loading={newInstanceStarting}
                 />
               </Toolbar>

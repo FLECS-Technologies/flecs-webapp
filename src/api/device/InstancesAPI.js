@@ -21,7 +21,6 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 export default class GetInstancesAPI extends BaseAPI {
   async getInstances () {
-    console.log('inside InstancesAPI.js/GetInstancesAPI/getInstances()')
     // GET request using fetch with error handling
     const requestOptions = {
       method: 'GET'

@@ -84,10 +84,10 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (version, licenseKey, handleCurrentJob) {
+  async installFromMarketplace (version, licenseKey, handleInstallationJob) {
     try {
       if (this.app) {
-        await this.installApp(version, licenseKey, handleCurrentJob)
+        await this.installApp(version, licenseKey, handleInstallationJob)
         if (this.jobStatus === 'successful') { // app has been installed
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
@@ -137,37 +137,35 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async waitUntilJobIsComplete (jobId, handleCurrentJob) {
+  async waitUntilJobIsComplete (jobId, handleInstallationJob) {
     const getJobsAPI = new GetJobsAPI()
     await getJobsAPI.getJob(jobId)
     this.jobStatus = getJobsAPI.state.responseData[0].status
-    if (handleCurrentJob) {
-      handleCurrentJob(jobId, this.jobStatus)
+    if (handleInstallationJob) {
+      handleInstallationJob(this.jobStatus)
     }
 
     while (this.jobStatus !== 'successful' && this.jobStatus !== 'failed' && this.jobStatus !== 'cancelled') {
       await getJobsAPI.getJob(jobId)
       this.jobStatus = getJobsAPI.state.responseData[0].status
-      if (handleCurrentJob) {
-        handleCurrentJob(jobId, this.jobStatus)
+      if (handleInstallationJob) {
+        handleInstallationJob(this.jobStatus)
       }
       await sleep(500)
     }
   }
 
-  async installApp (version, licenseKey, handleCurrentJob) {
+  async installApp (version, licenseKey, handleInstallationJob) {
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
         await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
         this.jobId = installAPI.state.responseData.jobId
-        handleCurrentJob(this.jobId)
-        await this.waitUntilJobIsComplete(this.jobId, handleCurrentJob)
+        await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
 
         if (this.jobStatus === 'successful') {
           this.app.status = 'installed'
           this.app.version = version || this.app.version
-          // this.lastAPICallSuccessfull = true // TODO: remove this line when instances are back
         } else {
           this.lastAPICallSuccessfull = false
           if (installAPI.state.errorMessage !== null) {
@@ -282,15 +280,14 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async sideloadApp (appYaml, licenseKey, handleCurrentJob) {
+  async sideloadApp (appYaml, licenseKey, handleInstallationJob) {
     try {
       if (appYaml && licenseKey) {
         // sideload app - this request takes the .yml file and tries to install the app
         const sideload = new PostSideloadAppAPI()
         await sideload.sideloadApp(appYaml, licenseKey)
         this.jobId = sideload.state.responseData.jobId
-        handleCurrentJob(this.jobId)
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
 
         if (this.jobStatus === 'successful') { // app has been installed
           await this.createInstance(this.createInstanceName())

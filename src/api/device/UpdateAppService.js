@@ -17,27 +17,63 @@
  */
 import PostInstallAppAPI from './InstallAppAPI'
 import { UpdateInstanceService } from './UpdateInstanceService'
+import GetJobsAPI from './JobsAPI'
+import { sleep } from '../../utils/sleep'
 
-async function UpdateAppService (app, from, to, licenseKey, instances) {
-  // install new version
-  const installAPI = new PostInstallAppAPI()
+async function UpdateAppService (app, from, to, licenseKey, instances, handleCurrentJob) {
+  const jobStatus = await installApp(app, to, licenseKey, handleCurrentJob)
+  if (jobStatus === 'successful') {
+    // migrate instances to the new version
+    let responses = Promise.resolve('App successfully updated.')
+    console.log('responsed now. it should be resolved by now')
+    if (instances && instances.length > 0) {
+      // responses = await Promise.all(
+      responses = await Promise.all(
+        instances.map(async instance => {
+          await UpdateInstanceService(app, instance.instanceId, '', to)
+        })
+      )
+      return responses
+    }
+  }
+}
 
-  await installAPI.installApp(app, to, licenseKey)
-  if (!installAPI.state.success) {
-    return Promise.reject(Error(installAPI.state.errorMessage.message))
+const installApp = async (app, version, licenseKey, handleCurrentJob) => {
+  let jobStatus
+  try {
+    if (app) {
+      const installAPI = new PostInstallAppAPI()
+      await installAPI.installApp(app, version, licenseKey)
+      const jobId = installAPI.state.responseData.jobId
+      jobStatus = await waitUntilJobIsComplete(jobId, handleCurrentJob)
+
+      if (jobStatus !== 'successful') {
+        throw Error('failed to install app.' + installAPI.state.errorMessage.message)
+      }
+    }
+  } catch (error) {
+    console.error(error)
+  }
+  await sleep(2000)
+  return jobStatus
+}
+
+const waitUntilJobIsComplete = async (jobId, handleCurrentJob) => {
+  const getJobsAPI = new GetJobsAPI()
+  await getJobsAPI.getJob(jobId)
+  let jobStatus = getJobsAPI.state.responseData[0].status
+  handleCurrentJob(jobId, jobStatus)
+
+  while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
+    await getJobsAPI.getJob(jobId)
+    jobStatus = getJobsAPI.state.responseData[0].status
+    if (handleCurrentJob) {
+      handleCurrentJob(jobId, jobStatus)
+    }
+    await sleep(500)
   }
 
-  // migrate instances to the new version
-  let responses = Promise.resolve('App successfully updated.')
-  if (instances && instances.length > 0) {
-    responses = await Promise.all(
-      instances.map(async instance => {
-        await UpdateInstanceService(app, instance.instanceId, '', to)
-      })
-    )
-  }
-
-  return responses
+  return jobStatus
 }
 
 export { UpdateAppService }

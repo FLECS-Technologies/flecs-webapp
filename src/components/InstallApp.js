@@ -96,6 +96,7 @@ export default function InstallApp (props) {
       setStartProgress(false)
       setInstallationMessage(app.title + ' successfully installed.')
     } else if (activeStep === -1) {
+      setStartProgress(false)
       setInstallationMessage('Error during the installation of ' + app.title + '.')
     }
     executedRef.current = true

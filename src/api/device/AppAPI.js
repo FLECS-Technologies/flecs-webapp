@@ -137,14 +137,20 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async waitUntilJobIsComplete (jobId) {
+  async waitUntilJobIsComplete (jobId, handleCurrentJob) {
     const getJobsAPI = new GetJobsAPI()
     await getJobsAPI.getJob(jobId)
     this.jobStatus = getJobsAPI.state.responseData[0].status
+    if (handleCurrentJob) {
+      handleCurrentJob(jobId, this.jobStatus)
+    }
 
     while (this.jobStatus !== 'successful' && this.jobStatus !== 'failed' && this.jobStatus !== 'cancelled') {
       await getJobsAPI.getJob(jobId)
       this.jobStatus = getJobsAPI.state.responseData[0].status
+      if (handleCurrentJob) {
+        handleCurrentJob(jobId, this.jobStatus)
+      }
       await sleep(500)
     }
   }
@@ -156,7 +162,7 @@ export default class AppAPI extends React.Component {
         await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
         this.jobId = installAPI.state.responseData.jobId
         handleCurrentJob(this.jobId)
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, handleCurrentJob)
 
         if (this.jobStatus === 'successful') {
           this.app.status = 'installed'

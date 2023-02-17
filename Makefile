@@ -1,4 +1,4 @@
-VERSION=1.6.0-porpoise
+VERSION=1.6.0-porpoise-r2
 DOCKER_TAG=$(VERSION)$(VERSION_SPECIAL)
 
 .PHONY: version

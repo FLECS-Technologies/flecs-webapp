@@ -116,7 +116,7 @@ export default function ElevateAppBar (props) {
     }
   }
 
-  const filteredJobs = jobs?.filter(j => !hiddenJobs.includes(j.id))
+  const filteredJobs = jobs?.filter(j => !hiddenJobs.includes(j.id)).sort((a, b) => b.id - a.id)
   const filteredJobsNotCompleted = filteredJobs?.filter(j => (j.status !== 'successful' && j.status !== 'failed' && j.status !== 'cancelled'))
 
   const cleanAllFilteredJobsCompleted = () => {

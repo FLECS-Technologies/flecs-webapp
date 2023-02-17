@@ -23,7 +23,7 @@ function ContentDialog (props) {
         <DialogContent dividers={true}>
             {(props.children == null) ? <Typography>Hm, looks like I was not given any content to display.</Typography> : props.children}
         </DialogContent>
-        <DialogActions>{(actions == null) ? <Button data-testid="close-button" onClick={handleClose}>Close</Button> : actions}</DialogActions>
+        <DialogActions>{(actions == null) ? <Button data-testid="close-button" variant='outlined' onClick={handleClose}>Close</Button> : actions}</DialogActions>
       </Dialog>
   )
 }

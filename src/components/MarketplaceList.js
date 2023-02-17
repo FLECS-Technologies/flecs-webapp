@@ -103,7 +103,7 @@ export default function MarketplaceList (props) {
           avatar={getAppIcon(app)}
           title={app.name}
           author={getAuthor(app)}
-          version={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.version}
+          version={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.appKey.version}
           description={getShortDescription(app)}
           status={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.status || 'uninstalled'}
           availability={app.stock_status}
@@ -128,8 +128,8 @@ export default function MarketplaceList (props) {
         ...app,
         props: {
           ...app.props,
-          status: appList?.find(o => o.app === app.props.app)?.status || 'uninstalled',
-          version: appList?.find(o => o.app === app.props.app)?.version,
+          status: appList?.find(o => o.appKey.name === app.props.app)?.status || 'uninstalled',
+          version: appList?.find(o => o.appKey.name === app.props.app)?.appKey.version,
           installedVersions: getInstalledVersions(appList, app.props.app)
         }
       }))

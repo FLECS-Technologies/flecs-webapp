@@ -46,14 +46,14 @@ const POST_CREATE_APP_INSTANCE_URL = '/create'
 // const POST_DELETE_APP_INSTANCE_URL = '/delete'
 // const POST_INSTANCE_DETAILS_URL = INSTANCES_ROUTE + '/details'
 // const POST_INSTANCE_LOG_URL = INSTANCES_ROUTE + '/log'
-// const POST_INSTANCE_COdNFIG_URL = INSTANCES_ROUTE + '/config'
+// const POST_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_APP_EXPORT_URL = APP_ROUTE + '/exports'
 const POST_SIDELOAD_APP = '/sideload'
 
-const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
-const PUT_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}/update`
+// const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
+const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
 
 const DELETE_UNINSTALL_APP_URL = ''
@@ -209,12 +209,12 @@ class DeviceAPIConfiguration extends Component {
   }
 
   // put requests
-  static get PUT_INSTANCE_CONFIG_URL () {
-    return PUT_INSTANCE_CONFIG_URL
-  }
+  // static get PUT_INSTANCE_CONFIG_URL () {
+  //   return PUT_INSTANCE_CONFIG_URL
+  // }
 
-  static get PUT_INSTANCE_UPDATE_URL () {
-    return PUT_INSTANCE_UPDATE_URL
+  static get PATCH_INSTANCE_UPDATE_URL () {
+    return PATCH_INSTANCE_UPDATE_URL
   }
 
   static get PUT_APP_IMPORT_URL () {

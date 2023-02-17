@@ -29,7 +29,7 @@ deb-pkg_%:
 	@sed -i 's/Architecture:.*/Architecture: $*/g' debian/DEBIAN/control
 	@rm -rf debian/opt/flecs-webapp/assets
 	@mkdir -p debian/opt/flecs-webapp/assets
-	@docker pull flecs/webapp:$(DOCKER_TAG)-$*
+	@docker pull --platform linux/$* flecs/webapp:$(DOCKER_TAG)-$*
 	@docker tag flecs/webapp:$(DOCKER_TAG)-$* flecs/webapp:$(DOCKER_TAG)
 	@docker save flecs/webapp:$(DOCKER_TAG) --output flecs-webapp_$(VERSION)_$*.tar.gz
 	@cp -f flecs-webapp_$(VERSION)_$*.tar.gz debian/opt/flecs-webapp/assets/

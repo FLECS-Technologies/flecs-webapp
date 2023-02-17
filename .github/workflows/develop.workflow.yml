@@ -51,6 +51,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
+          version: v0.9.1
           driver-opts: image=moby/buildkit:v0.11.0
       - name: build Docker image
         run: make docker_${{ matrix.arch }}

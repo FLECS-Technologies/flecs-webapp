@@ -20,14 +20,12 @@ import { UpdateInstanceService } from './UpdateInstanceService'
 import GetJobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
-async function UpdateAppService (app, from, to, licenseKey, instances, handleCurrentJob) {
-  const jobStatus = await installApp(app, to, licenseKey, handleCurrentJob)
+async function UpdateAppService (app, from, to, licenseKey, instances, handleInstallationJob) {
+  const jobStatus = await installApp(app, to, licenseKey, handleInstallationJob)
   if (jobStatus === 'successful') {
     // migrate instances to the new version
     let responses = Promise.resolve('App successfully updated.')
-    console.log('responsed now. it should be resolved by now')
     if (instances && instances.length > 0) {
-      // responses = await Promise.all(
       responses = await Promise.all(
         instances.map(async instance => {
           await UpdateInstanceService(app, instance.instanceId, '', to)
@@ -38,14 +36,14 @@ async function UpdateAppService (app, from, to, licenseKey, instances, handleCur
   }
 }
 
-const installApp = async (app, version, licenseKey, handleCurrentJob) => {
+const installApp = async (app, version, licenseKey, handleInstallationJob) => {
   let jobStatus
   try {
     if (app) {
       const installAPI = new PostInstallAppAPI()
       await installAPI.installApp(app, version, licenseKey)
       const jobId = installAPI.state.responseData.jobId
-      jobStatus = await waitUntilJobIsComplete(jobId, handleCurrentJob)
+      jobStatus = await waitUntilJobIsComplete(jobId, handleInstallationJob)
 
       if (jobStatus !== 'successful') {
         throw Error('failed to install app.' + installAPI.state.errorMessage.message)
@@ -58,21 +56,18 @@ const installApp = async (app, version, licenseKey, handleCurrentJob) => {
   return jobStatus
 }
 
-const waitUntilJobIsComplete = async (jobId, handleCurrentJob) => {
+const waitUntilJobIsComplete = async (jobId, handleInstallationJob) => {
   const getJobsAPI = new GetJobsAPI()
   await getJobsAPI.getJob(jobId)
   let jobStatus = getJobsAPI.state.responseData[0].status
-  handleCurrentJob(jobId, jobStatus)
+  handleInstallationJob(jobStatus)
 
   while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
     await getJobsAPI.getJob(jobId)
     jobStatus = getJobsAPI.state.responseData[0].status
-    if (handleCurrentJob) {
-      handleCurrentJob(jobId, jobStatus)
-    }
+    handleInstallationJob(jobStatus)
     await sleep(500)
   }
-
   return jobStatus
 }
 

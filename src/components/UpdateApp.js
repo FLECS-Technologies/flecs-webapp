@@ -26,9 +26,10 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { UpdateAppService } from '../api/device/UpdateAppService'
 import { JobsContext } from '../data/JobsContext'
+import { mapJobStatus } from '../utils/mapJobStatus'
 
 export default function UpdateApp (props) {
-  const { update, app, from, to, tickets, activeStep, handleCurrentJob } = (props)
+  const { update, app, from, to, tickets, handleActiveStep } = (props)
   const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [updating, setUpdating] = React.useState(false)
@@ -46,11 +47,10 @@ export default function UpdateApp (props) {
     setUpdating(true)
     setSuccess(false)
     setError(false)
-    setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
     setFetchingJobs(true)
 
     // call update endpoint
-    UpdateAppService(app?.app, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleCurrentJob)
+    UpdateAppService(app?.app, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
       .then(() => {
         // trigger a reload of all installed apps
         setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
@@ -58,20 +58,12 @@ export default function UpdateApp (props) {
           .catch()
           .finally(() => {
             setUpdateAppList(true)
-            setSuccess(true)
-            setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
           })
       })
       .catch((error) => {
-        setSuccess(false)
-        setError(true)
-        setInstallationMessage('Oops... ' + (error.message || 'Error during the ' + ((from < to) ? 'update' : 'downgrade') + ' of ' + app?.title + '.'))
+        console.log(error)
       })
-      .finally(() => {
-        setUpdating(false)
-        setFetchingJobs(false)
-      }
-      )
+    setFetchingJobs(false)
   })
 
   React.useEffect(() => {
@@ -80,25 +72,13 @@ export default function UpdateApp (props) {
       setRetry(false)
       updateApp(app, from, to, tickets)
     }
-    if (activeStep === 1) {
-      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
-    } else if (activeStep === 2) {
-      setStartProgress(true)
-      setInstallationMessage('Installing ' + app.title + '.')
-    } else if (activeStep === 4) {
-      setStartProgress(false)
-      setInstallationMessage(app.title + ' successfully installed.')
-    } else if (activeStep === -1) {
-      setStartProgress(false)
-      setInstallationMessage('Error during the installation of ' + app.title + '.')
-    }
     executedRef.current = true
   }, [retry])
 
   React.useEffect(() => {
     const timer = setInterval(
       () =>
-        installationMessage.includes('Installing ')
+        (installationMessage.includes('Installing') || installationMessage.includes('Downgrading') || installationMessage.includes('Updating'))
           ? setCompletion(completion + 1)
           : null,
       200
@@ -113,9 +93,34 @@ export default function UpdateApp (props) {
     executedRef.current = false
   }
 
+  const handleInstallationJob = (status) => {
+    const mappedStatus = mapJobStatus(status)
+    if (mappedStatus === 1) {
+      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
+    } else if (mappedStatus === 2) {
+      setStartProgress(true)
+      setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
+      // setInstallationMessage('Installing ' + app.title + '.')
+    } else if (mappedStatus === 4) {
+      setStartProgress(false)
+      setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
+      // setInstallationMessage(app.title + ' successfully installed.')
+      setSuccess(true)
+      setUpdating(false)
+    } else if (mappedStatus === -1) {
+      setStartProgress(false)
+      setInstallationMessage('Oops... ' + (error.message || 'Error during the ' + ((from < to) ? 'update' : 'downgrade') + ' of ' + app?.title + '.'))
+      // setInstallationMessage('Error during the installation of ' + app.title + '.')
+      setSuccess(false)
+      setError(true)
+      setUpdating(false)
+    }
+    handleActiveStep(mappedStatus)
+  }
+
   return (
     <div>
-      <Grid data-testid='sideload-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
+      <Grid data-testid='update-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
           {startProgress && CircularStatic(completion)}
           {(success && !updating) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
@@ -139,7 +144,5 @@ UpdateApp.propTypes = {
   from: PropTypes.string,
   to: PropTypes.string,
   tickets: PropTypes.array,
-  activeStep: PropTypes.number,
-  handleCurrentJob: PropTypes.func,
-  getLatestJobStatus: PropTypes.func
+  handleActiveStep: PropTypes.func
 }

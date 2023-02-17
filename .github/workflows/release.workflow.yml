@@ -65,9 +65,9 @@ jobs:
           password: ${{ secrets.REGISTRY_AUTH }}
       - name: Pull images
         run: |
-          docker pull flecs/webapp:$(make version)-amd64
-          docker pull flecs/webapp:$(make version)-arm64
-          docker pull flecs/webapp:$(make version)-armhf
+          docker pull --platform=linux/amd64 flecs/webapp:$(make version)-amd64
+          docker pull --platform=linux/arm64 flecs/webapp:$(make version)-arm64
+          docker pull --platform=linux/armhf flecs/webapp:$(make version)-armhf
       - name: Create Docker manifest
         run: |
           docker manifest create flecs/webapp:$(make version) flecs/webapp:$(make version)-amd64 flecs/webapp:$(make version)-arm64 flecs/webapp:$(make version)-armhf
@@ -190,9 +190,9 @@ jobs:
           password: ${{ secrets.REGISTRY_AUTH }}
       - name: Pull images
         run: |
-          docker pull flecs/webapp:$(make version)-amd64
-          docker pull flecs/webapp:$(make version)-arm64
-          docker pull flecs/webapp:$(make version)-armhf
+          docker pull --platform=linux/amd64 flecs/webapp:$(make version)-amd64
+          docker pull --platform=linux/arm64 flecs/webapp:$(make version)-arm64
+          docker pull --platform=linux/armhf flecs/webapp:$(make version)-armhf
       - name: Create Docker manifest
         run: |
           docker manifest create flecs/webapp:$(make version) flecs/webapp:$(make version)-amd64 flecs/webapp:$(make version)-arm64 flecs/webapp:$(make version)-armhf

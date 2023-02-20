@@ -41,4 +41,15 @@ export default class JobsAPI extends BaseAPI {
       await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobId, requestOptions)
     } catch (error) { }
   }
+
+  async deleteJob (jobId) {
+    // DELETE request using fetch with error handling
+    const requestOptions = {
+      method: 'DELETE'
+    }
+
+    try {
+      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobId, requestOptions)
+    } catch (error) { }
+  }
 }

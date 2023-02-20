@@ -11,19 +11,19 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
-export default function BasicTable (filteredJobs, hideJobs, cleanAllFilteredJobsCompleted) {
-  const rows = filteredJobs?.map(j => ({ id: j.id, description: j.description, status: j.status }))
+export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
+  const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status }))
 
   return (
     <React.Fragment>
       <Toolbar
           sx={{
             pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 }
+            pr: { xs: 1, sm: 1 },
+            justifyContent: 'space-between'
           }}
         >
           <Typography
-            sx={{ flex: '0.1 0.1 80%' }}
             variant="h12"
             id="tableTitle"
             component="div"
@@ -32,7 +32,7 @@ export default function BasicTable (filteredJobs, hideJobs, cleanAllFilteredJobs
           </Typography>
           <Tooltip title={'Clear the log (this does not uninstall or remove any apps or instances)'}>
             <div>
-            <Button variant='outlined' sx={{ mr: 1 }} data-testid='clear-all-button' onClick={() => cleanAllFilteredJobsCompleted()}>
+            <Button variant='outlined' sx={{ mr: 1 }} disabled={clearAllButtonisDisabled} data-testid='clear-all-button' onClick={() => clearAllFinishedJobs()}>
               Clear All
             </Button>
             </div>
@@ -42,7 +42,6 @@ export default function BasicTable (filteredJobs, hideJobs, cleanAllFilteredJobs
         <Table size='small' aria-label="simple table">
           <TableHead>
             <TableRow>
-              {/* <TableCell>ID</TableCell> */}
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Description</TableCell>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Status</TableCell>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Clear</TableCell>
@@ -54,12 +53,9 @@ export default function BasicTable (filteredJobs, hideJobs, cleanAllFilteredJobs
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                {/* <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell> */}
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{row.status !== 'running' ? <ClearIcon fontSize='10' onClick={() => hideJobs(row.id)}></ClearIcon> : null}
+                <TableCell align="left">{row.status !== 'running' ? <ClearIcon fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>
             ))}

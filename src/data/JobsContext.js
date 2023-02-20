@@ -24,7 +24,6 @@ const JobsContext = createContext([])
 function JobsContextProvider (props) {
   const [jobs, setJobs] = React.useState([])
   const [fetchingJobs, setFetchingJobs] = React.useState(false)
-  const [hiddenJobs, setHiddenJobs] = React.useState([])
 
   React.useEffect(() => {
     if (jobs?.length === 0) {
@@ -47,12 +46,10 @@ function JobsContextProvider (props) {
     setJobs(jobsAPI.state.responseData)
   }
 
-  const hideJobs = (jobs) => {
-    if (typeof jobs === 'number') {
-      setHiddenJobs([...hiddenJobs, jobs])
-    } else if (typeof jobs === 'object') {
-      setHiddenJobs(hiddenJobs.concat(jobs))
-    }
+  const deleteJobs = async (job) => {
+    const jobsAPI = new JobsAPI()
+    await jobsAPI.deleteJob(job)
+    fetchJobs()
   }
 
   const currentInstallations = () => {
@@ -60,7 +57,7 @@ function JobsContextProvider (props) {
   }
 
   return (
-    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, hiddenJobs, hideJobs, currentInstallations }}>
+    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, deleteJobs, currentInstallations }}>
       {props.children}
     </JobsContext.Provider>
   )

@@ -70,18 +70,20 @@ export default function ElevateAppBar (props) {
   const [anchorElPopover, setAnchorElPopover] = React.useState(null)
   const user = useAuth()
   const navigate = useNavigate()
-  const { jobs, hiddenJobs, hideJobs, setFetchingJobs } = React.useContext(JobsContext)
+  const { jobs, deleteJobs /*, setFetchingJobs */ } = React.useContext(JobsContext)
+  const finishedJobs = jobs?.filter(j => (j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled'))
+  const clearAllButtonisDisabled = finishedJobs?.length === 0
   const open = Boolean(anchorElPopover)
   const id = open ? 'simple-popover' : undefined
 
   const handleClickPopover = (event) => {
     setAnchorElPopover(event.currentTarget)
-    setFetchingJobs(true)
+    // setFetchingJobs(true)
   }
 
   const handleClosePopover = () => {
     setAnchorElPopover(null)
-    setFetchingJobs(false)
+    // setFetchingJobs(false)
   }
 
   const handleMenu = (event) => {
@@ -116,13 +118,9 @@ export default function ElevateAppBar (props) {
     }
   }
 
-  const filteredJobs = jobs?.filter(j => !hiddenJobs.includes(j.id)).sort((a, b) => b.id - a.id)
-  const filteredJobsNotCompleted = filteredJobs?.filter(j => (j.status !== 'successful' && j.status !== 'failed' && j.status !== 'cancelled'))
-
-  const cleanAllFilteredJobsCompleted = () => {
-    const jobsToBeRemoved = filteredJobs.filter(j => (j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled')).map(j => j.id)
-    hideJobs(jobsToBeRemoved)
-    setFetchingJobs(false)
+  const clearAllFinishedJobs = () => {
+    finishedJobs.map(j => deleteJobs(j.id))
+    // setFetchingJobs(false)
   }
 
   React.useEffect(() => {
@@ -139,10 +137,10 @@ export default function ElevateAppBar (props) {
           <Toolbar >
             <Logo></Logo>
 
-            <Button sx={{ display: filteredJobs?.length > 0 ? 'block' : 'none', minWidth: '24px' }} aria-describedby={id} variant="text" onClick={handleClickPopover}>
-              <Badge badgeContent={filteredJobsNotCompleted?.length > 0 ? filteredJobsNotCompleted?.length : null } sx={{ '& .MuiBadge-badge': { color: 'white', backgroundColor: '#868686' } }} >
-                  {filteredJobs?.filter(j => j.status !== 'successful').length > 0
-                    ? (filteredJobs?.filter(j => (j.status === 'failed' || j.status === 'cancelled')).length > 0
+            <Button sx={{ display: jobs?.length > 0 ? 'block' : 'none', minWidth: '24px' }} aria-describedby={id} variant="text" onClick={handleClickPopover}>
+              <Badge badgeContent={finishedJobs?.length < jobs?.length ? jobs?.length - finishedJobs?.length : null } sx={{ '& .MuiBadge-badge': { color: 'white', backgroundColor: '#868686' } }} >
+                  {jobs?.filter(j => j.status !== 'successful').length > 0
+                    ? (jobs?.filter(j => (j.status === 'failed' || j.status === 'cancelled')).length > 0
                         ? <AssignmentLateIcon color='action' /> // at least one job failed or cancelled
                         : <AssignmentIcon color='action' />) // still running some jobs
                     : <AssignmentTurnedInIcon color='action' />}
@@ -151,7 +149,7 @@ export default function ElevateAppBar (props) {
 
             <Popover
               id={id}
-              open={Boolean(open && filteredJobs?.length)} // if there are no more jobs to show, then close it
+              open={Boolean(open && jobs?.length)} // if there are no more jobs to show, then close it
               anchorEl={anchorElPopover}
               onClose={handleClosePopover}
               anchorOrigin={{
@@ -160,7 +158,7 @@ export default function ElevateAppBar (props) {
               }}
             >
               <Typography component={'div'} sx={{ p: 2 }}>
-                {BasicTable(filteredJobs, hideJobs, cleanAllFilteredJobsCompleted)}
+                {BasicTable(jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled)}
               </Typography>
             </Popover>
 

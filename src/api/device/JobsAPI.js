@@ -19,7 +19,7 @@
 import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
-export default class GetJobsAPI extends BaseAPI {
+export default class JobsAPI extends BaseAPI {
   async getJobs () {
     // GET request using fetch with error handling
     const requestOptions = {

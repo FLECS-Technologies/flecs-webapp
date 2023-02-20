@@ -17,7 +17,7 @@
  */
 import PostInstallAppAPI from './InstallAppAPI'
 import { UpdateInstanceService } from './UpdateInstanceService'
-import GetJobsAPI from './JobsAPI'
+import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
 async function UpdateAppService (app, from, to, licenseKey, instances, handleInstallationJob) {
@@ -57,14 +57,14 @@ const installApp = async (app, version, licenseKey, handleInstallationJob) => {
 }
 
 const waitUntilJobIsComplete = async (jobId, handleInstallationJob) => {
-  const getJobsAPI = new GetJobsAPI()
-  await getJobsAPI.getJob(jobId)
-  let jobStatus = getJobsAPI.state.responseData[0].status
+  const jobsAPI = new JobsAPI()
+  await jobsAPI.getJob(jobId)
+  let jobStatus = jobsAPI.state.responseData[0].status
   handleInstallationJob(jobStatus)
 
   while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
-    await getJobsAPI.getJob(jobId)
-    jobStatus = getJobsAPI.state.responseData[0].status
+    await jobsAPI.getJob(jobId)
+    jobStatus = jobsAPI.state.responseData[0].status
     handleInstallationJob(jobStatus)
     await sleep(500)
   }

@@ -27,7 +27,7 @@ import DeleteDeleteAppInstanceAPI from './DeleteAppInstanceAPI'
 import PostSideloadAppAPI from './SideloadAppAPI'
 import DeviceAPI from './DeviceAPI'
 import { getAppInstances } from '../../data/AppList' // is this the best approach?
-import GetJobsAPI from './JobsAPI'
+import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
 export default class AppAPI extends React.Component {
@@ -138,16 +138,16 @@ export default class AppAPI extends React.Component {
   }
 
   async waitUntilJobIsComplete (jobId, handleInstallationJob) {
-    const getJobsAPI = new GetJobsAPI()
-    await getJobsAPI.getJob(jobId)
-    this.jobStatus = getJobsAPI.state.responseData[0].status
+    const jobsAPI = new JobsAPI()
+    await jobsAPI.getJob(jobId)
+    this.jobStatus = jobsAPI.state.responseData[0].status
     if (handleInstallationJob) {
       handleInstallationJob(this.jobStatus)
     }
 
     while (this.jobStatus !== 'successful' && this.jobStatus !== 'failed' && this.jobStatus !== 'cancelled') {
-      await getJobsAPI.getJob(jobId)
-      this.jobStatus = getJobsAPI.state.responseData[0].status
+      await jobsAPI.getJob(jobId)
+      this.jobStatus = jobsAPI.state.responseData[0].status
       if (handleInstallationJob) {
         handleInstallationJob(this.jobStatus)
       }

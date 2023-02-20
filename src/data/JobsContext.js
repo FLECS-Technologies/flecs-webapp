@@ -17,7 +17,7 @@
  */
 import React, { createContext } from 'react'
 import PropTypes from 'prop-types'
-import GetJobsAPI from '../api/device/JobsAPI'
+import JobsAPI from '../api/device/JobsAPI'
 
 const JobsContext = createContext([])
 
@@ -42,9 +42,9 @@ function JobsContextProvider (props) {
   }, [fetchingJobs])
 
   const fetchJobs = async () => {
-    const getJobs = new GetJobsAPI()
-    await getJobs.getJobs()
-    setJobs(getJobs.state.responseData)
+    const jobsAPI = new JobsAPI()
+    await jobsAPI.getJobs()
+    setJobs(jobsAPI.state.responseData)
   }
 
   const hideJobs = (jobs) => {

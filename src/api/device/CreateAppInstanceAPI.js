@@ -29,7 +29,7 @@ export default class CreateAppInstanceAPI extends BaseAPI {
         {
           appKey: {
             name: app,
-            version
+            version: String(version)
           },
           instanceName
         })

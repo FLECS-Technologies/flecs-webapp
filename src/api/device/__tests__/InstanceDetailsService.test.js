@@ -67,7 +67,7 @@ describe('InstanceDetailsService', () => {
     jest.resetAllMocks()
   })
   test('calls successfull getInstanceDetails', async () => {
-    axios.post.mockResolvedValueOnce(mockDetails)
+    axios.get.mockResolvedValueOnce(mockDetails)
     const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId))
 
     expect(details.app).toBe(mockDetails.data.app)

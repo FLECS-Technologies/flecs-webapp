@@ -19,7 +19,7 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { getInstanceConfig, putInstanceConfig } from '../InstanceConfigService'
+import { getInstanceConfig, postInstanceConfig } from '../InstanceConfigService'
 
 jest.mock('axios')
 
@@ -39,37 +39,37 @@ const mockConfig = {
 describe('InstanceConfigService', () => {
   beforeAll(() => {
     axios.post = jest.fn()
-    axios.put = jest.fn()
+    axios.get = jest.fn()
   })
 
   afterAll(() => {
     jest.resetAllMocks()
   })
   test('calls successfull getInstanceConfig', async () => {
-    axios.post.mockResolvedValueOnce(mockConfig)
+    axios.get.mockResolvedValueOnce(mockConfig)
     const details = await waitFor(() => getInstanceConfig('InstanceId'))
 
     expect(details.nicConfig).toHaveLength(2)
   })
 
   test('calls unsuccessfull getInstanceConfig', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to load config details'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load config details'))
     await act(async () => {
       expect(getInstanceConfig('InstanceId')).rejects.toThrowError()
     })
   })
 
-  test('calls successfull putInstanceConfig', async () => {
-    axios.put.mockResolvedValueOnce(mockConfig)
-    const details = await waitFor(() => putInstanceConfig('InstanceId'))
+  test('calls successfull postInstanceConfig', async () => {
+    axios.post.mockResolvedValueOnce(mockConfig)
+    const details = await waitFor(() => postInstanceConfig('InstanceId'))
 
     expect(details.nicConfig).toHaveLength(2)
   })
 
-  test('calls unsuccessfull putInstanceConfig', async () => {
-    axios.put.mockRejectedValueOnce(new Error('Failed to save config details'))
+  test('calls unsuccessfull postInstanceConfig', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to save config details'))
     await act(async () => {
-      expect(putInstanceConfig('InstanceId')).rejects.toThrowError()
+      expect(postInstanceConfig('InstanceId')).rejects.toThrowError()
     })
   })
 })

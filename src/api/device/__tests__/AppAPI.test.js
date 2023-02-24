@@ -20,11 +20,15 @@ import '@testing-library/jest-dom'
 import AppAPI from '../AppAPI'
 import { DeviceAPIConfiguration } from '../../api-config'
 
+jest.mock('../JobsAPI.js')
+
 describe('AppAPI', () => {
   const testApp = {
-    app: 'org.eclipse.mosquitto',
+    appKey: {
+      name: 'org.eclipse.mosquitto',
+      version: '2.0.14-openssl'
+    },
     title: 'Mosquitto MQTT broker',
-    version: '2.0.14-openssl',
     description: 'Mosquitto MQTT broker',
     author: 'El Barto',
     category: ['communication'],
@@ -32,13 +36,15 @@ describe('AppAPI', () => {
     multiInstance: false,
     volumes: ['data:/mosquitto/data/', 'log:/mosquitto/log/'],
     ports: ['1883:1883', '9001:9001'],
-    status: 'uninstalled',
+    status: 'installed',
     availability: 'available'
   }
   const testInstance = {
-    app: 'org.eclipse.mosquitto',
+    appKey: {
+      name: 'org.eclipse.mosquitto',
+      version: '2.0.14-openssl'
+    },
     instanceName: 'Mosquitto MQTT broker0',
-    version: '2.0.14-openssl',
     instanceId: '01234567',
     status: 'running'
   }
@@ -51,268 +57,265 @@ describe('AppAPI', () => {
     nock.enableNetConnect()
   })
   test('calls AppAPI.setAppData', async () => {
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.title).toBe(testApp.title)
-    expect(app.app.author).toBe(testApp.author)
-    expect(app.app.version).toBe(testApp.version)
-    expect(app.app.description).toBe(testApp.description)
-    expect(app.app.multiInstance).toBe(testApp.multiInstance)
-    expect(app.app.status).toBe(testApp.status)
-    expect(app.app.availability).toBe(testApp.availability)
-    expect(app.lastAPIError).toBe(null)
-    expect(app.lastAPICallSuccessfull).toBe(false)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.title).toBe(testApp.title)
+    expect(appAPI.app.author).toBe(testApp.author)
+    expect(appAPI.app.appKey.version).toBe(testApp.appKey.version)
+    expect(appAPI.app.description).toBe(testApp.description)
+    expect(appAPI.app.multiInstance).toBe(testApp.multiInstance)
+    expect(appAPI.app.status).toBe(testApp.status)
+    expect(appAPI.app.availability).toBe(testApp.availability)
+    expect(appAPI.lastAPIError).toBe(null)
+    expect(appAPI.lastAPICallSuccessfull).toBe(false)
 
     testApp.author = 'Homer Simpson'
-    app.setAppData(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.author).toBe(testApp.author)
+    appAPI.setAppData(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.author).toBe(testApp.author)
   })
 
   test('calls AppAPI.createInstanceName', async () => {
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
 
-    let instName = app.createInstanceName()
+    let instName = appAPI.createInstanceName()
     expect(instName).toBe('Mosquitto MQTT broker0')
 
-    app.app.instances = [testInstance]
-    instName = app.createInstanceName()
+    appAPI.app.instances = [testInstance]
+    instName = appAPI.createInstanceName()
     expect(instName).toBe('Mosquitto MQTT broker1')
   })
 
   test('calls AppAPI.uninstall', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_UNINSTALL_APP_URL)
-      .reply(200, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL + '/' + testApp.appKey.name + '?version=' + testApp.appKey.version)
+      .reply(202, {
+        jobId: 1
       })
 
     testApp.status = 'installed'
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.uninstall()
+    await appAPI.uninstall()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('uninstalled')
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('uninstalled')
   })
 
   test('calls AppAPI.createInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'installed'
     testApp.instances = []
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    const instName = app.createInstanceName()
-    await app.createInstance(instName)
+    const instName = appAPI.createInstanceName()
+    await appAPI.createInstance(instName)
+    await appAPI.fetchInstances()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(1)
-    expect(app.app.instances[0].status).toBe('stopped')
-    expect(app.app.instances[0].version).toBe(testApp.version)
-    expect(app.app.instances[0].instanceName).toBe(instName)
-    expect(app.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(1)
+    expect(appAPI.app.instances[0].status).toBe('stopped')
+    expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
+    expect(appAPI.app.instances[0].instanceName).toBe(instName)
+    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
   })
 
   test('calls AppAPI.startInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'installed'
     testInstance.status = 'stopped'
     testApp.instances = [testInstance]
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.startInstance(testApp.version, testInstance.instanceId)
+    await appAPI.startInstance(testInstance.instanceId)
+    await appAPI.fetchInstances()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(1)
-    expect(app.app.instances[0].status).toBe('running')
-    expect(app.app.instances[0].version).toBe(testApp.version)
-    expect(app.app.instances[0].instanceName).toBe(testInstance.instanceName)
-    expect(app.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(1)
+    expect(appAPI.app.instances[0].status).toBe('running')
+    expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
+    expect(appAPI.app.instances[0].instanceName).toBe(testInstance.instanceName)
+    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
   })
 
   test('calls AppAPI.stopInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/stop')
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'stopped' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'installed'
     testInstance.status = 'running'
     testApp.instances = [testInstance]
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.stopInstance(testApp.version, testInstance.instanceId)
+    await appAPI.stopInstance(testInstance.instanceId)
+    await appAPI.fetchInstances()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(1)
-    expect(app.app.instances[0].status).toBe('stopped')
-    expect(app.app.instances[0].version).toBe(testApp.version)
-    expect(app.app.instances[0].instanceName).toBe(testInstance.instanceName)
-    expect(app.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(1)
+    expect(appAPI.app.instances[0].status).toBe('stopped')
+    expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
+    expect(appAPI.app.instances[0].instanceName).toBe(testInstance.instanceName)
+    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
   })
 
   test('calls AppAPI.deleteInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_DELETE_APP_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId)
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'installed'
     testInstance.status = 'running'
     testApp.instances = [testInstance]
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.deleteInstance(testApp.version, testInstance.instanceId)
+    await appAPI.deleteInstance(testInstance.instanceId)
+    await appAPI.fetchInstances()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(0)
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(0)
   })
 
   test('calls AppAPI.installFromMarketplace', async () => {
     nock('http://localhost')
       .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_INSTALL_APP_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .reply(202, {
+        jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .reply(202, {
+        jobId: 1
       })
 
+    // used for fetchInstances()
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
+
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'uninstalled'
     testApp.instances = []
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.installFromMarketplace()
+    await appAPI.installFromMarketplace()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    // installfrommarketplace is stateless, so the created instance has to be popped at the end. Therefore we expect no instance to be available at this point
-    expect(app.app.instances.length).toBe(0)
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(1)
   })
 
   test('calls AppAPI.sideloadApp', async () => {
     nock('http://localhost')
-      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
-      .reply(200, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
+      .reply(202, {
+        jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .reply(202, {
+        jobId: 1
       })
 
+    // used for fetchInstances()
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL)
-      .reply(200, {
-        app: testApp.app,
-        version: testApp.version,
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
+
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .reply(202, {
+        jobId: 1
       })
+
+    // used for fetchInstances()
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      )
 
     testApp.status = 'uninstalled'
     testApp.instances = []
-    const app = new AppAPI(testApp)
-    expect(app.app.app).toBe(testApp.app)
-    expect(app.app.status).toBe(testApp.status)
+    const appAPI = new AppAPI(testApp)
+    expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
+    expect(appAPI.app.status).toBe(testApp.status)
 
-    await app.sideloadApp('')
+    await appAPI.sideloadApp('fakeYaml', 'fakeLicenseKey')
+    await appAPI.fetchInstances()
 
-    expect(app.lastAPICallSuccessfull).toBeTruthy()
-    expect(app.app.status).toBe('installed')
-    expect(app.app.instances.length).toBe(1)
-    expect(app.app.instances[0].status).toBe('running')
+    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.app.status).toBe('installed')
+    expect(appAPI.app.instances.length).toBe(1)
+    expect(appAPI.app.instances[0].status).toBe('running')
   })
 })

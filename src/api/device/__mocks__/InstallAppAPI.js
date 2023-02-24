@@ -21,6 +21,7 @@ export default class PostInstallAppAPI extends BaseAPI {
   async installApp (app, version, licenseKey) {
     if (app) {
       this.state.success = true
+      this.state.responseData = { jobId: 1 }
     }
     return new Promise((resolve, reject) => {
       app

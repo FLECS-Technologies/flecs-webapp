@@ -21,14 +21,17 @@ import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import Row from '../InstalledAppsListRow'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 jest.mock('../../api/device/AppAPI')
 
 describe('Test Installed Apps List row', () => {
   const app = {
-    app: 'com.codesys.codesyscontrol',
+    appKey: {
+      name: 'com.codesys.codesyscontrol',
+      version: '4.2.0'
+    },
     status: 'installed',
-    version: '4.2.0',
     editor: ':8080',
     multiInstance: true,
     instances: [
@@ -36,13 +39,17 @@ describe('Test Installed Apps List row', () => {
         instanceId: 'com.codesys.codesyscontrol.01234567',
         instanceName: 'Smarthome',
         status: 'running',
-        version: '4.2.0'
+        appKey: {
+          version: '4.2.0'
+        }
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
         instanceName: 'Energymanager',
         status: 'stopped',
-        version: '4.2.0'
+        appKey: {
+          version: '4.2.0'
+        }
       }
     ]
   }
@@ -51,7 +58,10 @@ describe('Test Installed Apps List row', () => {
   })
   test('renders installed apps list row component', async () => {
     await act(async () => {
-      render(<Row key = {app.app} row = {app} />)
+      render(
+        <JobsContextProvider>
+          <Row key = {app.appKey.name} row = {app} />
+        </JobsContextProvider>)
     })
 
     const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
@@ -63,7 +73,10 @@ describe('Test Installed Apps List row', () => {
 
   test('create new instance', async () => {
     await act(async () => {
-      render(<Row key = {app.app} row = {app} />)
+      render(
+      <JobsContextProvider>
+        <Row key = {app.appKey.name} row = {app} />
+      </JobsContextProvider>)
     })
     const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = screen.getByTestId('DeleteIcon')
@@ -76,7 +89,10 @@ describe('Test Installed Apps List row', () => {
 
   test('test delete app', async () => {
     await act(async () => {
-      render(<Row key = {app.app} row = {app} />)
+      render(
+        <JobsContextProvider>
+          <Row key = {app.appKey.name} row = {app} />
+        </JobsContextProvider>)
     })
     const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon')
     const deleteButton = screen.getByTestId('DeleteIcon')
@@ -98,7 +114,7 @@ describe('Test Installed Apps List row', () => {
       }
     ]
     await act(async () => {
-      render(<Row key = {app.app} row = {app} />)
+      render(<Row key = {app.appKey.name} row = {app} />)
     })
 
     const relatedLinks = screen.getByTestId('more-horiz-icon')
@@ -115,7 +131,7 @@ describe('Test Installed Apps List row', () => {
   test('test app without relatedLinks', () => {
     app.relatedLinks = null
     const { getByTestId /*, getByLabelText */ } = render(<Row
-        key = {app.app}
+        key = {app.appKey.name}
         row = {app}
    />)
 
@@ -127,7 +143,7 @@ describe('Test Installed Apps List row', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
-    render(<Row key = {app.app} row = {app} />)
+    render(<Row key = {app.appKey.name} row = {app} />)
 
     const expandButton = screen.getByLabelText('expand row')
     fireEvent.click(expandButton)

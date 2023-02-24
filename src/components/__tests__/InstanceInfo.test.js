@@ -25,7 +25,9 @@ jest.mock('../../api/device/InstanceDetailsService')
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
-  version: '1.0.0',
+  appKey: {
+    version: '1.0.0'
+  },
   status: 'running',
   desired: 'stopped'
 }

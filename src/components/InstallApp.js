@@ -44,7 +44,7 @@ export default function InstallApp (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.appKey.name === props.app && obj.appKey.version === props.version)
+        return (obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version)
       })
 
       return tmpApp
@@ -145,6 +145,7 @@ export default function InstallApp (props) {
 InstallApp.propTypes = {
   install: PropTypes.bool,
   app: PropTypes.object,
+  appKey: PropTypes.object,
   version: PropTypes.string,
   tickets: PropTypes.array,
   handleActiveStep: PropTypes.func

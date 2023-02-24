@@ -42,15 +42,14 @@ export default function UpdateApp (props) {
   const [startProgress, setStartProgress] = React.useState(false)
 
   const updateApp = React.useCallback(async (app, from, to, tickets) => {
-    const installedApp = appList?.filter(obj => { return (obj.app === app.app && obj.version === from) }) || []
-
+    const installedApp = appList?.filter(obj => { return (obj.appKey.name === app.appKey.name && obj.appKey.version === from) }) || []
     setUpdating(true)
     setSuccess(false)
     setError(false)
     setFetchingJobs(true)
 
     // call update endpoint
-    UpdateAppService(app?.app, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
+    UpdateAppService(app?.appKey.name, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
       .then(() => {
         // trigger a reload of all installed apps
         setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)

@@ -35,11 +35,13 @@ export default class AppAPI extends React.Component {
     super(props)
 
     this.app = {
-      app: props.app,
+      appKey: {
+        name: props.appKey.name,
+        version: props.appKey.version
+      },
       avatar: props.avatar,
       title: props.title,
       author: props.author,
-      version: props.version,
       description: props.description,
       status: props.status,
       availability: props.availability,
@@ -57,11 +59,13 @@ export default class AppAPI extends React.Component {
   setAppData (props) {
     if (props) {
       this.app = {
-        app: props.appKey.name,
+        appKey: {
+          name: props.appKey.name,
+          version: props.appKey.version
+        },
         avatar: props.avatar,
         title: props.title,
         author: props.author,
-        version: props.appKey.version,
         description: props.description,
         status: props.status,
         availability: props.availability,
@@ -72,7 +76,7 @@ export default class AppAPI extends React.Component {
   }
 
   setVersion (version) {
-    this.app.version = version
+    this.app.appKey.version = version
   }
 
   get lastAPICallSuccessfull () {
@@ -105,7 +109,7 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const uninstallAPI = new DeleteUninstallAppAPI()
-        await uninstallAPI.uninstallApp(this.app.app, this.app.version)
+        await uninstallAPI.uninstallApp(this.app.appKey.name, this.app.appKey.version)
         this.jobId = uninstallAPI.state.responseData.jobId
         await this.waitUntilJobIsComplete(this.jobId)
 
@@ -159,13 +163,13 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
-        await installAPI.installApp(this.app.app, (version || this.app.version), licenseKey)
+        await installAPI.installApp(this.app.appKey.name, (version || this.app.appKey.version), licenseKey)
         this.jobId = installAPI.state.responseData.jobId
         await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
 
         if (this.jobStatus === 'successful') {
           this.app.status = 'installed'
-          this.app.version = version || this.app.version
+          this.app.appKey.version = version || this.app.appKey.version
         } else {
           this.lastAPICallSuccessfull = false
           if (installAPI.state.errorMessage !== null) {
@@ -183,7 +187,7 @@ export default class AppAPI extends React.Component {
     try {
       if (this.app) {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
-        await createInstanceAPI.createAppInstance(this.app.app, this.app.version, instanceName)
+        await createInstanceAPI.createAppInstance(this.app.appKey.name, this.app.appKey.version, instanceName)
         this.jobId = createInstanceAPI.state.responseData.jobId
         await this.waitUntilJobIsComplete(this.jobId)
 
@@ -318,12 +322,10 @@ export default class AppAPI extends React.Component {
 
   static get propTypes () {
     return {
-      app: PropTypes.string,
       appKey: PropTypes.object,
       avatar: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
-      version: PropTypes.string,
       description: PropTypes.string,
       status: PropTypes.string,
       availability: PropTypes.string,

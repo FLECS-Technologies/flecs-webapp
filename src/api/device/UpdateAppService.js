@@ -31,8 +31,8 @@ async function UpdateAppService (app, from, to, licenseKey, instances, handleIns
           await UpdateInstanceService(instance.instanceId, to)
         })
       )
-      return responses
     }
+    return responses
   }
 }
 
@@ -52,7 +52,7 @@ const installApp = async (app, version, licenseKey, handleInstallationJob) => {
   } catch (error) {
     console.error(error)
   }
-  await sleep(2000)
+  await sleep(500)
   return jobStatus
 }
 

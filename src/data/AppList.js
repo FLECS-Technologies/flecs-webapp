@@ -122,7 +122,7 @@ function getInstalledVersions (apps, app) {
 
 function getAppInstances (app, instances) {
   if (app && instances) {
-    return instances.filter(i => ((i.appKey.name === app.appKey?.name || i.appKey.name === app.app) && (i.appKey?.version === app.appKey?.version || i.appKey.version === app.version)))
+    return instances.filter(i => ((i.appKey.name === app.appKey.name) && (i.appKey.version === app.appKey.version)))
   }
 }
 

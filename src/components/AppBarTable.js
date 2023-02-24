@@ -48,7 +48,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows?.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

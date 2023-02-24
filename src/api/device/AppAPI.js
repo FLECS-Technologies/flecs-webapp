@@ -53,7 +53,6 @@ export default class AppAPI extends React.Component {
     this.lastAPIError = null
     this.jobId = null
     this.jobStatus = null
-    this.instances = []
   }
 
   setAppData (props) {
@@ -96,7 +95,7 @@ export default class AppAPI extends React.Component {
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
             await this.fetchInstances()
-            await this.startInstance(this.instances[this.instances.length - 1].instanceId)
+            await this.startInstance(this.app.instances[this.app.instances.length - 1].instanceId)
           }
         }
       }
@@ -134,7 +133,7 @@ export default class AppAPI extends React.Component {
       const deviceAPI = new DeviceAPI()
       await deviceAPI.getInstances()
       if (deviceAPI.lastAPICallSuccessfull) {
-        this.instances = await getAppInstances(this.app, deviceAPI.instances)
+        this.app.instances = await getAppInstances(this.app, deviceAPI.instances)
       }
     } catch (error) {
       console.error(error)

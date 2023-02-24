@@ -20,26 +20,36 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import AppInstanceRow from '../AppInstanceRow'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 describe('AppInstanceRow', () => {
   function loadReferenceData () {}
   const testApp = {
     multiInstance: true,
-    editor: ':8080'
+    editor: ':8080',
+    appKey: {
+      name: 'Test app',
+      version: 'Test App Version'
+    }
   }
   const testAppInstance = {
     instanceId: '01234567',
     instanceName: 'Smarthome',
     status: 'running',
-    version: 'Test App Version'
+    appKey: {
+      version: 'Test App Version'
+    }
   }
   test('render running instance and stop instance', () => {
     testAppInstance.status = 'running'
-    const { getByLabelText } = render(<AppInstanceRow
-      loadAppReferenceData = {loadReferenceData}
-      app={testApp}
-      appInstance={testAppInstance}
-      />
+    const { getByLabelText } = render(
+      <JobsContextProvider>
+        <AppInstanceRow
+          loadAppReferenceData = {loadReferenceData}
+          app={testApp}
+          appInstance={testAppInstance}
+          />
+      </JobsContextProvider>
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -56,11 +66,14 @@ describe('AppInstanceRow', () => {
 
   test('render running instance and delete instance', () => {
     testAppInstance.status = 'running'
-    const { getByLabelText } = render(<AppInstanceRow
-      loadAppReferenceData = {loadReferenceData}
-      app={testApp}
-      appInstance={testAppInstance}
-      />
+    const { getByLabelText } = render(
+      <JobsContextProvider>
+        <AppInstanceRow
+        loadAppReferenceData = {loadReferenceData}
+        app={testApp}
+        appInstance={testAppInstance}
+        />
+      </JobsContextProvider>
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -77,11 +90,14 @@ describe('AppInstanceRow', () => {
 
   test('render stopped instance and start instance', () => {
     testAppInstance.status = 'stopped'
-    const { getByLabelText } = render(<AppInstanceRow
-      loadAppReferenceData = {loadReferenceData}
-      app={testApp}
-      appInstance={testAppInstance}
-      />
+    const { getByLabelText } = render(
+    <JobsContextProvider>
+      <AppInstanceRow
+        loadAppReferenceData = {loadReferenceData}
+        app={testApp}
+        appInstance={testAppInstance}
+        />
+    </JobsContextProvider>
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')

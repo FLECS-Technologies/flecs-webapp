@@ -18,17 +18,20 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
+import { sleep } from '../../../utils/sleep'
 
 export default class AppAPI extends React.Component {
   constructor (props) {
     super(props)
 
     this.app = {
-      app: props.app,
+      appKey: {
+        name: props.appKey.name,
+        version: props.appKey.version
+      },
       avatar: props.avatar,
       title: props.title,
       author: props.author,
-      version: props.version,
       description: props.description,
       status: props.status,
       availability: props.availability,
@@ -38,16 +41,20 @@ export default class AppAPI extends React.Component {
 
     this._lastAPICallSuccessfull = false
     this.lastAPIError = null
+    this.jobId = null
+    this.jobStatus = null
   }
 
   setAppData (props) {
     if (props) {
       this.app = {
-        app: props.app,
+        appKey: {
+          name: props.appKey.name,
+          version: props.appKey.version
+        },
         avatar: props.avatar,
         title: props.title,
         author: props.author,
-        version: props.version,
         description: props.description,
         status: props.status,
         availability: props.availability,
@@ -66,7 +73,13 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (licenseKey) {
+  async installFromMarketplace (version, licenseKey, handleInstallationJob) {
+    if (licenseKey === undefined) handleInstallationJob('failed')
+    else {
+      handleInstallationJob('running')
+      await sleep(500)
+      handleInstallationJob('successful')
+    }
     this.lastAPICallSuccessfull = true
   }
 
@@ -78,19 +91,25 @@ export default class AppAPI extends React.Component {
     this.lastAPICallSuccessfull = true
   }
 
-  async startInstance (version, instanceId) {
+  async startInstance (instanceId) {
     this.lastAPICallSuccessfull = true
   }
 
-  async stopInstance (version, instanceId) {
+  async stopInstance (instanceId) {
     this.lastAPICallSuccessfull = true
   }
 
-  async deleteInstance (version, instanceId) {
+  async deleteInstance (instanceId) {
     this.lastAPICallSuccessfull = true
   }
 
-  async sideloadApp (appYaml) {
+  async sideloadApp (appYaml, licenseKey, handleInstallationJob) {
+    if (licenseKey === undefined) handleInstallationJob('failed')
+    else {
+      handleInstallationJob('running')
+      await sleep(500)
+      handleInstallationJob('successful')
+    }
     this.lastAPICallSuccessfull = true
   }
 
@@ -100,11 +119,10 @@ export default class AppAPI extends React.Component {
 
   static get propTypes () {
     return {
-      app: PropTypes.string,
+      appKey: PropTypes.object,
       avatar: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
-      version: PropTypes.string,
       description: PropTypes.string,
       status: PropTypes.string,
       availability: PropTypes.string,

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2022 FLECS Technologies GmbH
+ * Copyright (c) 2021 FLECS Technologies GmbH
  *
- * Created on Thu Oct 13 2022
+ * Created on Tue Nov 30 2021
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,23 @@
  * limitations under the License.
  */
 
-async function UpdateAppService (app, from, to, licenseKey, instances, handleInstallationJob) {
-  return new Promise((resolve, reject) => {
-    if (app === 'pass') {
-      handleInstallationJob('successful')
-      resolve()
-    } else {
-      handleInstallationJob('failed')
-      reject(new Error('Mock: Failed to update app.'))
-    }
-  })
-}
+import BaseAPI from '../BaseAPI'
 
-export { UpdateAppService }
+export default class JobsAPI extends BaseAPI {
+  async getJobs () {
+  }
+
+  async getJob (jobId) {
+    return new Promise((resolve, reject) => {
+      if (jobId) {
+        resolve()
+        this.state.responseData = [{ status: 'successful' }]
+      } else {
+        reject(new Error('Mock: Failed to fetch job status.'))
+      }
+    })
+  }
+
+  async deleteJob (jobId) {
+  }
+}

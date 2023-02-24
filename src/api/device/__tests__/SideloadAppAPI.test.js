@@ -21,10 +21,10 @@ import nock from 'nock'
 // import { render /*, screen */ } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import PutSideloadAppAPI from '../SideloadAppAPI'
+import PostSideloadAppAPI from '../SideloadAppAPI'
 import { DeviceAPIConfiguration } from '../../api-config'
 
-describe('PutSideloadAppAPI', () => {
+describe('PostSideloadAppAPI', () => {
   beforeEach(() => {
     nock.disableNetConnect()
     nock.enableNetConnect('127.0.0.1')
@@ -33,41 +33,29 @@ describe('PutSideloadAppAPI', () => {
     nock.cleanAll()
     nock.enableNetConnect()
   })
-  test('calls PutSideloadAppAPI with success response', async () => {
+  test('calls PostSideloadAppAPI with success response', async () => {
     nock('http://localhost')
-      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
-      .reply(200, {
-        app: 'org.eclipse.mosquitto',
-        title: 'Mosquitto MQTT broker',
-        version: '2.0.14-openssl',
-        description: 'Mosquitto MQTT broker',
-        author: 'alex@flecs.tech',
-        category: ['communication'],
-        image: 'eclipse-mosquitto',
-        multiInstance: false,
-        volumes: ['data:/mosquitto/data/', 'log:/mosquitto/log/'],
-        ports: ['1883:1883', '9001:9001']
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/yaml'
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
+      .reply(202, {
+        jobId: 1
       })
 
-    const testSideload = new PutSideloadAppAPI()
+    const testSideload = new PostSideloadAppAPI()
     await testSideload.sideloadApp('yaml', 'key')
 
     expect(testSideload.state.success).toBeTruthy()
-    expect(testSideload.state.responseData.app).toBe('org.eclipse.mosquitto')
+    expect(testSideload.state.responseData.jobId).toBe(1)
   })
 
-  test('calls PutSideloadAppAPI with unsuccessfull response', async () => {
+  test('calls PostSideloadAppAPI with unsuccessful response', async () => {
     nock('http://localhost')
-      .put(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.PUT_SIDELOAD_APP)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
       .reply(405, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
       })
 
-    const testSideload = new PutSideloadAppAPI()
+    const testSideload = new PostSideloadAppAPI()
     await testSideload.sideloadApp('yaml', 'key')
 
     expect(testSideload.state.success).toBeFalsy()

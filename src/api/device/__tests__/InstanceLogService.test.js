@@ -39,14 +39,14 @@ describe('InstanceLogService', () => {
     jest.resetAllMocks()
   })
   test('calls successfull getInstanceLog', async () => {
-    axios.post.mockResolvedValueOnce(mockLog)
+    axios.get.mockResolvedValueOnce(mockLog)
     const response = await waitFor(() => getInstanceLog('abcd'))
 
     expect(response.log).toBe(mockLog.data.log)
   })
 
   test('calls unsuccessfull getInstanceLog', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to load instance log'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load instance log'))
     await act(async () => {
       expect(getInstanceLog('abcd')).rejects.toThrowError()
     })
@@ -54,6 +54,6 @@ describe('InstanceLogService', () => {
 
   test('Get log from the response', () => {
     const log = getLog(mockLog.data)
-    expect(log).toBe(mockLog.data.log)
+    expect(log).toBe('--- stdout\n\n' + mockLog.data.stdout + '--- stderr\n\n' + mockLog.data.stderr)
   })
 })

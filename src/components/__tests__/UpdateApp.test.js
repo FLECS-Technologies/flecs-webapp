@@ -23,19 +23,25 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import UpdateApp from '../UpdateApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
+import { JobsContextProvider } from '../../data/JobsContext'
 import axios from 'axios'
 
 jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/UpdateAppService')
+jest.mock('../../api/device/AppAPI')
 jest.mock('axios')
 
 const app = {
-  app: 'pass',
   title: 'test app',
   status: 'installed',
-  version: '4.2.0',
+  appKey: {
+    name: 'pass',
+    version: '4.2.0'
+  },
   instances: []
 }
+
+const handleActiveStep = jest.fn()
 
 describe('Test Update App', () => {
   beforeAll(() => {
@@ -48,9 +54,12 @@ describe('Test Update App', () => {
   test('renders Update component', async () => {
     await act(async () => {
       render(
-      <ReferenceDataContextProvider>
-        <UpdateApp app={app}></UpdateApp>
-      </ReferenceDataContextProvider>)
+        <JobsContextProvider>
+          <ReferenceDataContextProvider>
+            <UpdateApp app={app}></UpdateApp>
+          </ReferenceDataContextProvider>
+        </JobsContextProvider>
+      )
     })
   })
 
@@ -59,22 +68,32 @@ describe('Test Update App', () => {
     // axios.post.mockResolvedValueOnce()
     await act(async () => {
       render(
-      <ReferenceDataContextProvider>
-        <UpdateApp update={true} app={app} from={app.version} to="4.3.0" tickets={[{ license_key: 'abc' }]}></UpdateApp>
-      </ReferenceDataContextProvider>)
+        <JobsContextProvider>
+          <ReferenceDataContextProvider>
+            <UpdateApp update={true} app={app} from={app.appKey.version} to="4.3.0" tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep} />
+          </ReferenceDataContextProvider>
+        </JobsContextProvider>
+      )
     })
+
+    // 1. check success icon
+    await screen.findByText('Congratulations! ' + app.title + ' was successfully updated from version ' + app.appKey.version + ' to version ' + '4.3.0!')
+    const icon = screen.getByTestId('success-icon')
+    expect(icon).toBeVisible()
   })
 
   test('Failed to update app', async () => {
     const user = userEvent.setup()
     // axios.put.mockRejectedValueOnce(new Error('Failed to update'))
 
-    app.app = 'fail'
+    app.appKey.name = 'fail'
     await act(async () => {
       render(
-      <ReferenceDataContextProvider>
-        <UpdateApp update={true} app={app} from={app.version} to='4.3.0' tickets={[{ license_key: 'abc' }]}></UpdateApp>
-      </ReferenceDataContextProvider>)
+        <JobsContextProvider>
+          <ReferenceDataContextProvider>
+          <UpdateApp update={true} app={app} from={app.appKey.version} to="4.3.0" tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep} />
+          </ReferenceDataContextProvider>
+        </JobsContextProvider>)
     })
     // 1. check error icon
     const icon = screen.getByTestId('error-icon')

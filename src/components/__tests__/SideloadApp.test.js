@@ -21,58 +21,60 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SideloadApp from '../SideloadApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import AppAPI from '../../api/device/AppAPI'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 jest.mock('../../api/marketplace/LicenseService')
+jest.mock('../../api/device/AppAPI')
 
 const yaml = {
-  app: 'com.codesys.codesyscontrol',
+  appKey: {
+    name: 'com.codesys.codesyscontrol',
+    version: '4.2.0'
+  },
   title: 'test app',
   status: 'installed',
-  version: '4.2.0',
   instances: []
 }
+
+const handleActiveStep = jest.fn()
 
 describe('Test Sideload App', () => {
   test('renders SideloadApp component', () => {
     render(
-      <ReferenceDataContextProvider>
-        <SideloadApp yaml={yaml}></SideloadApp>
-      </ReferenceDataContextProvider>
+      <JobsContextProvider>
+        <ReferenceDataContextProvider>
+          <SideloadApp yaml={yaml}></SideloadApp>
+        </ReferenceDataContextProvider>
+      </JobsContextProvider>
     )
   })
 
   test('Successfully sideload app', async () => {
-    const spyInstall = jest.spyOn(AppAPI.prototype, 'sideloadApp').mockResolvedValueOnce('ride on.')
-    jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(true)
     const { getByTestId } = render(
-      <ReferenceDataContextProvider>
-        <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: 'abc' }]}></SideloadApp>
-      </ReferenceDataContextProvider>
+      <JobsContextProvider>
+        <ReferenceDataContextProvider>
+          <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep}></SideloadApp>
+        </ReferenceDataContextProvider>
+      </JobsContextProvider>
     )
 
-    expect(spyInstall).toHaveBeenCalled()
-
-    await screen.findByText('Installing...')
-    await screen.findByText('Congratulations! ' + yaml.title + ' was successfully installed!')
+    await screen.findByText('Installing ' + yaml.title + '.')
+    await screen.findByText(yaml.title + ' successfully installed.')
 
     const icon = getByTestId('success-icon')
     expect(icon).toBeVisible()
   })
 
   test('Failed to sideload app', async () => {
-    const spyInstall = jest.spyOn(AppAPI.prototype, 'sideloadApp').mockResolvedValueOnce('ride on.')
-    jest.spyOn(AppAPI.prototype, 'lastAPICallSuccessfull', 'get').mockReturnValueOnce(false)
     const { getByTestId } = render(
-      <ReferenceDataContextProvider>
-        <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: 'abc' }]}></SideloadApp>
-      </ReferenceDataContextProvider>
+      <JobsContextProvider>
+        <ReferenceDataContextProvider>
+          <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: undefined }]} handleActiveStep={handleActiveStep}></SideloadApp>
+        </ReferenceDataContextProvider>
+      </JobsContextProvider>
     )
 
-    expect(spyInstall).toHaveBeenCalled()
-
-    await screen.findByText('Installing...')
-    await screen.findByText('Oops... Error during the installation of ' + yaml.title + '.')
+    await screen.findByText('Error during the installation of ' + yaml.title + '.')
 
     const icon = getByTestId('error-icon')
     expect(icon).toBeVisible()
@@ -80,7 +82,6 @@ describe('Test Sideload App', () => {
     const retry = screen.getByRole('button', { name: 'Retry' })
     fireEvent.click(retry)
 
-    await screen.findByText('Installing...')
-    await screen.findByText('Oops... Error during the installation of ' + yaml.title + '.')
+    await screen.findByText('Error during the installation of ' + yaml.title + '.')
   })
 })

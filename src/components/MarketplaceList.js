@@ -130,9 +130,9 @@ export default function MarketplaceList (props) {
         ...app,
         props: {
           ...app.props,
-          status: appList?.find(o => o.appKey.name === app.props.app)?.status || 'uninstalled',
-          version: appList?.find(o => o.appKey.name === app.props.app)?.appKey.version,
-          installedVersions: getInstalledVersions(appList, app.props.app)
+          status: appList?.find(o => o.appKey.name === app.props.appKey.name)?.status || 'uninstalled',
+          version: appList?.find(o => o.appKey.name === app.props.appKey.name)?.appKey.version,
+          installedVersions: getInstalledVersions(appList, app.props.appKey.name)
         }
       }))
 

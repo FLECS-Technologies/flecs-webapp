@@ -99,11 +99,13 @@ export default function MarketplaceList (props) {
       productCards = newProducts.map((app) => (
         <Card
           key={getReverseDomainName(app) ? getReverseDomainName(app) : app?.id}
-          app={getReverseDomainName(app)}
+          appKey={{
+            name: getReverseDomainName(app),
+            version: appList?.find(o => o.appKey.name === getReverseDomainName(app))?.appKey.version
+          }}
           avatar={getAppIcon(app)}
           title={app.name}
           author={getAuthor(app)}
-          version={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.appKey.version}
           description={getShortDescription(app)}
           status={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.status || 'uninstalled'}
           availability={app.stock_status}

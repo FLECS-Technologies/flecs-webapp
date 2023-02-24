@@ -92,9 +92,6 @@ export default function Row (props) {
     setFetchingJobs(true)
     let snackbarText
     let alertSeverity
-    // TODO: find a better way to implement the two lines below
-    props.row.app = props.row.appKey.name
-    props.row.version = props.row.appKey.version
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
 

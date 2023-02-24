@@ -28,7 +28,7 @@ async function UpdateAppService (app, from, to, licenseKey, instances, handleIns
     if (instances && instances.length > 0) {
       responses = await Promise.all(
         instances.map(async instance => {
-          await UpdateInstanceService(app, instance.instanceId, '', to)
+          await UpdateInstanceService(instance.instanceId, to)
         })
       )
       return responses

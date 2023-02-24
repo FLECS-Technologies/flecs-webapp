@@ -36,8 +36,8 @@ export default class AppAPI extends React.Component {
 
     this.app = {
       appKey: {
-        name: props.appKey.name,
-        version: props.appKey.version
+        name: props.appKey?.name || props.app,
+        version: props.appKey?.version || props.version
       },
       avatar: props.avatar,
       title: props.title,
@@ -293,10 +293,11 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
 
         if (this.jobStatus === 'successful') { // app has been installed
+          this.app.status = 'installed'
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
             await this.fetchInstances()
-            await this.startInstance(this.instances[this.instances.length - 1].instanceId)
+            await this.startInstance(this.app.instances[this.app.instances.length - 1].instanceId)
           }
         }
       }
@@ -322,6 +323,8 @@ export default class AppAPI extends React.Component {
   static get propTypes () {
     return {
       appKey: PropTypes.object,
+      app: PropTypes.string,
+      version: PropTypes.string,
       avatar: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,

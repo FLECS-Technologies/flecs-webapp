@@ -48,14 +48,14 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows?.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{row.status !== 'running' ? <ClearIcon fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
+                <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>
             ))}

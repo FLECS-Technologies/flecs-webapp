@@ -55,7 +55,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{row.status !== 'running' ? <ClearIcon fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
+                <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>
             ))}

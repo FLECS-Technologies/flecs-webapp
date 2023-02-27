@@ -35,7 +35,7 @@ const mockDetails = {
     ],
     hostname: 'flecs-0123abcd',
     instanceId: '87654fed',
-    IPAddress: '172.21.0.2',
+    ipAddress: '172.21.0.2',
     mounts: [
       {
         container: '/path/to/dir',
@@ -82,7 +82,7 @@ describe('InstanceDetailsService', () => {
 
   test('Get IP Address from Details', () => {
     const ip = getIPAddress(mockDetails.data)
-    expect(ip).toBe(mockDetails.data.IPAddress)
+    expect(ip).toBe(mockDetails.data.ipAddress)
   })
 
   test('Get host from Details', () => {

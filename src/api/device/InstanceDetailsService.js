@@ -31,7 +31,7 @@ function getHostname (instance) {
   return instance?.hostname
 }
 function getIPAddress (instance) {
-  return instance?.IPAddress
+  return instance?.ipAddress
 }
 function getPorts (instance) {
   return instance?.ports

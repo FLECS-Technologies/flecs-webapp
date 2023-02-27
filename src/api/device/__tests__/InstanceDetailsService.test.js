@@ -74,7 +74,7 @@ describe('InstanceDetailsService', () => {
   })
 
   test('calls unsuccessfull getCurrentUserLicenses', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to load instance details'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load instance details'))
     await act(async () => {
       expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError()
     })

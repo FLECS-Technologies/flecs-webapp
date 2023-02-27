@@ -24,7 +24,7 @@ export default class PostInstallAppAPI extends BaseAPI {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app, version, licenseKey })
+      body: JSON.stringify({ appKey: { name: app, version }, licenseKey })
     }
 
     try {

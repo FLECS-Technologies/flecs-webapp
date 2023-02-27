@@ -57,8 +57,6 @@ function AppList (props) {
       }
     )
 
-    // console.log(JSON.stringify(marketplaceAppList))
-
     // call api from the device to get all installed apps
     const deviceAPI = new DeviceAPI()
     await deviceAPI.getInstances()
@@ -123,7 +121,7 @@ function getInstalledVersions (apps, app) {
 
 function getAppInstances (app, instances) {
   if (app && instances) {
-    return instances.filter(i => i.appKey.name === app.appKey.name)
+    return instances.filter(i => (i.appKey.name === app.appKey.name && i.appKey.version === app.appKey.version))
   }
 }
 

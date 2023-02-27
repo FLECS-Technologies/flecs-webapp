@@ -45,7 +45,7 @@ describe('SystemInfo', () => {
   })
 
   test('calls unsuccessfull SystemInfo', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to get system info'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to get system info'))
     await act(async () => {
       expect(SystemInfo()).rejects.toThrowError()
     })

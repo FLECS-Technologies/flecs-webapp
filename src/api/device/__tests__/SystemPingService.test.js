@@ -45,7 +45,7 @@ describe('SystemPing', () => {
   })
 
   test('calls unsuccessfull SystemPing', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to ping'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to ping'))
     await act(async () => {
       expect(SystemPing()).rejects.toThrowError()
     })

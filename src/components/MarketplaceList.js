@@ -31,6 +31,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 
 export default function MarketplaceList (props) {
+  const executedRef = React.useRef(false)
   const [products, setProducts] = useState()
   const { appList } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
@@ -65,7 +66,7 @@ export default function MarketplaceList (props) {
   }
   const loadProducts = useCallback(async () => {
     try {
-      await getProducts(queryParams)
+      getProducts(queryParams)
         .then(
           (loadedProducts) => {
             try {
@@ -91,7 +92,7 @@ export default function MarketplaceList (props) {
     } catch (error) {
       console.log(error.response)
     }
-  }, [queryParams])
+  }, [queryParams, appList])
 
   function createProductCards (newProducts) {
     let productCards = []
@@ -119,7 +120,6 @@ export default function MarketplaceList (props) {
           installedVersions={getInstalledVersions(appList, getReverseDomainName(app))}
         />
       ))
-
       return productCards
     }
   }
@@ -141,12 +141,14 @@ export default function MarketplaceList (props) {
   }
 
   React.useEffect(() => {
-    loadProducts()
-  }, [loadProducts])
-
-  React.useEffect(() => {
     if (!loading) {
+      // update the product cards if the view is currently not loading
       updateProductCards()
+    } else {
+      // else create the product cards and make sure we only run it once
+      if (executedRef.current) { return }
+      loadProducts(appList)
+      executedRef.current = true
     }
   }, [appList])
 

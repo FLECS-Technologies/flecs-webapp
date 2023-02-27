@@ -24,10 +24,7 @@ import NewReleasesIcon from '@mui/icons-material/NewReleases'
 
 function VersionSelector (props) {
   const { availableVersions, setSelectedVersion, selectedVersion } = props
-  const [newVersionAvailable] = React.useState(
-    (!getLatestVersion(availableVersions)?.installed) &&
-      (availableVersions?.filter(version => version?.installed).length > 0)
-  )
+  const newVersionAvailable = ((!getLatestVersion(availableVersions)?.installed) && (availableVersions?.filter(version => version?.installed).length > 0))
 
   const handleChange = (event) => {
     setSelectedVersion(availableVersions?.find(version => version.version === event.target.value))

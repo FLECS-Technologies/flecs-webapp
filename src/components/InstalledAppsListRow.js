@@ -127,7 +127,7 @@ export default function Row (props) {
 
     if (appAPI.jobStatus === 'successful') { // instance has been created
       await appAPI.fetchInstances()
-      await appAPI.startInstance(appAPI.instances[appAPI.instances.length - 1].instanceId)
+      await appAPI.startInstance(appAPI.app.instances[appAPI.app.instances.length - 1].instanceId)
     }
 
     if (appAPI.lastAPICallSuccessfull) {

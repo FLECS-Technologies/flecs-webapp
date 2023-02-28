@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import { Button, Grid, Typography } from '@mui/material'
-import CircularStatic from './CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
@@ -36,9 +36,8 @@ export default function InstallApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
-  const [completion, setCompletion] = React.useState(0)
   const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
-  const [startProgress, setStartProgress] = React.useState(false)
+  const [running, setRunning] = React.useState(false)
   const executedRef = React.useRef(false)
 
   function loadReferenceData (props) {
@@ -82,19 +81,6 @@ export default function InstallApp (props) {
     executedRef.current = true
   }, [retry])
 
-  React.useEffect(() => {
-    const timer = setInterval(
-      () =>
-        (installationMessage.includes('Installing') || installationMessage.includes('Downgrading') || installationMessage.includes('Updating'))
-          ? setCompletion(completion + 1)
-          : null,
-      200
-    )
-    return () => {
-      clearInterval(timer)
-    }
-  })
-
   const onRetryButtonClick = (event) => {
     executedRef.current = false
     setRetry(true)
@@ -105,15 +91,15 @@ export default function InstallApp (props) {
     if (mappedStatus === 1) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
     } else if (mappedStatus === 2) {
-      setStartProgress(true)
+      setRunning(true)
       setInstallationMessage('Installing ' + app.title + '.')
     } else if (mappedStatus === 4) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage(app.title + ' successfully installed.')
       setSuccess(true)
       setInstalling(false)
     } else if (mappedStatus === -1) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage('Error during the installation of ' + app.title + '.')
       setSuccess(false)
       setError(true)
@@ -126,7 +112,8 @@ export default function InstallApp (props) {
     <div>
       <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          {startProgress && CircularStatic(completion)}
+          {(installing && !running) && <CircularProgress color='secondary' />} {/* pending job */}
+          {running && <CircularProgress />}
           {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>

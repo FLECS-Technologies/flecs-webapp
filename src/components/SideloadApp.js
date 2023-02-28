@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import { Button, Grid, Typography } from '@mui/material'
-import CircularStatic from './CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
@@ -39,7 +39,7 @@ export default function SideloadApp (props) {
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [completion, setCompletion] = React.useState(0)
   const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
-  const [startProgress, setStartProgress] = React.useState(false)
+  const [running, setRunning] = React.useState(false)
 
   function loadReferenceData (props) {
     if (appList) {
@@ -105,15 +105,15 @@ export default function SideloadApp (props) {
     if (mappedStatus === 1) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${yaml.title} will begin soon.`)
     } else if (mappedStatus === 2) {
-      setStartProgress(true)
+      setRunning(true)
       setInstallationMessage('Installing ' + yaml.title + '.')
     } else if (mappedStatus === 4) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage(yaml.title + ' successfully installed.')
       setSuccess(true)
       setInstalling(false)
     } else if (mappedStatus === -1) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage('Error during the installation of ' + yaml.title + '.')
       setSuccess(false)
       setError(true)
@@ -126,7 +126,8 @@ export default function SideloadApp (props) {
     <div>
       <Grid data-testid='sideload-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          {startProgress && CircularStatic(completion)}
+          {(installing && !running) && <CircularProgress color='secondary' />} {/* pending job */}
+          {running && <CircularProgress />}
           {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>

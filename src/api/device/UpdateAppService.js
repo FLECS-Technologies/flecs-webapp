@@ -20,7 +20,7 @@ import { UpdateInstanceService } from './UpdateInstanceService'
 import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
-async function UpdateAppService (app, from, to, licenseKey, instances, handleInstallationJob) {
+async function UpdateAppService (app, to, licenseKey, instances, handleInstallationJob) {
   const jobStatus = await installApp(app, to, licenseKey, handleInstallationJob)
   if (jobStatus === 'successful') {
     // migrate instances to the new version

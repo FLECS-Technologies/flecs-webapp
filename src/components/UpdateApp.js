@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import { Button, Grid, Typography } from '@mui/material'
-import CircularStatic from './CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
@@ -37,9 +37,8 @@ export default function UpdateApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
-  const [completion, setCompletion] = React.useState(0)
   const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
-  const [startProgress, setStartProgress] = React.useState(false)
+  const [running, setRunning] = React.useState(false)
 
   const updateApp = React.useCallback(async (app, from, to, tickets) => {
     const installedApp = appList?.filter(obj => { return (obj.appKey.name === app.appKey.name && obj.appKey.version === from) }) || []
@@ -49,7 +48,7 @@ export default function UpdateApp (props) {
     setFetchingJobs(true)
 
     // call update endpoint
-    UpdateAppService(app?.appKey.name, from, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
+    UpdateAppService(app?.appKey.name, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
       .then(() => {
         // trigger a reload of all installed apps
         setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
@@ -74,19 +73,6 @@ export default function UpdateApp (props) {
     executedRef.current = true
   }, [retry])
 
-  React.useEffect(() => {
-    const timer = setInterval(
-      () =>
-        (installationMessage.includes('Installing') || installationMessage.includes('Downgrading') || installationMessage.includes('Updating'))
-          ? setCompletion(completion + 1)
-          : null,
-      200
-    )
-    return () => {
-      clearInterval(timer)
-    }
-  })
-
   const handleRetryClick = (event) => {
     setRetry(true)
     executedRef.current = false
@@ -97,19 +83,16 @@ export default function UpdateApp (props) {
     if (mappedStatus === 1) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
     } else if (mappedStatus === 2) {
-      setStartProgress(true)
+      setRunning(true)
       setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
-      // setInstallationMessage('Installing ' + app.title + '.')
     } else if (mappedStatus === 4) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
-      // setInstallationMessage(app.title + ' successfully installed.')
       setSuccess(true)
       setUpdating(false)
     } else if (mappedStatus === -1) {
-      setStartProgress(false)
+      setRunning(false)
       setInstallationMessage('Oops... ' + (error.message || 'Error during the ' + ((from < to) ? 'update' : 'downgrade') + ' of ' + app?.title + '.'))
-      // setInstallationMessage('Error during the installation of ' + app.title + '.')
       setSuccess(false)
       setError(true)
       setUpdating(false)
@@ -121,7 +104,8 @@ export default function UpdateApp (props) {
     <div>
       <Grid data-testid='update-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
         <Grid item >
-          {startProgress && CircularStatic(completion)}
+          {(updating && !running) && <CircularProgress color='secondary' />} {/* pending job */}
+          {running && <CircularProgress />}
           {(success && !updating) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>

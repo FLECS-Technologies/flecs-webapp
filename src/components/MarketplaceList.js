@@ -52,6 +52,7 @@ export default function MarketplaceList (props) {
       return { ...previousState, stock_status: (queryParams.stock_status === 'instock' ? undefined : 'instock') }
     })
     setLoading(true)
+    executedRef.current = false
   }
 
   function setSearchFilter (event, reason) {
@@ -59,6 +60,7 @@ export default function MarketplaceList (props) {
       return { ...previousState, search: reason }
     })
     setLoading(true)
+    executedRef.current = false
   }
 
   function toggleFilter () {
@@ -150,7 +152,7 @@ export default function MarketplaceList (props) {
       loadProducts(appList)
       executedRef.current = true
     }
-  }, [appList])
+  }, [appList, queryParams])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">

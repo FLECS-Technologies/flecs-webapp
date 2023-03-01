@@ -34,8 +34,8 @@ export default function Export (props) {
   const exportApps = async (props) => {
     setExporting(true)
 
-    const apps = appList?.map(app => { return { app: app.app, version: app.version } })
-    const instances = appList?.map(app => { return app?.instances }).flat()
+    const apps = appList?.map(app => { return { name: app.appKey.name, version: app.appKey.version } })
+    const instances = appList?.map(app => { return app?.instances.map(i => i.instanceId) }).flat()
 
     downloadLatestExport(apps, instances)
       .then((response) => {
@@ -46,18 +46,20 @@ export default function Export (props) {
             fileDownload(response, 'filename.csv');
         */
         // create file link in browser's memory
-        const href = URL.createObjectURL(response)
+        // const href = URL.createObjectURL(response)
 
         // create "a" HTML element with href to file & click
         const link = document.createElement('a')
-        link.href = href
-        link.setAttribute('flecs export', window.location.hostname + '-flecs-export.tar')
-        document.body.appendChild(link)
+        link.download = 'flecs-export.tar'
+        link.href = URL.createObjectURL(response)
+        // link.href = href
+        // link.setAttribute('flecs export', window.location.hostname + '-flecs-export.tar')
+        // document.body.appendChild(link)
         link.click()
 
         // clean up "a" element & remove ObjectURL
-        document.body.removeChild(link)
-        URL.revokeObjectURL(href)
+        // document.body.removeChild(link)
+        URL.revokeObjectURL(link.href)
       })
       .catch((error) => {
         setSnackbarState({

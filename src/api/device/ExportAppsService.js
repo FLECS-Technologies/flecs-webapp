@@ -19,20 +19,23 @@ import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 import BaseAPI from './BaseAPI'
 
-async function postExportApps (apps, instances) {
-  return axios
-    .post(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL, { apps, instances })
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
-}
+// async function postExportApps (apps, instances) {
+//   console.log('entering ExportAppsService.js/postExportApps')
+//   console.log({ apps, instances })
+//   return axios
+//     .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL, { apps, instances })
+//     .then(response => {
+//       return response.data
+//     })
+//     .catch(error => {
+//       return Promise.reject(error)
+//     })
+// }
 
 async function getExports () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
+    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
+    .get('http://localhost/api/v2/exports')
     .then(response => {
       return response.data
     })
@@ -43,7 +46,8 @@ async function getExports () {
 
 async function getDownloadExport (exportFile) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
+    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
+    .get(`http://localhost/api/v2/exports/${exportFile}`, { responseType: 'blob' })
     .then(response => {
       return response.data
     })
@@ -67,7 +71,7 @@ async function downloadLatestExport (apps, instances) {
   // 3. download latest export
     .then(response => {
     // 3.1 get export list from response
-      const lastExport = response?.exports?.shift()
+      const lastExport = response?.shift()
       // 3.2 call download endpoint with the latest export file
       return getDownloadExport(lastExport)
     })
@@ -86,9 +90,9 @@ class ExportApps extends BaseAPI {
     }
 
     try {
-      await this.callAPI('/v2' + DeviceAPIConfiguration.POST_APP_EXPORT_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.POST_APP_EXPORT_URL, requestOptions)
     } catch (error) { }
   }
 }
 
-export { postExportApps, getExports, getDownloadExport, downloadLatestExport }
+export { /* postExportApps, */getExports, getDownloadExport, downloadLatestExport }

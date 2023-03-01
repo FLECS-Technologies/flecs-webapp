@@ -35,7 +35,7 @@ const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
-const GET_EXPORTS_URL = APP_ROUTE + '/exports'
+const GET_EXPORTS_URL = '/exports'
 const GET_JOBS_URL = '/jobs'
 
 const POST_INSTALL_APP_URL = '/install'
@@ -49,7 +49,7 @@ const POST_CREATE_APP_INSTANCE_URL = '/create'
 // const POST_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
-const POST_APP_EXPORT_URL = APP_ROUTE + '/exports'
+const POST_APP_EXPORT_URL = '/exports/create'
 const POST_SIDELOAD_APP = '/sideload'
 
 // const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'

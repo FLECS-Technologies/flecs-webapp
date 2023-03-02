@@ -201,6 +201,7 @@ export default function DeviceAppsList (props) {
         />)
       })
   }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tmpAppList.length) : 0
   return (
@@ -225,7 +226,7 @@ export default function DeviceAppsList (props) {
           </Typography>
           <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
             <div>
-              <Export disabled={!user?.user} sx={{ ml: 1 }}></Export>
+              <Export disabled={!user?.user || tmpAppList?.length === 0} sx={{ ml: 1 }}></Export>
             </div>
           </Tooltip>
           <Tooltip title={user?.user ? 'Import apps from file' : 'Please log in to be able to import apps'}>

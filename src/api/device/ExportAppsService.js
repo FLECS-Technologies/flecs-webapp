@@ -18,6 +18,8 @@
 import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 import BaseAPI from './BaseAPI'
+import JobsAPI from './JobsAPI'
+import { sleep } from '../../utils/sleep'
 
 // async function postExportApps (apps, instances) {
 //   console.log('entering ExportAppsService.js/postExportApps')
@@ -32,54 +34,6 @@ import BaseAPI from './BaseAPI'
 //     })
 // }
 
-async function getExports () {
-  return axios
-    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
-    .get('http://localhost/api/v2/exports')
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
-}
-
-async function getDownloadExport (exportFile) {
-  return axios
-    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
-    .get(`http://localhost/api/v2/exports/${exportFile}`, { responseType: 'blob' })
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
-}
-
-async function downloadLatestExport (apps, instances) {
-  // 1. export apps & instances
-  // return postExportApps(apps, instances)
-
-  // alternative with fetch instead of axios
-  const exportAPI = new ExportApps()
-  return exportAPI.postExportApps(apps, instances)
-
-  // 2. get all exports
-    .then(response => {
-      return getExports()
-    })
-  // 3. download latest export
-    .then(response => {
-    // 3.1 get export list from response
-      const lastExport = response?.shift()
-      // 3.2 call download endpoint with the latest export file
-      return getDownloadExport(lastExport)
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
-}
-
 class ExportApps extends BaseAPI {
   async postExportApps (apps, instances) {
     // POST request using fetch with error handling
@@ -93,6 +47,65 @@ class ExportApps extends BaseAPI {
       await this.callAPI(DeviceAPIConfiguration.POST_APP_EXPORT_URL, requestOptions)
     } catch (error) { }
   }
+}
+
+async function downloadLatestExport (apps, instances) {
+  try {
+    if (apps.length > 0 && instances.length > 0) {
+      // 1. export apps & instances
+      const exportAPI = new ExportApps()
+      await exportAPI.postExportApps(apps, instances)
+      const jobId = exportAPI.state.responseData.jobId
+      const { jobStatus, exportId } = await waitUntilJobIsComplete(jobId)
+
+      // 2. get export file
+      if (jobStatus === 'successful') { // export has been created in the server
+        return await getDownloadExport(exportId)
+      }
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function getExports () {
+  return axios
+    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
+    .get('http://localhost/api/v2/exports')
+    .then(response => {
+      return response.data
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+async function getDownloadExport (exportId) {
+  return axios
+    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
+    .get(`http://localhost/api/v2/exports/${exportId}`, { responseType: 'blob' })
+    .then(response => {
+      return { blob: response.data, exportId }
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
+const waitUntilJobIsComplete = async (jobId) => {
+  const jobsAPI = new JobsAPI()
+  await jobsAPI.getJob(jobId)
+  let jobStatus = jobsAPI.state.responseData[0].status
+
+  while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
+    await jobsAPI.getJob(jobId)
+    jobStatus = jobsAPI.state.responseData[0].status
+    await sleep(500)
+  }
+
+  const exportId = jobsAPI.state.responseData[0].result.message
+
+  return { jobStatus, exportId }
 }
 
 export { /* postExportApps, */getExports, getDownloadExport, downloadLatestExport }

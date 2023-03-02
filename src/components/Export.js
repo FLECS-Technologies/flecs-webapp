@@ -39,26 +39,13 @@ export default function Export (props) {
 
     downloadLatestExport(apps, instances)
       .then((response) => {
-        /*
-            alternative:
-            use js-file-download library
-            var fileDownload = require('js-file-download');
-            fileDownload(response, 'filename.csv');
-        */
-        // create file link in browser's memory
-        // const href = URL.createObjectURL(response)
-
-        // create "a" HTML element with href to file & click
+        // create <a> HTML element with href to file & click
         const link = document.createElement('a')
-        link.download = 'flecs-export.tar'
-        link.href = URL.createObjectURL(response)
-        // link.href = href
-        // link.setAttribute('flecs export', window.location.hostname + '-flecs-export.tar')
-        // document.body.appendChild(link)
+        link.download = `flecs-export-${response.exportId}.tar.gz`
+        link.href = URL.createObjectURL(response.blob)
         link.click()
 
-        // clean up "a" element & remove ObjectURL
-        // document.body.removeChild(link)
+        // clean up
         URL.revokeObjectURL(link.href)
       })
       .catch((error) => {

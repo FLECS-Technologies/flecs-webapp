@@ -21,19 +21,6 @@ import BaseAPI from './BaseAPI'
 import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
-// async function postExportApps (apps, instances) {
-//   console.log('entering ExportAppsService.js/postExportApps')
-//   console.log({ apps, instances })
-//   return axios
-//     .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL, { apps, instances })
-//     .then(response => {
-//       return response.data
-//     })
-//     .catch(error => {
-//       return Promise.reject(error)
-//     })
-// }
-
 class ExportApps extends BaseAPI {
   async postExportApps (apps, instances) {
     // POST request using fetch with error handling
@@ -49,7 +36,7 @@ class ExportApps extends BaseAPI {
   }
 }
 
-async function downloadLatestExport (apps, instances) {
+async function downloadExport (apps, instances) {
   try {
     if (apps.length > 0 && instances.length > 0) {
       // 1. export apps & instances
@@ -108,4 +95,4 @@ const waitUntilJobIsComplete = async (jobId) => {
   return { jobStatus, exportId }
 }
 
-export { /* postExportApps, */getExports, getDownloadExport, downloadLatestExport }
+export { getExports, getDownloadExport, downloadExport }

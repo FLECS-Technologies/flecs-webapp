@@ -29,21 +29,21 @@ async function getExports () {
   return new Promise((resolve, reject) => { resolve(['latestExport', 'midExport', 'oldestExport']) })
 }
 
-async function getDownloadExport (exportFile) {
+async function getDownloadExport (exportId) {
   const blob = new Blob()
   return new Promise((resolve, reject) => {
-    (exportFile)
+    (exportId)
 
       ? resolve(blob)
-      : reject(new Error('exportFile is missing'))
+      : reject(new Error('exportId is missing'))
   })
 }
 
-async function downloadLatestExport (apps, instances) {
+async function downloadExport (apps, instances) {
   const blob = new Blob()
   return new Promise((resolve, reject) => {
     resolve(blob)
   })
 }
 
-export { postExportApps, getExports, getDownloadExport, downloadLatestExport }
+export { postExportApps, getExports, getDownloadExport, downloadExport }

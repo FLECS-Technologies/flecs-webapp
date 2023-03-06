@@ -19,7 +19,7 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { downloadLatestExport, getDownloadExport, getExports, postExportApps } from '../ExportAppsService'
+import { downloadExport, getDownloadExport, getExports, postExportApps } from '../ExportAppsService'
 
 jest.mock('axios')
 
@@ -77,17 +77,17 @@ describe('ExportAppsService', () => {
     })
   })
 
-  test('calls successfull downloadLatestExport', async () => {
+  test('calls successfull downloadExport', async () => {
     axios.post.mockResolvedValueOnce('wonderful')
     axios.get.mockResolvedValueOnce(mockGetExports)
     axios.get.mockResolvedValueOnce(new Blob())
-    await waitFor(() => downloadLatestExport('latest'))
+    await waitFor(() => downloadExport('latest'))
   })
 
-  test('calls unsuccessfull downloadLatestExport', async () => {
+  test('calls unsuccessfull downloadExport', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to export apps.'))
     await act(async () => {
-      expect(downloadLatestExport()).rejects.toThrowError()
+      expect(downloadExport()).rejects.toThrowError()
     })
   })
 })

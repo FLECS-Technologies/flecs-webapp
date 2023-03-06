@@ -15,13 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import nock from 'nock'
 import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { downloadExport, getDownloadExport, getExports, postExportApps } from '../ExportAppsService'
+import { ExportApps, downloadExport, getDownloadExport, getExports } from '../ExportAppsService'
+import { DeviceAPIConfiguration } from '../../api-config'
 
 jest.mock('axios')
+jest.mock('../JobsAPI.js')
 
 const mockGetExports = {
   data: {
@@ -40,21 +43,31 @@ describe('ExportAppsService', () => {
   })
 
   test('calls successful postExportApps', async () => {
-    axios.post.mockResolvedValueOnce('wonderful')
-    await waitFor(() => postExportApps())
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .reply(202, {
+        jobId: 1
+      })
+
+    const exportApps = new ExportApps()
+    await exportApps.postExportApps()
+    const jobId = exportApps.state.responseData.jobId
+    expect(jobId).toBe(1)
   })
 
   test('calls unsuccessful postExportApps', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to export apps.'))
-    await act(async () => {
-      expect(postExportApps()).rejects.toThrowError()
-    })
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .reply(400, {})
+
+    const exportApps = new ExportApps()
+    await exportApps.postExportApps()
+    expect(exportApps.state.responseData).toBe(null)
   })
 
   test('calls successful getExports', async () => {
     axios.get.mockResolvedValueOnce(mockGetExports)
     const response = await waitFor(() => getExports())
-
     expect(response.exports).toBe(mockGetExports.data.exports)
   })
 
@@ -78,16 +91,33 @@ describe('ExportAppsService', () => {
   })
 
   test('calls successful downloadExport', async () => {
-    axios.post.mockResolvedValueOnce('wonderful')
-    axios.get.mockResolvedValueOnce(mockGetExports)
-    axios.get.mockResolvedValueOnce(new Blob())
-    await waitFor(() => downloadExport('latest'))
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .reply(202, {
+        jobId: 1
+      })
+
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL)
+      .reply(200, [{ status: 'successful', result: { message: '12345678' } }])
+
+    axios.get.mockResolvedValueOnce({ data: 'blob downloaded' })
+    const answer = await downloadExport(['1'], [])
+    expect(answer.blob).toBe('blob downloaded')
   })
 
   test('calls unsuccessful downloadExport', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to export apps.'))
-    await act(async () => {
-      expect(downloadExport()).rejects.toThrowError()
-    })
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .reply(202, {
+        jobId: 1
+      })
+
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL)
+      .reply(200, [{ status: 'failed', result: { message: '12345678' } }])
+
+    const answer = await downloadExport(['1'], [])
+    expect(answer).toBe(undefined)
   })
 })

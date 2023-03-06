@@ -48,7 +48,7 @@ describe('DeviceAuthAPI', () => {
     jest.resetAllMocks()
   })
 
-  test('calls successfull mp-login', async () => {
+  test('calls successful mp-login', async () => {
     axios.post.mockResolvedValueOnce()
     await act(async () => {
       postMPLogin(testUser)
@@ -57,7 +57,7 @@ describe('DeviceAuthAPI', () => {
     expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.data.user_login, token: testUser.jwt.token })
   })
 
-  test('calls successfull mp-logout', async () => {
+  test('calls  mp-logout', async () => {
     axios.post.mockResolvedValueOnce()
     await act(async () => {
       postMPLogout(testUser)
@@ -71,7 +71,7 @@ describe('DeviceAuthAPI', () => {
     await act(async () => { expect(postMPLogin(testUser)).rejects.toThrowError() })
   })
 
-  test('calls successfull mp-logout', async () => {
+  test('calls successful mp-logout', async () => {
     axios.post.mockReturnValue(Promise.reject(new Error('Failed to log out user from the device')))
     await act(async () => { expect(postMPLogout(testUser)).rejects.toThrowError() })
   })

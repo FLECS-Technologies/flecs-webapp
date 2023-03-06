@@ -67,7 +67,7 @@ export default function AppInstanceRow (props) {
     appAPI.setAppData(loadAppReferenceData(app))
     await appAPI.stopInstance(instanceId)
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       setUpdateAppList(true)
       snackbarText = 'Successully stopped ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
@@ -94,7 +94,7 @@ export default function AppInstanceRow (props) {
     appAPI.setAppData(loadAppReferenceData(app))
     await appAPI.startInstance(instanceId)
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       setUpdateAppList(true)
       snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
@@ -121,7 +121,7 @@ export default function AppInstanceRow (props) {
     appAPI.setAppData(loadAppReferenceData(app))
     await appAPI.deleteInstance(instanceId)
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       setUpdateAppList(true)
       snackbarText = appAPI.app.title + ' instance successully deleted.'
       alertSeverity = 'success'

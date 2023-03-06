@@ -53,7 +53,7 @@ describe('JobsAPI', () => {
     nock.enableNetConnect()
   })
 
-  test('calls successfull JobsAPI.getJobs', async () => {
+  test('calls successful JobsAPI.getJobs', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL)
       .reply(200, jobs)
@@ -79,7 +79,7 @@ describe('JobsAPI', () => {
     expect(jobsAPI.state.responseData).toBeNull()
   })
 
-  test('calls successfull JobsAPI.getJob', async () => {
+  test('calls successful JobsAPI.getJob', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobs[0].id)
       .reply(200, jobs[0])
@@ -105,7 +105,7 @@ describe('JobsAPI', () => {
     expect(jobsAPI.state.responseData).toBeNull()
   })
 
-  test('calls successfull JobsAPI.deleteJob', async () => {
+  test('calls successful JobsAPI.deleteJob', async () => {
     nock('http://localhost')
       .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobs[0].id)
       .reply(200)

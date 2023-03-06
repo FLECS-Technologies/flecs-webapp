@@ -49,7 +49,7 @@ export default class AppAPI extends React.Component {
       multiInstance: props.multiInstance
     }
 
-    this._lastAPICallSuccessfull = false
+    this._lastAPICallSuccessful = false
     this.lastAPIError = null
     this.jobId = null
     this.jobStatus = null
@@ -78,12 +78,12 @@ export default class AppAPI extends React.Component {
     this.app.appKey.version = version
   }
 
-  get lastAPICallSuccessfull () {
-    return this._lastAPICallSuccessfull
+  get lastAPICallSuccessful () {
+    return this._lastAPICallSuccessful
   }
 
-  set lastAPICallSuccessfull (value) {
-    this._lastAPICallSuccessfull = value
+  set lastAPICallSuccessful (value) {
+    this._lastAPICallSuccessful = value
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
@@ -113,7 +113,7 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId)
 
         if (this.jobStatus === 'successful') {
-          this.lastAPICallSuccessfull = true
+          this.lastAPICallSuccessful = true
           this.app.status = 'uninstalled'
         } else {
           if (uninstallAPI.state.errorMessage !== null) {
@@ -123,7 +123,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       this.lastAPIError = error
     }
   }
@@ -132,7 +132,7 @@ export default class AppAPI extends React.Component {
     try {
       const deviceAPI = new DeviceAPI()
       await deviceAPI.getInstances()
-      if (deviceAPI.lastAPICallSuccessfull) {
+      if (deviceAPI.lastAPICallSuccessful) {
         this.app.instances = await getAppInstances(this.app, deviceAPI.instances)
       }
     } catch (error) {
@@ -170,7 +170,7 @@ export default class AppAPI extends React.Component {
           this.app.status = 'installed'
           this.app.appKey.version = version || this.app.appKey.version
         } else {
-          this.lastAPICallSuccessfull = false
+          this.lastAPICallSuccessful = false
           if (installAPI.state.errorMessage !== null) {
             this.lastAPIError = installAPI.state.errorMessage.message
           }
@@ -191,9 +191,9 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId)
 
         if (this.jobStatus === 'successful') {
-          this.lastAPICallSuccessfull = true
+          this.lastAPICallSuccessful = true
         } else {
-          this.lastAPICallSuccessfull = false
+          this.lastAPICallSuccessful = false
           if (createInstanceAPI.state.errorMessage !== null) {
             this.lastAPIError = createInstanceAPI.state.errorMessage.message
           }
@@ -202,7 +202,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       throw Error('failed to create instance after installing the app.')
     }
   }
@@ -216,10 +216,10 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId)
 
         if (this.jobStatus === 'successful') {
-          this.lastAPICallSuccessfull = true
+          this.lastAPICallSuccessful = true
         } else {
         // catch response of start app instance was not OK
-          this.lastAPICallSuccessfull = false
+          this.lastAPICallSuccessful = false
           if (startInstanceAPI.state.errorMessage !== null) {
             this.lastAPIError = startInstanceAPI.state.errorMessage.message
           }
@@ -228,7 +228,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       throw Error('failed to start instance after installing the app.')
     }
   }
@@ -242,10 +242,10 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId)
 
         if (this.jobStatus === 'successful') {
-          this.lastAPICallSuccessfull = true
+          this.lastAPICallSuccessful = true
         } else {
         // catch response of stop app instance was not OK
-          this.lastAPICallSuccessfull = false
+          this.lastAPICallSuccessful = false
           if (stopInstanceAPI.state.errorMessage !== null) {
             this.lastAPIError = stopInstanceAPI.state.errorMessage.message
           }
@@ -254,7 +254,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
     }
   }
 
@@ -267,10 +267,10 @@ export default class AppAPI extends React.Component {
         await this.waitUntilJobIsComplete(this.jobId)
 
         if (this.jobStatus === 'successful') {
-          this.lastAPICallSuccessfull = true
+          this.lastAPICallSuccessful = true
         } else {
         // catch response of delete instance was not OK
-          this.lastAPICallSuccessfull = false
+          this.lastAPICallSuccessful = false
           if (deleteInstanceAPI.state.errorMessage !== null) {
             this.lastAPIError = deleteInstanceAPI.state.errorMessage.message
           }
@@ -279,7 +279,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
     }
   }
 

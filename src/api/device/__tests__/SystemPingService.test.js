@@ -37,14 +37,14 @@ describe('SystemPing', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull SystemPing', async () => {
+  test('calls successful SystemPing', async () => {
     axios.get.mockResolvedValueOnce(mockPing)
     const response = await waitFor(() => SystemPing())
 
     expect(response.additionalInfo).toBe(mockPing.data.additionalInfo)
   })
 
-  test('calls unsuccessfull SystemPing', async () => {
+  test('calls unsuccessful SystemPing', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to ping'))
     await act(async () => {
       expect(SystemPing()).rejects.toThrowError()

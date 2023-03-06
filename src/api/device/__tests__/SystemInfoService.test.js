@@ -37,14 +37,14 @@ describe('SystemInfo', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull SystemInfo', async () => {
+  test('calls successful SystemInfo', async () => {
     axios.get.mockResolvedValueOnce(mockSystemInfo)
     const response = await waitFor(() => SystemInfo())
 
     expect(response.platform).toBe(mockSystemInfo.data.platform)
   })
 
-  test('calls unsuccessfull SystemInfo', async () => {
+  test('calls unsuccessful SystemInfo', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to get system info'))
     await act(async () => {
       expect(SystemInfo()).rejects.toThrowError()

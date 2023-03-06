@@ -38,14 +38,14 @@ describe('AppRatingService', () => {
     jest.resetAllMocks()
   })
 
-  test('calls successfull createAppRating', async () => {
+  test('calls successful createAppRating', async () => {
     axios.post.mockResolvedValueOnce(mockRating)
     await waitFor(() => createAppRating(37))
 
     // expect(rating).toBe(mockRating.data.rating)
   })
 
-  test('calls unsuccessfull createAppRating', async () => {
+  test('calls unsuccessful createAppRating', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to create app rating'))
     await act(async () => {
       expect(createAppRating(37)).rejects.toThrowError()

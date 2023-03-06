@@ -61,7 +61,7 @@ function AppList (props) {
     const deviceAPI = new DeviceAPI()
     await deviceAPI.getInstances()
     await deviceAPI.getInstalledApps()
-    if (deviceAPI.lastAPICallSuccessfull) {
+    if (deviceAPI.lastAPICallSuccessful) {
       mergedList = deviceAPI.appList
 
       mergedList.forEach((app) => {

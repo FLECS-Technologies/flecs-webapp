@@ -61,7 +61,7 @@ export default function SideloadApp (props) {
     appAPI.setAppData(loadReferenceData(yaml))
     await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key, handleInstallationJob)
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       // trigger a reload of all installed apps
       setLicensedApp(tickets[currentInstallations()]?.license_key, yaml?.title)
         .then()

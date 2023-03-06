@@ -39,7 +39,7 @@ export default class AppAPI extends React.Component {
       multiInstance: props.multiInstance
     }
 
-    this._lastAPICallSuccessfull = false
+    this._lastAPICallSuccessful = false
     this.lastAPIError = null
     this.jobId = null
     this.jobStatus = null
@@ -64,12 +64,12 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  get lastAPICallSuccessfull () {
-    return this._lastAPICallSuccessfull
+  get lastAPICallSuccessful () {
+    return this._lastAPICallSuccessful
   }
 
-  set lastAPICallSuccessfull (value) {
-    this._lastAPICallSuccessfull = value
+  set lastAPICallSuccessful (value) {
+    this._lastAPICallSuccessful = value
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
@@ -80,27 +80,27 @@ export default class AppAPI extends React.Component {
       await sleep(500)
       handleInstallationJob('successful')
     }
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async uninstall () {
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async createInstance (instanceName) {
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async startInstance (instanceId) {
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async stopInstance (instanceId) {
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async deleteInstance (instanceId) {
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   async sideloadApp (appYaml, licenseKey, handleInstallationJob) {
@@ -110,7 +110,7 @@ export default class AppAPI extends React.Component {
       await sleep(500)
       handleInstallationJob('successful')
     }
-    this.lastAPICallSuccessfull = true
+    this.lastAPICallSuccessful = true
   }
 
   createInstanceName () {

@@ -85,12 +85,12 @@ export default function OutlinedCard (props) {
     appAPI.setVersion(selectedVersion.version)
     await appAPI.uninstall()
 
-    const alertSeverity = appAPI.lastAPICallSuccessfull ? 'success' : 'error'
-    const displayCopyIcon = appAPI.lastAPICallSuccessfull ? 'none' : 'block'
+    const alertSeverity = appAPI.lastAPICallSuccessful ? 'success' : 'error'
+    const displayCopyIcon = appAPI.lastAPICallSuccessful ? 'none' : 'block'
     let snackbarText
     let clipBoardContent
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       // trigger a reload of all installed apps
       setUpdateAppList(true)
 

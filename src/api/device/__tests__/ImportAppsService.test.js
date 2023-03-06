@@ -37,7 +37,7 @@ describe('ImportAppsService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull putImportApps', async () => {
+  test('calls successful putImportApps', async () => {
     axios.put.mockResolvedValueOnce(mockPutImportApps)
     const file = new File([], 'flecs-export.tar')
     const response = await waitFor(() => putImportApps(file))
@@ -45,7 +45,7 @@ describe('ImportAppsService', () => {
     expect(response.additionalInfo).toBe(mockPutImportApps.data.additionalInfo)
   })
 
-  test('calls unsuccessfull putImportApps', async () => {
+  test('calls unsuccessful putImportApps', async () => {
     axios.put.mockRejectedValueOnce(new Error('Failed to import apps.'))
     await act(async () => {
       expect(putImportApps()).rejects.toThrowError()

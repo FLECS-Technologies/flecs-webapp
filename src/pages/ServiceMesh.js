@@ -44,7 +44,7 @@ export default function ServiceMesh () {
 
     await deviceAPI.browseServiceMesh()
 
-    if (deviceAPI.lastAPICallSuccessfull) {
+    if (deviceAPI.lastAPICallSuccessful) {
       setData(deviceAPI?.serviceMeshData)
     } else {
       setErrorText('Something went wrong while loading the data! ' + deviceAPI?.lastAPIError)

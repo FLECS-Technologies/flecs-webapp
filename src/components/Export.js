@@ -18,7 +18,7 @@
 import React from 'react'
 import { LoadingButton } from '@mui/lab'
 import UploadIcon from '@mui/icons-material/Upload'
-import { downloadLatestExport } from '../api/device/ExportAppsService'
+import { downloadExport } from '../api/device/ExportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 
@@ -37,7 +37,7 @@ export default function Export (props) {
     const apps = appList?.map(app => { return { name: app.appKey.name, version: app.appKey.version } })
     const instances = appList?.map(app => { return app?.instances.map(i => i.instanceId) }).flat()
 
-    downloadLatestExport(apps, instances)
+    downloadExport(apps, instances)
       .then((response) => {
         // create <a> HTML element with href to file & click
         const link = document.createElement('a')

@@ -8,7 +8,7 @@ This is a short description on how to set up Visual Studio Code for the FLECS We
 
 1. Checkout the repository to your local pc and open it with Visual Studio Code.
 2. Follow this instruction: https://code.visualstudio.com/docs/nodejs/reactjs-tutorial but instead of create-react-app at the beginning, simply install npm into the repository (call: npm install)
-3. After successfull installation and start of npm, hitting F5 should open a new Chrome Windows loading the WebApp
+3. After successful installation and start of npm, hitting F5 should open a new Chrome Windows loading the WebApp
 
 ### Static analysis with ESLint
 We use ESLint for static analysis of our code. This tutorial shows how to setup ESLint in Visual Studio Code: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint

@@ -207,14 +207,14 @@ describe('ProductService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getProducts', async () => {
+  test('calls successful getProducts', async () => {
     axios.get.mockResolvedValueOnce(mockProducts)
     const products = await waitFor(() => getProducts())
 
     expect(products).toHaveLength(1)
   })
 
-  test('calls unsuccessfull getProducts', async () => {
+  test('calls unsuccessful getProducts', async () => {
     mockProducts.data.success = false
     axios.get.mockResolvedValueOnce(mockProducts)
     const products = await waitFor(() => getProducts())
@@ -222,7 +222,7 @@ describe('ProductService', () => {
     expect(products).toBeUndefined()
   })
 
-  test('calls successfull getProducts with status param', async () => {
+  test('calls successful getProducts with status param', async () => {
     const queryParam = {}
     queryParam.status = 'publish'
     queryParam.search = 'opc'

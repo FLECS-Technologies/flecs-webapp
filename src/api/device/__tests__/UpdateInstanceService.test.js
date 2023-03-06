@@ -37,14 +37,14 @@ describe('UpdateInstanceService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull UpdateInstanceService', async () => {
+  test('calls successful UpdateInstanceService', async () => {
     axios.patch.mockResolvedValueOnce(mockUpdateInstanceService)
     const response = await waitFor(() => UpdateInstanceService())
 
     expect(response.additionalInfo).toBe(mockUpdateInstanceService.data.additionalInfo)
   })
 
-  test('calls unsuccessfull UpdateInstanceService', async () => {
+  test('calls unsuccessful UpdateInstanceService', async () => {
     axios.patch.mockRejectedValueOnce(new Error('Failed to update instance'))
     await act(async () => {
       expect(UpdateInstanceService()).rejects.toThrowError()

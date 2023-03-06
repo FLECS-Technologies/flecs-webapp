@@ -32,7 +32,7 @@ describe('Cart', () => {
     jest.resetAllMocks()
   })
 
-  test('Successfull addToCart call', async () => {
+  test('Successful addToCart call', async () => {
     const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockResolvedValueOnce(responseData)
     const cartkey = await addToCart(12)
 
@@ -42,7 +42,7 @@ describe('Cart', () => {
     spy.mockRestore()
   })
 
-  test('Unsuccessfull addToCart call', async () => {
+  test('Unsuccessful addToCart call', async () => {
     const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockRejectedValueOnce('failed to add item.')
 
     await addToCart(12)

@@ -123,28 +123,28 @@ describe('LicenseService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getCurrentUserLicenses', async () => {
+  test('calls successful getCurrentUserLicenses', async () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
     expect(licenses).toHaveLength(1)
   })
 
-  test('calls unsuccessfull getCurrentUserLicenses', async () => {
+  test('calls unsuccessful getCurrentUserLicenses', async () => {
     axios.post.mockResolvedValueOnce(mockLicenses)
     const licenses = await waitFor(() => getCurrentUserLicenses())
 
     expect(licenses).toHaveLength(1)
   })
 
-  test('calls successfull setLicensedApp', async () => {
+  test('calls successful setLicensedApp', async () => {
     axios.post.mockResolvedValueOnce(mockMetaResponse)
     const response = await waitFor(() => setLicensedApp('license', 'app'))
 
     expect(response.result).toBe(mockMetaResponse.data.response.result)
   })
 
-  test('calls unsuccessfull setLicensedApp', async () => {
+  test('calls unsuccessful setLicensedApp', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to set meta'))
     await act(async () => {
       expect(setLicensedApp('license', 'app')).rejects.toThrowError()

@@ -89,7 +89,7 @@ describe('DeviceAPI', () => {
     nock.enableNetConnect()
   })
 
-  test('calls successfull DeviceAPI.getInstalledApps', async () => {
+  test('calls successful DeviceAPI.getInstalledApps', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
       .reply(200, appList, {
@@ -99,7 +99,7 @@ describe('DeviceAPI', () => {
     const devAPI = new DeviceAPI()
     await devAPI.getInstalledApps()
 
-    expect(devAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(devAPI.lastAPICallSuccessful).toBeTruthy()
     expect(devAPI.appList).toHaveLength(2)
   })
 
@@ -114,11 +114,11 @@ describe('DeviceAPI', () => {
     const devAPI = new DeviceAPI()
     await devAPI.getInstalledApps()
 
-    expect(devAPI.lastAPICallSuccessfull).toBeFalsy()
+    expect(devAPI.lastAPICallSuccessful).toBeFalsy()
     expect(devAPI.appList).toBeNull()
   })
 
-  test('calls successfull DeviceAPI.browseServiceMesh', async () => {
+  test('calls successful DeviceAPI.browseServiceMesh', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
       .reply(200, { data }, {
@@ -129,7 +129,7 @@ describe('DeviceAPI', () => {
     const devAPI = new DeviceAPI()
     await devAPI.browseServiceMesh()
 
-    expect(devAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(devAPI.lastAPICallSuccessful).toBeTruthy()
     expect(devAPI.serviceMeshData).toHaveLength(2)
   })
 
@@ -144,7 +144,7 @@ describe('DeviceAPI', () => {
     const devAPI = new DeviceAPI()
     await devAPI.browseServiceMesh()
 
-    expect(devAPI.lastAPICallSuccessfull).toBeFalsy()
+    expect(devAPI.lastAPICallSuccessful).toBeFalsy()
     expect(devAPI.serviceMeshData).toBeNull()
   })
 
@@ -159,7 +159,7 @@ describe('DeviceAPI', () => {
     const devAPI = new DeviceAPI()
     await devAPI.browseServiceMesh()
 
-    expect(devAPI.lastAPICallSuccessfull).toBeFalsy()
+    expect(devAPI.lastAPICallSuccessful).toBeFalsy()
     expect(devAPI.serviceMeshData).toBeNull()
   })
 })

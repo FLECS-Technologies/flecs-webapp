@@ -29,19 +29,19 @@ const handleInstallationJob = jest.fn()
 describe('UpdateAppService', () => {
   const mockInstances = [{ instanceId: '123' }, { instanceId: '456' }]
 
-  test('calls successfull UpdateAppService', async () => {
+  test('calls successful UpdateAppService', async () => {
     const response = await waitFor(() => UpdateAppService('app', '2.0.0', 'ABC', [], handleInstallationJob))
 
     expect(response).toBe('App successfully updated.')
   })
 
-  test('calls successfull UpdateAppService with instances', async () => {
+  test('calls successful UpdateAppService with instances', async () => {
     const response = await waitFor(() => UpdateAppService('app', '2.0.0', 'ABC', mockInstances, handleInstallationJob))
 
     expect(response).toHaveLength(2)
   })
 
-  test('calls unsuccessfull UpdateAppService', async () => {
+  test('calls unsuccessful UpdateAppService', async () => {
     await act(async () => {
       expect(UpdateAppService()).rejects.toThrowError()
     })

@@ -49,7 +49,7 @@ describe('ActionSnackbar', () => {
 
     }
     const { getByTestId } = render(<ActionSnackbar
-        text='Successfull operation'
+        text='Successful operation'
         errorText=''
         open={true}
         setOpen={setOpen}
@@ -63,7 +63,7 @@ describe('ActionSnackbar', () => {
     fireEvent.click(closeButton)
 
     expect(snackbar).toBeInTheDocument()
-    expect(alert).toHaveTextContent('Successfull operation')
+    expect(alert).toHaveTextContent('Successful operation')
     expect(closeButton).toBeInTheDocument()
     expect(copyButton).not.toBeVisible()
 
@@ -126,7 +126,7 @@ describe('ActionSnackbar', () => {
 
     await act(async () => {
       render(<ActionSnackbar
-        text='Successfull operation'
+        text='Successful operation'
         errorText=''
         open={true}
         setOpen={setOpen}
@@ -139,7 +139,7 @@ describe('ActionSnackbar', () => {
     expect(setOpen).not.toHaveBeenCalled()
     */
 
-    expect(screen.getByText('Successfull operation')).toBeVisible()
+    expect(screen.getByText('Successful operation')).toBeVisible()
     // const closeButton = screen.getByTestId('close-button')
 
     // await user.click(closeButton)
@@ -152,7 +152,7 @@ describe('ActionSnackbar', () => {
 
     await act(async () => {
       render(<ActionSnackbar
-        text='Successfull operation'
+        text='Successful operation'
         errorText=''
         open={true}
         setOpen={setOpen}

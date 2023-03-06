@@ -26,7 +26,7 @@ export default class DeviceAPI extends React.Component {
   constructor (props) {
     super(props)
     this.appList = null
-    this.lastAPICallSuccessfull = false
+    this.lastAPICallSuccessful = false
     this.lastAPIError = null
     this.serviceMeshData = null
     this.instances = null
@@ -36,8 +36,8 @@ export default class DeviceAPI extends React.Component {
     try {
       const getInstances = new GetInstancesAPI()
       await getInstances.getInstances()
-      this.lastAPICallSuccessfull = getInstances.state.success
-      if (this.lastAPICallSuccessfull) {
+      this.lastAPICallSuccessful = getInstances.state.success
+      if (this.lastAPICallSuccessful) {
         this.instances = getInstances.state.responseData
       } else {
         if (getInstances.state.errorMessage !== null) {
@@ -45,7 +45,7 @@ export default class DeviceAPI extends React.Component {
         }
       }
     } catch (error) {
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       this.lastAPIError = error
     }
   }
@@ -54,8 +54,8 @@ export default class DeviceAPI extends React.Component {
     try {
       const getAppListAPI = new GetInstalledAppsListAPI()
       await getAppListAPI.getAppList()
-      this.lastAPICallSuccessfull = getAppListAPI.state.success
-      if (this.lastAPICallSuccessfull) {
+      this.lastAPICallSuccessful = getAppListAPI.state.success
+      if (this.lastAPICallSuccessful) {
         this.appList = await getAppListAPI.state.responseData
       } else {
         if (getAppListAPI.state.errorMessage !== null) {
@@ -63,7 +63,7 @@ export default class DeviceAPI extends React.Component {
         }
       }
     } catch (error) {
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       this.lastAPIError = error
     }
   }
@@ -74,16 +74,16 @@ export default class DeviceAPI extends React.Component {
       await browse.getBrowseServiceMesh()
 
       if (browse.state.success && browse.state.responseData.data) {
-        this.lastAPICallSuccessfull = true
+        this.lastAPICallSuccessful = true
         this.serviceMeshData = browse.state.responseData.data
       } else {
-        this.lastAPICallSuccessfull = false
+        this.lastAPICallSuccessful = false
         if (browse.state.errorMessage !== null) {
           this.lastAPIError = browse.state.errorMessage.message
         }
       }
     } catch (error) {
-      this.lastAPICallSuccessfull = false
+      this.lastAPICallSuccessful = false
       this.lastAPIError = error
     }
   }

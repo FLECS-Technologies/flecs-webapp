@@ -67,7 +67,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.status).toBe(testApp.status)
     expect(appAPI.app.availability).toBe(testApp.availability)
     expect(appAPI.lastAPIError).toBe(null)
-    expect(appAPI.lastAPICallSuccessfull).toBe(false)
+    expect(appAPI.lastAPICallSuccessful).toBe(false)
 
     testApp.author = 'Homer Simpson'
     appAPI.setAppData(testApp)
@@ -101,7 +101,7 @@ describe('AppAPI', () => {
 
     await appAPI.uninstall()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('uninstalled')
   })
 
@@ -128,7 +128,7 @@ describe('AppAPI', () => {
     await appAPI.createInstance(instName)
     await appAPI.fetchInstances()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(1)
     expect(appAPI.app.instances[0].status).toBe('stopped')
@@ -160,7 +160,7 @@ describe('AppAPI', () => {
     await appAPI.startInstance(testInstance.instanceId)
     await appAPI.fetchInstances()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(1)
     expect(appAPI.app.instances[0].status).toBe('running')
@@ -192,7 +192,7 @@ describe('AppAPI', () => {
     await appAPI.stopInstance(testInstance.instanceId)
     await appAPI.fetchInstances()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(1)
     expect(appAPI.app.instances[0].status).toBe('stopped')
@@ -224,7 +224,7 @@ describe('AppAPI', () => {
     await appAPI.deleteInstance(testInstance.instanceId)
     await appAPI.fetchInstances()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(0)
   })
@@ -268,7 +268,7 @@ describe('AppAPI', () => {
 
     await appAPI.installFromMarketplace()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(1)
   })
@@ -313,7 +313,7 @@ describe('AppAPI', () => {
     await appAPI.sideloadApp('fakeYaml', 'fakeLicenseKey')
     await appAPI.fetchInstances()
 
-    expect(appAPI.lastAPICallSuccessfull).toBeTruthy()
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
     expect(appAPI.app.instances.length).toBe(1)
     expect(appAPI.app.instances[0].status).toBe('running')

@@ -60,7 +60,7 @@ export default function InstallApp (props) {
     appAPI.setAppData(loadReferenceData(app))
     await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key, handleInstallationJob)
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       // trigger a reload of all installed apps
       setLicensedApp(tickets[currentInstallations()]?.license_key, app.title)
         .then()

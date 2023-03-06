@@ -45,28 +45,28 @@ describe('InstanceConfigService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getInstanceConfig', async () => {
+  test('calls successful getInstanceConfig', async () => {
     axios.get.mockResolvedValueOnce(mockConfig)
     const details = await waitFor(() => getInstanceConfig('InstanceId'))
 
     expect(details.nicConfig).toHaveLength(2)
   })
 
-  test('calls unsuccessfull getInstanceConfig', async () => {
+  test('calls unsuccessful getInstanceConfig', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to load config details'))
     await act(async () => {
       expect(getInstanceConfig('InstanceId')).rejects.toThrowError()
     })
   })
 
-  test('calls successfull postInstanceConfig', async () => {
+  test('calls successful postInstanceConfig', async () => {
     axios.post.mockResolvedValueOnce(mockConfig)
     const details = await waitFor(() => postInstanceConfig('InstanceId'))
 
     expect(details.nicConfig).toHaveLength(2)
   })
 
-  test('calls unsuccessfull postInstanceConfig', async () => {
+  test('calls unsuccessful postInstanceConfig', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to save config details'))
     await act(async () => {
       expect(postInstanceConfig('InstanceId')).rejects.toThrowError()

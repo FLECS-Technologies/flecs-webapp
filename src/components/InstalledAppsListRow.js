@@ -95,7 +95,7 @@ export default function Row (props) {
     const appAPI = new AppAPI(props.row)
     await appAPI.uninstall()
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       if (setUpdateAppList) {
         setUpdateAppList(true)
       }
@@ -130,7 +130,7 @@ export default function Row (props) {
       await appAPI.startInstance(appAPI.app.instances[appAPI.app.instances.length - 1].instanceId)
     }
 
-    if (appAPI.lastAPICallSuccessfull) {
+    if (appAPI.lastAPICallSuccessful) {
       if (setUpdateAppList) {
         setUpdateAppList(true)
       }

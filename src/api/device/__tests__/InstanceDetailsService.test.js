@@ -66,14 +66,14 @@ describe('InstanceDetailsService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getInstanceDetails', async () => {
+  test('calls successful getInstanceDetails', async () => {
     axios.get.mockResolvedValueOnce(mockDetails)
     const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId))
 
     expect(details.app).toBe(mockDetails.data.app)
   })
 
-  test('calls unsuccessfull getCurrentUserLicenses', async () => {
+  test('calls unsuccessful getCurrentUserLicenses', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to load instance details'))
     await act(async () => {
       expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError()

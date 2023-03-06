@@ -37,28 +37,28 @@ describe('VersionService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successfull getVersion', async () => {
+  test('calls successful getVersion', async () => {
     axios.get.mockResolvedValueOnce(mockVersion)
     const version = await waitFor(() => getVersion())
 
     expect(version.core).toBe(mockVersion.data.core)
   })
 
-  test('calls unsuccessfull getVersion', async () => {
+  test('calls unsuccessful getVersion', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to load version'))
     await act(async () => {
       expect(getVersion()).rejects.toThrowError()
     })
   })
 
-  test('calls successfull getLatestVersion', async () => {
+  test('calls successful getLatestVersion', async () => {
     axios.get.mockResolvedValueOnce(mockVersion)
     const version = await waitFor(() => getLatestVersion())
 
     expect(version.core).toBe(mockVersion.data.core)
   })
 
-  test('calls unsuccessfull getLatestVersion', async () => {
+  test('calls unsuccessful getLatestVersion', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to load latest version'))
     await act(async () => {
       expect(getLatestVersion()).rejects.toThrowError()

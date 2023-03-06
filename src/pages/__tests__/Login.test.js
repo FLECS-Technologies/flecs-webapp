@@ -140,7 +140,7 @@ describe('Login', () => {
     expect(goButton).toBeEnabled()
   })
 
-  test('Successfull Login', async () => {
+  test('Successful Login', async () => {
     axios.post.mockResolvedValueOnce(homer)
     axios.post.mockResolvedValueOnce()
     useAuth.mockReturnValue(homer)
@@ -172,7 +172,7 @@ describe('Login', () => {
     expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
   })
 
-  test('Unsuccessfull Login', async () => {
+  test('Unsuccessful Login', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to login'))
     const user = userEvent.setup()
     await act(async () => {

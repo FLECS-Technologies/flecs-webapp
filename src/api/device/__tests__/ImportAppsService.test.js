@@ -15,40 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import nock from 'nock'
 import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { putImportApps } from '../ImportAppsService'
-
-jest.mock('axios')
-
-const mockPutImportApps = {
-  data: {
-    additionalInfo: 'Ok'
-  }
-}
+import { postImportApps } from '../ImportAppsService'
+import { DeviceAPIConfiguration } from '../../api-config'
 
 describe('ImportAppsService', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
   })
 
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('calls successful putImportApps', async () => {
-    axios.put.mockResolvedValueOnce(mockPutImportApps)
-    const file = new File([], 'flecs-export.tar')
-    const response = await waitFor(() => putImportApps(file))
 
-    expect(response.additionalInfo).toBe(mockPutImportApps.data.additionalInfo)
+  test('calls successful postImportApps', async () => {
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL)
+      .reply(202, {
+        jobId: 1
+      })
+
+    const file = new File([], 'flecs-export.tar')
+    const fileName = 'flecs-export.tar'
+    const response = await postImportApps(file, fileName)
+    expect(JSON.parse(response).jobId).toBe(1)
   })
 
-  test('calls unsuccessful putImportApps', async () => {
-    axios.put.mockRejectedValueOnce(new Error('Failed to import apps.'))
-    await act(async () => {
-      expect(putImportApps()).rejects.toThrowError()
-    })
+  test('calls unsuccessful postImportApps', async () => {
+    nock('http://localhost')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL)
+      .reply(400, {})
+
+    expect(postImportApps()).rejects.toThrowError()
   })
 })

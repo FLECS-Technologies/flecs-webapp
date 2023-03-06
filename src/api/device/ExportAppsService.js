@@ -57,8 +57,7 @@ async function downloadExport (apps, instances) {
 
 async function getExports () {
   return axios
-    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
-    .get('http://localhost/api/v2/exports')
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
     .then(response => {
       return response.data
     })
@@ -69,8 +68,7 @@ async function getExports () {
 
 async function getDownloadExport (exportId) {
   return axios
-    // .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_DOWNLOAD_URL(exportFile), { responseType: 'blob' })
-    .get(`http://localhost/api/v2/exports/${exportId}`, { responseType: 'blob' })
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORT_URL(exportId), { responseType: 'blob' })
     .then(response => {
       return { blob: response.data, exportId }
     })

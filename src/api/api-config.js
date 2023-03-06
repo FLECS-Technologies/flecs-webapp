@@ -52,10 +52,10 @@ const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_APP_EXPORT_URL = '/exports/create'
 const POST_SIDELOAD_APP = '/sideload'
+const POST_APP_IMPORT_URL = '/imports'
 
 // const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
 const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
-const PUT_APP_IMPORT_URL = APP_ROUTE + '/import'
 
 const DELETE_UNINSTALL_APP_URL = ''
 
@@ -176,6 +176,10 @@ class DeviceAPIConfiguration extends Component {
     return POST_APP_EXPORT_URL
   }
 
+  static get POST_APP_IMPORT_URL () {
+    return POST_APP_IMPORT_URL
+  }
+
   // get requests
   static get GET_INSTALLED_APP_LIST_URL () {
     return GET_INSTALLED_APP_LIST_URL
@@ -220,10 +224,6 @@ class DeviceAPIConfiguration extends Component {
 
   static get PATCH_INSTANCE_UPDATE_URL () {
     return PATCH_INSTANCE_UPDATE_URL
-  }
-
-  static get PUT_APP_IMPORT_URL () {
-    return PUT_APP_IMPORT_URL
   }
 
   // delete requests

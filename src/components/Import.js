@@ -18,9 +18,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DownloadIcon from '@mui/icons-material/Download'
-import { putImportApps } from '../api/device/ImportAppsService'
+import { postImportApps } from '../api/device/ImportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import FileOpen from './FileOpen'
+import JobsAPI from '../api/device/JobsAPI'
+import { sleep } from '../utils/sleep'
 
 export default function Import (props) {
   const { ...buttonProps } = props
@@ -30,15 +32,20 @@ export default function Import (props) {
     snackbarText: 'Info',
     alertSeverity: 'success'
   })
+
   const importApps = async (props) => {
     setImporting(true)
 
-    const formData = new FormData()
-    formData.append('file', props)
+    const file = props
+    const fileName = props.name
 
-    putImportApps(formData)
-      .then(() => {
-
+    postImportApps(file, fileName)
+      .then(async (response) => {
+        const jobId = JSON.parse(response).jobId
+        const jobStatus = await waitUntilJobIsComplete(jobId)
+        if (jobStatus === 'successful') {
+          console.log('Importing finished successfully')
+        } else console.log('Importing failed')
       })
       .catch((error) => {
         setSnackbarState({
@@ -50,7 +57,21 @@ export default function Import (props) {
       .finally(() => {
         setImporting(false)
       })
+
+    const waitUntilJobIsComplete = async (jobId) => {
+      const jobsAPI = new JobsAPI()
+      await jobsAPI.getJob(jobId)
+      let jobStatus = jobsAPI.state.responseData[0].status
+
+      while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
+        await jobsAPI.getJob(jobId)
+        jobStatus = jobsAPI.state.responseData[0].status
+        await sleep(500)
+      }
+      return jobStatus
+    }
   }
+
   return (
     <>
     <FileOpen
@@ -73,5 +94,6 @@ export default function Import (props) {
 }
 
 Import.propTypes = {
-  apps: PropTypes.array
+  apps: PropTypes.array,
+  name: PropTypes.string
 }

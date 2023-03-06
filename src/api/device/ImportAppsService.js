@@ -15,24 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
 import { DeviceAPIConfiguration } from '../api-config'
 
-async function putImportApps (formData) {
-  return axios
-    .put(
-      DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.PUT_APP_IMPORT_URL,
-      formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' }
+async function postImportApps (file, fileName) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    const url = DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL
+    xhr.open('POST', url, true)
+    xhr.setRequestHeader('X-Uploaded-Filename', fileName)
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 202) {
+          console.log('File uploaded successfully:', xhr.responseText)
+          resolve(xhr.responseText)
+          return xhr.response
+        } else {
+          console.error('Error uploading file:', xhr.statusText)
+          reject(xhr.statusText)
+        }
       }
-    )
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    }
+    xhr.send(file)
+  })
 }
 
-export { putImportApps }
+export { postImportApps }

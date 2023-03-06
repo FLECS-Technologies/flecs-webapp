@@ -21,7 +21,7 @@ import BaseAPI from './BaseAPI'
 import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
-class ExportApps extends BaseAPI {
+export class ExportApps extends BaseAPI {
   async postExportApps (apps, instances) {
     // POST request using fetch with error handling
     const requestOptions = {

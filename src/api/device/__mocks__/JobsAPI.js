@@ -26,7 +26,7 @@ export default class JobsAPI extends BaseAPI {
     return new Promise((resolve, reject) => {
       if (jobId) {
         resolve()
-        this.state.responseData = [{ status: 'successful' }]
+        this.state.responseData = [{ status: 'successful', result: { message: '12345678' } }]
       } else {
         reject(new Error('Mock: Failed to fetch job status.'))
       }

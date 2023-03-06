@@ -36,6 +36,7 @@ const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
 const GET_EXPORTS_URL = '/exports'
+const GET_EXPORT_URL = (exportId) => GET_EXPORTS_URL + `/${exportId}`
 const GET_JOBS_URL = '/jobs'
 
 const POST_INSTALL_APP_URL = '/install'
@@ -202,6 +203,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_EXPORTS_URL () {
     return GET_EXPORTS_URL
+  }
+
+  static get GET_EXPORT_URL () {
+    return GET_EXPORT_URL
   }
 
   static get GET_JOBS_URL () {

@@ -38,7 +38,7 @@ class ExportApps extends BaseAPI {
 
 async function downloadExport (apps, instances) {
   try {
-    if (apps.length > 0 && instances.length > 0) {
+    if (apps.length > 0) {
       // 1. export apps & instances
       const exportAPI = new ExportApps()
       await exportAPI.postExportApps(apps, instances)

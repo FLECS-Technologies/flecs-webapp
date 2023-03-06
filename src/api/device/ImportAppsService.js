@@ -26,11 +26,9 @@ async function postImportApps (file, fileName) {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 202) {
-          console.log('File uploaded successfully:', xhr.responseText)
           resolve(xhr.responseText)
           return xhr.response
         } else {
-          console.error('Error uploading file:', xhr.statusText)
           reject(xhr.statusText)
         }
       }

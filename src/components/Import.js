@@ -44,8 +44,18 @@ export default function Import (props) {
         const jobId = JSON.parse(response).jobId
         const jobStatus = await waitUntilJobIsComplete(jobId)
         if (jobStatus === 'successful') {
-          console.log('Importing finished successfully')
-        } else console.log('Importing failed')
+          setSnackbarState({
+            alertSeverity: 'success',
+            snackbarText: ('Importing finished successfully')
+          })
+          setSnackbarOpen(true)
+        } else {
+          setSnackbarState({
+            alertSeverity: 'error',
+            snackbarText: ('Importing failed')
+          })
+          setSnackbarOpen(true)
+        }
       })
       .catch((error) => {
         setSnackbarState({

@@ -22,9 +22,11 @@ import { postImportApps } from '../api/device/ImportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import FileOpen from './FileOpen'
 import JobsAPI from '../api/device/JobsAPI'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { sleep } from '../utils/sleep'
 
 export default function Import (props) {
+  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
   const { ...buttonProps } = props
   const [importing, setImporting] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -44,6 +46,7 @@ export default function Import (props) {
         const jobId = JSON.parse(response).jobId
         const jobStatus = await waitUntilJobIsComplete(jobId)
         if (jobStatus === 'successful') {
+          setUpdateAppList(true)
           setSnackbarState({
             alertSeverity: 'success',
             snackbarText: ('Importing finished successfully')

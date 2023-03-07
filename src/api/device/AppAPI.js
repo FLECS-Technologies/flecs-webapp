@@ -53,6 +53,7 @@ export default class AppAPI extends React.Component {
     this.lastAPIError = null
     this.jobId = null
     this.jobStatus = null
+    this.instanceId = null
   }
 
   setAppData (props) {
@@ -94,8 +95,7 @@ export default class AppAPI extends React.Component {
         if (this.jobStatus === 'successful') { // app has been installed
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
-            await this.fetchInstances()
-            await this.startInstance(this.app.instances[this.app.instances.length - 1].instanceId)
+            await this.startInstance(this.instanceId)
           }
         }
       }
@@ -156,6 +156,8 @@ export default class AppAPI extends React.Component {
       }
       await sleep(500)
     }
+
+    this.instanceId = jobsAPI.state.responseData[0].result.message
   }
 
   async installApp (version, licenseKey, handleInstallationJob) {
@@ -296,8 +298,7 @@ export default class AppAPI extends React.Component {
           this.app.status = 'installed'
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
-            await this.fetchInstances()
-            await this.startInstance(this.app.instances[this.app.instances.length - 1].instanceId)
+            await this.startInstance(this.instanceId)
           }
         }
       }

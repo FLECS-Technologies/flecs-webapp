@@ -110,7 +110,7 @@ export default class AppAPI extends React.Component {
         const uninstallAPI = new DeleteUninstallAppAPI()
         await uninstallAPI.uninstallApp(this.app.appKey.name, this.app.appKey.version)
         this.jobId = uninstallAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, 'uninstall')
 
         if (this.jobStatus === 'successful') {
           this.lastAPICallSuccessful = true
@@ -140,7 +140,7 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async waitUntilJobIsComplete (jobId, handleInstallationJob) {
+  async waitUntilJobIsComplete (jobId, jobType, handleInstallationJob) {
     const jobsAPI = new JobsAPI()
     await jobsAPI.getJob(jobId)
     this.jobStatus = jobsAPI.state.responseData[0].status
@@ -157,7 +157,9 @@ export default class AppAPI extends React.Component {
       await sleep(500)
     }
 
-    this.instanceId = jobsAPI.state.responseData[0].result.message
+    if (jobType === 'create-instance') {
+      this.instanceId = jobsAPI.state.responseData[0].result.message
+    }
   }
 
   async installApp (version, licenseKey, handleInstallationJob) {
@@ -166,7 +168,7 @@ export default class AppAPI extends React.Component {
         const installAPI = new PostInstallAppAPI()
         await installAPI.installApp(this.app.appKey.name, (version || this.app.appKey.version), licenseKey)
         this.jobId = installAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
+        await this.waitUntilJobIsComplete(this.jobId, 'install', handleInstallationJob)
 
         if (this.jobStatus === 'successful') {
           this.app.status = 'installed'
@@ -190,7 +192,7 @@ export default class AppAPI extends React.Component {
         const createInstanceAPI = new PostCreateAppInstanceAPI()
         await createInstanceAPI.createAppInstance(this.app.appKey.name, this.app.appKey.version, instanceName)
         this.jobId = createInstanceAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, 'create-instance')
 
         if (this.jobStatus === 'successful') {
           this.lastAPICallSuccessful = true
@@ -215,7 +217,7 @@ export default class AppAPI extends React.Component {
         const startInstanceAPI = new PostStartAppInstanceAPI()
         await startInstanceAPI.startAppInstance(instanceId)
         this.jobId = startInstanceAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, 'start-instance')
 
         if (this.jobStatus === 'successful') {
           this.lastAPICallSuccessful = true
@@ -241,7 +243,7 @@ export default class AppAPI extends React.Component {
         const stopInstanceAPI = new PostStopAppInstanceAPI()
         await stopInstanceAPI.stopAppInstance(instanceId)
         this.jobId = stopInstanceAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, 'stop-instance')
 
         if (this.jobStatus === 'successful') {
           this.lastAPICallSuccessful = true
@@ -266,7 +268,7 @@ export default class AppAPI extends React.Component {
         const deleteInstanceAPI = new DeleteDeleteAppInstanceAPI()
         await deleteInstanceAPI.deleteAppInstance(instanceId)
         this.jobId = deleteInstanceAPI.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId)
+        await this.waitUntilJobIsComplete(this.jobId, 'delete-instance')
 
         if (this.jobStatus === 'successful') {
           this.lastAPICallSuccessful = true
@@ -292,7 +294,7 @@ export default class AppAPI extends React.Component {
         const sideload = new PostSideloadAppAPI()
         await sideload.sideloadApp(appYaml, licenseKey)
         this.jobId = sideload.state.responseData.jobId
-        await this.waitUntilJobIsComplete(this.jobId, handleInstallationJob)
+        await this.waitUntilJobIsComplete(this.jobId, 'sideload', handleInstallationJob)
 
         if (this.jobStatus === 'successful') { // app has been installed
           this.app.status = 'installed'

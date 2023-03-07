@@ -122,31 +122,38 @@ export default function Row (props) {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(props.row)
-    appAPI.setAppData(loadReferenceData(props.row))
-    await appAPI.createInstance(appAPI.createInstanceName())
 
-    if (appAPI.jobStatus === 'successful') { // instance has been created
-      await appAPI.startInstance(appAPI.instanceId)
-    }
+    try {
+      appAPI.setAppData(loadReferenceData(props.row))
+      await appAPI.createInstance(appAPI.createInstanceName())
 
-    if (appAPI.lastAPICallSuccessful) {
-      if (setUpdateAppList) {
-        setUpdateAppList(true)
+      if (appAPI.jobStatus === 'successful') { // instance has been created
+        await appAPI.startInstance(appAPI.instanceId)
       }
-      snackbarText = 'Successfully started a new instance of ' + appAPI.app.title + '.'
-      alertSeverity = 'success'
-    } else {
+
+      if (appAPI.jobStatus === 'successful') { // instance has started
+        // success snackbar
+        snackbarText = 'Successfully started a new instance of ' + appAPI.app.title + '.'
+        alertSeverity = 'success'
+      }
+    } catch {
       // error snackbar
       snackbarText = 'Failed to start a new instance of ' + appAPI.app.title + '.'
       alertSeverity = 'error'
+    } finally {
+      setSnackbarState({
+        alertSeverity,
+        snackbarText
+      })
+      setSnackbarOpen(true)
+
+      if (appAPI.instanceId) { // instance has been created, regardless of status
+        setUpdateAppList(true)
+      }
+
+      setNewInstanceStarting(false)
+      setFetchingJobs(false)
     }
-    setSnackbarState({
-      alertSeverity,
-      snackbarText
-    })
-    setSnackbarOpen(true)
-    setNewInstanceStarting(false)
-    setFetchingJobs(false)
   }
 
   function openApp () {

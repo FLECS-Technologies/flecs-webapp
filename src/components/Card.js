@@ -47,7 +47,7 @@ export default function OutlinedCard (props) {
   const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist))
   const installed = (props.status === 'installed')
   const [selectedVersion, setSelectedVersion] = useState(createVersion((props.installedVersions?.length > 0 ? getLatestVersion(props.installedVersions) : getLatestVersion(props.versions)), null, null, props.version))
-  const uninstalled = (props.status !== 'installed')
+  const uninstalled = (!props.installedVersions?.includes(selectedVersion.version))
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
     (props.availability === 'available') || (props.availability === 'instock')

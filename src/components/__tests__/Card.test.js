@@ -104,14 +104,15 @@ describe('Card', () => {
       description= 'Test App Description'
       status= 'uninstalled'
       availability='available'
+      installedVersions={[]}
       instances={[]} />)
 
     const installButton = getByLabelText('install-app-button')
-    const uninstallButton = getByLabelText('uninstall-app-button')
+    const uninstallButton = screen.queryByText('Uninstall')
     const requestButton = getByTestId('app-request-button')
     expect(installButton).toBeVisible()
     expect(installButton).toBeEnabled()
-    expect(uninstallButton).not.toBeEnabled()
+    expect(uninstallButton).toBeNull()
     expect(requestButton).not.toBeVisible()
     fireEvent.click(installButton)
 
@@ -119,9 +120,19 @@ describe('Card', () => {
   })
 
   test('Click uninstall', async () => {
-    const { getByLabelText } = render(<Card />)
+    render(<Card
+      app= 'Testapp'
+      avatar= ''
+      title= 'Test App Title'
+      author= 'Test App author'
+      version= 'Test App Version'
+      description= 'Test App Description'
+      status= 'installed'
+      availability='available'
+      installedVersions={['Test App Version']}
+      instances={[]} />)
 
-    const uninstallButton = getByLabelText('uninstall-app-button')
+    const uninstallButton = screen.queryByText('Uninstall')
     fireEvent.click(uninstallButton)
 
     // todo: add what to expect

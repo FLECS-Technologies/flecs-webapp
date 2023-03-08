@@ -47,7 +47,6 @@ export default function OutlinedCard (props) {
   const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist))
   const installed = (props.status === 'installed')
   const [selectedVersion, setSelectedVersion] = useState(createVersion((props.installedVersions?.length > 0 ? getLatestVersion(props.installedVersions) : getLatestVersion(props.versions)), null, null, props.version))
-  const uninstalled = (!props.installedVersions?.includes(selectedVersion.version))
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
     (props.availability === 'available') || (props.availability === 'instock')
@@ -177,16 +176,16 @@ export default function OutlinedCard (props) {
           onClick={() => setUpdateAppOpen(true)}
           displaystate={displayState}
         />}
-        <LoadButton
+        {(props.installedVersions?.includes(selectedVersion.version)) && <LoadButton
           text="Uninstall"
           variant="outlined"
           label="uninstall-app-button"
-          disabled={uninstalled || uninstalling}
+          disabled={uninstalling}
           color="error"
           onClick={() => setConfirmOpen(true)}
           displaystate={displayState}
           loading={uninstalling || false}
-        />
+        />}
         <ConfirmDialog
           data-testid="confirm-dialog"
           title={'Uninstall ' + props.title + '?'}

@@ -115,7 +115,7 @@ describe('AppAPI', () => {
     // used for fetchInstances()
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
     testApp.status = 'installed'
@@ -134,7 +134,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.instances[0].status).toBe('stopped')
     expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
     expect(appAPI.app.instances[0].instanceName).toBe(instName)
-    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.app.instances[0].instanceId).toBe(testInstance.instanceId)
   })
 
   test('calls AppAPI.startInstance', async () => {
@@ -147,7 +147,7 @@ describe('AppAPI', () => {
     // used for fetchInstances()
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
     testApp.status = 'installed'
@@ -166,7 +166,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.instances[0].status).toBe('running')
     expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
     expect(appAPI.app.instances[0].instanceName).toBe(testInstance.instanceName)
-    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.app.instances[0].instanceId).toBe(testInstance.instanceId)
   })
 
   test('calls AppAPI.stopInstance', async () => {
@@ -179,7 +179,7 @@ describe('AppAPI', () => {
     // used for fetchInstances()
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'stopped' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'stopped' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
     testApp.status = 'installed'
@@ -198,7 +198,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.instances[0].status).toBe('stopped')
     expect(appAPI.app.instances[0].appKey.version).toBe(testApp.appKey.version)
     expect(appAPI.app.instances[0].instanceName).toBe(testInstance.instanceName)
-    expect(appAPI.app.instances[0].instanceId).toBe('01234567')
+    expect(appAPI.app.instances[0].instanceId).toBe(testInstance.instanceId)
   })
 
   test('calls AppAPI.deleteInstance', async () => {
@@ -242,12 +242,6 @@ describe('AppAPI', () => {
         jobId: 1
       })
 
-    // used for fetchInstances()
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
-      )
-
     nock('http://localhost')
       .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
       .reply(202, {
@@ -257,7 +251,7 @@ describe('AppAPI', () => {
     // used for fetchInstances()
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
     testApp.status = 'uninstalled'
@@ -267,6 +261,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.status).toBe(testApp.status)
 
     await appAPI.installFromMarketplace()
+    await appAPI.fetchInstances()
 
     expect(appAPI.lastAPICallSuccessful).toBeTruthy()
     expect(appAPI.app.status).toBe('installed')
@@ -286,12 +281,6 @@ describe('AppAPI', () => {
         jobId: 1
       })
 
-    // used for fetchInstances()
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
-      )
-
     nock('http://localhost')
       .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
       .reply(202, {
@@ -301,7 +290,7 @@ describe('AppAPI', () => {
     // used for fetchInstances()
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [{ instanceId: '01234567', instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
+      .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
     testApp.status = 'uninstalled'

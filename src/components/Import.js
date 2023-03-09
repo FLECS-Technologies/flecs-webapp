@@ -96,6 +96,7 @@ export default function Import (props) {
         onConfirm={importApps}
         loading={importing}
         wholeFile={true}
+        disabled={importing}
     ></FileOpen>
     <ActionSnackbar
         text={snackbarState.snackbarText}

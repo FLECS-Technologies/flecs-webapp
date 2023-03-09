@@ -21,6 +21,7 @@ import UploadIcon from '@mui/icons-material/Upload'
 import { downloadExport } from '../api/device/ExportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { JobsContext } from '../data/JobsContext'
 
 export default function Export (props) {
   const { ...buttonProps } = props
@@ -31,8 +32,11 @@ export default function Export (props) {
     snackbarText: 'Info',
     alertSeverity: 'success'
   })
+  const { setFetchingJobs } = React.useContext(JobsContext)
+
   const exportApps = async (props) => {
     setExporting(true)
+    setFetchingJobs(true)
 
     const apps = appList?.map(app => { return { name: app.appKey.name, version: app.appKey.version } })
     const instances = appList?.map(app => { return app?.instances.map(i => i.instanceId) }).flat()
@@ -57,6 +61,7 @@ export default function Export (props) {
       })
       .finally(() => {
         setExporting(false)
+        setFetchingJobs(false)
       })
   }
   return (

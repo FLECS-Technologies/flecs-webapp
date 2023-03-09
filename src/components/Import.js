@@ -23,6 +23,7 @@ import ActionSnackbar from './ActionSnackbar'
 import FileOpen from './FileOpen'
 import JobsAPI from '../api/device/JobsAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { JobsContext } from '../data/JobsContext'
 import { sleep } from '../utils/sleep'
 
 export default function Import (props) {
@@ -34,9 +35,11 @@ export default function Import (props) {
     snackbarText: 'Info',
     alertSeverity: 'success'
   })
+  const { setFetchingJobs } = React.useContext(JobsContext)
 
   const importApps = async (props) => {
     setImporting(true)
+    setFetchingJobs(true)
 
     const file = props
     const fileName = props.name
@@ -69,6 +72,7 @@ export default function Import (props) {
       })
       .finally(() => {
         setImporting(false)
+        setFetchingJobs(false)
       })
 
     const waitUntilJobIsComplete = async (jobId) => {

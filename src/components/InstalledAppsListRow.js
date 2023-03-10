@@ -99,7 +99,6 @@ export default function Row (props) {
       if (setUpdateAppList) {
         setUpdateAppList(true)
       }
-      // startInstance(appAPI, appAPI.app.instances[appAPI.app.instances.length - 1])
       snackbarText = appAPI.app.title + ' successfully uninstalled.'
       alertSeverity = 'success'
     } else {

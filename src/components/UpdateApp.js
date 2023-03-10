@@ -27,6 +27,7 @@ import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { UpdateAppService } from '../api/device/UpdateAppService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
+import { sleep } from '../utils/sleep'
 
 export default function UpdateApp (props) {
   const { update, app, from, to, tickets, handleActiveStep } = (props)
@@ -54,14 +55,15 @@ export default function UpdateApp (props) {
         setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
           .then()
           .catch()
-          .finally(() => {
+          .finally(async () => {
             setUpdateAppList(true)
+            await sleep(1000)
+            setFetchingJobs(false)
           })
       })
       .catch((error) => {
         console.log(error)
       })
-    setFetchingJobs(false)
   })
 
   React.useEffect(() => {

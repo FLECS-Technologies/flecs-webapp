@@ -120,6 +120,7 @@ export default class AppAPI extends React.Component {
             this.lastAPIError = uninstallAPI.state.errorMessage
           }
         }
+        await sleep(500)
       }
     } catch (error) {
       console.error(error)

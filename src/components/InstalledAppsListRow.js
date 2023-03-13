@@ -278,6 +278,14 @@ export default function Row (props) {
               </Table>
             </Box>
           </Collapse>
+          <ActionSnackbar
+              data-testid="snackbar"
+              text={snackbarText}
+              errorText={snackbarErrorText}
+              open={snackbarOpen}
+              setOpen={setSnackbarOpen}
+              alertSeverity={alertSeverity}
+          />
         </TableCell>
       </TableRow>
       <ConfirmDialog
@@ -286,14 +294,6 @@ export default function Row (props) {
           setOpen={setConfirmOpen}
           onConfirm={() => uninstallApp(props)}
         ></ConfirmDialog>
-      <ActionSnackbar
-          data-testid="snackbar"
-          text={snackbarText}
-          errorText={snackbarErrorText}
-          open={snackbarOpen}
-          setOpen={setSnackbarOpen}
-          alertSeverity={alertSeverity}
-      />
     </Fragment>
   )
 }

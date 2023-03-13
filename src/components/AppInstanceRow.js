@@ -91,13 +91,16 @@ export default function AppInstanceRow (props) {
     let snackbarText
     let alertSeverity
     const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.startInstance(instanceId)
 
-    if (appAPI.lastAPICallSuccessful) {
-      setUpdateAppList(true)
-      snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
-    } else {
+    try {
+      appAPI.setAppData(loadAppReferenceData(app))
+      await appAPI.startInstance(instanceId)
+
+      if (appAPI.lastAPICallSuccessful) {
+        setUpdateAppList(true)
+        snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
+      }
+    } catch {
       // error snackbar
       snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
@@ -107,9 +110,10 @@ export default function AppInstanceRow (props) {
         snackbarErrorText: appAPI.lastAPIError
       })
       setSnackbarOpen(true)
+    } finally {
+      setInstanceStarting(false)
+      setFetchingJobs(false)
     }
-    setInstanceStarting(false)
-    setFetchingJobs(false)
   }
 
   const deleteInstance = async (instanceId) => {

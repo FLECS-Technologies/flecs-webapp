@@ -10,9 +10,11 @@ import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
+import DownloadIcon from '@mui/icons-material/Download'
+import { downloadPastExport } from '../api/device/ExportAppsService'
 
 export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
-  const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status }))
+  const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
 
   return (
     <React.Fragment>
@@ -44,6 +46,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
             <TableRow>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Description</TableCell>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Status</TableCell>
+              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Action</TableCell>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Clear</TableCell>
             </TableRow>
           </TableHead>
@@ -55,6 +58,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
+                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful') ? <DownloadIcon sx={{ cursor: 'pointer' }}onClick={() => downloadPastExport(row.message)} /> : null}</TableCell>
                 <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>

@@ -55,6 +55,14 @@ async function downloadExport (apps, instances) {
   }
 }
 
+async function downloadPastExport (exportId) {
+  const file = await getDownloadExport(exportId)
+  const link = document.createElement('a')
+  link.download = `flecs-export-${exportId}.tar.gz`
+  link.href = URL.createObjectURL(file.blob)
+  link.click()
+}
+
 async function getExports () {
   return axios
     .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
@@ -93,4 +101,4 @@ const waitUntilJobIsComplete = async (jobId) => {
   return { jobStatus, exportId }
 }
 
-export { getExports, getDownloadExport, downloadExport }
+export { getExports, getDownloadExport, downloadExport, downloadPastExport }

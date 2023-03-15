@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
+import LoadIconButton from './LoadIconButton'
+import { Grid } from '@mui/material'
 import { downloadPastExport, deleteExport, getExports } from '../api/device/ExportAppsService'
 
 export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
@@ -42,6 +44,10 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
         await fetchExports()
       }
     }
+  }
+
+  const checkExport = (exportId) => {
+    return exports.includes(exportId)
   }
 
   return (
@@ -86,7 +92,13 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful') ? <><DownloadIcon sx={{ cursor: 'pointer' }}onClick={() => handleDownloadPastExport(row.message)} /><DeleteIcon sx={{ cursor: 'pointer' }}onClick={() => handleDeleteExport(row.message)} /></> : null}</TableCell>
+                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful')
+                  ? <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                      <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={<DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />}/>
+                      <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={<DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />}/>
+                    </Grid>
+                  : null}
+                </TableCell>
                 <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' sx={{ cursor: 'pointer' }} onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>

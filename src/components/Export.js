@@ -32,7 +32,7 @@ export default function Export (props) {
     snackbarText: 'Info',
     alertSeverity: 'success'
   })
-  const { setFetchingJobs } = React.useContext(JobsContext)
+  const { setFetchingJobs, fetchExports } = React.useContext(JobsContext)
 
   const exportApps = async (props) => {
     setExporting(true)
@@ -51,6 +51,8 @@ export default function Export (props) {
 
         // clean up
         URL.revokeObjectURL(link.href)
+
+        fetchExports()
       })
       .catch((error) => {
         setSnackbarState({

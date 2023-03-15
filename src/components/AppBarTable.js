@@ -28,6 +28,12 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
     setExports(exports)
   }
 
+  const handleDownloadPastExport = async (exportId) => {
+    if (exports.includes(exportId)) {
+      await downloadPastExport(exportId)
+    }
+  }
+
   return (
     <React.Fragment>
       <Toolbar
@@ -70,7 +76,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful') ? <DownloadIcon sx={{ cursor: 'pointer' }}onClick={() => downloadPastExport(row.message)} /> : null}</TableCell>
+                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful') ? <DownloadIcon sx={{ cursor: 'pointer' }}onClick={() => handleDownloadPastExport(row.message)} /> : null}</TableCell>
                 <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' sx={{ cursor: 'pointer' }} onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
                 </TableCell>
               </TableRow>

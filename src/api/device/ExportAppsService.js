@@ -48,6 +48,8 @@ async function downloadExport (apps, instances) {
       // 2. get export file
       if (jobStatus === 'successful') { // export has been created in the server
         return await getDownloadExport(exportId)
+      } else if (jobStatus === 'failed') {
+        return Promise.reject(new Error('There was a problem creating the export file'))
       }
     }
   } catch (error) {

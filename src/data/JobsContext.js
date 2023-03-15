@@ -18,17 +18,23 @@
 import React, { createContext } from 'react'
 import PropTypes from 'prop-types'
 import JobsAPI from '../api/device/JobsAPI'
+import { getExports } from '../api/device/ExportAppsService'
 
 const JobsContext = createContext([])
 
 function JobsContextProvider (props) {
   const [jobs, setJobs] = React.useState([])
   const [fetchingJobs, setFetchingJobs] = React.useState(false)
+  const [exports, setExports] = React.useState([])
 
   React.useEffect(() => {
     if (jobs?.length === 0) {
       fetchJobs()
     }
+  }, [])
+
+  React.useEffect(() => {
+    fetchExports()
   }, [])
 
   React.useEffect(() => {
@@ -56,8 +62,13 @@ function JobsContextProvider (props) {
     return jobs?.filter(j => (j.description.includes('Installation') && (j.status === 'running' || j.status === 'queued' || j.status === 'pending'))).length
   }
 
+  const fetchExports = async () => {
+    const exports = await getExports()
+    setExports(exports)
+  }
+
   return (
-    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, deleteJobs, currentInstallations }}>
+    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, deleteJobs, currentInstallations, exports, fetchExports }}>
       {props.children}
     </JobsContext.Provider>
   )

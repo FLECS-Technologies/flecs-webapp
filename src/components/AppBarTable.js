@@ -14,20 +14,12 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ClearIcon from '@mui/icons-material/Clear'
 import LoadIconButton from './LoadIconButton'
 import { Grid } from '@mui/material'
-import { downloadPastExport, deleteExport, getExports } from '../api/device/ExportAppsService'
+import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService'
+import { JobsContext } from '../data/JobsContext'
 
 export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
   const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
-  const [exports, setExports] = React.useState([])
-
-  React.useEffect(() => {
-    fetchExports()
-  }, [])
-
-  const fetchExports = async () => {
-    const exports = await getExports()
-    setExports(exports)
-  }
+  const { exports, fetchExports } = React.useContext(JobsContext)
 
   const handleDownloadPastExport = async (exportId) => {
     if (exports.includes(exportId)) {

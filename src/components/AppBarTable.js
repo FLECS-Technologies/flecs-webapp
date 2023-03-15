@@ -91,11 +91,23 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
                 <TableCell align="left">{row.status}</TableCell>
                 <TableCell align="left">
                   <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                  <LoadIconButton disabled={row.status === 'running'} onClick={() => deleteJobs(row.id)} icon={<ClearIcon aria-label='clear-button' sx={{ width: '60%', cursor: 'pointer' }} />}/>
+                    <LoadIconButton disabled={row.status === 'running'} onClick={() => deleteJobs(row.id)} icon={
+                      <Tooltip title={'Clear this entry from the log'}>
+                        <ClearIcon aria-label='clear-button' sx={{ width: '60%', cursor: 'pointer' }} />
+                      </Tooltip>
+                    }/>
                     {(row.description === 'Creating export' && row.status === 'successful')
                       ? <>
-                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={<DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />}/>
-                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={<DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />}/>
+                          <LoadIconButton title={'Download this export'} disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={
+                          <Tooltip title={'Download this export'}>
+                            <DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />
+                          </Tooltip>
+                          }/>
+                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={
+                            <Tooltip title={'Delete this export'}>
+                              <DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />
+                            </Tooltip>
+                          }/>
                         </>
                       : null}
                   </Grid>

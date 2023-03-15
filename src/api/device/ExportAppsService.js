@@ -63,6 +63,17 @@ async function downloadPastExport (exportId) {
   link.click()
 }
 
+async function deleteExport (exportId) {
+  return axios
+    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL + '/' + exportId)
+    .then(response => {
+      return response
+    })
+    .catch(error => {
+      return Promise.reject(error)
+    })
+}
+
 async function getExports () {
   return axios
     .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
@@ -101,4 +112,4 @@ const waitUntilJobIsComplete = async (jobId) => {
   return { jobStatus, exportId }
 }
 
-export { getExports, getDownloadExport, downloadExport, downloadPastExport }
+export { getExports, getDownloadExport, downloadExport, downloadPastExport, deleteExport }

@@ -5,13 +5,13 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import ClearIcon from '@mui/icons-material/Clear'
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
+import ClearIcon from '@mui/icons-material/Clear'
 import LoadIconButton from './LoadIconButton'
 import { Grid } from '@mui/material'
 import { downloadPastExport, deleteExport, getExports } from '../api/device/ExportAppsService'
@@ -21,9 +21,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
   const [exports, setExports] = React.useState([])
 
   React.useEffect(() => {
-    if (exports.length === 0) {
-      fetchExports()
-    }
+    fetchExports()
   }, [])
 
   const fetchExports = async () => {
@@ -80,8 +78,7 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
             <TableRow>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Description</TableCell>
               <TableCell align="left" sx={{ fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Action</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Clear</TableCell>
+              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -92,14 +89,16 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
               >
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">{row.status}</TableCell>
-                <TableCell align="left">{(row.description === 'Creating export' && row.status === 'successful')
-                  ? <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                      <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={<DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />}/>
-                      <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={<DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />}/>
-                    </Grid>
-                  : null}
-                </TableCell>
-                <TableCell align="left">{row.status !== 'running' ? <ClearIcon aria-label='clear-button' fontSize='10' sx={{ cursor: 'pointer' }} onClick={() => deleteJobs(row.id)}></ClearIcon> : null}
+                <TableCell align="left">
+                  <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                  <LoadIconButton disabled={row.status === 'running'} onClick={() => deleteJobs(row.id)} icon={<ClearIcon aria-label='clear-button' sx={{ width: '60%', cursor: 'pointer' }} />}/>
+                    {(row.description === 'Creating export' && row.status === 'successful')
+                      ? <>
+                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={<DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />}/>
+                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={<DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />}/>
+                        </>
+                      : null}
+                  </Grid>
                 </TableCell>
               </TableRow>
             ))}

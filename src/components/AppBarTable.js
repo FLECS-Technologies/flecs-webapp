@@ -11,10 +11,22 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import DownloadIcon from '@mui/icons-material/Download'
-import { downloadPastExport } from '../api/device/ExportAppsService'
+import { downloadPastExport, getExports } from '../api/device/ExportAppsService'
 
 export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
   const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
+  const [exports, setExports] = React.useState([])
+
+  React.useEffect(() => {
+    if (exports.length === 0) {
+      fetchExports()
+    }
+  }, [])
+
+  const fetchExports = async () => {
+    const exports = await getExports()
+    setExports(exports)
+  }
 
   return (
     <React.Fragment>

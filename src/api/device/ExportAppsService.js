@@ -61,6 +61,9 @@ async function downloadPastExport (exportId) {
   link.download = `flecs-export-${exportId}.tar.gz`
   link.href = URL.createObjectURL(file.blob)
   link.click()
+
+  // clean up
+  URL.revokeObjectURL(link.href)
 }
 
 async function deleteExport (exportId) {

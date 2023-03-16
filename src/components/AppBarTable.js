@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 
-import * as React from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -35,7 +36,8 @@ import { Grid } from '@mui/material'
 import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService'
 import { JobsContext } from '../data/JobsContext'
 
-export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled) {
+export default function BasicTable (props) {
+  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled } = props
   const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
   const { exports, fetchExports } = React.useContext(JobsContext)
 
@@ -129,4 +131,11 @@ export default function BasicTable (jobs, deleteJobs, clearAllFinishedJobs, clea
       </TableContainer>
     </React.Fragment>
   )
+}
+
+BasicTable.propTypes = {
+  jobs: PropTypes.array,
+  deleteJobs: PropTypes.func,
+  clearAllFinishedJobs: PropTypes.func,
+  clearAllButtonisDisabled: PropTypes.bool
 }

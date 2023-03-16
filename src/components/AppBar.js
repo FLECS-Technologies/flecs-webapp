@@ -158,7 +158,7 @@ export default function ElevateAppBar (props) {
               }}
             >
               <Typography component={'div'} sx={{ p: 2 }}>
-                {BasicTable(jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled)}
+                <BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={clearAllButtonisDisabled} />
               </Typography>
             </Popover>
 

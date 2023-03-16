@@ -72,7 +72,7 @@ describe('AppBarTable', () => {
     const deleteJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(<BasicTable jobs={[]} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={false} />)
+      render(<BasicTable jobs={[]} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonIsDisabled={false} />)
     })
     expect(screen.getByText('Clear All')).toBeVisible()
     const clearAllButton = screen.getByText('Clear All')
@@ -94,7 +94,7 @@ describe('AppBarTable', () => {
     const clearAllFinishedJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(<BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={true} />)
+      render(<BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonIsDisabled={true} />)
     })
 
     const clearButton = screen.getAllByTestId('icon-button')

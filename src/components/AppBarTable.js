@@ -37,7 +37,7 @@ import { downloadPastExport, deleteExport } from '../api/device/ExportAppsServic
 import { JobsContext } from '../data/JobsContext'
 
 export default function BasicTable (props) {
-  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonisDisabled } = props
+  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonIsDisabled } = props
   const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
   const { exports, fetchExports } = React.useContext(JobsContext)
 
@@ -78,7 +78,7 @@ export default function BasicTable (props) {
           </Typography>
           <Tooltip title={'Clear the log (this does not uninstall or remove any apps or instances)'}>
             <div>
-            <Button variant='outlined' sx={{ mr: 1 }} disabled={clearAllButtonisDisabled} data-testid='clear-all-button' onClick={() => clearAllFinishedJobs()}>
+            <Button variant='outlined' sx={{ mr: 1 }} disabled={clearAllButtonIsDisabled} data-testid='clear-all-button' onClick={() => clearAllFinishedJobs()}>
               Clear All
             </Button>
             </div>
@@ -137,5 +137,5 @@ BasicTable.propTypes = {
   jobs: PropTypes.array,
   deleteJobs: PropTypes.func,
   clearAllFinishedJobs: PropTypes.func,
-  clearAllButtonisDisabled: PropTypes.bool
+  clearAllButtonIsDisabled: PropTypes.bool
 }

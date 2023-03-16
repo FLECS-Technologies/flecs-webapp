@@ -72,7 +72,7 @@ export default function ElevateAppBar (props) {
   const navigate = useNavigate()
   const { jobs, deleteJobs /*, setFetchingJobs */ } = React.useContext(JobsContext)
   const finishedJobs = jobs?.filter(j => (j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled'))
-  const clearAllButtonisDisabled = finishedJobs?.length === 0
+  const clearAllButtonIsDisabled = finishedJobs?.length === 0
   const open = Boolean(anchorElPopover)
   const id = open ? 'simple-popover' : undefined
 
@@ -158,7 +158,7 @@ export default function ElevateAppBar (props) {
               }}
             >
               <Typography component={'div'} sx={{ p: 2 }}>
-                <BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={clearAllButtonisDisabled} />
+                <BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonIsDisabled={clearAllButtonIsDisabled} />
               </Typography>
             </Popover>
 

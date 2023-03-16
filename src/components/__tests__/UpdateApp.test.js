@@ -29,6 +29,7 @@ import axios from 'axios'
 jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/UpdateAppService')
 jest.mock('../../api/device/AppAPI')
+jest.mock('../../api/device/ExportAppsService')
 jest.mock('axios')
 
 const app = {

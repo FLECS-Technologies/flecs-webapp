@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-// import React from 'react'
+import React from 'react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
@@ -27,40 +27,52 @@ const jobs = [
   {
     id: 1,
     description: 'Went fishing',
-    status: 'successful'
+    status: 'running',
+    result: {
+      message: ''
+    }
   },
   {
     id: 2,
     description: 'Do the laundry',
-    status: 'failed'
+    status: 'failed',
+    result: {
+      message: ''
+    }
   },
   {
     id: 3,
     description: 'Repair sink',
-    status: 'pending'
+    status: 'pending',
+    result: {
+      message: ''
+    }
   },
   {
     id: 4,
     description: 'Drive home',
-    status: 'running'
+    status: 'successful',
+    result: {
+      message: ''
+    }
   }
 ]
 
 describe('AppBarTable', () => {
   test('renders AppBarTable component', async () => {
     await act(async () => {
-      render(BasicTable([]))
+      render(<BasicTable jobs={[]}></BasicTable>)
     })
     expect(screen.getByText('Installation Log')).toBeVisible()
     expect(screen.getByText('Clear All')).toBeVisible()
   })
 
-  test('click on clear all button', async () => {
+  test('click on Clear All button', async () => {
     const clearAllFinishedJobs = jest.fn()
     const deleteJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(BasicTable([], deleteJobs, clearAllFinishedJobs, false))
+      render(<BasicTable jobs={[]} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={false} />)
     })
     expect(screen.getByText('Clear All')).toBeVisible()
     const clearAllButton = screen.getByText('Clear All')
@@ -70,22 +82,23 @@ describe('AppBarTable', () => {
 
   test('render with jobs', async () => {
     await act(async () => {
-      render(BasicTable(jobs))
+      render(<BasicTable jobs={jobs} />)
     })
 
     expect(screen.getByText(jobs[1].description)).toBeVisible()
     expect(screen.getByText(jobs[2].status)).toBeVisible()
   })
 
-  test('render with jobs and click on clear', async () => {
+  test('render with jobs and click on Clear', async () => {
     const deleteJobs = jest.fn()
+    const clearAllFinishedJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(BasicTable(jobs, deleteJobs, undefined, true))
+      render(<BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonisDisabled={true} />)
     })
 
-    const clearButton = screen.getAllByTestId('ClearIcon')
-    await user.click(clearButton[0])
+    const clearButton = screen.getAllByTestId('icon-button')
+    await user.click(clearButton[0]) // [0] is somehow the last button created and that job has status 'successful', so it can be clicked
     expect(deleteJobs).toHaveBeenCalled()
   })
 })

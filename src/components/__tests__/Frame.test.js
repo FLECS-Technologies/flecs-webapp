@@ -22,13 +22,16 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import Frame from '../Frame'
 import { DarkModeState } from '../ThemeHandler'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 describe('Frame', () => {
   test('renders Frame component', () => {
     render(
         <Router>
             <DarkModeState>
+              <JobsContextProvider>
                 <Frame />
+              </JobsContextProvider>
             </DarkModeState>
         </Router>
     )

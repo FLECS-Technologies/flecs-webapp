@@ -23,6 +23,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import AppBar from '../AppBar'
 import { useAuth } from '../AuthProvider'
 import { DarkModeState } from '../ThemeHandler'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 const mockedUsedNavigate = jest.fn()
 
@@ -30,6 +31,8 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate
 }))
+
+jest.mock('../../api/device/ExportAppsService.js')
 
 const currentUser = {
   user: {
@@ -59,7 +62,7 @@ describe('AppBar', () => {
   })
 
   test('renders AppBar component', () => {
-    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
+    const { getByLabelText, getByText } = render(<Router><JobsContextProvider><AppBar /></JobsContextProvider></Router>)
     // test if logo is there
     expect(getByLabelText('logo')).toBeVisible()
     // test if FLECS brand name is there
@@ -68,7 +71,7 @@ describe('AppBar', () => {
   })
 
   test('Click on login', async () => {
-    const { getByLabelText } = render(<Router><AppBar /></Router>)
+    const { getByLabelText } = render(<Router><JobsContextProvider><AppBar /></JobsContextProvider></Router>)
     const loginButton = getByLabelText('login-button')
     fireEvent.click(loginButton)
 
@@ -77,7 +80,7 @@ describe('AppBar', () => {
 
   test('Click on user menu', async () => {
     useAuth.mockReturnValue(currentUser)
-    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
+    const { getByLabelText, getByText } = render(<Router><JobsContextProvider><AppBar /></JobsContextProvider></Router>)
     const userMenuButton = getByLabelText('user-menu-button')
 
     fireEvent.click(userMenuButton)
@@ -93,7 +96,7 @@ describe('AppBar', () => {
 
   test('Click on logout', async () => {
     useAuth.mockReturnValue(currentUser)
-    const { getByLabelText, getByText } = render(<Router><AppBar /></Router>)
+    const { getByLabelText, getByText } = render(<Router><JobsContextProvider><AppBar /></JobsContextProvider></Router>)
     const userMenuButton = getByLabelText('user-menu-button')
 
     fireEvent.click(userMenuButton)
@@ -109,7 +112,7 @@ describe('AppBar', () => {
   })
 
   test('Change theme', async () => {
-    const { getByLabelText } = render(<DarkModeState><Router><AppBar /></Router></DarkModeState>)
+    const { getByLabelText } = render(<DarkModeState><Router><JobsContextProvider><AppBar /></JobsContextProvider></Router></DarkModeState>)
     const changeThemeButton = getByLabelText('change-theme-button')
 
     fireEvent.click(changeThemeButton)

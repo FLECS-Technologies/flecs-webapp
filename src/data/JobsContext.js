@@ -34,10 +34,6 @@ function JobsContextProvider (props) {
   }, [])
 
   React.useEffect(() => {
-    fetchExports()
-  }, [])
-
-  React.useEffect(() => {
     if (fetchingJobs) {
       const timer = setInterval(() => fetchJobs(), 500)
       return () => {

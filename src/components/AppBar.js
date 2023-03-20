@@ -70,7 +70,7 @@ export default function ElevateAppBar (props) {
   const [anchorElPopover, setAnchorElPopover] = React.useState(null)
   const user = useAuth()
   const navigate = useNavigate()
-  const { jobs, deleteJobs /*, setFetchingJobs */ } = React.useContext(JobsContext)
+  const { jobs, deleteJobs, fetchExports } = React.useContext(JobsContext)
   const finishedJobs = jobs?.filter(j => (j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled'))
   const clearAllButtonIsDisabled = finishedJobs?.length === 0
   const open = Boolean(anchorElPopover)
@@ -78,12 +78,10 @@ export default function ElevateAppBar (props) {
 
   const handleClickPopover = (event) => {
     setAnchorElPopover(event.currentTarget)
-    // setFetchingJobs(true)
   }
 
   const handleClosePopover = () => {
     setAnchorElPopover(null)
-    // setFetchingJobs(false)
   }
 
   const handleMenu = (event) => {
@@ -120,11 +118,14 @@ export default function ElevateAppBar (props) {
 
   const clearAllFinishedJobs = () => {
     finishedJobs.map(j => deleteJobs(j.id))
-    // setFetchingJobs(false)
   }
 
   React.useEffect(() => {
   }, [user])
+
+  React.useEffect(() => {
+    fetchExports()
+  }, [])
 
   return (
     <React.Fragment>

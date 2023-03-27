@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 
+/* eslint-disable react/no-direct-mutation-state */
+
 import React from 'react'
 import { DeviceAPIConfiguration } from '../api-config'
 

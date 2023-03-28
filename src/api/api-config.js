@@ -26,6 +26,7 @@ const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
+const EXPORTS_ROUTE = '/exports'
 
 const GET_INSTALLED_APP_LIST_URL = ''
 const GET_BROWSE_DATA_LAYER = '/browse'
@@ -33,8 +34,7 @@ const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
-const GET_EXPORTS_URL = '/exports'
-const GET_EXPORT_URL = (exportId) => GET_EXPORTS_URL + `/${exportId}`
+const GET_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const GET_JOBS_URL = '/jobs'
 
 const POST_INSTALL_APP_URL = '/install'
@@ -48,7 +48,7 @@ const POST_CREATE_APP_INSTANCE_URL = '/create'
 // const POST_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
-const POST_APP_EXPORT_URL = '/exports/create'
+const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
 const POST_SIDELOAD_APP = '/sideload'
 const POST_APP_IMPORT_URL = '/imports'
 
@@ -56,6 +56,7 @@ const POST_APP_IMPORT_URL = '/imports'
 const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 
 const DELETE_UNINSTALL_APP_URL = ''
+const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -163,8 +164,8 @@ class DeviceAPIConfiguration extends Component {
     return POST_UPDATE_APP_URL
   }
 
-  static get POST_APP_EXPORT_URL () {
-    return POST_APP_EXPORT_URL
+  static get POST_EXPORT_URL () {
+    return POST_EXPORT_URL
   }
 
   static get POST_APP_IMPORT_URL () {
@@ -196,8 +197,8 @@ class DeviceAPIConfiguration extends Component {
     return GET_DOWNLOAD_URL
   }
 
-  static get GET_EXPORTS_URL () {
-    return GET_EXPORTS_URL
+  static get EXPORTS_ROUTE () {
+    return EXPORTS_ROUTE
   }
 
   static get GET_EXPORT_URL () {
@@ -220,6 +221,10 @@ class DeviceAPIConfiguration extends Component {
   // delete requests
   static get DELETE_UNINSTALL_APP_URL () {
     return DELETE_UNINSTALL_APP_URL
+  }
+
+  static get DELETE_EXPORT_URL () {
+    return DELETE_EXPORT_URL
   }
 }
 

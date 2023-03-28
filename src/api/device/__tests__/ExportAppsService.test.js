@@ -44,7 +44,7 @@ describe('ExportAppsService', () => {
 
   test('calls successful postExportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
       .reply(202, {
         jobId: 1
       })
@@ -57,7 +57,7 @@ describe('ExportAppsService', () => {
 
   test('calls unsuccessful postExportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
       .reply(400, {})
 
     const exportApps = new ExportApps()
@@ -92,7 +92,7 @@ describe('ExportAppsService', () => {
 
   test('calls successful downloadExport', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
       .reply(202, {
         jobId: 1
       })
@@ -108,7 +108,7 @@ describe('ExportAppsService', () => {
 
   test('calls unsuccessful downloadExport', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_EXPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
       .reply(202, {
         jobId: 1
       })

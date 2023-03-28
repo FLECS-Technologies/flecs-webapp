@@ -98,7 +98,7 @@ describe('ExportAppsService', () => {
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
       .reply(200, [{ status: 'successful', result: { message: '12345678' } }])
 
     axios.get.mockResolvedValueOnce({ data: 'blob downloaded' })
@@ -114,7 +114,7 @@ describe('ExportAppsService', () => {
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOBS_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
       .reply(200, [{ status: 'failed', result: { message: '12345678' } }])
 
     const answer = await downloadExport(['1'], [])

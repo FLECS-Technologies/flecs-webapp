@@ -31,7 +31,7 @@ export class ExportApps extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_APP_EXPORT_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.POST_EXPORT_URL, requestOptions)
     } catch (error) { }
   }
 }
@@ -70,7 +70,7 @@ async function downloadPastExport (exportId) {
 
 async function deleteExport (exportId) {
   return axios
-    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL + '/' + exportId)
+    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_EXPORT_URL(exportId))
     .then(response => {
       return response
     })
@@ -81,7 +81,7 @@ async function deleteExport (exportId) {
 
 async function getExports () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORTS_URL)
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.EXPORTS_ROUTE)
     .then(response => {
       return response.data
     })

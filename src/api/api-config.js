@@ -27,6 +27,7 @@ const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
 const EXPORTS_ROUTE = '/exports'
+const JOBS_ROUTE = '/jobs'
 
 const GET_INSTALLED_APP_LIST_URL = ''
 const GET_BROWSE_DATA_LAYER = '/browse'
@@ -35,7 +36,7 @@ const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
 const GET_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
-const GET_JOBS_URL = '/jobs'
+const GET_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
 const GET_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const GET_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs'
 const GET_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config'
@@ -59,6 +60,7 @@ const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instance
 const DELETE_UNINSTALL_APP_URL = ''
 const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
+const DELETE_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -115,6 +117,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get DATA_LAYER_ROUTE () {
     return DATA_LAYER_ROUTE
+  }
+
+  static get JOBS_ROUTE () {
+    return JOBS_ROUTE
   }
 
   // post requests
@@ -203,6 +209,10 @@ class DeviceAPIConfiguration extends Component {
     return GET_EXPORT_URL
   }
 
+  static get GET_JOB_URL () {
+    return GET_JOB_URL
+  }
+
   static get GET_INSTANCE_DETAILS_URL () {
     return GET_INSTANCE_DETAILS_URL
   }
@@ -213,10 +223,6 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_INSTANCE_CONFIG_URL () {
     return GET_INSTANCE_CONFIG_URL
-  }
-
-  static get GET_JOBS_URL () {
-    return GET_JOBS_URL
   }
 
   // patch requests
@@ -235,6 +241,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get DELETE_INSTANCE_URL () {
     return DELETE_INSTANCE_URL
+  }
+
+  static get DELETE_JOB_URL () {
+    return DELETE_JOB_URL
   }
 }
 

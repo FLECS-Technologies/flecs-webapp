@@ -27,7 +27,7 @@ export default class JobsAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.JOBS_ROUTE, requestOptions)
     } catch (error) { }
   }
 
@@ -38,7 +38,7 @@ export default class JobsAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobId, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.GET_JOB_URL(jobId), requestOptions)
     } catch (error) { }
   }
 
@@ -49,7 +49,7 @@ export default class JobsAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOBS_URL + '/' + jobId, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.DELETE_JOB_URL(jobId), requestOptions)
     } catch (error) { }
   }
 }

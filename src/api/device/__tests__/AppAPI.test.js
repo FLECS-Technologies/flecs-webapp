@@ -107,7 +107,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.createInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
@@ -139,7 +139,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.startInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
@@ -171,7 +171,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.stopInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/stop')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
@@ -203,7 +203,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.deleteInstance', async () => {
     nock('http://localhost')
-      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId)
+      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
@@ -237,13 +237,13 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
@@ -276,13 +276,13 @@ describe('AppAPI', () => {
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + testInstance.instanceId + '/start')
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })

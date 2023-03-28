@@ -36,7 +36,7 @@ export default class CreateAppInstanceAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + DeviceAPIConfiguration.POST_CREATE_APP_INSTANCE_URL, requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL, requestOptions)
     } catch (error) { }
   }
 }

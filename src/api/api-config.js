@@ -36,27 +36,29 @@ const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
 const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`
 const GET_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const GET_JOBS_URL = '/jobs'
+const GET_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
+const GET_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs'
+const GET_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UPDATE_APP_URL = DEVICE_ROUTE + APP_ROUTE + '/update'
-const POST_START_INSTANCE_URL = '/start'
-const POST_STOP_INSTANCE_URL = '/stop'
-const POST_CREATE_APP_INSTANCE_URL = '/create'
-// const POST_DELETE_APP_INSTANCE_URL = '/delete'
-// const POST_INSTANCE_DETAILS_URL = INSTANCES_ROUTE + '/details'
-// const POST_INSTANCE_LOG_URL = INSTANCES_ROUTE + '/log'
-// const POST_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
+const POST_START_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/start'
+const POST_STOP_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/stop'
+const POST_CREATE_INSTANCE_URL = INSTANCES_ROUTE + '/create'
+const POST_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
+const POST_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs'
+const POST_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config'
 const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
 const POST_SIDELOAD_APP = '/sideload'
 const POST_APP_IMPORT_URL = '/imports'
 
-// const PUT_INSTANCE_CONFIG_URL = INSTANCES_ROUTE + '/config'
 const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 
 const DELETE_UNINSTALL_APP_URL = ''
 const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
+const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 
 const MP_BASE_URL = 'https://marketplace.flecs.tech'
 const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
@@ -128,13 +130,9 @@ class DeviceAPIConfiguration extends Component {
     return POST_STOP_INSTANCE_URL
   }
 
-  static get POST_CREATE_APP_INSTANCE_URL () {
-    return POST_CREATE_APP_INSTANCE_URL
+  static get POST_CREATE_INSTANCE_URL () {
+    return POST_CREATE_INSTANCE_URL
   }
-
-  // static get POST_DELETE_APP_INSTANCE_URL () {
-  //   return POST_DELETE_APP_INSTANCE_URL
-  // }
 
   static get POST_SIDELOAD_APP () {
     return POST_SIDELOAD_APP
@@ -148,17 +146,17 @@ class DeviceAPIConfiguration extends Component {
     return POST_MP_LOGOUT_URL
   }
 
-  // static get POST_INSTANCE_DETAILS_URL () {
-  //   return POST_INSTANCE_DETAILS_URL
-  // }
+  static get POST_INSTANCE_DETAILS_URL () {
+    return POST_INSTANCE_DETAILS_URL
+  }
 
-  // static get POST_INSTANCE_LOG_URL () {
-  //   return POST_INSTANCE_LOG_URL
-  // }
+  static get POST_INSTANCE_LOG_URL () {
+    return POST_INSTANCE_LOG_URL
+  }
 
-  // static get POST_INSTANCE_CONFIG_URL () {
-  //   return POST_INSTANCE_CONFIG_URL
-  // }
+  static get POST_INSTANCE_CONFIG_URL () {
+    return POST_INSTANCE_CONFIG_URL
+  }
 
   static get POST_UPDATE_APP_URL () {
     return POST_UPDATE_APP_URL
@@ -205,15 +203,23 @@ class DeviceAPIConfiguration extends Component {
     return GET_EXPORT_URL
   }
 
+  static get GET_INSTANCE_DETAILS_URL () {
+    return GET_INSTANCE_DETAILS_URL
+  }
+
+  static get GET_INSTANCE_LOG_URL () {
+    return GET_INSTANCE_LOG_URL
+  }
+
+  static get GET_INSTANCE_CONFIG_URL () {
+    return GET_INSTANCE_CONFIG_URL
+  }
+
   static get GET_JOBS_URL () {
     return GET_JOBS_URL
   }
 
-  // put requests
-  // static get PUT_INSTANCE_CONFIG_URL () {
-  //   return PUT_INSTANCE_CONFIG_URL
-  // }
-
+  // patch requests
   static get PATCH_INSTANCE_UPDATE_URL () {
     return PATCH_INSTANCE_UPDATE_URL
   }
@@ -225,6 +231,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get DELETE_EXPORT_URL () {
     return DELETE_EXPORT_URL
+  }
+
+  static get DELETE_INSTANCE_URL () {
+    return DELETE_INSTANCE_URL
   }
 }
 

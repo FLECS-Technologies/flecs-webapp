@@ -20,8 +20,6 @@ import { Component } from 'react'
 
 const DEVICE_ROUTE = '../api/v2'
 const DEVICE_ROUTE_TEST = '/api/v2'
-const DEVICE_V2_ROUTE = '../api/v2'
-const DEVICE_V2_ROUTE_TEST = '/api/v2'
 const APP_ROUTE = '/apps'
 const INSTANCES_ROUTE = '/instances'
 const MARKETPLACE_ROUTE = '/marketplace'
@@ -40,7 +38,7 @@ const GET_EXPORT_URL = (exportId) => GET_EXPORTS_URL + `/${exportId}`
 const GET_JOBS_URL = '/jobs'
 
 const POST_INSTALL_APP_URL = '/install'
-const POST_UPDATE_APP_URL = DEVICE_V2_ROUTE + APP_ROUTE + '/update'
+const POST_UPDATE_APP_URL = DEVICE_ROUTE + APP_ROUTE + '/update'
 const POST_START_INSTANCE_URL = '/start'
 const POST_STOP_INSTANCE_URL = '/stop'
 const POST_CREATE_APP_INSTANCE_URL = '/create'
@@ -94,13 +92,6 @@ class DeviceAPIConfiguration extends Component {
       return DEVICE_ROUTE_TEST
     }
     return DEVICE_ROUTE
-  }
-
-  static get DEVICE_V2_ROUTE () {
-    if ((process.env.REACT_APP_ENVIRONMENT === 'test') || (process.env.REACT_APP_ENVIRONMENT === 'development')) {
-      return DEVICE_V2_ROUTE_TEST
-    }
-    return DEVICE_V2_ROUTE
   }
 
   static get APP_ROUTE () {

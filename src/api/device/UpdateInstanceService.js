@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 async function UpdateInstanceService (instanceId, to) {
   return axios
-    .patch(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_V2_ROUTE + DeviceAPIConfiguration.PATCH_INSTANCE_UPDATE_URL(instanceId), { to })
+    .patch(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.PATCH_INSTANCE_UPDATE_URL(instanceId), { to })
     .then(response => {
       return response.data
     })

@@ -27,7 +27,7 @@ export default class StartAppInstanceAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/start', requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.POST_START_INSTANCE_URL(instanceId), requestOptions)
     } catch (error) { }
   }
 }

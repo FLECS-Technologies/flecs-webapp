@@ -27,7 +27,7 @@ export default class StopAppInstanceAPI extends BaseAPI {
     }
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE + '/' + instanceId + '/stop', requestOptions)
+      await this.callAPI(DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(instanceId), requestOptions)
     } catch (error) { }
   }
 }

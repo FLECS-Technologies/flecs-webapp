@@ -32,7 +32,7 @@ import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ClearIcon from '@mui/icons-material/Clear'
 import LoadIconButton from './LoadIconButton'
-import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined'
+import InfoIcon from './InfoIcon'
 import { Grid } from '@mui/material'
 import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService'
 import { JobsContext } from '../data/JobsContext'
@@ -108,9 +108,7 @@ export default function BasicTable (props) {
                         alignItems: 'center'
                       }}>
                         {row.status}
-                        <Tooltip title={row.message} style={{ width: '35px', height: '24px' }}>
-                          <ReportOutlinedIcon aria-label='info-button' outlined='true' sx={{ color: '#959595' }}/>
-                        </Tooltip>
+                        <InfoIcon message={row.message}/>
                       </div>
                       : row.status}
                 </TableCell>

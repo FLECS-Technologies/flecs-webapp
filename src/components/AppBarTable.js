@@ -32,6 +32,7 @@ import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ClearIcon from '@mui/icons-material/Clear'
 import LoadIconButton from './LoadIconButton'
+import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined'
 import { Grid } from '@mui/material'
 import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService'
 import { JobsContext } from '../data/JobsContext'
@@ -100,7 +101,19 @@ export default function BasicTable (props) {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell align="left">{row.description}</TableCell>
-                <TableCell align="left">{row.status}</TableCell>
+                <TableCell align="left">
+                    {row.status === 'failed'
+                      ? <div style={{
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}>
+                        {row.status}
+                        <Tooltip title={row.message} style={{ width: '35px', height: '24px' }}>
+                          <ReportOutlinedIcon aria-label='info-button' outlined='true' sx={{ color: '#959595' }}/>
+                        </Tooltip>
+                      </div>
+                      : row.status}
+                </TableCell>
                 <TableCell align="left">
                   <Grid container direction="row" justify="flex-start" alignItems="flex-start">
                     <LoadIconButton disabled={row.status === 'running'} onClick={() => deleteJobs(row.id)} icon={
@@ -111,9 +124,9 @@ export default function BasicTable (props) {
                     {(row.description === 'Creating export' && row.status === 'successful')
                       ? <>
                           <LoadIconButton title={'Download this export'} disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={
-                          <Tooltip title={'Download this export'}>
-                            <DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />
-                          </Tooltip>
+                            <Tooltip title={'Download this export'}>
+                              <DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />
+                            </Tooltip>
                           }/>
                           <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={
                             <Tooltip title={'Delete this export'}>

@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration } from '../api-config'
 async function postImportApps (file, fileName) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    const url = DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL
+    const url = DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL
     xhr.open('POST', url, true)
     xhr.setRequestHeader('X-Uploaded-Filename', fileName)
     xhr.onreadystatechange = () => {

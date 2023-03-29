@@ -53,7 +53,7 @@ const POST_MP_LOGIN_URL = '/login'
 const POST_MP_LOGOUT_URL = '/logout'
 const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
 const POST_SIDELOAD_APP = '/sideload'
-const POST_APP_IMPORT_URL = '/imports'
+const POST_IMPORT_URL = '/imports'
 
 const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 
@@ -172,8 +172,8 @@ class DeviceAPIConfiguration extends Component {
     return POST_EXPORT_URL
   }
 
-  static get POST_APP_IMPORT_URL () {
-    return POST_APP_IMPORT_URL
+  static get POST_IMPORT_URL () {
+    return POST_IMPORT_URL
   }
 
   // get requests

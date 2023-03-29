@@ -30,7 +30,7 @@ describe('ImportAppsService', () => {
 
   test('calls successful postImportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL)
       .reply(202, {
         jobId: 1
       })
@@ -43,7 +43,7 @@ describe('ImportAppsService', () => {
 
   test('calls unsuccessful postImportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_APP_IMPORT_URL)
+      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL)
       .reply(400, {})
 
     expect(postImportApps()).rejects.toThrowError()

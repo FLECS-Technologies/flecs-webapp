@@ -20,6 +20,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
@@ -38,6 +40,7 @@ export default function UpdateApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const [infoMessage, setInfoMessage] = React.useState(false)
   const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
 
@@ -87,9 +90,11 @@ export default function UpdateApp (props) {
     } else if (mappedStatus === 2) {
       setRunning(true)
       setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
+      setInfoMessage(true)
     } else if (mappedStatus === 4) {
       setRunning(false)
       setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
+      setInfoMessage(false)
       setSuccess(true)
       setUpdating(false)
     } else if (mappedStatus === -1) {
@@ -113,6 +118,14 @@ export default function UpdateApp (props) {
         </Grid>
         <Grid item >
           <Typography data-testid='installationMessage'>{installationMessage}</Typography>
+        </Grid>
+        <Grid item>
+        {infoMessage
+          ? <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
+            <AlertTitle>Info</AlertTitle>
+            <Typography variant='body2'>You can close this window. Installation takes place automatically in the background.</Typography>
+          </Alert>
+          : null}
         </Grid>
         {(error) &&
         <Grid item >

@@ -20,6 +20,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportIcon from '@mui/icons-material/Report'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 import PropTypes from 'prop-types'
 import React from 'react'
 import AppAPI from '../api/device/AppAPI'
@@ -36,6 +38,7 @@ export default function InstallApp (props) {
   const [error, setError] = React.useState(false)
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
+  const [infoMessage, setInfoMessage] = React.useState(false)
   const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
   const executedRef = React.useRef(false)
@@ -93,9 +96,11 @@ export default function InstallApp (props) {
     } else if (mappedStatus === 2) {
       setRunning(true)
       setInstallationMessage('Installing ' + app.title + '.')
+      setInfoMessage(true)
     } else if (mappedStatus === 4) {
       setRunning(false)
       setInstallationMessage(app.title + ' successfully installed.')
+      setInfoMessage(false)
       setSuccess(true)
       setInstalling(false)
     } else if (mappedStatus === -1) {
@@ -119,6 +124,14 @@ export default function InstallApp (props) {
         </Grid>
         <Grid item >
           <Typography data-testid='installationMessage'>{installationMessage}</Typography>
+        </Grid>
+        <Grid item>
+        {infoMessage
+          ? <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
+            <AlertTitle>Info</AlertTitle>
+            <Typography variant='body2'>You can close this window. Installation takes place automatically in the background.</Typography>
+          </Alert>
+          : null}
         </Grid>
         {(error) &&
         <Grid item >

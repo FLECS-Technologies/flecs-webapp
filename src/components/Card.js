@@ -25,7 +25,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
-
+import { Tooltip } from '@mui/material'
 import LoadButton from './LoadButton'
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/device/AppAPI'
@@ -160,6 +160,8 @@ export default function OutlinedCard (props) {
         >
           Request
         </Button>
+        <Tooltip title={installable ? '' : `This app can only be installed on ${props.requirement}`}>
+            <div>
             {!installed && <LoadButton
           text="Install"
           variant="contained"
@@ -169,6 +171,8 @@ export default function OutlinedCard (props) {
           onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
         />}
+            </div>
+          </Tooltip>
         {(!props.installedVersions?.includes(selectedVersion.version)) && installed && <LoadButton
           text= 'Update'
           variant="contained"

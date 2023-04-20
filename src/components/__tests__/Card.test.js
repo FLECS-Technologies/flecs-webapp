@@ -104,6 +104,7 @@ describe('Card', () => {
       description= 'Test App Description'
       status= 'uninstalled'
       availability='available'
+      requirement='all FLECS devices'
       installedVersions={[]}
       instances={[]} />)
 

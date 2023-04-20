@@ -172,7 +172,7 @@ describe('Marketplace List', () => {
     expect(apps).toHaveLength(1)
   })
 
-  test('filter apps by installable filter', async () => {
+  test('filter apps by available filter', async () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
 
     await act(async () => {
@@ -188,11 +188,11 @@ describe('Marketplace List', () => {
       fireEvent.click(filterButton)
     })
 
-    const filterByInstallable = await waitFor(() => screen.getByTestId('installable-filter'))
-    expect(filterByInstallable).toBeEnabled()
+    const filterByAvailable = await waitFor(() => screen.getByTestId('available-filter'))
+    expect(filterByAvailable).toBeEnabled()
 
     await act(async () => {
-      fireEvent.click(filterByInstallable)
+      fireEvent.click(filterByAvailable)
     })
   })
 

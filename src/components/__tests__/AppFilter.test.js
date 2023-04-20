@@ -31,15 +31,15 @@ describe('AppFilter', () => {
   test('renders AppFilter component', () => {
     const { getByTestId } = render(<AppFilter/>)
 
-    expect(getByTestId('installable-filter')).toBeVisible()
+    expect(getByTestId('available-filter')).toBeVisible()
   })
 
-  test('toggle AppFilter->Installable Button', () => {
-    const setInstallable = jest.fn()
-    const { getByTestId } = render(<AppFilter installed={true} setInstalled={setInstallable}/>)
+  test('toggle AppFilter->Available Button', () => {
+    const setAvailableFilter = jest.fn()
+    const { getByTestId } = render(<AppFilter available={true} setAvailableFilter={setAvailableFilter}/>)
 
-    const toggleInstallable = getByTestId('installable-filter')
-    fireEvent.click(toggleInstallable)
-    expect(setInstallable).toHaveBeenLastCalledWith()
+    const toggleAvailable = getByTestId('available-filter')
+    fireEvent.click(toggleAvailable)
+    expect(setAvailableFilter).toHaveBeenLastCalledWith()
   })
 })

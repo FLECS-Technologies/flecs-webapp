@@ -1,9 +1,24 @@
+const localStorageMock = (function () {
+  let store = {}
 
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn()
-}
+  return {
+    getItem: function (key) {
+      return store[key] || null
+    },
+    setItem: function (key, value) {
+      store[key] = value.toString()
+    },
+    clear: function () {
+      store = {}
+    },
+    removeItem: function (key) {
+      delete store[key]
+    }
 
-global.localStorage = localStorageMock
+  }
+})()
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true
+})

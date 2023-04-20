@@ -51,6 +51,8 @@ export default function OutlinedCard (props) {
   const [available] = useState(
     (props.availability === 'available') || (props.availability === 'instock')
   )
+  const [installable] = useState(props.requirement !== undefined && ((props.requirement === 'all FLECS devices') || (props.requirement?.includes(systemInfo?.arch)))
+  )
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'
   const [open, setConfirmOpen] = useState(false)
@@ -158,12 +160,12 @@ export default function OutlinedCard (props) {
         >
           Request
         </Button>
-        {!installed && <LoadButton
+            {!installed && <LoadButton
           text="Install"
           variant="contained"
           color="success"
           label="install-app-button"
-          disabled={installed || blackListed}
+          disabled={installed || blackListed || !installable}
           onClick={() => setInstallAppOpen(true)}
           displaystate={displayState}
         />}

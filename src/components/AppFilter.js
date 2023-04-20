@@ -21,19 +21,15 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 const AppFilter = (props) => {
-  const { installed = false, setInstalled /*, setCategories */ } = props
-  function setInstalledFilter () {
-    setInstalled()
-  }
-
+  const { availableFilter, setAvailableFilter /*, setCategories */ } = props
   return (
     <Paper>
         <Box sx={{ margin: 1, padding: 1 }}>
           <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter</Typography>
           <Divider/>
           <Box sx={{ mt: 1 }}>
-            <ToggleButton data-testid="installable-filter" value="installable" color="primary" selected={installed} onChange={setInstalledFilter}>
-              {installed ? <Clear/> : <Check/>}Show installable apps only
+            <ToggleButton data-testid="available-filter" value="available" color="primary" selected={availableFilter} onChange={() => setAvailableFilter()}>
+              {availableFilter ? <Clear/> : <Check/>}Show available apps only
             </ToggleButton>
           </Box>
         </Box>
@@ -42,8 +38,8 @@ const AppFilter = (props) => {
 }
 
 AppFilter.propTypes = {
-  installed: PropTypes.bool,
-  setInstalled: PropTypes.func,
+  availableFilter: PropTypes.bool,
+  setAvailableFilter: PropTypes.func,
   setCategories: PropTypes.func
 }
 

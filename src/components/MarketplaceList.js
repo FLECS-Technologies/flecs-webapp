@@ -47,7 +47,7 @@ export default function MarketplaceList (props) {
   })
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
 
-  function setInstalledFilter () {
+  function setAvailableFilter () {
     setQueryParams(previousState => {
       return { ...previousState, stock_status: (queryParams.stock_status === 'instock' ? undefined : 'instock') }
     })
@@ -166,7 +166,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setInstalled={setInstalledFilter} installed={(queryParams.stock_status === 'instock')}/>
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')}/>
               </Collapse>
 
         </Grid>

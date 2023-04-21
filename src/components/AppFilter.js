@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 import { Check, Clear } from '@mui/icons-material'
-import { Box, Divider, Paper, ToggleButton, Typography } from '@mui/material'
+import { Box, Button, Divider, Paper, ToggleButton, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter /*, setCategories */ } = props
+  const { availableFilter, setAvailableFilter, handleSetHiddenCategories /*, setCategories */ } = props
   return (
     <Paper>
         <Box sx={{ margin: 1, padding: 1 }}>
@@ -32,6 +32,13 @@ const AppFilter = (props) => {
               {availableFilter ? <Clear/> : <Check/>}Show available apps only
             </ToggleButton>
           </Box>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(28)}>Communication</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(29)}>Control</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(30)}>Data Analysis</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(31)}>Motion</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(32)}>Fleet Management</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(33)}>Visu & SCADA</Button>
+          <Button variant='contained' onClick={() => handleSetHiddenCategories(34)}>System</Button>
         </Box>
     </Paper>
   )
@@ -40,7 +47,8 @@ const AppFilter = (props) => {
 AppFilter.propTypes = {
   availableFilter: PropTypes.bool,
   setAvailableFilter: PropTypes.func,
-  setCategories: PropTypes.func
+  handleSetHiddenCategories: PropTypes.func,
+  setCategories: PropTypes.func // TODO: remove
 }
 
 export { AppFilter }

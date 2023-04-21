@@ -123,6 +123,10 @@ function getId (app) {
   return app?.id
 }
 
+function getCategories (app) {
+  return app?.categories
+}
+
 function getCategoryID () {
   let catID = ''
   switch (process.env.REACT_APP_ENVIRONMENT) {
@@ -149,4 +153,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

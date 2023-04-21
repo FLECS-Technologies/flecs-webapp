@@ -46,6 +46,7 @@ export default function MarketplaceList (props) {
     stock_status: undefined
   })
   const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
+  const [hiddenHasUpdated, setHiddenHasUpdated] = useState(false)
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
 
   function setAvailableFilter () {
@@ -59,6 +60,7 @@ export default function MarketplaceList (props) {
   function handleSetHiddenCategories (category) {
     const newHiddenCategories = hiddenCategories.includes(category) ? hiddenCategories.filter(c => c !== category) : [...hiddenCategories, category]
     newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
+    setHiddenHasUpdated(true)
     setHiddenCategories(newHiddenCategories)
   }
 
@@ -73,6 +75,13 @@ export default function MarketplaceList (props) {
   function toggleFilter () {
     setToggleFilter(!showFilter)
   }
+
+  const isHidden = (productCategories) => {
+    const productCategory = productCategories?.filter(p => p.id !== 27) // removes the "App" category (id 27)
+    const categoryId = productCategory?.map(p => p.id)[0]
+    return hiddenCategories.includes(categoryId)
+  }
+
   const loadProducts = useCallback(async () => {
     try {
       getProducts(queryParams)
@@ -101,7 +110,7 @@ export default function MarketplaceList (props) {
     } catch (error) {
       console.log(error.response)
     }
-  }, [queryParams, appList])
+  }, [queryParams, appList, hiddenCategories])
 
   function createProductCards (newProducts) {
     let productCards = []
@@ -128,6 +137,7 @@ export default function MarketplaceList (props) {
           rating_count={getRatingCount(app)}
           blacklist={getBlacklist(app)}
           installedVersions={getInstalledVersions(appList, getReverseDomainName(app))}
+          hidden={isHidden(getCategories(app))}
         />
       ))
       return productCards
@@ -135,7 +145,7 @@ export default function MarketplaceList (props) {
   }
 
   function updateProductCards () {
-    if (products && appList) {
+    if (products && appList && !hiddenHasUpdated) {
       const updatedProducts = products.map((app) => ({
         ...app,
         props: {
@@ -145,7 +155,16 @@ export default function MarketplaceList (props) {
           installedVersions: getInstalledVersions(appList, app.props.appKey.name)
         }
       }))
-
+      setProducts(updatedProducts)
+    } else if (products && appList && hiddenHasUpdated) {
+      const updatedProducts = products.map((app) => ({
+        ...app,
+        props: {
+          ...app.props,
+          hidden: isHidden(getCategories(app.props))
+        }
+      }))
+      setHiddenHasUpdated(false)
       setProducts(updatedProducts)
     }
   }
@@ -160,7 +179,7 @@ export default function MarketplaceList (props) {
       loadProducts(appList)
       executedRef.current = true
     }
-  }, [appList, queryParams])
+  }, [appList, queryParams, hiddenCategories])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
@@ -197,7 +216,7 @@ export default function MarketplaceList (props) {
             <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
           </Grid>)
         }
-        { products }
+        { products?.filter(p => !p.props.hidden) }
       </Grid>
     </Box>
   )

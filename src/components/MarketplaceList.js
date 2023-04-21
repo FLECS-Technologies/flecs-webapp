@@ -45,6 +45,7 @@ export default function MarketplaceList (props) {
     status: undefined,
     stock_status: undefined
   })
+  const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
 
   function setAvailableFilter () {
@@ -53,6 +54,12 @@ export default function MarketplaceList (props) {
     })
     setLoading(true)
     executedRef.current = false
+  }
+
+  function handleSetHiddenCategories (category) {
+    const newHiddenCategories = hiddenCategories.includes(category) ? hiddenCategories.filter(c => c !== category) : [...hiddenCategories, category]
+    newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
+    setHiddenCategories(newHiddenCategories)
   }
 
   function setSearchFilter (event, reason) {
@@ -167,7 +174,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')}/>
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')} handleSetHiddenCategories={handleSetHiddenCategories}/>
               </Collapse>
 
         </Grid>

@@ -23,7 +23,7 @@ import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import SearchBar from './SearchBar'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
-import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
+import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
@@ -116,6 +116,7 @@ export default function MarketplaceList (props) {
           requirement={getRequirement(app)}
           versions={getVersions(app)}
           id={getId(app)}
+          categories={getCategories(app)}
           average_rating={getAverageRating(app)}
           rating_count={getRatingCount(app)}
           blacklist={getBlacklist(app)}

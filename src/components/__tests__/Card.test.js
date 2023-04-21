@@ -154,8 +154,8 @@ describe('Card', () => {
     expect(() => getByTestId('more-vert-icon')).toThrow()
   })
 
-  test('Card requirements ', async () => {
-    render(<Card
+  test('Card requirements - unsupported architecture', async () => {
+    const { getByLabelText } = render(<Card
       app= 'Testapp'
       avatar= ''
       title= 'Test App Title'
@@ -165,8 +165,26 @@ describe('Card', () => {
       status= 'uninstalled'
       availability='available'
       instances={[]}
-      requirement='amd64' />)
+      requirement='amd60000000' />) // invalid architecture
 
-    expect(screen.getByText('Installable on amd64')).toBeVisible()
+    const installButton = getByLabelText('install-app-button')
+    expect(installButton).not.toBeEnabled()
+  })
+
+  test('Card requirements - supported architecture', async () => {
+    const { getByLabelText } = render(<Card
+      app= 'Testapp'
+      avatar= ''
+      title= 'Test App Title'
+      author= 'Test App author'
+      version= 'Test App Version'
+      description= 'Test App Description'
+      status= 'uninstalled'
+      availability='available'
+      instances={[]}
+      requirement='all FLECS devices' />)
+
+    const installButton = getByLabelText('install-app-button')
+    expect(installButton).toBeEnabled()
   })
 })

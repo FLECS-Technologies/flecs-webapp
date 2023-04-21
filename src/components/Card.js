@@ -144,9 +144,6 @@ export default function OutlinedCard (props) {
           {props.description}
         </Typography>
         <VersionSelector availableVersions={createVersions(props.versions, props.installedVersions)} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion}></VersionSelector>
-        {available && <Typography data_testid='installable-requirement' sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Installable on {props?.requirement}
-        </Typography>}
       </CardContent>
       <CardActions>
         <Button

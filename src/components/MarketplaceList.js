@@ -77,6 +77,11 @@ export default function MarketplaceList (props) {
     setToggleFilter(!showFilter)
   }
 
+  const getCleanName = (name) => {
+    if (name.includes('&amp;')) { return name.replace('&amp;', '&') }
+    return name
+  }
+
   const getUniqueCategories = (loadedProducts) => {
     const categoriesArray = []
     const productCategories = loadedProducts.map(p => p.categories)
@@ -88,7 +93,7 @@ export default function MarketplaceList (props) {
         } else { // new category found
           categoriesArray.push({
             id: productCategories[i][j].id,
-            name: productCategories[i][j].name,
+            name: getCleanName(productCategories[i][j].name),
             count: 1
           })
         }

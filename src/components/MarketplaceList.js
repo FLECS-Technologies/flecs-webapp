@@ -45,6 +45,7 @@ export default function MarketplaceList (props) {
     status: undefined,
     stock_status: undefined
   })
+  const [categories, setCategories] = useState([])
   const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
   const [hiddenHasUpdated, setHiddenHasUpdated] = useState(false)
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
@@ -76,6 +77,26 @@ export default function MarketplaceList (props) {
     setToggleFilter(!showFilter)
   }
 
+  const getUniqueCategories = (loadedProducts) => {
+    const categoriesArray = []
+    const productCategories = loadedProducts.map(p => p.categories)
+    for (let i = 0; i < productCategories.length; i++) {
+      for (let j = 0; j < productCategories[i].length; j++) {
+        const index = categoriesArray.findIndex(c => c.id === productCategories[i][j].id)
+        if (index > -1) { // category already existent
+          categoriesArray[index].count++
+        } else { // new category found
+          categoriesArray.push({
+            id: productCategories[i][j].id,
+            name: productCategories[i][j].name,
+            count: 1
+          })
+        }
+      }
+    }
+    setCategories(categoriesArray)
+  }
+
   const isHidden = (productCategories) => {
     const productCategory = productCategories?.filter(p => p.id !== 27) // removes the "App" category (id 27)
     const categoryId = productCategory?.map(p => p.id)[0]
@@ -90,6 +111,7 @@ export default function MarketplaceList (props) {
             try {
               loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
 
+              getUniqueCategories(loadedProducts)
               const productCards = createProductCards(loadedProducts)
               setProducts(productCards)
               setLoadingError(false)
@@ -193,7 +215,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')} handleSetHiddenCategories={handleSetHiddenCategories}/>
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')} handleSetHiddenCategories={handleSetHiddenCategories} categories={categories}/>
               </Collapse>
 
         </Grid>

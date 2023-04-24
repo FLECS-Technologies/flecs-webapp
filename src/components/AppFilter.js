@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter, handleSetHiddenCategories /*, setCategories */ } = props
+  const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories /*, setCategories */ } = props
   return (
     <Paper>
         <Box sx={{ margin: 1, padding: 1 }}>
@@ -32,13 +32,7 @@ const AppFilter = (props) => {
               {availableFilter ? <Clear/> : <Check/>}Show available apps only
             </ToggleButton>
           </Box>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(28)}>Communication</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(29)}>Control</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(30)}>Data Analysis</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(31)}>Motion</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(32)}>Fleet Management</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(33)}>Visu & SCADA</Button>
-          <Button variant='contained' onClick={() => handleSetHiddenCategories(34)}>System</Button>
+          {categories.map(c => <Button variant='contained' key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name}</Button>)}
         </Box>
     </Paper>
   )
@@ -48,6 +42,7 @@ AppFilter.propTypes = {
   availableFilter: PropTypes.bool,
   setAvailableFilter: PropTypes.func,
   handleSetHiddenCategories: PropTypes.func,
+  categories: PropTypes.array,
   setCategories: PropTypes.func // TODO: remove
 }
 

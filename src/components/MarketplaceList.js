@@ -86,17 +86,15 @@ export default function MarketplaceList (props) {
     const categoriesArray = []
     const productCategories = loadedProducts.map(p => p.categories)
     for (let i = 0; i < productCategories.length; i++) {
-      for (let j = 0; j < productCategories[i].length; j++) {
-        const index = categoriesArray.findIndex(c => c.id === productCategories[i][j].id)
-        if (index > -1) { // category already existent
-          categoriesArray[index].count++
-        } else { // new category found
-          categoriesArray.push({
-            id: productCategories[i][j].id,
-            name: getCleanName(productCategories[i][j].name),
-            count: 1
-          })
-        }
+      const index = categoriesArray.findIndex(c => c.id === productCategories[i][1].id) // skipping [i][0] as this is the parent category "App"
+      if (index > -1) { // category already existent
+        categoriesArray[index].count++
+      } else { // new category found
+        categoriesArray.push({
+          id: productCategories[i][1].id,
+          name: getCleanName(productCategories[i][1].name),
+          count: 1
+        })
       }
     }
     setCategories(categoriesArray)

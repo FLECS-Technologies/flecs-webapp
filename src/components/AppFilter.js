@@ -15,15 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Check, Clear } from '@mui/icons-material'
-import { Box, Button, Divider, Paper, ToggleButton, Typography } from '@mui/material'
+import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import React from 'react'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories, hiddenCategories /*, setCategories */ } = props
+  const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories, hiddenCategories } = props
 
   return (
     <Paper>
@@ -31,9 +30,7 @@ const AppFilter = (props) => {
           <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by availability</Typography>
           <Divider/>
           <Box sx={{ mt: 1 }}>
-            <ToggleButton data-testid="available-filter" value="available" color="primary" selected={availableFilter} onChange={() => setAvailableFilter()}>
-              {availableFilter ? <Clear/> : <Check/>}Show available apps only
-            </ToggleButton>
+            <Button size='small' data-testid="available-filter" style={{ margin: '3px' }} variant={availableFilter ? 'contained' : 'outlined'} onClick={() => setAvailableFilter()} endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}>Show available apps only</Button>
           </Box>
           <Box sx={{ mt: 2, mb: 1 }}>
             <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
@@ -50,8 +47,7 @@ AppFilter.propTypes = {
   setAvailableFilter: PropTypes.func,
   handleSetHiddenCategories: PropTypes.func,
   categories: PropTypes.array,
-  hiddenCategories: PropTypes.array,
-  setCategories: PropTypes.func // TODO: remove
+  hiddenCategories: PropTypes.array
 }
 
 export { AppFilter }

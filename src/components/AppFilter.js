@@ -19,6 +19,8 @@ import { Check, Clear } from '@mui/icons-material'
 import { Box, Button, Divider, Paper, ToggleButton, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import React from 'react'
+import CancelIcon from '@mui/icons-material/Cancel'
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 
 const AppFilter = (props) => {
   const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories, hiddenCategories /*, setCategories */ } = props
@@ -26,14 +28,18 @@ const AppFilter = (props) => {
   return (
     <Paper>
         <Box sx={{ margin: 1, padding: 1 }}>
-          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter</Typography>
+          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by availability</Typography>
           <Divider/>
           <Box sx={{ mt: 1 }}>
             <ToggleButton data-testid="available-filter" value="available" color="primary" selected={availableFilter} onChange={() => setAvailableFilter()}>
               {availableFilter ? <Clear/> : <Check/>}Show available apps only
             </ToggleButton>
           </Box>
-            {categories.map(c => <Button variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name} ({c.count})</Button>)}
+          <Box sx={{ mt: 2, mb: 1 }}>
+            <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
+            <Divider sx={{ mb: 1 }}/>
+            {categories.map(c => <Button size='small' style={{ margin: '3px' }} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name} ({c.count})</Button>)}
+          </Box>
         </Box>
     </Paper>
   )

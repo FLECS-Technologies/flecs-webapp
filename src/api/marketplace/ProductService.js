@@ -122,7 +122,7 @@ function getMultiInstance (app) {
 }
 
 function getRequirement (app) {
-  return app?.meta_data.find(o => o.key === 'port-requirement')?.value
+  return app?.attributes.find(o => o.name === 'archs')?.options
 }
 
 function getId (app) {

@@ -21,7 +21,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories /*, setCategories */ } = props
+  const { availableFilter, setAvailableFilter, handleSetHiddenCategories, categories, hiddenCategories /*, setCategories */ } = props
+
   return (
     <Paper>
         <Box sx={{ margin: 1, padding: 1 }}>
@@ -32,7 +33,7 @@ const AppFilter = (props) => {
               {availableFilter ? <Clear/> : <Check/>}Show available apps only
             </ToggleButton>
           </Box>
-          {categories.map(c => <Button variant='contained' key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name}</Button>)}
+            {categories.map(c => <Button variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name} ({c.count})</Button>)}
         </Box>
     </Paper>
   )
@@ -43,6 +44,7 @@ AppFilter.propTypes = {
   setAvailableFilter: PropTypes.func,
   handleSetHiddenCategories: PropTypes.func,
   categories: PropTypes.array,
+  hiddenCategories: PropTypes.array,
   setCategories: PropTypes.func // TODO: remove
 }
 

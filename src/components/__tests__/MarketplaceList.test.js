@@ -51,6 +51,11 @@ describe('Marketplace List', () => {
     ],
     categories: [
       {
+        id: 27,
+        name: 'App',
+        slug: 'app'
+      },
+      {
         id: 15,
         name: 'Unkategorisiert',
         slug: 'unkategorisiert'
@@ -205,6 +210,30 @@ describe('Marketplace List', () => {
 
     await act(async () => {
       fireEvent.click(filterByAvailable)
+    })
+  })
+
+  test('filter apps by category filter', async () => {
+    getProducts.mockReturnValueOnce(Promise.resolve(products))
+
+    await act(async () => {
+      render(<MPList appData={installedApps} />)
+    })
+
+    const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
+    const filterButton = within(searchBar).getByLabelText('filter')
+
+    expect(filterButton).toBeEnabled()
+
+    await act(async () => {
+      fireEvent.click(filterButton)
+    })
+
+    const filterByCategory = await waitFor(() => screen.getByTestId('category-filter'))
+    expect(filterByCategory).toBeEnabled()
+
+    await act(async () => {
+      fireEvent.click(filterByCategory)
     })
   })
 

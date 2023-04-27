@@ -97,6 +97,7 @@ export default function MarketplaceList (props) {
         })
       }
     }
+    categoriesArray.sort((a, b) => a.name < b.name ? -1 : 1) // sorts categories alphabetically
     setCategories(categoriesArray)
   }
 

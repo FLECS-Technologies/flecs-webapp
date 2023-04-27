@@ -108,6 +108,16 @@ const mockProducts = {
           options: [
             ':1880'
           ]
+        },
+        {
+          id: 0,
+          name: 'archs',
+          position: 3,
+          visible: true,
+          variation: true,
+          options: [
+            'amd64'
+          ]
         }
       ],
       default_attributes: [
@@ -248,7 +258,7 @@ describe('ProductService', () => {
     expect(getShortDescription(products[0])).toBe('Low code programming\n')
     expect(getCustomLinks(products[0])).toHaveLength(2)
     expect(getMultiInstance(products[0])).toBeFalsy()
-    expect(getRequirement(products[0])).toBe('amd64')
+    expect(getRequirement(products[0])).toStrictEqual(['amd64'])
     expect(getId(products[0])).toBe(37)
     expect(getAverageRating(products[0])).toBe('0.00')
     expect(getRatingCount(products[0])).toBe(0)

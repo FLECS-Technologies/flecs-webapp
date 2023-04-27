@@ -51,7 +51,7 @@ export default function OutlinedCard (props) {
   const [available] = useState(
     (props.availability === 'available') || (props.availability === 'instock')
   )
-  const [installable] = useState(props.requirement && props.requirement?.includes(systemInfo?.arch))
+  const installable = props.requirement && props.requirement?.includes(systemInfo?.arch)
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'
   const [open, setConfirmOpen] = useState(false)

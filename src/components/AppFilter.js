@@ -35,7 +35,7 @@ const AppFilter = (props) => {
           <Box sx={{ mt: 2, mb: 1 }}>
             <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
             <Divider sx={{ mb: 1 }}/>
-            {categories.map(c => <Button size='small' data-testid="category-filter" style={{ margin: '3px' }} color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name} ({c.count})</Button>)}
+            {categories?.map(c => <Button size='small' data-testid="category-filter" style={{ margin: '3px' }} color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => handleSetHiddenCategories(c.id)}>{c.name} ({c.count})</Button>)}
           </Box>
         </Box>
     </Paper>

@@ -37,6 +37,18 @@ describe('Marketplace List', () => {
     short_description: '<p>IEC61131-3 Runtime.</p>\n',
     sku: '',
     price: '1',
+    attributes: [
+      {
+        id: 0,
+        name: 'archs',
+        position: 3,
+        visible: true,
+        variation: true,
+        options: [
+          'amd64'
+        ]
+      }
+    ],
     categories: [
       {
         id: 15,

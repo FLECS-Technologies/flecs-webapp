@@ -21,6 +21,10 @@ import nock from 'nock'
 import { screen, render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Card from '../Card'
+import { SystemContextProvider } from '../../data/SystemProvider'
+import { SystemData } from '../../data/SystemData'
+import { act } from 'react-dom/test-utils'
+jest.mock('../../api/device/SystemInfoService.js')
 
 describe('Card', () => {
   const relatedLinks = [
@@ -32,7 +36,7 @@ describe('Card', () => {
 
   beforeEach(() => {
     nock.disableNetConnect()
-    nock.enableNetConnect('127.0.0.1')
+    nock.enableNetConnect(['127.0.0.1'])
   })
   afterEach(() => {
     nock.cleanAll()
@@ -60,57 +64,31 @@ describe('Card', () => {
   })
 
   test('Click install', async () => {
-    nock('http://localhost')
-      .post('/InstallApp')
-      .reply(200, {
-        app: 'Testapp',
-        version: 'Test App Version',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
-      })
+    await act(async () => {
+      render(
+        <SystemContextProvider>
+          <SystemData>
+            <Card
+              app= 'Testapp'
+              avatar= ''
+              title= 'Test App Title'
+              author= 'Test App author'
+              version= 'Test App Version'
+              description= 'Test App Description'
+              status= 'uninstalled'
+              availability='available'
+              requirement={['amd64']} // valid architecture
+              installedVersions={[]}
+              instances={[]}
+            />
+          </SystemData>
+        </SystemContextProvider>
+      )
+    })
 
-    nock('http://localhost')
-      .post('/CreateAppInstance')
-      .reply(200, {
-        app: 'Testapp',
-        version: 'Test App Version',
-        instanceName: 'Test app instance',
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
-      })
-
-    nock('http://localhost')
-      .post('/StartAppInstance')
-      .reply(200, {
-        app: 'Testapp',
-        version: 'Test App Version',
-        instanceId: '01234567',
-        additionalInfo: ''
-      }, {
-        'Access-Control-Allow-Origin': '*',
-        'Content-type': 'application/json'
-      })
-    const { getByLabelText, getByTestId } = render(<Card
-      app= 'Testapp'
-      avatar= ''
-      title= 'Test App Title'
-      author= 'Test App author'
-      version= 'Test App Version'
-      description= 'Test App Description'
-      status= 'uninstalled'
-      availability='available'
-      requirement='all FLECS devices'
-      installedVersions={[]}
-      instances={[]} />)
-
-    const installButton = getByLabelText('install-app-button')
+    const installButton = screen.getByLabelText('install-app-button')
     const uninstallButton = screen.queryByText('Uninstall')
-    const requestButton = getByTestId('app-request-button')
+    const requestButton = screen.getByTestId('app-request-button')
     expect(installButton).toBeVisible()
     expect(installButton).toBeEnabled()
     expect(uninstallButton).toBeNull()
@@ -155,36 +133,54 @@ describe('Card', () => {
   })
 
   test('Card requirements - unsupported architecture', async () => {
-    const { getByLabelText } = render(<Card
-      app= 'Testapp'
-      avatar= ''
-      title= 'Test App Title'
-      author= 'Test App author'
-      version= 'Test App Version'
-      description= 'Test App Description'
-      status= 'uninstalled'
-      availability='available'
-      instances={[]}
-      requirement='amd60000000' />) // invalid architecture
+    await act(async () => {
+      render(
+        <SystemContextProvider>
+          <SystemData>
+            <Card
+              app= 'Testapp'
+              avatar= ''
+              title= 'Test App Title'
+              author= 'Test App author'
+              version= 'Test App Version'
+              description= 'Test App Description'
+              status= 'uninstalled'
+              availability='available'
+              instances={[]}
+              requirement={['amd60000000']} // invalid architecture
+            />
+          </SystemData>
+        </SystemContextProvider>
+      )
+    })
 
-    const installButton = getByLabelText('install-app-button')
+    const installButton = screen.getByLabelText('install-app-button')
     expect(installButton).not.toBeEnabled()
   })
 
   test('Card requirements - supported architecture', async () => {
-    const { getByLabelText } = render(<Card
-      app= 'Testapp'
-      avatar= ''
-      title= 'Test App Title'
-      author= 'Test App author'
-      version= 'Test App Version'
-      description= 'Test App Description'
-      status= 'uninstalled'
-      availability='available'
-      instances={[]}
-      requirement='all FLECS devices' />)
+    await act(async () => {
+      render(
+        <SystemContextProvider>
+          <SystemData>
+            <Card
+              app= 'Testapp'
+              avatar= ''
+              title= 'Test App Title'
+              author= 'Test App author'
+              version= 'Test App Version'
+              description= 'Test App Description'
+              status= 'uninstalled'
+              availability='available'
+              instances={[]}
+              requirement={['amd64']} // valid architecture
+            />
+          </SystemData>
+        </SystemContextProvider>
+      )
+    })
 
-    const installButton = getByLabelText('install-app-button')
+    const installButton = screen.getByLabelText('install-app-button')
     expect(installButton).toBeEnabled()
   })
 })

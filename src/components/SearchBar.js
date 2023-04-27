@@ -26,9 +26,9 @@ const SearchBar = (props) => {
 
   return (
     <Paper data-testid='search-bar' component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-        {setToggleFilter && <Button onClick={setToggleFilter} sx={{ p: '10px' }} aria-label="filter" startIcon={<FilterList />}>Filter
+        {setToggleFilter && <Button color="inherit" onClick={setToggleFilter} sx={{ p: '10px', pt: '7px' }} aria-label="filter" startIcon={<FilterList />}>Filter
         </Button>}
-        <Search aria-label='search-icon' sx={{ ml: 1 }} />
+        <Search aria-label='search-icon' sx={{ ml: 1, width: 20 }} />
         <Autocomplete
             sx={{ ml: 1, flex: 1 }}
             freeSolo

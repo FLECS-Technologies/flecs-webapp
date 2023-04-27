@@ -95,12 +95,6 @@ function isBlacklisted (systemInfo, blacklist) {
   return isListed
 }
 
-function getSupportedArchs (app) {
-  const supportedArchs = app?.attributes?.find(o => o.name === 'archs')?.options
-
-  return supportedArchs
-}
-
 function getShortDescription (app) {
   return app?.short_description?.replace(/<[^>]+>/g, '')
 }
@@ -155,4 +149,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getSupportedArchs, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

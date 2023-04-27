@@ -18,7 +18,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Paper, IconButton, Autocomplete, TextField } from '@mui/material'
+import { Paper, Button, Autocomplete, TextField } from '@mui/material'
 import { FilterList, Search } from '@mui/icons-material'
 
 const SearchBar = (props) => {
@@ -26,9 +26,8 @@ const SearchBar = (props) => {
 
   return (
     <Paper data-testid='search-bar' component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-        {setToggleFilter && <IconButton onClick={setToggleFilter} sx={{ p: '10px' }} aria-label="filter">
-            <FilterList />
-        </IconButton>}
+        {setToggleFilter && <Button onClick={setToggleFilter} sx={{ p: '10px' }} aria-label="filter" startIcon={<FilterList />}>Filter
+        </Button>}
         <Search aria-label='search-icon' sx={{ ml: 1 }} />
         <Autocomplete
             sx={{ ml: 1, flex: 1 }}
@@ -41,6 +40,7 @@ const SearchBar = (props) => {
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    sx={{ p: '0px' }}
                     aria-label='search-field'
                     data-testid='search-field'
                     autoFocus={true}

@@ -17,7 +17,7 @@
  */
 import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
-import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
+import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCategories, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
 
 jest.mock('axios')
 
@@ -78,6 +78,11 @@ const mockProducts = {
       parent_id: 0,
       purchase_note: '',
       categories: [
+        {
+          id: 27,
+          name: 'App',
+          slug: 'app'
+        },
         {
           id: 15,
           name: 'Unkategorisiert',
@@ -262,6 +267,19 @@ describe('ProductService', () => {
     expect(getId(products[0])).toBe(37)
     expect(getAverageRating(products[0])).toBe('0.00')
     expect(getRatingCount(products[0])).toBe(0)
+    expect(getCategories(products[0])).toStrictEqual([
+      {
+        id: 27,
+        name: 'App',
+        slug: 'app'
+      },
+      {
+        id: 15,
+        name: 'Unkategorisiert',
+        slug: 'unkategorisiert'
+      }
+    ])
+    expect(getCategories(products[1])).toBeUndefined() // product doesn't exist
     expect(getBlacklist(products[0])).toBeUndefined()
   })
 })

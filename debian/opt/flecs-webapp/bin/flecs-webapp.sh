@@ -70,5 +70,10 @@ if [ "${PORT}" == "none" ]; then
   exit 1
 fi
 
+IMAGE_ID=`docker image ls -q flecs/webapp:${DOCKER_TAG} 2>/dev/null`
+if [ -z "${IMAGE_ID}" ]; then
+  docker load --input /opt/flecs-webapp/assets/flecs-webapp_*.tar.gz >/dev/null 2>&1
+fi
+
 echo "Binding flecs-webapp to port ${PORT}"
 docker run -d -p ${PORT}:80 --add-host=host.docker.internal:${GATEWAY} ${NETWORK} --name flecs-webapp flecs/webapp:${DOCKER_TAG}

@@ -2,6 +2,6 @@ Package: flecs-webapp
 Version:
 Description: FLECS App Management Web App
 Architecture:
-Depends: net-tools,docker-ce (>= 20.10.5)|docker.io (>= 20.10.5)
+Depends: net-tools, docker-ce (>= 20.10.5) | docker.io (>= 20.10.5)
 Priority: optional
 Maintainer: FLECS Technologies GmbH <alex@flecs.tech>

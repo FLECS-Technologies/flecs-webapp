@@ -22,6 +22,7 @@ import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
 import { getProducts } from '../../api/marketplace/ProductService'
 import { render, fireEvent, within, waitFor, screen } from '@testing-library/react'
+import { FilterContextProvider } from '../../data/FilterContext'
 
 jest.mock('../../api/marketplace/ProductService', () => ({
   ...jest.requireActual('../../api/marketplace/ProductService'),
@@ -159,7 +160,7 @@ describe('Marketplace List', () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
 
     await act(async () => {
-      render(<MPList appData={installedApps} />, container)
+      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>, container)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -174,7 +175,7 @@ describe('Marketplace List', () => {
   test('filter apps by free text', async () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
     await act(async () => {
-      render(<MPList appData={installedApps} />)
+      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -193,7 +194,7 @@ describe('Marketplace List', () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
 
     await act(async () => {
-      render(<MPList appData={installedApps} />)
+      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -217,7 +218,7 @@ describe('Marketplace List', () => {
     getProducts.mockReturnValueOnce(Promise.resolve(products))
 
     await act(async () => {
-      render(<MPList appData={installedApps} />)
+      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -241,7 +242,7 @@ describe('Marketplace List', () => {
     getProducts.mockReturnValueOnce(Promise.reject(new Error('failed to load products')))
 
     await act(async () => {
-      render(<MPList appData={installedApps} />)
+      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))

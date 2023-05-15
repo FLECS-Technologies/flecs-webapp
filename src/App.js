@@ -26,23 +26,26 @@ import { UIRoutes } from './pages/ui-routes'
 import { SystemContextProvider } from './data/SystemProvider'
 import { SystemData } from './data/SystemData'
 import { JobsContextProvider } from './data/JobsContext'
+import { FilterContextProvider } from './data/FilterContext'
 
 export default function App () {
   return (
     <DarkModeState>
       <AuthProvider>
-      <JobsContextProvider>
-        <Frame>
-          <SystemContextProvider>
-            <SystemData>
-              <ReferenceDataContextProvider>
-                <AppList>
-                  <UIRoutes />
-                </AppList>
-              </ReferenceDataContextProvider>
-            </SystemData>
-          </SystemContextProvider>
-        </Frame>
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <Frame>
+              <SystemContextProvider>
+                <SystemData>
+                  <ReferenceDataContextProvider>
+                    <AppList>
+                      <UIRoutes />
+                    </AppList>
+                  </ReferenceDataContextProvider>
+                </SystemData>
+              </SystemContextProvider>
+            </Frame>
+          </FilterContextProvider>
         </JobsContextProvider>
       </AuthProvider>
     </DarkModeState>

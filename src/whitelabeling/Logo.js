@@ -19,15 +19,22 @@
 import React from 'react'
 import { IconButton, Typography } from '@mui/material'
 import { ReactComponent as LogoSVG } from './logo.svg'
+import OI4Logo from './OI4_Logo_complete_color_RGB.png'
 
 export default function Logo () {
   return (
         <React.Fragment>
             <IconButton aria-label='logo' disabled={true}>
-              <LogoSVG width="24" height="24" />
+              <img src={OI4Logo} width="144" height="48" />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              FLECS
+            <Typography variant="caption" component="div" sx={{ flexGrow: 1 }}>
+              powered by
+              <IconButton aria-label='FLECS-Logo' disabled={true}>
+              <LogoSVG width="16" height="16" />
+            </IconButton>
+              <Typography variant="caption">
+                 FLECS
+              </Typography>
             </Typography>
         </React.Fragment>
   )

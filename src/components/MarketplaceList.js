@@ -29,6 +29,7 @@ import { AppFilter } from './AppFilter'
 import useStateWithLocalStorage from './LocalStorage'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
+import { FilterContext } from '../data/FilterContext'
 
 export default function MarketplaceList (props) {
   const executedRef = React.useRef(false)
@@ -45,10 +46,8 @@ export default function MarketplaceList (props) {
     status: undefined,
     stock_status: undefined
   })
-  const [categories, setCategories] = useState([])
-  const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
-  const [hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated] = useState(false)
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
+  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, isCategoryHidden } = React.useContext(FilterContext)
 
   function setAvailableFilter () {
     setQueryParams(previousState => {
@@ -56,13 +55,6 @@ export default function MarketplaceList (props) {
     })
     setLoading(true)
     executedRef.current = false
-  }
-
-  function handleSetHiddenCategories (category) {
-    const newHiddenCategories = hiddenCategories.includes(category) ? hiddenCategories.filter(c => c !== category) : [...hiddenCategories, category]
-    newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
-    setHiddenCategoriesHasUpdated(true)
-    setHiddenCategories(newHiddenCategories)
   }
 
   function setSearchFilter (event, reason) {
@@ -75,36 +67,6 @@ export default function MarketplaceList (props) {
 
   function toggleFilter () {
     setToggleFilter(!showFilter)
-  }
-
-  const getCleanName = (name) => {
-    if (name.includes('&amp;')) { return name.replace('&amp;', '&') }
-    return name
-  }
-
-  const getUniqueCategories = (loadedProducts) => {
-    const categoriesArray = []
-    const productCategories = loadedProducts.map(p => p.categories)
-    for (let i = 0; i < productCategories.length; i++) {
-      const index = categoriesArray.findIndex(c => c.id === productCategories[i][1].id) // skipping [i][0] as this is the parent category "App"
-      if (index > -1) { // category already existent
-        categoriesArray[index].count++
-      } else { // new category found
-        categoriesArray.push({
-          id: productCategories[i][1].id,
-          name: getCleanName(productCategories[i][1].name),
-          count: 1
-        })
-      }
-    }
-    categoriesArray.sort((a, b) => a.name < b.name ? -1 : 1) // sorts categories alphabetically
-    setCategories(categoriesArray)
-  }
-
-  const isCategoryHidden = (productCategories) => {
-    const productCategory = productCategories?.filter(p => p.id !== 27) // removes the "App" category (id 27)
-    const categoryId = productCategory?.map(p => p.id)[0]
-    return hiddenCategories.includes(categoryId)
   }
 
   const loadProducts = useCallback(async () => {

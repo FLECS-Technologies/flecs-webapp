@@ -1,4 +1,4 @@
-VERSION=2.1.0-dormouse
+VERSION=2.1.1-dormouse
 DOCKER_TAG=$(VERSION)$(VERSION_SPECIAL)
 
 .PHONY: version

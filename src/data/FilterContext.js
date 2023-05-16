@@ -39,23 +39,28 @@ function FilterContextProvider (props) {
     return name
   }
 
-  const getUniqueCategories = (loadedProducts) => {
-    const categoriesArray = []
-    const productCategories = loadedProducts.map(p => p.categories)
-    for (let i = 0; i < productCategories.length; i++) {
-      const index = categoriesArray.findIndex(c => c.id === productCategories[i][1].id) // skipping [i][0] as this is the parent category "App"
-      if (index > -1) { // category already existent
-        categoriesArray[index].count++
-      } else { // new category found
-        categoriesArray.push({
-          id: productCategories[i][1].id,
-          name: getCleanName(productCategories[i][1].name),
-          count: 1
-        })
-      }
-    }
-    categoriesArray.sort((a, b) => a.name < b.name ? -1 : 1) // sorts categories alphabetically
-    setCategories(categoriesArray)
+  const getUniqueCategories = (products) => {
+    const uniqueCategories = []
+
+    products.forEach(product => {
+      product.categories.forEach(category => {
+        if (category.id !== 27) { // skipping parent category "App"
+          const index = uniqueCategories.findIndex(c => c.id === category.id)
+          if (index > -1) { // category already existent
+            uniqueCategories[index].count++
+          } else { // new category found
+            uniqueCategories.push({
+              id: category.id,
+              name: getCleanName(category.name),
+              count: 1
+            })
+          }
+        }
+      })
+    })
+
+    uniqueCategories.sort((a, b) => a.name < b.name ? -1 : 1) // sorts categories alphabetically
+    setCategories(uniqueCategories)
   }
 
   const isCategoryHidden = (productCategories) => {

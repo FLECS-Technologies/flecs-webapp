@@ -64,11 +64,28 @@ export default function MarketplaceList (props) {
   }
 
   function setSearchFilter (event, reason) {
+    const filteredByAvailability = queryParams.available ? loadedProducts : loadedProducts.filter(p => p.stock_status === 'instock')
+    const uniqueCategories = getUniqueCategories(filteredByAvailability)
+    setCategories(uniqueCategories)
+    const productCards = createProductCards(filteredByAvailability)
+    const filteredByCategory = productCards.filter(p => !p.props.hidden)
+
+    console.log('reason:', reason)
+    console.log({ filteredByCategory })
+    const filteredBySearch = searchProducts(filteredByCategory, reason)
+    console.log({ filteredBySearch })
+    setProducts(filteredBySearch)
+
     setQueryParams(previousState => {
       return { ...previousState, search: reason }
     })
-    setLoading(true)
-    executedRef.current = false
+  }
+
+  const searchProducts = (products, search) => {
+    if (!search) return products
+    const query = search.toLowerCase()
+    const filteredProducts = products.filter(p => p.props.author?.toLowerCase().includes(query) || p.props.description?.toLowerCase().includes(query) || p.props.title?.toLowerCase().includes(query))
+    return filteredProducts
   }
 
   const setCategoryFilter = () => {
@@ -211,7 +228,7 @@ export default function MarketplaceList (props) {
       >
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
 
-              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
+              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps by author, title or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
                 <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.available)} handleSetHiddenCategories={handleSetHiddenCategories} categories={categories} hiddenCategories={hiddenCategories} />
               </Collapse>

@@ -43,7 +43,7 @@ function FilterContextProvider (props) {
     const uniqueCategories = []
 
     products.forEach(product => {
-      product.categories.forEach(category => {
+      product.categories?.forEach(category => {
         if (category.id !== 27) { // skipping parent category "App"
           const index = uniqueCategories.findIndex(c => c.id === category.id)
           if (index > -1) { // category already existent

@@ -44,17 +44,23 @@ export default function MarketplaceList (props) {
     order: undefined,
     orderby: undefined,
     status: undefined,
-    stock_status: undefined
+    stock_status: undefined,
+    available: false
   })
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
-  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, isCategoryHidden } = React.useContext(FilterContext)
+  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden } = React.useContext(FilterContext)
+  const [loadedProducts, setLoadedProducts] = useState([])
 
   function setAvailableFilter () {
+    const filteredByAvailability = queryParams.available ? loadedProducts : loadedProducts.filter(p => p.stock_status === 'instock')
+    const uniqueCategories = getUniqueCategories(filteredByAvailability)
+    setCategories(uniqueCategories)
+    const productCards = createProductCards(filteredByAvailability)
+    const filteredByCategory = productCards.filter(p => !p.props.hidden)
+    setProducts(filteredByCategory)
     setQueryParams(previousState => {
-      return { ...previousState, stock_status: (queryParams.stock_status === 'instock' ? undefined : 'instock') }
+      return { ...previousState, available: !queryParams.available }
     })
-    setLoading(true)
-    executedRef.current = false
   }
 
   function setSearchFilter (event, reason) {
@@ -77,9 +83,13 @@ export default function MarketplaceList (props) {
             try {
               loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
 
-              getUniqueCategories(loadedProducts)
-              const productCards = createProductCards(loadedProducts)
-              setProducts(productCards)
+              const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+              const uniqueCategories = getUniqueCategories(filteredByAvailability)
+              setCategories(uniqueCategories)
+              const productCards = createProductCards(filteredByAvailability)
+              const filteredByCategory = productCards.filter(p => !p.props.hidden)
+              setProducts(filteredByCategory)
+              setLoadedProducts(loadedProducts)
               setLoadingError(false)
             } catch (error) { console.log(error) }
           },
@@ -98,7 +108,7 @@ export default function MarketplaceList (props) {
     } catch (error) {
       console.log(error.response)
     }
-  }, [queryParams, appList, hiddenCategories])
+  }, [appList, hiddenCategories])
 
   function createProductCards (newProducts) {
     let productCards = []
@@ -167,7 +177,7 @@ export default function MarketplaceList (props) {
       loadProducts(appList)
       executedRef.current = true
     }
-  }, [appList, queryParams, hiddenCategories])
+  }, [appList, hiddenCategories])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
@@ -181,7 +191,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.stock_status === 'instock')} handleSetHiddenCategories={handleSetHiddenCategories} categories={categories} hiddenCategories={hiddenCategories} />
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.available)} handleSetHiddenCategories={handleSetHiddenCategories} categories={categories} hiddenCategories={hiddenCategories} />
               </Collapse>
 
         </Grid>
@@ -204,7 +214,7 @@ export default function MarketplaceList (props) {
             <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
           </Grid>)
         }
-        { products?.filter(p => !p.props.hidden) }
+        {products}
       </Grid>
     </Box>
   )

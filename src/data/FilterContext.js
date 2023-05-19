@@ -60,7 +60,7 @@ function FilterContextProvider (props) {
     })
 
     uniqueCategories.sort((a, b) => a.name < b.name ? -1 : 1) // sorts categories alphabetically
-    setCategories(uniqueCategories)
+    return uniqueCategories
   }
 
   const isCategoryHidden = (productCategories) => {
@@ -70,7 +70,7 @@ function FilterContextProvider (props) {
   }
 
   return (
-    <FilterContext.Provider value={{ categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, isCategoryHidden }}>
+    <FilterContext.Provider value={{ categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden }}>
       {props.children}
     </FilterContext.Provider>
   )

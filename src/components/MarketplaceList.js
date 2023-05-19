@@ -71,6 +71,24 @@ export default function MarketplaceList (props) {
     executedRef.current = false
   }
 
+  const setCategoryFilter = () => {
+    if (loadedProducts && appList) {
+      const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+      const productCards = createProductCards(filteredByAvailability)
+
+      const updatedProducts = productCards.map((app) => ({
+        ...app,
+        props: {
+          ...app.props,
+          hidden: isCategoryHidden(getCategories(app.props))
+        }
+      }))
+
+      const filteredByCategory = updatedProducts.filter(p => !p.props.hidden)
+      setProducts(filteredByCategory)
+    }
+  }
+
   function toggleFilter () {
     setToggleFilter(!showFilter)
   }
@@ -108,7 +126,7 @@ export default function MarketplaceList (props) {
     } catch (error) {
       console.log(error.response)
     }
-  }, [appList, hiddenCategories])
+  }, [appList])
 
   function createProductCards (newProducts) {
     let productCards = []
@@ -177,7 +195,11 @@ export default function MarketplaceList (props) {
       loadProducts(appList)
       executedRef.current = true
     }
-  }, [appList, hiddenCategories])
+  }, [appList])
+
+  React.useEffect(() => {
+    setCategoryFilter()
+  }, [hiddenCategories])
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">

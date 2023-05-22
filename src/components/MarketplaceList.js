@@ -50,60 +50,80 @@ export default function MarketplaceList (props) {
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
   const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden } = React.useContext(FilterContext)
   const [loadedProducts, setLoadedProducts] = useState([])
+  const [filteredByAvailability, setFilteredByAvailability] = useState([])
+  const [filteredByCategories, setFilteredByCategories] = useState([])
+  const [filteredBySearch, setFilteredBySearch] = useState([])
+
+  const getFilteredProducts = () => {
+    if (loadedProducts.length > 0) {
+      const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+      setFilteredByAvailability(filteredByAvailability)
+      console.log({ filteredByAvailability })
+
+      const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
+      setFilteredByCategories(filteredByCategories)
+      console.log({ filteredByCategories })
+
+      const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
+      setFilteredBySearch(filteredBySearch)
+      console.log({ filteredBySearch })
+
+      const finalCategories = getIntersection(filteredByAvailability, filteredBySearch)
+      const uniqueCategories = getUniqueCategories(finalCategories)
+      setCategories(uniqueCategories)
+
+      const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
+      console.log({ finalProducts })
+
+      const productCards = createProductCards(finalProducts)
+      console.log({ productCards })
+      setProducts(productCards)
+    }
+  }
+
+  React.useEffect(() => {
+    getFilteredProducts()
+  }, [queryParams, loadedProducts])
+
+  const getIntersection = (...arrays) => {
+    if (arrays.length === 3) {
+      const commonItems = arrays[0].reduce((result, currentItem) => {
+        if (arrays[1].find(p => p.id === currentItem.id) &&
+              arrays[2].find(p => p.id === currentItem.id)) {
+          result.push(currentItem)
+        }
+        return result
+      }, [])
+
+      return commonItems
+    } else if (arrays.length === 2) {
+      return arrays.reduce((commonItems, currentArray) => {
+        return commonItems.filter(p => currentArray.some(currentItem => currentItem.id === p.id))
+      })
+    }
+  }
 
   function setAvailableFilter () {
-    const filteredByAvailability = queryParams.available ? loadedProducts : loadedProducts.filter(p => p.stock_status === 'instock')
-    const uniqueCategories = getUniqueCategories(filteredByAvailability)
-    setCategories(uniqueCategories)
-    const productCards = createProductCards(filteredByAvailability)
-    const filteredByCategory = productCards.filter(p => !p.props.hidden)
-    setProducts(filteredByCategory)
     setQueryParams(previousState => {
       return { ...previousState, available: !queryParams.available }
     })
   }
 
   function setSearchFilter (event, reason) {
-    const filteredByAvailability = queryParams.available ? loadedProducts : loadedProducts.filter(p => p.stock_status === 'instock')
-    const uniqueCategories = getUniqueCategories(filteredByAvailability)
-    setCategories(uniqueCategories)
-    const productCards = createProductCards(filteredByAvailability)
-    const filteredByCategory = productCards.filter(p => !p.props.hidden)
-
-    console.log('reason:', reason)
-    console.log({ filteredByCategory })
-    const filteredBySearch = searchProducts(filteredByCategory, reason)
-    console.log({ filteredBySearch })
-    setProducts(filteredBySearch)
-
     setQueryParams(previousState => {
       return { ...previousState, search: reason }
     })
   }
 
   const searchProducts = (products, search) => {
-    if (!search) return products
+    if (!search) return products // prevent showing 0 products when search is null
     const query = search.toLowerCase()
-    const filteredProducts = products.filter(p => p.props.author?.toLowerCase().includes(query) || p.props.description?.toLowerCase().includes(query) || p.props.title?.toLowerCase().includes(query))
+    const filteredProducts = products.filter(p => p.author?.toLowerCase().includes(query) || p.short_description?.toLowerCase().includes(query) || p.title?.toLowerCase().includes(query))
     return filteredProducts
   }
 
   const setCategoryFilter = () => {
-    if (loadedProducts && appList) {
-      const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
-      const productCards = createProductCards(filteredByAvailability)
-
-      const updatedProducts = productCards.map((app) => ({
-        ...app,
-        props: {
-          ...app.props,
-          hidden: isCategoryHidden(getCategories(app.props))
-        }
-      }))
-
-      const filteredByCategory = updatedProducts.filter(p => !p.props.hidden)
-      setProducts(filteredByCategory)
-    }
+    getFilteredProducts()
   }
 
   function toggleFilter () {
@@ -117,13 +137,6 @@ export default function MarketplaceList (props) {
           (loadedProducts) => {
             try {
               loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-
-              const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
-              const uniqueCategories = getUniqueCategories(filteredByAvailability)
-              setCategories(uniqueCategories)
-              const productCards = createProductCards(filteredByAvailability)
-              const filteredByCategory = productCards.filter(p => !p.props.hidden)
-              setProducts(filteredByCategory)
               setLoadedProducts(loadedProducts)
               setLoadingError(false)
             } catch (error) { console.log(error) }
@@ -170,7 +183,6 @@ export default function MarketplaceList (props) {
           rating_count={getRatingCount(app)}
           blacklist={getBlacklist(app)}
           installedVersions={getInstalledVersions(appList, getReverseDomainName(app))}
-          hidden={isCategoryHidden(getCategories(app))}
         />
       ))
       return productCards

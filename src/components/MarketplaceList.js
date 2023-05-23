@@ -37,7 +37,11 @@ export default function MarketplaceList (props) {
   const [loading, setLoading] = useState(true)
   const [loadingError, setLoadingError] = useState(false)
   const [loadedProducts, setLoadedProducts] = useState([])
-  const { categories, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
+  const [queryParams] = React.useState({
+    page: 1,
+    per_page: 100
+  })
+  const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -47,7 +51,7 @@ export default function MarketplaceList (props) {
 
   React.useEffect(() => {
     getFilteredProducts(loadedProducts)
-  }, [queryParams, loadedProducts])
+  }, [filterParams, loadedProducts])
 
   React.useEffect(() => {
     createFinalProducts()
@@ -61,7 +65,7 @@ export default function MarketplaceList (props) {
             try {
               loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
               setLoadedProducts(loadedProducts)
-              setQueryParams(previousState => {
+              setFilterParams(previousState => {
                 return { ...previousState, caller: 'loadProducts' }
               })
               setLoadingError(false)
@@ -152,9 +156,9 @@ export default function MarketplaceList (props) {
       >
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
 
-              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps by author, title or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
+              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, title or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={queryParams.hiddenCategories} />
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} />
               </Collapse>
 
         </Grid>

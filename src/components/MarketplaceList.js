@@ -37,7 +37,7 @@ export default function MarketplaceList (props) {
   const [loading, setLoading] = useState(true)
   const [loadingError, setLoadingError] = useState(false)
   const [loadedProducts, setLoadedProducts] = useState([])
-  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, isCategoryHidden, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
+  const { categories, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -116,7 +116,7 @@ export default function MarketplaceList (props) {
   }
 
   function updateProductCards () {
-    if (products && appList && !hiddenCategoriesHasUpdated) {
+    if (products && appList) {
       const updatedProducts = products.map((app) => ({
         ...app,
         props: {
@@ -126,16 +126,6 @@ export default function MarketplaceList (props) {
           installedVersions: getInstalledVersions(appList, app.props.appKey.name)
         }
       }))
-      setProducts(updatedProducts)
-    } else if (products && appList && hiddenCategoriesHasUpdated) {
-      const updatedProducts = products.map((app) => ({
-        ...app,
-        props: {
-          ...app.props,
-          hidden: isCategoryHidden(getCategories(app.props))
-        }
-      }))
-      setHiddenCategoriesHasUpdated(false)
       setProducts(updatedProducts)
     }
   }
@@ -152,10 +142,6 @@ export default function MarketplaceList (props) {
     }
   }, [appList])
 
-  React.useEffect(() => {
-    setCategoryFilter()
-  }, [hiddenCategories])
-
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
       <Grid
@@ -168,7 +154,7 @@ export default function MarketplaceList (props) {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={queryParams.search} searchTitle='Search apps by author, title or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.available)} handleSetHiddenCategories={handleSetHiddenCategories} categories={categories} hiddenCategories={hiddenCategories} />
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(queryParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={queryParams.hiddenCategories} />
               </Collapse>
 
         </Grid>

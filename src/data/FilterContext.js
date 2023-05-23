@@ -24,8 +24,6 @@ const FilterContext = createContext([])
 
 function FilterContextProvider (props) {
   const [categories, setCategories] = useState([])
-  const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
-  const [hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated] = useState(false)
   const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
     page: undefined,
     per_page: undefined,
@@ -35,6 +33,7 @@ function FilterContextProvider (props) {
     status: undefined,
     stock_status: undefined,
     available: false,
+    hiddenCategories: [],
     caller: undefined
   })
   const [filteredByAvailability, setFilteredByAvailability] = useState([])
@@ -54,7 +53,7 @@ function FilterContextProvider (props) {
 
       if (queryParams.caller === 'category' || queryParams.caller === 'loadProducts') {
         console.log(`${queryParams.caller} called setFilteredByCategories`)
-        const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
+        const filteredByCategories = queryParams.hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
         setFilteredByCategories(filteredByCategories)
         console.log({ filteredByCategories })
       }
@@ -117,22 +116,16 @@ function FilterContextProvider (props) {
     return filteredProducts
   }
 
-  const setCategoryFilter = () => {
-    console.log({ queryParams })
+  const setCategoryFilter = (category) => {
+    const newHiddenCategories = queryParams.hiddenCategories.includes(category) ? queryParams.hiddenCategories.filter(c => c !== category) : [...queryParams.hiddenCategories, category]
+    newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
     setQueryParams(previousState => {
-      return { ...previousState, caller: 'category' }
+      return { ...previousState, hiddenCategories: newHiddenCategories, caller: 'category' }
     })
   }
 
   function toggleFilter () {
     setToggleFilter(!showFilter)
-  }
-
-  function handleSetHiddenCategories (category) {
-    const newHiddenCategories = hiddenCategories.includes(category) ? hiddenCategories.filter(c => c !== category) : [...hiddenCategories, category]
-    newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
-    setHiddenCategoriesHasUpdated(true)
-    setHiddenCategories(newHiddenCategories)
   }
 
   const getCleanName = (name) => {
@@ -167,7 +160,7 @@ function FilterContextProvider (props) {
   const isCategoryHidden = (productCategories) => {
     const productCategory = productCategories?.filter(p => p.id !== 27) // removes the "App" category (id 27)
     const categoryId = productCategory?.map(p => p.id)[0]
-    return hiddenCategories.includes(categoryId)
+    return queryParams.hiddenCategories.includes(categoryId)
   }
 
   React.useEffect(() => {
@@ -176,7 +169,7 @@ function FilterContextProvider (props) {
   }, [filteredByAvailability, filteredByCategories, filteredBySearch])
 
   return (
-    <FilterContext.Provider value={{ categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, isCategoryHidden, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
+    <FilterContext.Provider value={{ categories, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
       {props.children}
     </FilterContext.Provider>
   )

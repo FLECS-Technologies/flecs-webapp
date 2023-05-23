@@ -45,7 +45,6 @@ export default function MarketplaceList (props) {
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
-    console.log({ productCards })
     setProducts(productCards)
   }
 

@@ -26,7 +26,6 @@ import CloudOffIcon from '@mui/icons-material/CloudOff'
 import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
-import useStateWithLocalStorage from './LocalStorage'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
@@ -37,117 +36,22 @@ export default function MarketplaceList (props) {
   const { appList } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
   const [loadingError, setLoadingError] = useState(false)
-  const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
-    page: undefined,
-    per_page: undefined,
-    search: undefined,
-    order: undefined,
-    orderby: undefined,
-    status: undefined,
-    stock_status: undefined,
-    available: false,
-    caller: undefined
-  })
-  const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
-  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden } = React.useContext(FilterContext)
   const [loadedProducts, setLoadedProducts] = useState([])
-  const [filteredByAvailability, setFilteredByAvailability] = useState([])
-  const [filteredByCategories, setFilteredByCategories] = useState([])
-  const [filteredBySearch, setFilteredBySearch] = useState([])
+  const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, isCategoryHidden, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
 
-  const getFilteredProducts = () => {
-    if (loadedProducts.length > 0) {
-      if (queryParams.caller === 'availability' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredByAvailability`)
-        const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
-        setFilteredByAvailability(filteredByAvailability)
-        console.log({ filteredByAvailability })
-      }
-
-      if (queryParams.caller === 'category' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredByCategories`)
-        const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
-        setFilteredByCategories(filteredByCategories)
-        console.log({ filteredByCategories })
-      }
-
-      if (queryParams.caller === 'search' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredBySearch`)
-        const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
-        setFilteredBySearch(filteredBySearch)
-        console.log({ filteredBySearch })
-      }
-    }
-  }
-
-  const getFinalCategories = () => {
-    const finalCategories = getIntersection(filteredByAvailability, filteredBySearch)
-    const uniqueCategories = getUniqueCategories(finalCategories)
-    setCategories(uniqueCategories)
-
-    const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
-    console.log({ finalProducts })
-
+  const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
     console.log({ productCards })
     setProducts(productCards)
   }
 
   React.useEffect(() => {
-    getFilteredProducts()
+    getFilteredProducts(loadedProducts)
   }, [queryParams, loadedProducts])
 
   React.useEffect(() => {
-    getFinalCategories()
-  }, [filteredByAvailability, filteredByCategories, filteredBySearch])
-
-  const getIntersection = (...arrays) => {
-    if (arrays.length === 3) {
-      const commonItems = arrays[0].reduce((result, currentItem) => {
-        if (arrays[1].find(p => p.id === currentItem.id) &&
-              arrays[2].find(p => p.id === currentItem.id)) {
-          result.push(currentItem)
-        }
-        return result
-      }, [])
-
-      return commonItems
-    } else if (arrays.length === 2) {
-      return arrays.reduce((commonItems, currentArray) => {
-        return commonItems.filter(p => currentArray.some(currentItem => currentItem.id === p.id))
-      })
-    }
-  }
-
-  function setAvailableFilter () {
-    setQueryParams(previousState => {
-      return { ...previousState, available: !queryParams.available, caller: 'availability' }
-    })
-  }
-
-  function setSearchFilter (event, reason) {
-    setQueryParams(previousState => {
-      return { ...previousState, search: reason, caller: 'search' }
-    })
-  }
-
-  const searchProducts = (products, search) => {
-    if (!search) return products // prevent showing 0 products when search is null
-    const query = search.toLowerCase()
-    const filteredProducts = products.filter(p => p.author?.toLowerCase().includes(query) || p.short_description?.toLowerCase().includes(query) || p.title?.toLowerCase().includes(query))
-    return filteredProducts
-  }
-
-  const setCategoryFilter = () => {
-    console.log({ queryParams })
-    setQueryParams(previousState => {
-      return { ...previousState, caller: 'category' }
-    })
-  }
-
-  function toggleFilter () {
-    setToggleFilter(!showFilter)
-  }
+    createFinalProducts()
+  }, [finalProducts])
 
   const loadProducts = useCallback(async () => {
     try {

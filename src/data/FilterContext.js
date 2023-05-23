@@ -39,25 +39,18 @@ function FilterContextProvider (props) {
   const getFilteredProducts = (loadedProducts) => {
     if (loadedProducts.length > 0) {
       if (filterParams.caller === 'availability' || filterParams.caller === 'loadProducts') {
-        console.log(`${filterParams.caller} called setFilteredByAvailability`)
         const filteredByAvailability = filterParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
         setFilteredByAvailability(filteredByAvailability)
-        console.log({ filteredByAvailability })
       }
 
       if (filterParams.caller === 'category' || filterParams.caller === 'loadProducts') {
-        console.log(`${filterParams.caller} called setFilteredByCategories`)
-        console.log({ filterParams })
         const filteredByCategories = filterParams.hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
         setFilteredByCategories(filteredByCategories)
-        console.log({ filteredByCategories })
       }
 
       if (filterParams.caller === 'search' || filterParams.caller === 'loadProducts') {
-        console.log(`${filterParams.caller} called setFilteredBySearch`)
         const filteredBySearch = filterParams.search ? searchProducts(loadedProducts, filterParams.search) : loadedProducts
         setFilteredBySearch(filteredBySearch)
-        console.log({ filteredBySearch })
       }
     }
   }
@@ -71,7 +64,6 @@ function FilterContextProvider (props) {
   const getFinalProducts = () => {
     const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
     setFinalProducts(finalProducts)
-    console.log({ finalProducts })
   }
 
   const getIntersection = (...arrays) => {

@@ -26,6 +26,107 @@ function FilterContextProvider (props) {
   const [categories, setCategories] = useState([])
   const [hiddenCategories, setHiddenCategories] = useStateWithLocalStorage('hidden-categories', [])
   const [hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated] = useState(false)
+  const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
+    page: undefined,
+    per_page: undefined,
+    search: undefined,
+    order: undefined,
+    orderby: undefined,
+    status: undefined,
+    stock_status: undefined,
+    available: false,
+    caller: undefined
+  })
+  const [filteredByAvailability, setFilteredByAvailability] = useState([])
+  const [filteredByCategories, setFilteredByCategories] = useState([])
+  const [filteredBySearch, setFilteredBySearch] = useState([])
+  const [finalProducts, setFinalProducts] = useState([])
+  const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
+
+  const getFilteredProducts = (loadedProducts) => {
+    if (loadedProducts.length > 0) {
+      if (queryParams.caller === 'availability' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredByAvailability`)
+        const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+        setFilteredByAvailability(filteredByAvailability)
+        console.log({ filteredByAvailability })
+      }
+
+      if (queryParams.caller === 'category' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredByCategories`)
+        const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
+        setFilteredByCategories(filteredByCategories)
+        console.log({ filteredByCategories })
+      }
+
+      if (queryParams.caller === 'search' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredBySearch`)
+        const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
+        setFilteredBySearch(filteredBySearch)
+        console.log({ filteredBySearch })
+      }
+    }
+  }
+
+  const getFinalCategories = () => {
+    const finalCategories = getIntersection(filteredByAvailability, filteredBySearch)
+    const uniqueCategories = getUniqueCategories(finalCategories)
+    setCategories(uniqueCategories)
+  }
+
+  const getFinalProducts = () => {
+    const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
+    setFinalProducts(finalProducts)
+    console.log({ finalProducts })
+  }
+
+  const getIntersection = (...arrays) => {
+    if (arrays.length === 3) {
+      const commonItems = arrays[0].reduce((result, currentItem) => {
+        if (arrays[1].find(p => p.id === currentItem.id) &&
+              arrays[2].find(p => p.id === currentItem.id)) {
+          result.push(currentItem)
+        }
+        return result
+      }, [])
+
+      return commonItems
+    } else if (arrays.length === 2) {
+      return arrays.reduce((commonItems, currentArray) => {
+        return commonItems.filter(p => currentArray.some(currentItem => currentItem.id === p.id))
+      })
+    }
+  }
+
+  function setAvailableFilter () {
+    setQueryParams(previousState => {
+      return { ...previousState, available: !queryParams.available, caller: 'availability' }
+    })
+  }
+
+  function setSearchFilter (event, reason) {
+    setQueryParams(previousState => {
+      return { ...previousState, search: reason, caller: 'search' }
+    })
+  }
+
+  const searchProducts = (products, search) => {
+    if (!search) return products // prevent showing 0 products when search is null
+    const query = search.toLowerCase()
+    const filteredProducts = products.filter(p => p.author?.toLowerCase().includes(query) || p.short_description?.toLowerCase().includes(query) || p.title?.toLowerCase().includes(query))
+    return filteredProducts
+  }
+
+  const setCategoryFilter = () => {
+    console.log({ queryParams })
+    setQueryParams(previousState => {
+      return { ...previousState, caller: 'category' }
+    })
+  }
+
+  function toggleFilter () {
+    setToggleFilter(!showFilter)
+  }
 
   function handleSetHiddenCategories (category) {
     const newHiddenCategories = hiddenCategories.includes(category) ? hiddenCategories.filter(c => c !== category) : [...hiddenCategories, category]
@@ -69,8 +170,13 @@ function FilterContextProvider (props) {
     return hiddenCategories.includes(categoryId)
   }
 
+  React.useEffect(() => {
+    getFinalCategories()
+    getFinalProducts()
+  }, [filteredByAvailability, filteredByCategories, filteredBySearch])
+
   return (
-    <FilterContext.Provider value={{ categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden }}>
+    <FilterContext.Provider value={{ categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, isCategoryHidden, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
       {props.children}
     </FilterContext.Provider>
   )

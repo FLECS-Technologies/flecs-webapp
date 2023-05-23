@@ -210,7 +210,11 @@ describe('Marketplace List', () => {
     expect(filterByAvailable).toBeEnabled()
 
     await act(async () => {
-      fireEvent.click(filterByAvailable)
+      fireEvent.click(filterByAvailable) // shows only available apps
+    })
+
+    await act(async () => {
+      fireEvent.click(filterByAvailable) // shows all apps again, available and unavailable
     })
   })
 

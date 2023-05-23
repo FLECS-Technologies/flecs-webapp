@@ -20,6 +20,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Marketplace from '../Marketplace'
+import { FilterContextProvider } from '../../data/FilterContext'
 
 jest.mock('../../api/marketplace/ProductService', () => ({
   getProducts: jest.fn()
@@ -32,7 +33,7 @@ describe('Marketplace', () => {
   })
 
   test('renders Marketplace page', () => {
-    render(<Marketplace />)
+    render(<FilterContextProvider><Marketplace /></FilterContextProvider>)
 
     expect(screen.getByLabelText('marketplace-apps-list')).toBeVisible()
 

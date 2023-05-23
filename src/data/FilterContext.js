@@ -24,16 +24,10 @@ const FilterContext = createContext([])
 
 function FilterContextProvider (props) {
   const [categories, setCategories] = useState([])
-  const [queryParams, setQueryParams] = useStateWithLocalStorage('marketplace-query', {
-    page: undefined,
-    per_page: undefined,
-    search: undefined,
-    order: undefined,
-    orderby: undefined,
-    status: undefined,
-    stock_status: undefined,
-    available: false,
+  const [filterParams, setFilterParams] = useStateWithLocalStorage('filter-options', {
     hiddenCategories: [],
+    search: undefined,
+    available: false,
     caller: undefined
   })
   const [filteredByAvailability, setFilteredByAvailability] = useState([])
@@ -44,23 +38,24 @@ function FilterContextProvider (props) {
 
   const getFilteredProducts = (loadedProducts) => {
     if (loadedProducts.length > 0) {
-      if (queryParams.caller === 'availability' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredByAvailability`)
-        const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+      if (filterParams.caller === 'availability' || filterParams.caller === 'loadProducts') {
+        console.log(`${filterParams.caller} called setFilteredByAvailability`)
+        const filteredByAvailability = filterParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
         setFilteredByAvailability(filteredByAvailability)
         console.log({ filteredByAvailability })
       }
 
-      if (queryParams.caller === 'category' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredByCategories`)
-        const filteredByCategories = queryParams.hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
+      if (filterParams.caller === 'category' || filterParams.caller === 'loadProducts') {
+        console.log(`${filterParams.caller} called setFilteredByCategories`)
+        console.log({ filterParams })
+        const filteredByCategories = filterParams.hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
         setFilteredByCategories(filteredByCategories)
         console.log({ filteredByCategories })
       }
 
-      if (queryParams.caller === 'search' || queryParams.caller === 'loadProducts') {
-        console.log(`${queryParams.caller} called setFilteredBySearch`)
-        const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
+      if (filterParams.caller === 'search' || filterParams.caller === 'loadProducts') {
+        console.log(`${filterParams.caller} called setFilteredBySearch`)
+        const filteredBySearch = filterParams.search ? searchProducts(loadedProducts, filterParams.search) : loadedProducts
         setFilteredBySearch(filteredBySearch)
         console.log({ filteredBySearch })
       }
@@ -98,13 +93,13 @@ function FilterContextProvider (props) {
   }
 
   function setAvailableFilter () {
-    setQueryParams(previousState => {
-      return { ...previousState, available: !queryParams.available, caller: 'availability' }
+    setFilterParams(previousState => {
+      return { ...previousState, available: !filterParams.available, caller: 'availability' }
     })
   }
 
   function setSearchFilter (event, reason) {
-    setQueryParams(previousState => {
+    setFilterParams(previousState => {
       return { ...previousState, search: reason, caller: 'search' }
     })
   }
@@ -117,9 +112,9 @@ function FilterContextProvider (props) {
   }
 
   const setCategoryFilter = (category) => {
-    const newHiddenCategories = queryParams.hiddenCategories.includes(category) ? queryParams.hiddenCategories.filter(c => c !== category) : [...queryParams.hiddenCategories, category]
+    const newHiddenCategories = filterParams.hiddenCategories.includes(category) ? filterParams.hiddenCategories.filter(c => c !== category) : [...filterParams.hiddenCategories, category]
     newHiddenCategories.sort((a, b) => (a - b)) // sorts array numerically
-    setQueryParams(previousState => {
+    setFilterParams(previousState => {
       return { ...previousState, hiddenCategories: newHiddenCategories, caller: 'category' }
     })
   }
@@ -160,7 +155,7 @@ function FilterContextProvider (props) {
   const isCategoryHidden = (productCategories) => {
     const productCategory = productCategories?.filter(p => p.id !== 27) // removes the "App" category (id 27)
     const categoryId = productCategory?.map(p => p.id)[0]
-    return queryParams.hiddenCategories.includes(categoryId)
+    return filterParams.hiddenCategories.includes(categoryId)
   }
 
   React.useEffect(() => {
@@ -169,7 +164,7 @@ function FilterContextProvider (props) {
   }, [filteredByAvailability, filteredByCategories, filteredBySearch])
 
   return (
-    <FilterContext.Provider value={{ categories, queryParams, setQueryParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
+    <FilterContext.Provider value={{ categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
       {props.children}
     </FilterContext.Provider>
   )

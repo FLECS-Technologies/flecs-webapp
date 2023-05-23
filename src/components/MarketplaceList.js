@@ -156,7 +156,7 @@ export default function MarketplaceList (props) {
       >
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
 
-              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, title or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
+              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, name or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
                 <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} />
               </Collapse>

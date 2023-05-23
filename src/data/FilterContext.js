@@ -107,7 +107,7 @@ function FilterContextProvider (props) {
   const searchProducts = (products, search) => {
     if (!search) return products // prevent showing 0 products when search is null
     const query = search.toLowerCase()
-    const filteredProducts = products.filter(p => p.author?.toLowerCase().includes(query) || p.short_description?.toLowerCase().includes(query) || p.title?.toLowerCase().includes(query))
+    const filteredProducts = products.filter(p => p.author?.toLowerCase().includes(query) || p.short_description?.toLowerCase().includes(query) || p.name?.toLowerCase().includes(query))
     return filteredProducts
   }
 

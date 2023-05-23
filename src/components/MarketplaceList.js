@@ -45,7 +45,8 @@ export default function MarketplaceList (props) {
     orderby: undefined,
     status: undefined,
     stock_status: undefined,
-    available: false
+    available: false,
+    caller: undefined
   })
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
   const { categories, hiddenCategories, hiddenCategoriesHasUpdated, setHiddenCategoriesHasUpdated, handleSetHiddenCategories, getUniqueCategories, setCategories, isCategoryHidden } = React.useContext(FilterContext)
@@ -56,34 +57,49 @@ export default function MarketplaceList (props) {
 
   const getFilteredProducts = () => {
     if (loadedProducts.length > 0) {
-      const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
-      setFilteredByAvailability(filteredByAvailability)
-      console.log({ filteredByAvailability })
+      if (queryParams.caller === 'availability' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredByAvailability`)
+        const filteredByAvailability = queryParams.available ? loadedProducts.filter(p => p.stock_status === 'instock') : loadedProducts
+        setFilteredByAvailability(filteredByAvailability)
+        console.log({ filteredByAvailability })
+      }
 
-      const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
-      setFilteredByCategories(filteredByCategories)
-      console.log({ filteredByCategories })
+      if (queryParams.caller === 'category' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredByCategories`)
+        const filteredByCategories = hiddenCategories.length > 0 ? loadedProducts.filter(p => !isCategoryHidden(p.categories)) : loadedProducts
+        setFilteredByCategories(filteredByCategories)
+        console.log({ filteredByCategories })
+      }
 
-      const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
-      setFilteredBySearch(filteredBySearch)
-      console.log({ filteredBySearch })
-
-      const finalCategories = getIntersection(filteredByAvailability, filteredBySearch)
-      const uniqueCategories = getUniqueCategories(finalCategories)
-      setCategories(uniqueCategories)
-
-      const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
-      console.log({ finalProducts })
-
-      const productCards = createProductCards(finalProducts)
-      console.log({ productCards })
-      setProducts(productCards)
+      if (queryParams.caller === 'search' || queryParams.caller === 'loadProducts') {
+        console.log(`${queryParams.caller} called setFilteredBySearch`)
+        const filteredBySearch = queryParams.search ? searchProducts(loadedProducts, queryParams.search) : loadedProducts
+        setFilteredBySearch(filteredBySearch)
+        console.log({ filteredBySearch })
+      }
     }
+  }
+
+  const getFinalCategories = () => {
+    const finalCategories = getIntersection(filteredByAvailability, filteredBySearch)
+    const uniqueCategories = getUniqueCategories(finalCategories)
+    setCategories(uniqueCategories)
+
+    const finalProducts = getIntersection(filteredByAvailability, filteredByCategories, filteredBySearch)
+    console.log({ finalProducts })
+
+    const productCards = createProductCards(finalProducts)
+    console.log({ productCards })
+    setProducts(productCards)
   }
 
   React.useEffect(() => {
     getFilteredProducts()
   }, [queryParams, loadedProducts])
+
+  React.useEffect(() => {
+    getFinalCategories()
+  }, [filteredByAvailability, filteredByCategories, filteredBySearch])
 
   const getIntersection = (...arrays) => {
     if (arrays.length === 3) {
@@ -105,13 +121,13 @@ export default function MarketplaceList (props) {
 
   function setAvailableFilter () {
     setQueryParams(previousState => {
-      return { ...previousState, available: !queryParams.available }
+      return { ...previousState, available: !queryParams.available, caller: 'availability' }
     })
   }
 
   function setSearchFilter (event, reason) {
     setQueryParams(previousState => {
-      return { ...previousState, search: reason }
+      return { ...previousState, search: reason, caller: 'search' }
     })
   }
 
@@ -123,7 +139,10 @@ export default function MarketplaceList (props) {
   }
 
   const setCategoryFilter = () => {
-    getFilteredProducts()
+    console.log({ queryParams })
+    setQueryParams(previousState => {
+      return { ...previousState, caller: 'category' }
+    })
   }
 
   function toggleFilter () {
@@ -138,6 +157,9 @@ export default function MarketplaceList (props) {
             try {
               loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
               setLoadedProducts(loadedProducts)
+              setQueryParams(previousState => {
+                return { ...previousState, caller: 'loadProducts' }
+              })
               setLoadingError(false)
             } catch (error) { console.log(error) }
           },

@@ -150,7 +150,7 @@ function FilterContextProvider (props) {
     return filterParams.hiddenCategories.includes(categoryId)
   }
 
-  React.useEffect(() => {
+  React.useEffect(() => { // filters were updated
     getFinalCategories()
     getFinalProducts()
   }, [filteredByAvailability, filteredByCategories, filteredBySearch])

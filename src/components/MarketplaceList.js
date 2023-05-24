@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import SearchBar from './SearchBar'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
-import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
+import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
@@ -31,16 +31,9 @@ import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
 
 export default function MarketplaceList (props) {
-  const executedRef = React.useRef(false)
   const [products, setProducts] = useState()
-  const { appList } = useContext(ReferenceDataContext)
+  const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
-  const [loadingError, setLoadingError] = useState(false)
-  const [loadedProducts, setLoadedProducts] = useState([])
-  const [queryParams] = React.useState({
-    page: 1,
-    per_page: 100
-  })
   const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
 
   const createFinalProducts = () => {
@@ -48,44 +41,22 @@ export default function MarketplaceList (props) {
     setProducts(productCards)
   }
 
-  React.useEffect(() => {
-    getFilteredProducts(loadedProducts)
-  }, [filterParams, loadedProducts])
+  React.useEffect(() => { // initial app loading, or filters got updated
+    if (loadedProducts?.length > 0) {
+      getFilteredProducts(loadedProducts)
+      setLoading(false)
+    }
+  }, [filterParams])
 
-  React.useEffect(() => {
+  React.useEffect(() => { // loadedProducts received, ready to start filtering
+    setFilterParams(previousState => {
+      return { ...previousState, caller: 'loadProducts' }
+    })
+  }, [loadedProducts])
+
+  React.useEffect(() => { // filtered apps received
     createFinalProducts()
   }, [finalProducts])
-
-  const loadProducts = useCallback(async () => {
-    try {
-      getProducts(queryParams)
-        .then(
-          (loadedProducts) => {
-            try {
-              loadedProducts.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-              setLoadedProducts(loadedProducts)
-              setFilterParams(previousState => {
-                return { ...previousState, caller: 'loadProducts' }
-              })
-              setLoadingError(false)
-            } catch (error) { console.log(error) }
-          },
-          error => {
-            const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.reason) ||
-          error.message ||
-          error.toString()
-            console.log(resMessage)
-            setLoadingError(true)
-          }
-        )
-        .finally(function () { setLoading(false) })
-    } catch (error) {
-      console.log(error.response)
-    }
-  }, [appList])
 
   function createProductCards (newProducts) {
     let productCards = []
@@ -133,15 +104,9 @@ export default function MarketplaceList (props) {
     }
   }
 
-  React.useEffect(() => {
+  React.useEffect(() => { // when apps get installed, uninstalled ou updated
     if (!loading) {
-      // update the product cards if the view is currently not loading
       updateProductCards()
-    } else {
-      // else create the product cards and make sure we only run it once
-      if (executedRef.current) { return }
-      loadProducts(appList)
-      executedRef.current = true
     }
   }, [appList])
 
@@ -171,11 +136,11 @@ export default function MarketplaceList (props) {
             <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
           </Grid>
         )}
-        {(loadingError && !loading) &&
+        {(appListError && !loading) &&
         (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
           <CloudOffIcon fontSize='large'/>
         </Grid>)}
-        {(loadingError && !loading) &&
+        {(appListError && !loading) &&
         (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
             <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
           </Grid>)

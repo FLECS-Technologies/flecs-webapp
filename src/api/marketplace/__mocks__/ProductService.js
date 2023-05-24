@@ -209,11 +209,11 @@ function getEditorAddress (app) {
 }
 
 function getAppIcon (app) {
-  return 'blabla'
+  return ''
 }
 
 function getAuthor (app) {
-  return 'blabla'
+  return ''
 }
 
 function getVersion (app) {

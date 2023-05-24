@@ -30,7 +30,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
 
-export default function MarketplaceList (props) {
+const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
   const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
@@ -41,24 +41,7 @@ export default function MarketplaceList (props) {
     setProducts(productCards)
   }
 
-  React.useEffect(() => { // initial app loading, or filters got updated
-    if (loadedProducts?.length > 0) {
-      getFilteredProducts(loadedProducts)
-      setLoading(false)
-    }
-  }, [filterParams])
-
-  React.useEffect(() => { // loadedProducts received, ready to start filtering
-    setFilterParams(previousState => {
-      return { ...previousState, caller: 'loadProducts' }
-    })
-  }, [loadedProducts])
-
-  React.useEffect(() => { // filtered apps received
-    createFinalProducts()
-  }, [finalProducts])
-
-  function createProductCards (newProducts) {
+  const createProductCards = (newProducts) => {
     let productCards = []
     if (newProducts) {
       productCards = newProducts.map((app) => (
@@ -89,8 +72,10 @@ export default function MarketplaceList (props) {
     }
   }
 
-  function updateProductCards () {
+  const updateProductCards = () => {
     if (products && appList) {
+      console.log({ products })
+      console.log({ appList })
       const updatedProducts = products.map((app) => ({
         ...app,
         props: {
@@ -103,6 +88,23 @@ export default function MarketplaceList (props) {
       setProducts(updatedProducts)
     }
   }
+
+  React.useEffect(() => { // loadedProducts received, ready to start filtering
+    setFilterParams(previousState => {
+      return { ...previousState, caller: 'loadProducts' }
+    })
+  }, [loadedProducts])
+
+  React.useEffect(() => { // initial app loading, or filters got updated
+    if (loadedProducts?.length > 0) {
+      getFilteredProducts(loadedProducts)
+      setLoading(false)
+    }
+  }, [filterParams])
+
+  React.useEffect(() => { // filtered apps received
+    createFinalProducts()
+  }, [finalProducts])
 
   React.useEffect(() => { // when apps get installed, uninstalled ou updated
     if (!loading) {
@@ -151,8 +153,9 @@ export default function MarketplaceList (props) {
   )
 }
 
+export default MarketplaceList
+
 MarketplaceList.propTypes = {
-  appData: PropTypes.any,
   app: PropTypes.string,
   avatar: PropTypes.string,
   title: PropTypes.string,

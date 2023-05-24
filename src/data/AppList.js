@@ -23,15 +23,10 @@ import DeviceAPI from '../api/device/DeviceAPI'
 import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
 
 function AppList (props) {
-  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList } = useReferenceDataContext()
+  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, setLoadedProducts } = useReferenceDataContext()
   const [queryParams] = React.useState({
-    page: undefined,
-    per_page: undefined,
-    search: undefined,
-    order: undefined,
-    orderby: undefined,
-    status: 'publish',
-    stock_status: 'instock'
+    page: 1,
+    per_page: 100
   })
 
   React.useEffect(() => {
@@ -49,6 +44,8 @@ function AppList (props) {
     setAppListLoading(true)
     await getProducts(queryParams).then(
       (products) => {
+        products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
+        setLoadedProducts(products)
         marketplaceAppList = marketplaceAppList.concat(products)
       },
       error => {

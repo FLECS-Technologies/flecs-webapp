@@ -31,6 +31,7 @@ const mockReferenceDataContext = {
   setAppListLoading: jest.fn(),
   setAppListError: jest.fn(),
   setUpdateAppList: jest.fn(),
+  setLoadedProducts: jest.fn(),
   updateAppList: false,
   appListLoading: false
 }

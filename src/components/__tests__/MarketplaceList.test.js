@@ -20,127 +20,15 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
-import { getProducts } from '../../api/marketplace/ProductService'
 import { render, fireEvent, within, waitFor, screen } from '@testing-library/react'
 import { FilterContextProvider } from '../../data/FilterContext'
+import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
+import { AppList } from '../../data/AppList'
 
-jest.mock('../../api/marketplace/ProductService', () => ({
-  ...jest.requireActual('../../api/marketplace/ProductService'),
-  getProducts: jest.fn()
-}))
+jest.mock('../../api/marketplace/ProductService')
 
 describe('Marketplace List', () => {
   let container
-  const products = [{
-    id: 35,
-    name: 'CODESYS Control SL',
-    status: 'publish',
-    short_description: '<p>IEC61131-3 Runtime.</p>\n',
-    sku: '',
-    price: '1',
-    attributes: [
-      {
-        id: 0,
-        name: 'archs',
-        position: 3,
-        visible: true,
-        variation: true,
-        options: [
-          'amd64'
-        ]
-      }
-    ],
-    categories: [
-      {
-        id: 27,
-        name: 'App',
-        slug: 'app'
-      },
-      {
-        id: 15,
-        name: 'Unkategorisiert',
-        slug: 'unkategorisiert'
-      }
-    ],
-    meta_data: [
-      {
-        id: 664,
-        key: 'port-author-name',
-        value: 'CODESYS GmbH'
-      },
-      {
-        id: 665,
-        key: 'port-release',
-        value: ''
-      },
-      {
-        id: 666,
-        key: 'port-version',
-        value: '4.2.0.0'
-      },
-      {
-        id: 670,
-        key: 'app-icon',
-        value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
-      },
-      {
-        id: 672,
-        key: 'port-requirement',
-        value: ''
-      },
-      {
-        id: 1669,
-        key: 'app-custom-meta',
-        value: [
-          {
-            title: 'reverse-domain-name',
-            icon: '',
-            value: 'com.codesys.control'
-          }
-        ]
-      }
-    ]
-  }]
-  const installedApps = [
-    {
-      app: 'com.codesys.control',
-      avatar:
-        'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
-      title: 'CODESYS Control',
-      author: 'CODESYS GmbH',
-      version: '4.2.0',
-      description: 'IEC61131-3 Runtime.',
-      availability: 'available',
-      status: 'uninstalled',
-      multiInstance: true,
-      instances: []
-    },
-    {
-      app: 'com.codesys.edge',
-      avatar:
-        'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
-      title: 'CODESYS Edge Gateway',
-      author: 'CODESYS GmbH',
-      version: '4.1.0',
-      description: 'Gateway to connect to CODESYS RTS.',
-      availability: 'available',
-      status: 'uninstalled',
-      multiInstance: false,
-      instances: []
-    },
-    {
-      app: 'org.mosquitto.broker',
-      avatar:
-        'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
-      title: 'Mosquitto MQTT',
-      author: 'Eclipse Foundation',
-      version: '2.0.14-openssl',
-      description: 'MQTT broker.',
-      availability: 'available',
-      status: 'uninstalled',
-      multiInstance: false,
-      instances: []
-    }]
 
   afterAll(() => {
     jest.resetAllMocks()
@@ -157,10 +45,8 @@ describe('Marketplace List', () => {
   })
 
   test('renders marketplace list component', async () => {
-    getProducts.mockReturnValueOnce(Promise.resolve(products))
-
     await act(async () => {
-      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>, container)
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>, container)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -173,9 +59,8 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by free text', async () => {
-    getProducts.mockReturnValueOnce(Promise.resolve(products))
     await act(async () => {
-      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -191,10 +76,8 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by available filter', async () => {
-    getProducts.mockReturnValueOnce(Promise.resolve(products))
-
     await act(async () => {
-      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -219,10 +102,8 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by category filter', async () => {
-    getProducts.mockReturnValueOnce(Promise.resolve(products))
-
     await act(async () => {
-      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -243,10 +124,8 @@ describe('Marketplace List', () => {
   })
 
   test('fetching products failed', async () => {
-    getProducts.mockReturnValueOnce(Promise.reject(new Error('failed to load products')))
-
     await act(async () => {
-      render(<FilterContextProvider><MPList appData={installedApps} /></FilterContextProvider>)
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))

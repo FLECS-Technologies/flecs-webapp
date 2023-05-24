@@ -22,7 +22,7 @@ import useStateWithLocalStorage from '../components/LocalStorage'
 
 const FilterContext = createContext([])
 
-function FilterContextProvider (props) {
+const FilterContextProvider = (props) => {
   const [categories, setCategories] = useState([])
   const [filterParams, setFilterParams] = useStateWithLocalStorage('filter-options', {
     hiddenCategories: [],
@@ -84,13 +84,13 @@ function FilterContextProvider (props) {
     }
   }
 
-  function setAvailableFilter () {
+  const setAvailableFilter = () => {
     setFilterParams(previousState => {
       return { ...previousState, available: !filterParams.available, caller: 'availability' }
     })
   }
 
-  function setSearchFilter (event, reason) {
+  const setSearchFilter = (event, reason) => {
     setFilterParams(previousState => {
       return { ...previousState, search: reason, caller: 'search' }
     })
@@ -111,7 +111,7 @@ function FilterContextProvider (props) {
     })
   }
 
-  function toggleFilter () {
+  const toggleFilter = () => {
     setToggleFilter(!showFilter)
   }
 
@@ -162,7 +162,7 @@ function FilterContextProvider (props) {
   )
 }
 
-function useFilterContext () {
+const useFilterContext = () => {
   return React.useContext(FilterContext)
 }
 

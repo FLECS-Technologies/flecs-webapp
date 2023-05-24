@@ -74,8 +74,6 @@ const MarketplaceList = (props) => {
 
   const updateProductCards = () => {
     if (products && appList) {
-      console.log({ products })
-      console.log({ appList })
       const updatedProducts = products.map((app) => ({
         ...app,
         props: {

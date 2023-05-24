@@ -17,15 +17,62 @@
  */
 
 import React from 'react'
+import nock from 'nock'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
 import { render, fireEvent, within, waitFor, screen } from '@testing-library/react'
+import { DeviceAPIConfiguration } from '../../api/api-config'
 import { FilterContextProvider } from '../../data/FilterContext'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { AppList } from '../../data/AppList'
 
 jest.mock('../../api/marketplace/ProductService')
+
+const installedApps = [
+  {
+    appKey: {
+      name: 'com.codesys.control',
+      version: '4.2.0'
+    },
+    avatar: 'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+    title: 'CODESYS Control',
+    author: 'CODESYS GmbH',
+    description: 'IEC61131-3 Runtime.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: true,
+    instances: []
+  },
+  {
+    appKey: {
+      name: 'com.codesys.edge',
+      version: '4.1.0'
+    },
+    avatar: 'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+    title: 'CODESYS Edge Gateway',
+    author: 'CODESYS GmbH',
+    description: 'Gateway to connect to CODESYS RTS.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    instances: []
+  },
+  {
+    appKey: {
+      name: 'org.mosquitto.broker',
+      version: '2.0.14-openssl'
+    },
+    avatar: 'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
+    title: 'Mosquitto MQTT',
+    author: 'Eclipse Foundation',
+    description: 'MQTT broker.',
+    availability: 'available',
+    status: 'uninstalled',
+    multiInstance: false,
+    instances: []
+  }
+]
 
 describe('Marketplace List', () => {
   let container
@@ -45,6 +92,14 @@ describe('Marketplace List', () => {
   })
 
   test('renders marketplace list component', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>, container)
     })
@@ -59,6 +114,14 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by free text', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -76,6 +139,14 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by available filter', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -102,6 +173,14 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by category filter', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -124,6 +203,14 @@ describe('Marketplace List', () => {
   })
 
   test('fetching products failed', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })

@@ -42,4 +42,22 @@ describe('AppFilter', () => {
     fireEvent.click(toggleAvailable)
     expect(setAvailableFilter).toHaveBeenLastCalledWith()
   })
+
+  test('toggle AppFilter->Search Button', () => {
+    const setIsSearchEnabled = jest.fn()
+    const { getByTestId } = render(<AppFilter search={'test'} isSearchEnabled={true} setIsSearchEnabled={setIsSearchEnabled}/>)
+
+    const toggleAvailable = getByTestId('search-filter')
+    fireEvent.click(toggleAvailable)
+    expect(setIsSearchEnabled).toHaveBeenCalledTimes(1)
+  })
+
+  test('toggle AppFilter->Category Button', () => {
+    const setCategoryFilter = jest.fn()
+    const { getByTestId } = render(<AppFilter categories={['1']} hiddenCategories={[]} setCategoryFilter={setCategoryFilter}/>)
+
+    const toggleAvailable = getByTestId('category-filter')
+    fireEvent.click(toggleAvailable)
+    expect(setCategoryFilter).toHaveBeenCalledTimes(1)
+  })
 })

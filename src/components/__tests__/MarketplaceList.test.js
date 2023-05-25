@@ -202,6 +202,42 @@ describe('Marketplace List', () => {
     })
   })
 
+  test('filter apps by search filter', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
+    await act(async () => {
+      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+    })
+
+    const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
+    const filterButton = within(searchBar).getByLabelText('filter')
+
+    expect(filterButton).toBeEnabled()
+
+    await act(async () => {
+      fireEvent.click(filterButton)
+    })
+
+    const filterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
+    expect(filterBySearchButton).toBeEnabled()
+
+    await act(async () => {
+      fireEvent.click(filterBySearchButton)
+    })
+
+    const disabledFilterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
+    const buttonStyle = window.getComputedStyle(disabledFilterBySearchButton)
+    const color = buttonStyle.backgroundColor
+    expect(color).toEqual('transparent')
+    expect(filterBySearchButton).toBeEnabled()
+  })
+
   test('fetching products failed', async () => {
     nock('http://localhost')
       .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)

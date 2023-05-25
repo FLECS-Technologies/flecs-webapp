@@ -22,7 +22,7 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter, setCategoryFilter, categories, hiddenCategories } = props
+  const { availableFilter, setAvailableFilter, setCategoryFilter, categories, hiddenCategories, search, isSearchEnabled, setIsSearchEnabled } = props
 
   return (
     <Paper>
@@ -32,6 +32,13 @@ const AppFilter = (props) => {
           <Divider/>
           <Button size='small' data-testid="available-filter" style={{ margin: '11px 3px 3px 3px' }} color={availableFilter ? 'primary' : 'inherit'} variant={availableFilter ? 'contained' : 'outlined'} onClick={() => setAvailableFilter()} endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}>Show available apps only</Button>
         </Box>
+        {search &&
+        <Box sx={{ mt: 2, mb: 1 }}>
+          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by search</Typography>
+          <Divider sx={{ mb: 1 }}/>
+          <Button size='small' data-testid="search-filter" style={{ margin: '3px' }} color={!isSearchEnabled ? 'inherit' : 'primary'} variant={!isSearchEnabled ? 'outlined' : 'contained'} endIcon={!isSearchEnabled ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} onClick={() => setIsSearchEnabled(!isSearchEnabled)}>{search}</Button>
+        </Box>
+        }
         <Box sx={{ mt: 2, mb: 1 }}>
           <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
           <Divider sx={{ mb: 1 }}/>
@@ -47,7 +54,10 @@ AppFilter.propTypes = {
   setAvailableFilter: PropTypes.func,
   setCategoryFilter: PropTypes.func,
   categories: PropTypes.array,
-  hiddenCategories: PropTypes.array
+  hiddenCategories: PropTypes.array,
+  search: PropTypes.string,
+  isSearchEnabled: PropTypes.bool,
+  setIsSearchEnabled: PropTypes.func
 }
 
 export { AppFilter }

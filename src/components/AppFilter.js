@@ -26,18 +26,18 @@ const AppFilter = (props) => {
 
   return (
     <Paper>
-        <Box sx={{ margin: 1, padding: 1 }}>
+      <Box sx={{ margin: 1, padding: 1 }}>
+        <Box sx={{ mb: 1 }}>
           <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by availability</Typography>
           <Divider/>
-          <Box sx={{ mt: 1 }}>
-            <Button size='small' data-testid="available-filter" style={{ margin: '3px' }} color={availableFilter ? 'primary' : 'inherit'} variant={availableFilter ? 'contained' : 'outlined'} onClick={() => setAvailableFilter()} endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}>Show available apps only</Button>
-          </Box>
-          <Box sx={{ mt: 2, mb: 1 }}>
-            <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
-            <Divider sx={{ mb: 1 }}/>
-            {categories?.map(c => <Button size='small' data-testid="category-filter" style={{ margin: '3px' }} color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => setCategoryFilter(c.id)}>{c.name} ({c.count})</Button>)}
-          </Box>
+          <Button size='small' data-testid="available-filter" style={{ margin: '11px 3px 3px 3px' }} color={availableFilter ? 'primary' : 'inherit'} variant={availableFilter ? 'contained' : 'outlined'} onClick={() => setAvailableFilter()} endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}>Show available apps only</Button>
         </Box>
+        <Box sx={{ mt: 2, mb: 1 }}>
+          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>Filter by category</Typography>
+          <Divider sx={{ mb: 1 }}/>
+          {categories?.map(c => <Button size='small' data-testid="category-filter" style={{ margin: '3px' }} color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => setCategoryFilter(c.id)}>{c.name} ({c.count})</Button>)}
+        </Box>
+      </Box>
     </Paper>
   )
 }

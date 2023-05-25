@@ -34,7 +34,7 @@ const SearchBar = (props) => {
             freeSolo
             clearOnEscape
             aria-label="autocomplete"
-            onChange={search}
+            onInputChange={search}
             options={[]}
             value={defaultSearchValue}
             renderInput={(params) => (

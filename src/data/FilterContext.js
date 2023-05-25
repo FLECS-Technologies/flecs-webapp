@@ -90,10 +90,12 @@ const FilterContextProvider = (props) => {
     })
   }
 
-  const setSearchFilter = (event, reason) => {
-    setFilterParams(previousState => {
-      return { ...previousState, search: reason, caller: 'search' }
-    })
+  const setSearchFilter = (e) => {
+    if (e) {
+      setFilterParams(previousState => {
+        return { ...previousState, search: e.target.value, caller: 'search' }
+      })
+    }
   }
 
   const searchProducts = (products, search) => {

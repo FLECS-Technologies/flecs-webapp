@@ -34,7 +34,7 @@ const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
   const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
-  const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
+  const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -122,7 +122,7 @@ const MarketplaceList = (props) => {
 
               <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, name or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
               <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} />
+                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} search={filterParams.search} isSearchEnabled={isSearchEnabled} setIsSearchEnabled={setIsSearchEnabled}/>
               </Collapse>
 
         </Grid>

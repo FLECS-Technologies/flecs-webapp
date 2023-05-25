@@ -35,6 +35,7 @@ const FilterContextProvider = (props) => {
   const [filteredBySearch, setFilteredBySearch] = useState([])
   const [finalProducts, setFinalProducts] = useState([])
   const [showFilter, setToggleFilter] = useStateWithLocalStorage('marketplace-filter', false)
+  const [isSearchEnabled, setIsSearchEnabled] = useStateWithLocalStorage('is-search-enabled', true)
 
   const getFilteredProducts = (loadedProducts) => {
     if (loadedProducts.length > 0) {
@@ -48,8 +49,8 @@ const FilterContextProvider = (props) => {
         setFilteredByCategories(filteredByCategories)
       }
 
-      if (filterParams.caller === 'search' || filterParams.caller === 'loadProducts') {
-        const filteredBySearch = filterParams.search ? searchProducts(loadedProducts, filterParams.search) : loadedProducts
+      if (filterParams.caller === 'search' || filterParams.caller === 'loadProducts' || filterParams.caller === 'isSearchEnabled') {
+        const filteredBySearch = filterParams.search && isSearchEnabled ? searchProducts(loadedProducts, filterParams.search) : loadedProducts
         setFilteredBySearch(filteredBySearch)
       }
     }
@@ -157,8 +158,14 @@ const FilterContextProvider = (props) => {
     getFinalProducts()
   }, [filteredByAvailability, filteredByCategories, filteredBySearch])
 
+  React.useEffect(() => { // isSearchEnabled changed
+    setFilterParams(previousState => {
+      return { ...previousState, caller: 'isSearchEnabled' }
+    })
+  }, [isSearchEnabled])
+
   return (
-    <FilterContext.Provider value={{ categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, toggleFilter, showFilter, finalProducts }}>
+    <FilterContext.Provider value={{ categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts }}>
       {props.children}
     </FilterContext.Provider>
   )

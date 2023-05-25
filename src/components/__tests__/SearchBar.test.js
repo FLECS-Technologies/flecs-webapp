@@ -50,11 +50,10 @@ describe('SearchBar', () => {
     const autocomplete = getByLabelText('autocomplete')
 
     await user.keyboard('Flanders')
-    await user.keyboard('{Enter}')
 
-    const inputt = within(autocomplete).getByRole('combobox')
+    const input = within(autocomplete).getByRole('combobox')
 
-    expect(inputt.value).toEqual('Flanders')
-    expect(searchFunc).toBeCalledTimes(1)
+    expect(input.value).toEqual('Flanders')
+    expect(searchFunc).toBeCalledTimes(8) // Flanders has 8 letters
   })
 })

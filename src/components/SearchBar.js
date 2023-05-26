@@ -36,7 +36,7 @@ const SearchBar = (props) => {
             aria-label="autocomplete"
             onInputChange={search}
             options={[]}
-            value={defaultSearchValue}
+            value={defaultSearchValue || null}
             renderInput={(params) => (
                 <TextField
                     {...params}

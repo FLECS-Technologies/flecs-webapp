@@ -37,19 +37,14 @@ function AppList (props) {
       per_page: 20
     }
 
-    let allProducts = []
-
-    for (queryParams.page; ; queryParams.page++) {
-      const products = await getProducts(queryParams)
-      if (products.length === 0) { // no products at all, or no more products
-        return allProducts
-      } else if (products.length > 0 && products.length < queryParams.per_page) { // last page
-        allProducts = [...allProducts, ...products]
-        return allProducts
-      } else if (products.length === queryParams.per_page) { // might have some more
+    let { products: allProducts, totalPages } = await getProducts(queryParams)
+    if (totalPages > 1) {
+      for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
+        const { products } = await getProducts(queryParams)
         allProducts = [...allProducts, ...products]
       }
     }
+    return allProducts
   }
 
   const loadAppList = async (props) => {

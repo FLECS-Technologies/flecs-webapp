@@ -28,7 +28,7 @@ function getProducts (params) {
     .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })
     .then(response => {
       if (response.data && response.data.success && response.data.products) {
-        return response.data.products
+        return response.data
       }
     })
     .catch(error => {

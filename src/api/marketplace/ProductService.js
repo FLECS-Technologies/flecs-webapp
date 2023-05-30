@@ -19,11 +19,10 @@ import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
 
 function getProducts (params) {
-  // const { /* page , per_page, search, order, orderby, */ } = params || {}
   const reqParams = new URLSearchParams()
   reqParams.append('category', getCategoryID())
-  reqParams.append('page', '1')
-  reqParams.append('per_page', '100')
+  reqParams.append('page', params.page)
+  reqParams.append('per_page', params.per_page)
 
   return axios
     .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })

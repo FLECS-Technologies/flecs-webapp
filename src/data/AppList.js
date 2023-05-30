@@ -24,11 +24,6 @@ import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainNam
 
 function AppList (props) {
   const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, setLoadedProducts } = useReferenceDataContext()
-  const [queryParams] = React.useState({
-    page: 1,
-    per_page: 100
-  })
-
   React.useEffect(() => {
     if (!appListLoading) {
       loadAppList()
@@ -36,13 +31,34 @@ function AppList (props) {
     }
   }, [updateAppList])
 
+  const getAllProducts = async () => {
+    const queryParams = {
+      page: 1,
+      per_page: 20
+    }
+
+    let allProducts = []
+
+    for (queryParams.page; ; queryParams.page++) {
+      const products = await getProducts(queryParams)
+      if (products.length === 0) { // no products at all, or no more products
+        return allProducts
+      } else if (products.length > 0 && products.length < queryParams.per_page) { // last page
+        allProducts = [...allProducts, ...products]
+        return allProducts
+      } else if (products.length === queryParams.per_page) { // might have some more
+        allProducts = [...allProducts, ...products]
+      }
+    }
+  }
+
   const loadAppList = async (props) => {
     let marketplaceAppList = []
     let mergedList = []
     const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
 
     setAppListLoading(true)
-    await getProducts(queryParams).then(
+    await getAllProducts().then(
       (products) => {
         products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
         setLoadedProducts(products)

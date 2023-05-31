@@ -15,6 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+const getAllProducts = async () => {
+  const queryParams = {
+    page: 1,
+    per_page: 100
+  }
+
+  const data = await getProducts(queryParams)
+  let allProducts = data?.products
+  const totalPages = data?.totalPages
+
+  if (totalPages > 1) {
+    for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
+      const { products } = await getProducts(queryParams)
+      allProducts = [...allProducts, ...products]
+    }
+  }
+  return allProducts
+}
+
 function getProducts (params) {
   return new Promise((resolve, reject) => {
     params
@@ -169,4 +189,4 @@ function getRatingCount (app) {
   return 1
 }
 
-export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getCategoryID, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAllProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getCategoryID, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

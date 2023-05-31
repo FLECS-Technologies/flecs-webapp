@@ -18,6 +18,22 @@
 import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
 
+const getAllProducts = async () => {
+  const queryParams = {
+    page: 1,
+    per_page: 20
+  }
+
+  let { products: allProducts, totalPages } = await getProducts(queryParams)
+  if (totalPages > 1) {
+    for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
+      const { products } = await getProducts(queryParams)
+      allProducts = [...allProducts, ...products]
+    }
+  }
+  return allProducts
+}
+
 function getProducts (params) {
   const reqParams = new URLSearchParams()
   reqParams.append('category', getCategoryID())
@@ -143,4 +159,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAllProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

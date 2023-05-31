@@ -21,7 +21,7 @@ import axios from 'axios'
 const getAllProducts = async () => {
   const queryParams = {
     page: 1,
-    per_page: 20
+    per_page: 100
   }
 
   const data = await getProducts(queryParams)

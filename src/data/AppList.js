@@ -37,17 +37,15 @@ function AppList (props) {
     const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
 
     setAppListLoading(true)
-    await getAllProducts().then(
-      (products) => {
-        products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-        setLoadedProducts(products)
-        marketplaceAppList = marketplaceAppList.concat(products)
-      },
-      error => {
-        console.log(error)
-        setAppListError(true)
-      }
-    )
+    try {
+      const products = await getAllProducts()
+      products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
+      setLoadedProducts(products)
+      marketplaceAppList = marketplaceAppList.concat(products)
+    } catch (error) {
+      console.log(error)
+      setAppListError(true)
+    }
 
     // call api from the device to get all installed apps
     const deviceAPI = new DeviceAPI()

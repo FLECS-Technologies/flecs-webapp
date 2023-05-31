@@ -24,7 +24,10 @@ const getAllProducts = async () => {
     per_page: 20
   }
 
-  let { products: allProducts, totalPages } = await getProducts(queryParams)
+  const data = await getProducts(queryParams)
+  let allProducts = data?.products
+  const totalPages = data?.totalPages
+
   if (totalPages > 1) {
     for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
       const { products } = await getProducts(queryParams)

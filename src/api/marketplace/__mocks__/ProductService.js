@@ -19,76 +19,79 @@ function getProducts (params) {
   return new Promise((resolve, reject) => {
     params
       ? resolve(
-        [{
-          id: 35,
-          name: 'CODESYS Control SL',
-          status: 'publish',
-          short_description: '<p>IEC61131-3 Runtime.</p>\n',
-          sku: '',
-          price: '1',
-          attributes: [
-            {
-              id: 0,
-              name: 'archs',
-              position: 3,
-              visible: true,
-              variation: true,
-              options: [
-                'amd64'
-              ]
-            }
-          ],
-          categories: [
-            {
-              id: 27,
-              name: 'App',
-              slug: 'app'
-            },
-            {
-              id: 15,
-              name: 'Unkategorisiert',
-              slug: 'unkategorisiert'
-            }
-          ],
-          meta_data: [
-            {
-              id: 664,
-              key: 'port-author-name',
-              value: 'CODESYS GmbH'
-            },
-            {
-              id: 665,
-              key: 'port-release',
-              value: ''
-            },
-            {
-              id: 666,
-              key: 'port-version',
-              value: '4.2.0.0'
-            },
-            {
-              id: 670,
-              key: 'app-icon',
-              value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
-            },
-            {
-              id: 672,
-              key: 'port-requirement',
-              value: ''
-            },
-            {
-              id: 1669,
-              key: 'app-custom-meta',
-              value: [
-                {
-                  title: 'reverse-domain-name',
-                  icon: '',
-                  value: 'com.codesys.control'
-                }
-              ]
-            }
-          ]
-        }]
+        {
+          totalPages: 1,
+          products: [{
+            id: 35,
+            name: 'CODESYS Control SL',
+            status: 'publish',
+            short_description: '<p>IEC61131-3 Runtime.</p>\n',
+            sku: '',
+            price: '1',
+            attributes: [
+              {
+                id: 0,
+                name: 'archs',
+                position: 3,
+                visible: true,
+                variation: true,
+                options: [
+                  'amd64'
+                ]
+              }
+            ],
+            categories: [
+              {
+                id: 27,
+                name: 'App',
+                slug: 'app'
+              },
+              {
+                id: 15,
+                name: 'Unkategorisiert',
+                slug: 'unkategorisiert'
+              }
+            ],
+            meta_data: [
+              {
+                id: 664,
+                key: 'port-author-name',
+                value: 'CODESYS GmbH'
+              },
+              {
+                id: 665,
+                key: 'port-release',
+                value: ''
+              },
+              {
+                id: 666,
+                key: 'port-version',
+                value: '4.2.0.0'
+              },
+              {
+                id: 670,
+                key: 'app-icon',
+                value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
+              },
+              {
+                id: 672,
+                key: 'port-requirement',
+                value: ''
+              },
+              {
+                id: 1669,
+                key: 'app-custom-meta',
+                value: [
+                  {
+                    title: 'reverse-domain-name',
+                    icon: '',
+                    value: 'com.codesys.control'
+                  }
+                ]
+              }
+            ]
+          }]
+        }
       )
       : reject(new Error('Mock: Failed to get products'))
   })

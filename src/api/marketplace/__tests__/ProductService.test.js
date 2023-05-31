@@ -21,9 +21,15 @@ import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCategories, g
 
 jest.mock('axios')
 
+const queryParams = {
+  page: 1,
+  per_page: 100
+}
+
 const mockProducts = {
   data: {
     success: true,
+    totalPages: 1,
     products: [{
       id: 37,
       name: 'Node-RED',
@@ -224,7 +230,7 @@ describe('ProductService', () => {
   })
   test('calls successful getProducts', async () => {
     axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts())
+    const { products } = await waitFor(() => getProducts(queryParams))
 
     expect(products).toHaveLength(1)
   })
@@ -232,26 +238,14 @@ describe('ProductService', () => {
   test('calls unsuccessful getProducts', async () => {
     mockProducts.data.success = false
     axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts())
+    const data = await waitFor(() => getProducts(queryParams))
 
-    expect(products).toBeUndefined()
-  })
-
-  test('calls successful getProducts with status param', async () => {
-    const queryParam = {}
-    queryParam.status = 'publish'
-    queryParam.search = 'opc'
-    queryParam.stock_status = 'in stock'
-
-    axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts(queryParam))
-
-    expect(products).toHaveLength(1)
+    expect(data).toBeUndefined()
   })
 
   test('test property helpers', async () => {
     axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts())
+    const { products } = await waitFor(() => getProducts(queryParams))
 
     expect(products).toHaveLength(1)
 

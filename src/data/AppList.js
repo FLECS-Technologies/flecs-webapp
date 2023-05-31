@@ -20,7 +20,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useReferenceDataContext } from './ReferenceDataContext'
 import DeviceAPI from '../api/device/DeviceAPI'
-import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getAllProducts, getReverseDomainName } from '../api/marketplace/ProductService'
 
 function AppList (props) {
   const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, setLoadedProducts } = useReferenceDataContext()
@@ -30,22 +30,6 @@ function AppList (props) {
       setUpdateAppList(false)
     }
   }, [updateAppList])
-
-  const getAllProducts = async () => {
-    const queryParams = {
-      page: 1,
-      per_page: 20
-    }
-
-    let { products: allProducts, totalPages } = await getProducts(queryParams)
-    if (totalPages > 1) {
-      for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
-        const { products } = await getProducts(queryParams)
-        allProducts = [...allProducts, ...products]
-      }
-    }
-    return allProducts
-  }
 
   const loadAppList = async (props) => {
     let marketplaceAppList = []

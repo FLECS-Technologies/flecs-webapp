@@ -116,6 +116,7 @@ const MarketplaceList = (props) => {
 
   React.useEffect(() => { // filtered apps received
     createFinalProducts()
+    setPage(0)
   }, [finalProducts])
 
   React.useEffect(() => { // when apps get installed, uninstalled ou updated

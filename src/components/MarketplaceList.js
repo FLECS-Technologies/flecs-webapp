@@ -39,7 +39,7 @@ const MarketplaceList = (props) => {
   const [loading, setLoading] = useState(true)
   const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
   const [page, setPage] = useStateWithLocalStorage('marketplaceApps.paginator.page', 0)
-  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('marketplaceApps.paginator.rowsPerPage', 5)
+  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('marketplaceApps.paginator.rowsPerPage', 100)
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -171,7 +171,7 @@ const MarketplaceList = (props) => {
             )} */}
       </Grid>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
         count={products?.length || 0}
         rowsPerPage={rowsPerPage}

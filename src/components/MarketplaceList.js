@@ -125,11 +125,9 @@ const MarketplaceList = (props) => {
     }
   }, [appList])
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products?.length) : 0
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
-    <Paper>
+    <Paper elevation={0}>
       <Grid
         container
         direction="row"
@@ -164,11 +162,6 @@ const MarketplaceList = (props) => {
           </Grid>)
         }
         {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-        {/* {emptyRows > 0 && (
-              <TableRow>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )} */}
       </Grid>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}

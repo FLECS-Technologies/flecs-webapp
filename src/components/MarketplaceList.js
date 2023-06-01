@@ -178,6 +178,7 @@ const MarketplaceList = (props) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Apps per page:"
       />
     </Paper>
   </Box>

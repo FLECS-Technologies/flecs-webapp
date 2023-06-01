@@ -19,8 +19,10 @@
 import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
+import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
+import TablePagination from '@mui/material/TablePagination'
 import SearchBar from './SearchBar'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
 import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
@@ -29,12 +31,24 @@ import { AppFilter } from './AppFilter'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
+import useStateWithLocalStorage from './LocalStorage'
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
   const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
   const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
+  const [page, setPage] = useStateWithLocalStorage('marketplaceApps.paginator.page', 0)
+  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('marketplaceApps.paginator.rowsPerPage', 5)
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -110,8 +124,11 @@ const MarketplaceList = (props) => {
     }
   }, [appList])
 
+  // Avoid a layout jump when reaching the last page with empty rows.
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products?.length) : 0
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
+    <Paper>
       <Grid
         container
         direction="row"
@@ -145,9 +162,24 @@ const MarketplaceList = (props) => {
             <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
           </Grid>)
         }
-        {products}
+        {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+        {/* {emptyRows > 0 && (
+              <TableRow>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )} */}
       </Grid>
-    </Box>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={products?.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
+  </Box>
   )
 }
 

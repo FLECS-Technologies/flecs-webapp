@@ -39,6 +39,7 @@ import Row from './InstalledAppsListRow'
 import FileOpen from './FileOpen'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
+import usePagination from '../hooks/usePagination'
 import { useAuth } from './AuthProvider'
 import { CircularProgress } from '@mui/material'
 import { useSystemContext } from '../data/SystemProvider'
@@ -156,8 +157,8 @@ export default function DeviceAppsList (props) {
   const { ping } = useSystemContext()
   const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
   const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
-  const [page, setPage] = useStateWithLocalStorage('installedApps.paginator.page', 0)
-  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('installedApps.paginator.rowsPerPage', 5)
+  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = usePagination('installedApps', 0, 5)
+
   const [yaml, setYaml] = React.useState()
   const [sideloadAppOpen, setSideloadAppOpen] = React.useState(false)
   let tmpAppList = []
@@ -167,15 +168,6 @@ export default function DeviceAppsList (props) {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
   }
 
   const handleOnSideloadConfirm = async (text) => {

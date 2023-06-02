@@ -31,24 +31,14 @@ import { AppFilter } from './AppFilter'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
-import useStateWithLocalStorage from './LocalStorage'
+import usePagination from '../hooks/usePagination'
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
   const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
   const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
-  const [page, setPage] = useStateWithLocalStorage('marketplaceApps.paginator.page', 0)
-  const [rowsPerPage, setRowsPerPage] = useStateWithLocalStorage('marketplaceApps.paginator.rowsPerPage', 100)
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
+  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = usePagination('marketplaceApps', 0, 100)
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -116,7 +106,7 @@ const MarketplaceList = (props) => {
 
   React.useEffect(() => { // filtered apps received
     createFinalProducts()
-    setPage(0)
+    handleChangePage('', 0)
   }, [finalProducts])
 
   React.useEffect(() => { // when apps get installed, uninstalled ou updated

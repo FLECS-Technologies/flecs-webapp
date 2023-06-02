@@ -85,6 +85,14 @@ describe('Marketplace List', () => {
     window.localStorage.clear() // clear the hidden categories etc
     container = document.createElement('div')
     document.body.appendChild(container)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
   })
 
   afterEach(() => {
@@ -93,14 +101,6 @@ describe('Marketplace List', () => {
   })
 
   test('renders marketplace list component', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>, container)
     })
@@ -115,14 +115,6 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by free text', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -140,14 +132,6 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by available filter', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -177,14 +161,6 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by category filter', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -213,14 +189,6 @@ describe('Marketplace List', () => {
   })
 
   test('filter apps by search filter', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
@@ -275,14 +243,6 @@ describe('Marketplace List', () => {
   })
 
   test('fetching products failed', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><MPList /></ReferenceDataContextProvider></FilterContextProvider>)
     }) // missing <AppList></AppList> so that products won't be loaded
@@ -292,14 +252,6 @@ describe('Marketplace List', () => {
   })
 
   test('pagination', async () => {
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
-      .reply(200, installedApps)
-
-    nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
-      .reply(200, [])
-
     await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })

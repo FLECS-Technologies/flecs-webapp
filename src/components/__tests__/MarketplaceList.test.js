@@ -82,6 +82,7 @@ describe('Marketplace List', () => {
   })
 
   beforeEach(() => {
+    window.localStorage.clear() // clear the hidden categories etc
     container = document.createElement('div')
     document.body.appendChild(container)
   })
@@ -170,6 +171,9 @@ describe('Marketplace List', () => {
     await act(async () => {
       fireEvent.click(filterByAvailable) // shows all apps again, available and unavailable
     })
+
+    const apps = await waitFor(() => screen.queryAllByTestId('app-card'))
+    expect(apps).toHaveLength(1)
   })
 
   test('filter apps by category filter', async () => {
@@ -197,9 +201,15 @@ describe('Marketplace List', () => {
     const filterByCategory = await waitFor(() => screen.getByTestId('category-filter'))
     expect(filterByCategory).toBeEnabled()
 
-    await act(async () => {
+    let apps = await waitFor(() => screen.queryAllByTestId('app-card'))
+    expect(apps).toHaveLength(1)
+
+    await act(async () => { // disables the app category
       fireEvent.click(filterByCategory)
     })
+
+    apps = await waitFor(() => screen.queryAllByTestId('app-card'))
+    expect(apps).toHaveLength(0)
   })
 
   test('filter apps by search filter', async () => {
@@ -215,27 +225,53 @@ describe('Marketplace List', () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
+    // searches for a valid app
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
+    const input = within(searchBar).getByRole('combobox')
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'control' } })
+    })
+
+    // opens the filter section
     const filterButton = within(searchBar).getByLabelText('filter')
-
     expect(filterButton).toBeEnabled()
-
     await act(async () => {
       fireEvent.click(filterButton)
     })
 
+    // searches for the filter-by-search button
     const filterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
     expect(filterBySearchButton).toBeEnabled()
 
+    // expects to find the app it searched for
+    let apps = await waitFor(() => screen.queryAllByTestId('app-card'))
+    expect(apps).toHaveLength(1)
+
+    // disables the search filter
     await act(async () => {
       fireEvent.click(filterBySearchButton)
     })
 
+    // expects the filter-by-search button to have the disabled background colour
     const disabledFilterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
     const buttonStyle = window.getComputedStyle(disabledFilterBySearchButton)
     const color = buttonStyle.backgroundColor
     expect(color).toEqual('transparent')
     expect(filterBySearchButton).toBeEnabled()
+
+    // reactivates the search filter
+    await act(async () => {
+      fireEvent.click(filterBySearchButton)
+    })
+
+    // searches for an invalid app
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'fake app' } })
+    })
+
+    // expects NOT to find the app it searched for
+    apps = await waitFor(() => screen.queryAllByTestId('app-card'))
+    expect(apps).toHaveLength(0)
   })
 
   test('fetching products failed', async () => {
@@ -248,15 +284,36 @@ describe('Marketplace List', () => {
       .reply(200, [])
 
     await act(async () => {
+      render(<FilterContextProvider><ReferenceDataContextProvider><MPList /></ReferenceDataContextProvider></FilterContextProvider>)
+    }) // missing <AppList></AppList> so that products won't be loaded
+
+    const apps = screen.queryAllByTestId('app-card')
+    expect(apps).toHaveLength(0)
+  })
+
+  test('pagination', async () => {
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .reply(200, installedApps)
+
+    nock('http://localhost')
+      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .reply(200, [])
+
+    await act(async () => {
       render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
     })
 
-    const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
+    const nextPageButton = await waitFor(() => screen.getByLabelText('Go to next page'))
+    const previousPageButton = await waitFor(() => screen.getByLabelText('Go to previous page'))
 
-    expect(searchBar).toBeInTheDocument()
+    const currentPage = document.getElementsByClassName('MuiTablePagination-displayedRows')[0]
+    expect(currentPage).toBeInTheDocument()
+    expect(currentPage.textContent).toBe('1–1 of 1')
 
-    const apps = screen.queryAllByTestId('app-card')
-
-    expect(apps).toHaveLength(0)
+    expect(nextPageButton).toBeVisible()
+    expect(nextPageButton).not.toBeEnabled()
+    expect(previousPageButton).toBeVisible()
+    expect(previousPageButton).not.toBeEnabled()
   })
 })

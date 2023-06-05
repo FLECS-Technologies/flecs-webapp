@@ -17,13 +17,21 @@
  */
 import { waitFor } from '@testing-library/dom'
 import axios from 'axios'
-import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCategories, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
+import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCategories, getCustomLinks, getEditorAddress, getId, getMultiInstance, getProducts, getAllProducts, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersion } from '../ProductService'
 
 jest.mock('axios')
 
 const queryParams = {
   page: 1,
   per_page: 100
+}
+
+const mockMultiplePages = {
+  data: {
+    success: true,
+    totalPages: 2,
+    products: [{ id: 1 }]
+  }
 }
 
 const mockProducts = {
@@ -228,6 +236,7 @@ describe('ProductService', () => {
   afterAll(() => {
     jest.resetAllMocks()
   })
+
   test('calls successful getProducts', async () => {
     axios.get.mockResolvedValueOnce(mockProducts)
     const { products } = await waitFor(() => getProducts(queryParams))
@@ -275,5 +284,19 @@ describe('ProductService', () => {
     ])
     expect(getCategories(products[1])).toBeUndefined() // product doesn't exist
     expect(getBlacklist(products[0])).toBeUndefined()
+  })
+
+  test('calls successful getAllProducts with single page', async () => {
+    axios.get.mockResolvedValueOnce(mockProducts)
+    const products = await waitFor(() => getAllProducts())
+
+    expect(products).toHaveLength(1)
+  })
+
+  test('calls successful getAllProducts with multiple pages', async () => {
+    axios.get.mockResolvedValue(mockMultiplePages)
+    const products = await waitFor(() => getAllProducts())
+
+    expect(products).toHaveLength(2) // it will just get the same product twice because there "are" two pages
   })
 })

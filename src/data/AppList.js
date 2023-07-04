@@ -63,7 +63,7 @@ function AppList (props) {
           app.relatedLinks = getCustomLinks(mpApp)
         }
         if (typeof app === 'object' && app !== null) {
-          app.installedVersions = getInstalledVersions(mergedList, app.appKey)
+          app.installedVersions = getInstalledVersions(mergedList, app.appKey.name)
           app.installedVersions.sort((a, b) => collator.compare(a, b))
           app.installedVersions.reverse()
           app.instances = getAppInstances(app, deviceAPI.instances)

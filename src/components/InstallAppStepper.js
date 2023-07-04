@@ -61,7 +61,7 @@ export default function InstallAppStepper (props) {
           {(!begin) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
           {(begin && !(sideload || update)) && <InstallApp app={app} version={version || app?.appKey.version} tickets={tickets} install={(begin)} handleActiveStep={handleActiveStep} />}
           {(begin && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(begin)} handleActiveStep={handleActiveStep} />}
-          {(begin && update) && <UpdateApp app={app} from={app.appKey.version} to={version} tickets={tickets} update={(begin)} handleActiveStep={handleActiveStep} />}
+          {(begin && update) && <UpdateApp app={app} from={app.installedVersions[0]} to={version} tickets={tickets} update={(begin)} handleActiveStep={handleActiveStep} />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             {!begin

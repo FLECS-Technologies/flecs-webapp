@@ -98,21 +98,23 @@ jobs:
       - name: package
         run: |
           make deb-pkg_${{ matrix.arch }}
-      - name: Deploy packages
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.MP_GITHUB_SERVER }}
-          username: ${{ secrets.MP_GITHUB_USER }}
-          key: ${{ secrets.MP_GITHUB_SSH_KEY }}
-          passphrase: ${{ secrets.MP_GITHUB_SSH_KEY_PW }}
-          source: "*.deb"
-          target: "${{ secrets.MP_GITHUB_DEVELOP_DIR }}/deb/"
-      - name: Deploy latest file
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.MP_GITHUB_SERVER }}
-          username: ${{ secrets.MP_GITHUB_USER }}
-          key: ${{ secrets.MP_GITHUB_SSH_KEY }}
-          passphrase: ${{ secrets.MP_GITHUB_SSH_KEY_PW }}
-          source: "latest_flecs-webapp_*"
-          target: "${{ secrets.MP_GITHUB_DEVELOP_DIR }}/"
+
+      - name: Setup AWS CLI
+        env:
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_HOST: ${{ secrets.S3_HOST }}
+          S3_REGION: ${{ secrets.S3_REGION }}
+        run: |
+          aws configure set aws_access_key_id ${S3_ACCESS_KEY}
+          aws configure set aws_secret_access_key ${S3_SECRET_KEY}
+
+      - name: Deploy packages and latest files
+        env:
+          S3_HOST: ${{ secrets.S3_HOST }}
+          S3_REGION: ${{ secrets.S3_REGION }}
+        run: |
+          for i in `find out/ -mindepth 1 -maxdepth 1 -name "*.deb" -o -name "latest_flecs-webapp_*"`; do \
+            echo "Uploading ${i}"; \
+            aws s3api put-object --acl public-read --endpoint-url https://${S3_HOST} --region ${S3_REGION} --bucket flecs-dl --key `basename ${i}` --body ${i}; \
+          done

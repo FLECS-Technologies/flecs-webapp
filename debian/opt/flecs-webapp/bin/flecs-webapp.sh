@@ -13,67 +13,129 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SCRIPTNAME=$(basename $(readlink -f ${0}))
+
+DOCKER_IMAGE=flecs/flecs-webapp
 DOCKER_TAG=
+CONTAINER=flecs-webapp
 
-# try to determine host IP address on default 'docker0' network
-GATEWAY=`ifconfig docker0 2>/dev/null | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
+print_usage() {
+  echo "Usage: ${SCRIPTNAME} <action>"
+  echo
+  echo "Manage FLECS Webapp Docker container"
+  echo
+  echo "Actions:"
+  echo "      pull      Pull FLECS Webapp Docker image"
+  echo "      create    Create FLECS Webapp Docker container"
+  echo "      delete    Delete FLECS Webapp Docker container"
+  echo "      stop      Cleanly shutdown FLECS Webapp Docker container"
+  echo "      kill      Kill FLECS Webapp Docker container"
+  echo
+}
 
-# if default bridge does not exist, check if we have created network flecs-webapp before
-if [ -z "${GATEWAY}" ]; then
-  GATEWAY=`docker network inspect --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}" flecs-webapp 2>/dev/null`
-  NETWORK="--network flecs-webapp"
-fi
+create_network() {
+  # check if we have created network 'flecs' before
+  GATEWAY=`docker network inspect --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}" flecs 2>/dev/null`
 
-# if flecs-webapp network does not exist, create it
-if [ -z "${GATEWAY}" ]; then
-  # list all in-use IP addresses
-  IPS=`ifconfig -a | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
-  # try subnets 172.31.0.0/16 --> 172.22.0.0/16 (everything above "flecs" network)
-  SUBNETS=(31 30 29 28 27 26 25 24 23 22)
-  for SUBNET in ${SUBNETS[*]}; do
-    # skip subnets that overlap with in-use IP addresses
-    SKIP_SUBNET=
-    for IP in ${IPS}; do
-      if [[ ${IP} == 172.${SUBNET}.* ]]; then
-        echo "${IP} collides with subnet 172.${SUBNET}.0.0/16 -- skipping"
-        SKIP_SUBNET="true"
+  # if network 'flecs' does not exist, create it
+  if [ -z "${GATEWAY}" ]; then
+    # list all in-use IP addresses
+    if ifconfig -a >/dev/null 2>&1; then
+      IPS=`ifconfig -a | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
+    elif ip addr >/dev/null 2>&1; then
+      IPS=`ip addr -a | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
+    else
+      echo "Warning: Cannot determine in-use IP addresses" 1>&2
+    fi
+    # try subnets 172.21.0.0/16 --> 172.31.0.0/16
+    SUBNETS=(21 22 23 24 25 26 27 28 29 30 31)
+    for SUBNET in ${SUBNETS[*]}; do
+      # skip subnets that overlap with in-use IP addresses
+      SKIP_SUBNET=
+      for IP in ${IPS}; do
+        if [[ ${IP} == 172.${SUBNET}.* ]]; then
+          echo "${IP} collides with subnet 172.${SUBNET}.0.0/16 -- skipping"
+          SKIP_SUBNET="true"
+        fi
+      done
+      if [ ! -z "${SKIP_SUBNET}" ]; then
+        continue
+      fi
+      # try to create flecs network as Docker bridge network
+      if docker network create --driver bridge --subnet 172.${SUBNET}.0.0/16 --gateway 172.${SUBNET}.0.1 flecs >/dev/null 2>&1; then
+        GATEWAY="172.${SUBNET}.0.1"
+        break;
       fi
     done
-    if [ ! -z "${SKIP_SUBNET}" ]; then
-      continue
-    fi
-    # try to create flecs-webapp network as Docker bridge network
-    if docker network create --driver bridge --subnet 172.${SUBNET}.0.0/16 --gateway 172.${SUBNET}.0.1 flecs-webapp >/dev/null 2>&1; then
-      GATEWAY="172.${SUBNET}.0.1"
-      NETWORK="--network flecs-webapp"
-      break;
-    fi
-  done
-fi
-
-if [ -z "${GATEWAY}" ]; then
-  echo "No valid gateway address found - exiting"
-  exit 1
-fi
-
-docker stop flecs-webapp 2>/dev/null;
-docker rm -f flecs-webapp 2>/dev/null;
-PORTS=(80 8080 8008 none)
-for PORT in ${PORTS[*]}; do
-  if ! netstat -tulpn | grep ":${PORT} " >/dev/null 2>&1; then
-    break
   fi
-done
 
-if [ "${PORT}" == "none" ]; then
-  echo "No free port found - exiting"
-  exit 1
-fi
+  if [ -z "${GATEWAY}" ]; then
+    echo "Network 'flecs' does not exist and could not create it" 2>&1
+    exit 1
+  fi
 
-IMAGE_ID=`docker image ls -q flecs/webapp:${DOCKER_TAG} 2>/dev/null`
-if [ -z "${IMAGE_ID}" ]; then
-  docker load --input /opt/flecs-webapp/assets/flecs-webapp_*.tar.gz >/dev/null 2>&1
-fi
+  IP=`echo ${GATEWAY} | sed -E 's/[0-9]+\.[0-9]+$/255.253/g'`
+  echo "Assigning IP ${IP} to ${CONTAINER}"
+}
 
-echo "Binding flecs-webapp to port ${PORT}"
-docker run -d -p ${PORT}:80 --add-host=host.docker.internal:${GATEWAY} ${NETWORK} --name flecs-webapp flecs/webapp:${DOCKER_TAG}
+case ${1} in
+  pull)
+    # If pulling fails but an image is already present locally,
+    # consider pulling successful so the service startup does not fail
+    IMAGE_ID=$(docker image ls --quiet ${DOCKER_IMAGE}:${DOCKER_TAG})
+    docker pull --quiet ${DOCKER_IMAGE}:${DOCKER_TAG}
+    EXIT_CODE=$?
+    if [ ${EXIT_CODE} -ne 0 ]; then
+      if [ ! -z "${IMAGE_ID}" ]; then
+        echo "Using local image ${IMAGE_ID}"
+        exit 0
+      fi
+      exit ${EXIT_CODE}
+    fi
+    ;;
+  create)
+    create_network
+    if [ -z "${IP}" ]; then
+      echo "Could not calculate IP address to assign to ${CONTAINER}"
+      exit 1
+    fi
+
+    PORTS=(80 8080 8000 none)
+    PORTS_HEX=(50 1F90 1F40 none)
+    for i in ${!PORTS_HEX[*]}; do
+      if ! cat /proc/net/tcp | grep -E ":${PORTS_HEX[$i]} [0-9A-F]{8}"; then
+        break
+      fi
+    done
+
+    if [ "${PORTS[$i]}" == "none" ]; then
+      echo "No free port found - exiting"
+      exit 1
+    fi
+    echo "Binding flecs-webapp to port ${PORT}"
+
+    docker create \
+      --name ${CONTAINER} \
+      --network flecs \
+      --ip ${IP} \
+      --publish ${PORT}:80
+      --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
+    exit $?
+    ;;
+  remove)
+    docker rm -f ${CONTAINER} >/dev/null 2>&1
+    exit $?
+    ;;
+  stop)
+    docker stop --time 10 ${CONTAINER}
+    exit $?
+    ;;
+  kill)
+    docker kill --signal KILL ${CONTAINER}
+    exit $?
+    ;;
+  *)
+    print_usage
+    exit 1
+  ;;
+esac

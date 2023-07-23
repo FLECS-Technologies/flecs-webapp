@@ -1,18 +1,19 @@
 [Unit]
 Description=FLECS App Management Web App
-After=network-online.target
-Wants=network-online.target
-After=docker.service
-Requires=docker.service
-After=containerd.service
-Wants=containerd.service
+After=flecs.service
+Requires=flecs.service
 
 [Service]
-Type=oneshot
-TimeoutStartSec=0
-ExecStart=/opt/flecs-webapp/bin/flecs-webapp.sh
-ExecStop=docker stop flecs-webapp
-RemainAfterExit=yes
+Type=exec
+TimeoutStartSec=infinity
+TimeoutStopSec=infinity
+ExecStartPre=/bin/bash -x /opt/flecs-webapp/bin/flecs-webapp.sh pull
+ExecStartPre=/bin/bash -x /opt/flecs-webapp/bin/flecs-webapp.sh remove
+ExecStartPre=/bin/bash -x /opt/flecs-webapp/bin/flecs-webapp.sh create
+ExecStart=/usr/bin/docker start -a flecs-webapp
+ExecStop=/usr/bin/docker stop --time 120 flecs-webapp
+ExecStopPost=/bin/bash -x /opt/flecs-webapp/bin/flecs-webapp.sh remove
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

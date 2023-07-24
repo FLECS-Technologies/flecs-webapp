@@ -4,7 +4,8 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 case "$1" in
   *)
-    systemctl enable --now flecs-webapp
+    systemctl preset flecs-webapp
+    systemctl is-enabled flecs-webapp >/dev/null && systemctl start flecs-webapp || true
     ;;
 esac
 

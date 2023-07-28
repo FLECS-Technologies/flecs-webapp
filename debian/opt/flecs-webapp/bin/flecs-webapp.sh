@@ -74,7 +74,7 @@ create_network() {
     exit 1
   fi
 
-  IP=`echo ${GATEWAY} | sed -E 's/[0-9]+\.[0-9]+$/255.253/g'`
+  IP=`echo ${GATEWAY} | sed -E 's/[0-9]+\.[0-9]+$/255.254/g'`
   echo "Assigning IP ${IP} to ${CONTAINER}"
 }
 
@@ -118,6 +118,7 @@ case ${1} in
       --name ${CONTAINER} \
       --network flecs \
       --ip ${IP} \
+      --add-host flecs-flecsd:${GATEWAY} \
       --publish ${PORTS[$i]}:80 \
       --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
     exit $?

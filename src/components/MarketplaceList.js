@@ -117,53 +117,55 @@ const MarketplaceList = (props) => {
 
   return (
   <Box aria-label="marketplace-apps-list" display="flex">
-    <Paper elevation={0}>
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="flex-start"
-      >
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
+    <Grid
+      container
+      direction="row"
+      justify="flex-start"
+      alignItems="flex-start"
+    >
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
 
-              <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, name or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
-              <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-                <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} search={filterParams.search} isSearchEnabled={isSearchEnabled} setIsSearchEnabled={setIsSearchEnabled}/>
-              </Collapse>
+            <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, name or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
+            <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
+              <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} search={filterParams.search} isSearchEnabled={isSearchEnabled} setIsSearchEnabled={setIsSearchEnabled}/>
+            </Collapse>
 
-        </Grid>
-        {loading && (
-          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
-            <CircularProgress color='primary'></CircularProgress>
-          </Grid>
-        )}
-        {loading && (
-          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
-            <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
-          </Grid>
-        )}
-        {(appListError && !loading) &&
-        (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
-          <CloudOffIcon fontSize='large'/>
-        </Grid>)}
-        {(appListError && !loading) &&
-        (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
-            <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
-          </Grid>)
-        }
-        {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
       </Grid>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
-        component="div"
-        count={products?.length || 0}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Apps per page:"
-      />
-    </Paper>
+      {loading && (
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
+          <CircularProgress color='primary'></CircularProgress>
+        </Grid>
+      )}
+      {loading && (
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
+          <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
+        </Grid>
+      )}
+      {(appListError && !loading) &&
+      (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
+        <CloudOffIcon fontSize='large'/>
+      </Grid>)}
+      {(appListError && !loading) &&
+      (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
+          <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
+        </Grid>)
+      }
+      {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
+        <Paper data-testid='app-paginator' component="form" sx={{ p: '2px 4px' }}>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            component="div"
+            count={products?.length || 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Apps per page:"
+          />
+        </Paper>
+      </Grid>
+    </Grid>
   </Box>
   )
 }

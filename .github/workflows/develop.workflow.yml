@@ -83,7 +83,7 @@ jobs:
           docker manifest push flecs/webapp:$(make version)
 
   package:
-    needs: docker
+    needs: build
     runs-on: ubuntu-22.04
 
     env:
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: package
         run: |
-          make deb-pkg_${{ matrix.arch }}
+          make package_${{ matrix.arch }}
 
       - name: Setup AWS CLI
         env:
@@ -114,11 +114,15 @@ jobs:
           S3_HOST: ${{ secrets.S3_HOST }}
           S3_REGION: ${{ secrets.S3_REGION }}
         run: |
-          for i in `find ./ -mindepth 1 -maxdepth 1 -name "latest_flecs-webapp_*"`; do \
+          for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "latest_flecs-webapp_*"`; do \
             echo "Uploading ${i}"; \
             aws s3api put-object --acl public-read --endpoint-url https://${S3_HOST} --region ${S3_REGION} --bucket flecs-dev --key `basename ${i}` --body ${i}; \
           done
-          for i in `find ./ -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
+          for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
             echo "Uploading ${i}"; \
             aws s3api put-object --acl public-read --endpoint-url https://${S3_HOST} --region ${S3_REGION} --bucket flecs-dev --key flecs-webapp/deb/`basename ${i}` --body ${i}; \
+          done
+          for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.tar"`; do \
+            echo "Uploading ${i}"; \
+            aws s3api put-object --acl public-read --endpoint-url https://${S3_HOST} --region ${S3_REGION} --bucket flecs-dev --key flecs-webapp/tar/`basename ${i}` --body ${i}; \
           done

@@ -23,15 +23,24 @@ special_%:
 docker_%:
 	./docker/build-image.sh $(DOCKER_TAG) $*
 
+.PHONY: deb-pkg_%
 deb-pkg_%:
-	@sed -i 's/DOCKER_TAG=.*/DOCKER_TAG=$(DOCKER_TAG)/g' debian/opt/flecs-webapp/bin/flecs-webapp.sh
-	@sed -i 's/Version:.*/Version: $(VERSION)/g' debian/DEBIAN/control
-	@sed -i 's/Architecture:.*/Architecture: $*/g' debian/DEBIAN/control
-	@rm -rf debian/opt/flecs-webapp/assets
-	@mkdir -p debian/opt/flecs-webapp/assets
-	@docker pull --platform linux/$* flecs/webapp:$(DOCKER_TAG)-$*
-	@docker tag flecs/webapp:$(DOCKER_TAG)-$* flecs/webapp:$(DOCKER_TAG)
-	@docker save flecs/webapp:$(DOCKER_TAG) --output flecs-webapp_$(VERSION)_$*.tar.gz
-	@cp -f flecs-webapp_$(VERSION)_$*.tar.gz debian/opt/flecs-webapp/assets/
-	@dpkg-deb --root-owner-group -Z gzip --build debian flecs-webapp_$(VERSION)_$*.deb
-	@echo $(VERSION) >latest_flecs-webapp_$*
+	@rm -rf out/$*/pkg/debian
+	@mkdir -p out/$*/pkg/debian
+	@cp -prT pkg/fs out/$*/pkg/debian
+	@cp -prT pkg/debian out/$*/pkg/debian
+	@sed -i 's/DOCKER_TAG=.*/DOCKER_TAG=$(DOCKER_TAG)/g' out/$*/pkg/debian/opt/flecs-webapp/bin/flecs-webapp.sh
+	@sed -i 's/Version:.*/Version: $(VERSION)/g' out/$*/pkg/debian/DEBIAN/control
+	@sed -i 's/Architecture:.*/Architecture: $*/g' out/$*/pkg/debian/DEBIAN/control
+	@dpkg-deb --root-owner-group -Z gzip --build out/$*/pkg/debian out/$*/pkg/flecs-webapp_$(VERSION)_$*.deb
+	@echo $(VERSION) >out/$*/pkg/latest_flecs-webapp_$*
+
+.PHONY: tar-pkg_%
+tar-pkg_%:
+	@rm -rf out/$*/pkg/tar
+	@mkdir -p out/$*/pkg/tar
+	@cp -prT pkg/fs out/$*/pkg/tar
+	@cp -prT pkg/tar out/$*/pkg/tar
+
+package_%: deb-pkg_% tar-pkg_%
+	@echo "Building package_$*"

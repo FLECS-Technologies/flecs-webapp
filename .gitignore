@@ -3,3 +3,4 @@ build
 coverage
 build/asset-manifest.json
 build/index.html
+out/**

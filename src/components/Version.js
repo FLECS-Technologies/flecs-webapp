@@ -94,7 +94,7 @@ export default function Version () {
               <AlertTitle>Info</AlertTitle>
               <Typography variant='body2'>There is a newer version for FLECS available:</Typography>
               <VersionSelector availableVersions={[latestVersion]} selectedVersion={latestVersion}></VersionSelector>
-              <Typography variant='body2'>Install this update by running <i>curl -L marketplace.flecs.tech/install.sh | sudo bash</i> in the terminal of this device ({window.location.hostname}).</Typography>
+              <Typography variant='body2'>Install this update by running <i>curl -fsSL install.flecs.tech | bash</i> in the terminal of this device ({window.location.hostname}).</Typography>
             </Alert>
           }
         </Box>

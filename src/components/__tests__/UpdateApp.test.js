@@ -65,8 +65,8 @@ describe('Test Update App', () => {
   })
 
   test('Successfully update app', async () => {
-    // mock update service
-    // axios.post.mockResolvedValueOnce()
+    axios.post.mockResolvedValue({ status: 200 })
+
     await act(async () => {
       render(
         <JobsContextProvider>
@@ -84,8 +84,8 @@ describe('Test Update App', () => {
   })
 
   test('Failed to update app', async () => {
+    axios.post.mockResolvedValue({ status: 200 })
     const user = userEvent.setup()
-    // axios.put.mockRejectedValueOnce(new Error('Failed to update'))
 
     app.appKey.name = 'fail'
     await act(async () => {

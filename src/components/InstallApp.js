@@ -29,6 +29,8 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
+import { postMPLogin } from '../api/device/DeviceAuthAPI'
+import AuthService from '../api/marketplace/AuthService'
 
 export default function InstallApp (props) {
   const { install, app, version, tickets, handleActiveStep } = (props)
@@ -59,18 +61,25 @@ export default function InstallApp (props) {
     setError(false)
     setFetchingJobs(true)
 
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadReferenceData(app))
-    await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key, handleInstallationJob)
+    const currentUser = AuthService.getCurrentUser()
+    const mpLogin = await postMPLogin(currentUser)
+    if (mpLogin.status === 200) {
+      const appAPI = new AppAPI(app)
+      appAPI.setAppData(loadReferenceData(app))
+      await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key, handleInstallationJob)
 
-    if (appAPI.lastAPICallSuccessful) {
-      // trigger a reload of all installed apps
-      setLicensedApp(tickets[currentInstallations()]?.license_key, app.title)
-        .then()
-        .catch()
-        .finally(() => {
-          setUpdateAppList(true)
-        })
+      if (appAPI.lastAPICallSuccessful) {
+        // trigger a reload of all installed apps
+        setLicensedApp(tickets[currentInstallations()]?.license_key, app.title)
+          .then()
+          .catch()
+          .finally(() => {
+            setUpdateAppList(true)
+          })
+      }
+    } else {
+      setError(true)
+      setInstalling(false)
     }
     setFetchingJobs(false)
   })

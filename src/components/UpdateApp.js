@@ -30,6 +30,8 @@ import { UpdateAppService } from '../api/device/UpdateAppService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
 import { sleep } from '../utils/sleep'
+import AuthService from '../api/marketplace/AuthService'
+import { postMPLogin } from '../api/device/DeviceAuthAPI'
 
 export default function UpdateApp (props) {
   const { update, app, from, to, tickets, handleActiveStep } = (props)
@@ -51,20 +53,34 @@ export default function UpdateApp (props) {
     setError(false)
     setFetchingJobs(true)
 
-    // call update endpoint
-    UpdateAppService(app?.appKey.name, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
-      .then(() => {
-        // trigger a reload of all installed apps
-        setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
-          .then()
-          .catch()
-          .finally(async () => {
-            setUpdateAppList(true)
-            await sleep(1000)
-            setFetchingJobs(false)
-          })
+    const currentUser = AuthService.getCurrentUser()
+    postMPLogin(currentUser)
+      .then((response) => {
+        if (response.status === 200) {
+          // call update endpoint
+          UpdateAppService(app?.appKey.name, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
+            .then(() => {
+              // trigger a reload of all installed apps
+              setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
+                .then()
+                .catch()
+                .finally(async () => {
+                  setUpdateAppList(true)
+                  await sleep(1000)
+                  setFetchingJobs(false)
+                })
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        } else {
+          setError(true)
+          setUpdating(false)
+        }
       })
       .catch((error) => {
+        setError(true)
+        setUpdating(false)
         console.log(error)
       })
   })

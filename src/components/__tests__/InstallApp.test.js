@@ -22,11 +22,10 @@ import '@testing-library/jest-dom'
 import InstallApp from '../InstallApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../data/JobsContext'
-import axios from 'axios'
 
 jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/AppAPI')
-jest.mock('axios')
+jest.mock('../../api/device/DeviceAuthAPI')
 
 const app = {
   appKey: {
@@ -52,7 +51,6 @@ describe('Test Install App', () => {
   })
 
   test('Successfully install app', async () => {
-    axios.post.mockResolvedValue({ status: 200 })
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
@@ -69,7 +67,6 @@ describe('Test Install App', () => {
   })
 
   test('Failed to install app', async () => {
-    axios.post.mockResolvedValue({ status: 200 })
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>

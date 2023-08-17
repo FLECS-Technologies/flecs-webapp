@@ -24,13 +24,12 @@ import '@testing-library/jest-dom'
 import UpdateApp from '../UpdateApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../data/JobsContext'
-import axios from 'axios'
 
 jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/UpdateAppService')
 jest.mock('../../api/device/AppAPI')
 jest.mock('../../api/device/ExportAppsService')
-jest.mock('axios')
+jest.mock('../../api/device/DeviceAuthAPI')
 
 const app = {
   title: 'test app',
@@ -46,7 +45,6 @@ const handleActiveStep = jest.fn()
 
 describe('Test Update App', () => {
   beforeAll(() => {
-    axios.post = jest.fn()
   })
 
   afterAll(() => {
@@ -65,8 +63,6 @@ describe('Test Update App', () => {
   })
 
   test('Successfully update app', async () => {
-    axios.post.mockResolvedValue({ status: 200 })
-
     await act(async () => {
       render(
         <JobsContextProvider>
@@ -84,7 +80,6 @@ describe('Test Update App', () => {
   })
 
   test('Failed to update app', async () => {
-    axios.post.mockResolvedValue({ status: 200 })
     const user = userEvent.setup()
 
     app.appKey.name = 'fail'

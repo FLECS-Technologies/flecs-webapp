@@ -101,7 +101,7 @@ case ${1} in
     fi
 
     PORTS=(80 8080 8000 none)
-    PORTS_HEX=(50 1F90 1F40 none)
+    PORTS_HEX=(0050 1F90 1F40 none)
     for i in ${!PORTS_HEX[*]}; do
       if ! cat /proc/net/tcp | grep -E ":${PORTS_HEX[$i]} [0-9A-F]{8}"; then
         break

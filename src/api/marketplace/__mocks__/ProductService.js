@@ -16,104 +16,78 @@
  * limitations under the License.
  */
 
-const getAllProducts = async () => {
-  const queryParams = {
-    page: 1,
-    per_page: 100
-  }
-
-  const data = await getProducts(queryParams)
-  let allProducts = data?.products
-  const totalPages = data?.totalPages
-
-  if (totalPages > 1) {
-    for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
-      const { products } = await getProducts(queryParams)
-      allProducts = [...allProducts, ...products]
-    }
-  }
-  return allProducts
-}
-
-function getProducts (params) {
+async function getProducts () {
   return new Promise((resolve, reject) => {
-    params
-      ? resolve(
+    resolve([{
+      id: 35,
+      name: 'CODESYS Control SL',
+      status: 'publish',
+      short_description: '<p>IEC61131-3 Runtime.</p>\n',
+      sku: '',
+      price: '1',
+      attributes: [
         {
-          totalPages: 1,
-          products: [{
-            id: 35,
-            name: 'CODESYS Control SL',
-            status: 'publish',
-            short_description: '<p>IEC61131-3 Runtime.</p>\n',
-            sku: '',
-            price: '1',
-            attributes: [
-              {
-                id: 0,
-                name: 'archs',
-                position: 3,
-                visible: true,
-                variation: true,
-                options: [
-                  'amd64'
-                ]
-              }
-            ],
-            categories: [
-              {
-                id: 27,
-                name: 'App',
-                slug: 'app'
-              },
-              {
-                id: 15,
-                name: 'Unkategorisiert',
-                slug: 'unkategorisiert'
-              }
-            ],
-            meta_data: [
-              {
-                id: 664,
-                key: 'port-author-name',
-                value: 'CODESYS GmbH'
-              },
-              {
-                id: 665,
-                key: 'port-release',
-                value: ''
-              },
-              {
-                id: 666,
-                key: 'port-version',
-                value: '4.2.0.0'
-              },
-              {
-                id: 670,
-                key: 'app-icon',
-                value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
-              },
-              {
-                id: 672,
-                key: 'port-requirement',
-                value: ''
-              },
-              {
-                id: 1669,
-                key: 'app-custom-meta',
-                value: [
-                  {
-                    title: 'reverse-domain-name',
-                    icon: '',
-                    value: 'com.codesys.control'
-                  }
-                ]
-              }
-            ]
-          }]
+          id: 0,
+          name: 'archs',
+          position: 3,
+          visible: true,
+          variation: true,
+          options: [
+            'amd64'
+          ]
         }
-      )
-      : reject(new Error('Mock: Failed to get products'))
+      ],
+      categories: [
+        {
+          id: 27,
+          name: 'App',
+          slug: 'app'
+        },
+        {
+          id: 15,
+          name: 'Unkategorisiert',
+          slug: 'unkategorisiert'
+        }
+      ],
+      meta_data: [
+        {
+          id: 664,
+          key: 'port-author-name',
+          value: 'CODESYS GmbH'
+        },
+        {
+          id: 665,
+          key: 'port-release',
+          value: ''
+        },
+        {
+          id: 666,
+          key: 'port-version',
+          value: '4.2.0.0'
+        },
+        {
+          id: 670,
+          key: 'app-icon',
+          value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
+        },
+        {
+          id: 672,
+          key: 'port-requirement',
+          value: ''
+        },
+        {
+          id: 1669,
+          key: 'app-custom-meta',
+          value: [
+            {
+              title: 'reverse-domain-name',
+              icon: '',
+              value: 'com.codesys.control'
+            }
+          ]
+        }
+      ]
+    }])
   })
 }
 
@@ -189,4 +163,4 @@ function getRatingCount (app) {
   return 1
 }
 
-export { getProducts, getAllProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getCategoryID, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getCategoryID, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

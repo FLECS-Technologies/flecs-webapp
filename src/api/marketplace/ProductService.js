@@ -18,36 +18,12 @@
 import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
 
-const getAllProducts = async () => {
-  const queryParams = {
-    page: 1,
-    per_page: 100
-  }
-
-  const data = await getProducts(queryParams)
-  let allProducts = data?.products
-  const totalPages = data?.totalPages
-
-  if (totalPages > 1) {
-    for (queryParams.page++; queryParams.page <= totalPages; queryParams.page++) {
-      const { products } = await getProducts(queryParams)
-      allProducts = [...allProducts, ...products]
-    }
-  }
-  return allProducts
-}
-
-function getProducts (params) {
-  const reqParams = new URLSearchParams()
-  reqParams.append('category', getCategoryID())
-  reqParams.append('page', params.page)
-  reqParams.append('per_page', params.per_page)
-
+async function getProducts () {
   return axios
-    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL, { params: reqParams })
+    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL)
     .then(response => {
       if (response.data && response.data.success && response.data.products) {
-        return response.data
+        return response.data.products
       }
     })
     .catch(error => {
@@ -136,24 +112,6 @@ function getCategories (app) {
   return app?.categories
 }
 
-function getCategoryID () {
-  let catID = ''
-  switch (process.env.REACT_APP_ENVIRONMENT) {
-    case 'production':
-      catID = '27'
-      break
-    case 'development':
-      catID = '27'
-      break
-    case 'test':
-      catID = '27'
-      break
-    default:
-      catID = '27'
-  }
-  return catID
-}
-
 function getAverageRating (app) {
   return app?.average_rating
 }
@@ -162,4 +120,4 @@ function getRatingCount (app) {
   return app?.rating_count
 }
 
-export { getProducts, getAllProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }

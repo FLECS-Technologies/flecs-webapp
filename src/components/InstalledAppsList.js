@@ -233,7 +233,7 @@ export default function DeviceAppsList (props) {
               sx={{ ml: 1 }}
               buttonText="Sideload App"
               buttonIcon={<DeveloperModeIcon/>}
-              accept='.yml'
+              accept='.yml, .json'
               onConfirm={handleOnSideloadConfirm}
               disabled={!user?.user}
             ></FileOpen>

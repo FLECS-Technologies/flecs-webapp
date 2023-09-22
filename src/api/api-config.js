@@ -62,17 +62,15 @@ const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const DELETE_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
 
-const MP_BASE_URL = 'https://marketplace.flecs.tech'
-const MP_BETA_BASE_URL = 'https://mp-dev.flecs.tech'
+const MP_BASE_URL = 'https://console.flecs.tech'
+const MP_BETA_BASE_URL = 'https://console-dev.flecs.tech'
 const MP_CART_ROUTE = '/cart?cocart-load-cart='
-const MP_BASE_DEV_URL = 'https://marketplace.flecs.tech:3000'
 
-const MP_PROXY_DEV = 'http://localhost:8001'
-const MP_PROXY_TEST = 'https://marketplace.flecs.tech:8443'
-const MP_PROXY_PRODUCTION = 'https://marketplace.flecs.tech'
+const MP_PROXY_DEV = 'https://console-dev.flecs.tech'
+const MP_PROXY_PRODUCTION = 'https://console.flecs.tech'
 
-const MP_DEV = 'https://mp-dev.flecs.tech'
-const MP_TEST = 'https://mp-dev.flecs.tech'
+const MP_DEV = 'https://staging.flecs-technologies.com'
+const MP_TEST = 'https://staging.flecs-technologies.com'
 const MP_PRODUCTION = 'https://flecs.tech'
 
 const POST_AUTHENTICATE_URL = '/api/access/authenticate'
@@ -258,9 +256,6 @@ class MarketplaceAPIConfiguration {
       case 'development':
         mpUrl = MP_PROXY_DEV
         break
-      case 'test':
-        mpUrl = MP_PROXY_TEST
-        break
       default:
         mpUrl = MP_PROXY_PRODUCTION
     }
@@ -313,10 +308,6 @@ class MarketplaceAPIConfiguration {
         ticketID = 737
     }
     return ticketID
-  }
-
-  static get BASE_DEV_URL () {
-    return MP_BASE_DEV_URL
   }
 
   // get requests

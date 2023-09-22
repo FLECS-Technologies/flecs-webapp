@@ -20,7 +20,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useReferenceDataContext } from './ReferenceDataContext'
 import DeviceAPI from '../api/device/DeviceAPI'
-import { getAppIcon, getAuthor, getCustomLinks, getAllProducts, getReverseDomainName } from '../api/marketplace/ProductService'
+import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
 
 function AppList (props) {
   const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, setLoadedProducts } = useReferenceDataContext()
@@ -38,7 +38,7 @@ function AppList (props) {
 
     setAppListLoading(true)
     try {
-      const products = await getAllProducts()
+      const products = await getProducts()
       products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
       setLoadedProducts(products)
       marketplaceAppList = marketplaceAppList.concat(products)

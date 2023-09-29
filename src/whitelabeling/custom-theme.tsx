@@ -23,11 +23,118 @@ import {
 } from '../styles/theme'
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
+  ...flecsDarkTheme,
+  typography: {
+    fontFamily: 'Noto Sans'
+  },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#00AA7E',
+            '& .MuiListItemIcon-root': {
+              color: '#00AA7E'
+            }
+          },
+          '&$selected:hover': {
+            color: '00AA7E',
+            '& .MuiListItemIcon-root': {
+              color: '#00AA7E'
+            }
+          },
+          '&:hover': {
+            color: '#00AA7E',
+            '& .MuiListItemIcon-root': {
+              color: '#00AA7E'
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#212121'
+        }
+      }
+    }
+  },
+  palette: {
+    ...flecsDarkTheme.palette,
+    primary: {
+      // emerson green
+      main: '#00AA7E'
+    },
+    // emerson blue
+    secondary: {
+      main: '#004B8D'
+    },
+    success: {
+      main: '#00AA7E'
+    },
+    background: {
+      default: '#212121',
+      paper: '#313131'
+    },
+  }
 } as ThemeOptions)
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
+  ...flecsLightTheme,
+  typography: {
+    fontFamily: 'Noto Sans'
+  },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#004B8D',
+            '& .MuiListItemIcon-root': {
+              color: '#004B8D'
+            }
+          },
+          '&$selected:hover': {
+            color: '004B8D',
+            '& .MuiListItemIcon-root': {
+              color: '#004B8D'
+            }
+          },
+          '&:hover': {
+            color: '#004B8D',
+            '& .MuiListItemIcon-root': {
+              color: '#004B8D'
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#C4CED1'
+        }
+      }
+    }
+  },
+  palette: {
+    ...flecsLightTheme.palette,
+    primary: {
+      // emerson green
+      main: '#00AA7E'
+    },
+    // emerson blue
+    secondary: {
+      main: '#004B8D'
+    },
+
+    success: {
+      main: '#00AA7E'
+    },
+  }
 } as ThemeOptions)
 
 export { darkTheme, lightTheme }

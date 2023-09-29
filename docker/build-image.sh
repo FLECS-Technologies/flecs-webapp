@@ -26,6 +26,6 @@ docker login -u ${REGISTRY_USER} -p ${REGISTRY_AUTH}
 docker buildx build \
   --push \
   --platform ${PLATFORM} \
-  --tag flecs/webapp:${DOCKER_TAG}-${ARCH} \
+  --tag cr.flecs.tech/webapp:${DOCKER_TAG}-${ARCH} \
   --file docker/Dockerfile \
   .

@@ -15,7 +15,7 @@
 
 SCRIPTNAME=$(basename $(readlink -f ${0}))
 
-DOCKER_IMAGE=flecs/webapp
+DOCKER_IMAGE=cr.flecs.tech/webapp
 DOCKER_TAG=
 CONTAINER=flecs-webapp
 

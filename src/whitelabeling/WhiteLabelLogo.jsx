@@ -16,23 +16,28 @@
  * limitations under the License.
  */
 import React from 'react'
-import Logo from '../assets/images/logo.svg?react' // Vite-compatible SVG import using vite-plugin-svgr
+import Logo from './Emerson-Electric-Company-Logo.svg?react' // Change to the custom whitelabel logo
 import { useTheme } from '@mui/material/styles'
 import PropTypes from 'prop-types'
+import { darkModeContext } from '../components/ThemeHandler'
 
 // Set to true if the whitelabel logo should be used
-export const useWhiteLabelLogo = false
+export const useWhiteLabelLogo = true;
 // Set to false if 'powered by flecs' should not be shown
-export const showPoweredBy = true
+export const showPoweredBy = false;
 
 export default function WhiteLabelLogo({ logoColor }) {
   const theme = useTheme() // Access the Material-UI theme
+  const DarkModeContext = React.useContext(darkModeContext)
+  const { darkMode } = DarkModeContext
   // Customize the whitelabel logo here
   return (
     <Logo
-      width='128'
-      height='48'
-      style={{ color: logoColor || theme.palette.primary.main }} // Set the "color" property for currentColor
+      width='94'
+      height='54'
+      style={{
+        color: darkMode ? '#FFFFFF' : '#004B8D'
+      }}
     />
   )
 }

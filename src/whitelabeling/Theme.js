@@ -21,7 +21,7 @@ import './Theme.css'
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: "'Quicksand'"
+    fontFamily: 'Roboto'
     // fontFamilySecondary: "'Roboto Condensed', sans-serif"
   },
 
@@ -32,19 +32,19 @@ const baseTheme = createTheme({
           '&.Mui-selected': {
             color: '#ff2e63',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#FF2E63'
             }
           },
           '&$selected:hover': {
             color: 'ff2e63',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#FF2E63'
             }
           },
           '&:hover': {
-            color: '#08D9D6',
+            color: '#FF2E63',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#FF2E63'
             }
           }
         },
@@ -65,12 +65,12 @@ const darkTheme = createTheme({
 
     primary: {
       // pink
-      main: '#FF2E63'
+      main: '#004B8D'
     },
 
     // cyan
     secondary: {
-      main: '#08D9D6'
+      main: '#FF2E63'
     },
 
     text: {
@@ -103,7 +103,7 @@ const lightTheme = createTheme({
 
     primary: {
       // cyan
-      main: '#08D9D6'
+      main: '#004B8D'
     },
     // pink
     secondary: {

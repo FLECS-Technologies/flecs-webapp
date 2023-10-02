@@ -20,11 +20,11 @@ async function getProducts () {
   return new Promise((resolve, reject) => {
     resolve([{
       id: 35,
-      name: 'CODESYS Control SL',
+      name: 'FLECS Service Mesh',
       status: 'publish',
-      short_description: '<p>IEC61131-3 Runtime.</p>\n',
+      short_description: '<p>Communication and data exchange between all FLECS apps.</p>\n',
       sku: '',
-      price: '1',
+      price: '',
       attributes: [
         {
           id: 0,
@@ -44,16 +44,16 @@ async function getProducts () {
           slug: 'app'
         },
         {
-          id: 15,
-          name: 'Unkategorisiert',
-          slug: 'unkategorisiert'
+          id: 28,
+          name: 'Communication',
+          slug: 'communication'
         }
       ],
       meta_data: [
         {
           id: 664,
           key: 'port-author-name',
-          value: 'CODESYS GmbH'
+          value: 'FLECS Technologies GmbH'
         },
         {
           id: 665,
@@ -63,12 +63,12 @@ async function getProducts () {
         {
           id: 666,
           key: 'port-version',
-          value: '4.2.0.0'
+          value: '2.0.2-dormouse'
         },
         {
           id: 670,
           key: 'app-icon',
-          value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/codesys-logo.png'
+          value: 'https://staging.flecs-technologies.com/wp-content/uploads/2021/07/FLECS-cyan.png'
         },
         {
           id: 672,
@@ -82,7 +82,7 @@ async function getProducts () {
             {
               title: 'reverse-domain-name',
               icon: '',
-              value: 'com.codesys.control'
+              value: 'tech.flecs.service-mesh'
             }
           ]
         }

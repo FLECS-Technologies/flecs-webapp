@@ -123,7 +123,7 @@ describe('Marketplace List', () => {
     const input = within(searchBar).getByRole('combobox')
 
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'control' } })
+      fireEvent.change(input, { target: { value: 'mesh' } })
     })
 
     const apps = screen.queryAllByTestId('app-card')
@@ -197,7 +197,7 @@ describe('Marketplace List', () => {
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
     const input = within(searchBar).getByRole('combobox')
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'control' } })
+      fireEvent.change(input, { target: { value: 'mesh' } })
     })
 
     // opens the filter section

@@ -59,8 +59,9 @@ function JobsContextProvider (props) {
   }
 
   const fetchExports = async () => {
-    const exports = await getExports()
-    setExports(exports)
+    await getExports()
+      .then((exports) => setExports(exports))
+      .catch(() => {})
   }
 
   return (

@@ -16,8 +16,7 @@
  * limitations under the License.
  */
 import React from 'react'
-import { act } from 'react-dom/test-utils'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'

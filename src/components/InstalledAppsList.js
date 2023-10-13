@@ -213,8 +213,10 @@ export default function DeviceAppsList (props) {
             variant="h6"
             id="tableTitle"
             component="div"
-          >
-            Installed Apps
+            >
+              {(appListLoading && ping)
+                ? (<>Loading Apps...<CircularProgress align='center' size='1.1rem' sx={{ ml: 1 }} /></>)
+                : (<>Installed Apps</>)}
           </Typography>
           <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
             <div>
@@ -270,16 +272,6 @@ export default function DeviceAppsList (props) {
                   </TableCell>
                 </TableRow>
               )}
-              {(appListLoading && ping) &&
-                  <TableRow>
-                  <TableCell colSpan={6} align='center'>
-                    <CircularProgress align='center'></CircularProgress>
-                    <Typography align='center'>
-                      Loading installed apps from the device...
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              }
               {(appListError && ping) &&
                   <TableRow>
                   <TableCell colSpan={6} align='center'>

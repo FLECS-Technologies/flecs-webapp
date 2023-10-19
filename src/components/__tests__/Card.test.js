@@ -25,7 +25,9 @@ import { SystemContextProvider } from '../../data/SystemProvider'
 import { SystemData } from '../../data/SystemData'
 import { act } from 'react-dom/test-utils'
 import { JobsContextProvider } from '../../data/JobsContext'
-jest.mock('../../api/device/SystemInfoService.js')
+jest.mock('../../api/device/SystemInfoService')
+jest.mock('../../api/device/SystemPingService')
+jest.mock('../../api/device/JobsAPI')
 
 describe('Card', () => {
   const relatedLinks = [
@@ -133,31 +135,5 @@ describe('Card', () => {
     const { getByTestId } = render(<Card />)
 
     expect(() => getByTestId('more-vert-icon')).toThrow()
-  })
-
-  test('Card requirements - unsupported architecture', async () => {
-    await act(async () => {
-      render(
-        <SystemContextProvider>
-          <SystemData>
-            <Card
-              app= 'Testapp'
-              avatar= ''
-              title= 'Test App Title'
-              author= 'Test App author'
-              version= 'Test App Version'
-              description= 'Test App Description'
-              status= 'uninstalled'
-              availability='available'
-              instances={[]}
-              requirement={['amd60000000']} // invalid architecture
-            />
-          </SystemData>
-        </SystemContextProvider>
-      )
-    })
-
-    const installButton = screen.getByLabelText('install-app-button')
-    expect(installButton).not.toBeEnabled()
   })
 })

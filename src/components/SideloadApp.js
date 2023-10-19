@@ -39,7 +39,6 @@ export default function SideloadApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [infoMessage, setInfoMessage] = React.useState(false)
-  const [completion, setCompletion] = React.useState(0)
   const { setFetchingJobs } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
 
@@ -81,19 +80,6 @@ export default function SideloadApp (props) {
     }
     executedRef.current = true
   }, [retry])
-
-  React.useEffect(() => {
-    const timer = setInterval(
-      () =>
-        (installationMessage.includes('Installing') || installationMessage.includes('Downgrading') || installationMessage.includes('Updating'))
-          ? setCompletion(completion + 1)
-          : null,
-      200
-    )
-    return () => {
-      clearInterval(timer)
-    }
-  })
 
   const handleRetryClick = (event) => {
     setRetry(true)

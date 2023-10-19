@@ -54,10 +54,6 @@ function JobsContextProvider (props) {
     fetchJobs()
   }
 
-  const currentInstallations = () => {
-    return jobs?.filter(j => (j.description.includes('Installation') && (j.status === 'running' || j.status === 'queued' || j.status === 'pending'))).length
-  }
-
   const fetchExports = async () => {
     await getExports()
       .then((exports) => setExports(exports))
@@ -65,7 +61,7 @@ function JobsContextProvider (props) {
   }
 
   return (
-    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, deleteJobs, currentInstallations, exports, fetchExports }}>
+    <JobsContext.Provider value={{ jobs, setJobs, setFetchingJobs, fetchingJobs, deleteJobs, exports, fetchExports }}>
       {props.children}
     </JobsContext.Provider>
   )

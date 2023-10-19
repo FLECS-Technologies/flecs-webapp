@@ -25,7 +25,6 @@ import UpdateApp from '../UpdateApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../data/JobsContext'
 
-jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/UpdateAppService')
 jest.mock('../../api/device/AppAPI')
 jest.mock('../../api/device/ExportAppsService')
@@ -67,7 +66,7 @@ describe('Test Update App', () => {
       render(
         <JobsContextProvider>
           <ReferenceDataContextProvider>
-            <UpdateApp update={true} app={app} from={app.appKey.version} to="4.3.0" tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep} />
+            <UpdateApp app={app} from={app.appKey.version} to="4.3.0" handleActiveStep={handleActiveStep} />
           </ReferenceDataContextProvider>
         </JobsContextProvider>
       )
@@ -87,7 +86,7 @@ describe('Test Update App', () => {
       render(
         <JobsContextProvider>
           <ReferenceDataContextProvider>
-          <UpdateApp update={true} app={app} from={app.appKey.version} to="4.3.0" tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep} />
+          <UpdateApp app={app} from={app.appKey.version} to="4.3.0" handleActiveStep={handleActiveStep} />
           </ReferenceDataContextProvider>
         </JobsContextProvider>)
     })

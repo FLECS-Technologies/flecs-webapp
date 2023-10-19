@@ -20,13 +20,13 @@ import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
 export default class PostSideloadAppAPI extends BaseAPI {
-  async sideloadApp (yml, licenseKey) {
+  async sideloadApp (yml) {
     // POST request using fetch with error handling
     const manifest = JSON.stringify(yml)
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ manifest, licenseKey })
+      body: JSON.stringify({ manifest })
     }
 
     try {

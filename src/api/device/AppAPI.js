@@ -88,10 +88,10 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (version, licenseKey, handleInstallationJob) {
+  async installFromMarketplace (version, handleInstallationJob) {
     try {
       if (this.app) {
-        await this.installApp(version, licenseKey, handleInstallationJob)
+        await this.installApp(version, handleInstallationJob)
         if (this.jobStatus === 'successful') { // app has been installed
           await this.createInstance(this.createInstanceName())
           if (this.jobStatus === 'successful') { // instance has been created
@@ -163,11 +163,11 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async installApp (version, licenseKey, handleInstallationJob) {
+  async installApp (version, handleInstallationJob) {
     try {
       if (this.app) {
         const installAPI = new PostInstallAppAPI()
-        await installAPI.installApp(this.app.appKey.name, (version || this.app.appKey.version), licenseKey)
+        await installAPI.installApp(this.app.appKey.name, (version || this.app.appKey.version))
         this.jobId = installAPI.state.responseData.jobId
         await this.waitUntilJobIsComplete(this.jobId, 'install', handleInstallationJob)
 
@@ -288,12 +288,12 @@ export default class AppAPI extends React.Component {
     }
   }
 
-  async sideloadApp (appYaml, licenseKey, handleInstallationJob) {
+  async sideloadApp (appYaml, handleInstallationJob) {
     try {
-      if (appYaml && licenseKey) {
+      if (appYaml) {
         // sideload app - this request takes the .yml file and tries to install the app
         const sideload = new PostSideloadAppAPI()
-        await sideload.sideloadApp(appYaml, licenseKey)
+        await sideload.sideloadApp(appYaml)
         this.jobId = sideload.state.responseData.jobId
         await this.waitUntilJobIsComplete(this.jobId, 'sideload', handleInstallationJob)
 

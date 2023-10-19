@@ -23,7 +23,6 @@ import SideloadApp from '../SideloadApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../data/JobsContext'
 
-jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/AppAPI')
 
 const yaml = {
@@ -43,7 +42,7 @@ describe('Test Sideload App', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml}></SideloadApp>
+          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -53,7 +52,7 @@ describe('Test Sideload App', () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep}></SideloadApp>
+          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -66,15 +65,16 @@ describe('Test Sideload App', () => {
   })
 
   test('Failed to sideload app', async () => {
+    // will fail because no yaml is passed to SideloadApp
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} install={true} tickets={[{ license_key: undefined }]} handleActiveStep={handleActiveStep}></SideloadApp>
+          <SideloadApp handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
 
-    await screen.findByText('Error during the installation of ' + yaml.title + '.')
+    await screen.findByText('Error during the installation of undefined.')
 
     const icon = getByTestId('error-icon')
     expect(icon).toBeVisible()
@@ -82,6 +82,6 @@ describe('Test Sideload App', () => {
     const retry = screen.getByRole('button', { name: 'Retry' })
     fireEvent.click(retry)
 
-    await screen.findByText('Error during the installation of ' + yaml.title + '.')
+    await screen.findByText('Error during the installation of undefined.')
   })
 })

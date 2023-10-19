@@ -24,6 +24,7 @@ import Card from '../Card'
 import { SystemContextProvider } from '../../data/SystemProvider'
 import { SystemData } from '../../data/SystemData'
 import { act } from 'react-dom/test-utils'
+import { JobsContextProvider } from '../../data/JobsContext'
 jest.mock('../../api/device/SystemInfoService.js')
 
 describe('Card', () => {
@@ -66,16 +67,17 @@ describe('Card', () => {
   test('Click install', async () => {
     await act(async () => {
       render(
+        <JobsContextProvider>
         <SystemContextProvider>
           <SystemData>
             <Card
-              app= 'Testapp'
-              avatar= ''
-              title= 'Test App Title'
-              author= 'Test App author'
-              version= 'Test App Version'
+              app='Testapp'
+              avatar=''
+              title='Test App Title'
+              author='Test App author'
+              versions={['Test App Version']}
               description= 'Test App Description'
-              status= 'uninstalled'
+              status='uninstalled'
               availability='available'
               requirement={['amd64']} // valid architecture
               installedVersions={[]}
@@ -83,6 +85,7 @@ describe('Card', () => {
             />
           </SystemData>
         </SystemContextProvider>
+        </JobsContextProvider>
       )
     })
 
@@ -156,31 +159,5 @@ describe('Card', () => {
 
     const installButton = screen.getByLabelText('install-app-button')
     expect(installButton).not.toBeEnabled()
-  })
-
-  test('Card requirements - supported architecture', async () => {
-    await act(async () => {
-      render(
-        <SystemContextProvider>
-          <SystemData>
-            <Card
-              app= 'Testapp'
-              avatar= ''
-              title= 'Test App Title'
-              author= 'Test App author'
-              version= 'Test App Version'
-              description= 'Test App Description'
-              status= 'uninstalled'
-              availability='available'
-              instances={[]}
-              requirement={['amd64']} // valid architecture
-            />
-          </SystemData>
-        </SystemContextProvider>
-      )
-    })
-
-    const installButton = screen.getByLabelText('install-app-button')
-    expect(installButton).toBeEnabled()
   })
 })

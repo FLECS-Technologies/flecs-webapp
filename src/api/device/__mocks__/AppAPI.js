@@ -73,13 +73,10 @@ export default class AppAPI extends React.Component {
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (version, licenseKey, handleInstallationJob) {
-    if (licenseKey === undefined) handleInstallationJob('failed')
-    else {
-      handleInstallationJob('running')
-      await sleep(500)
-      handleInstallationJob('successful')
-    }
+  async installFromMarketplace (version, handleInstallationJob) {
+    handleInstallationJob('running')
+    await sleep(500)
+    handleInstallationJob('successful')
     this.lastAPICallSuccessful = true
   }
 
@@ -103,13 +100,10 @@ export default class AppAPI extends React.Component {
     this.lastAPICallSuccessful = true
   }
 
-  async sideloadApp (appYaml, licenseKey, handleInstallationJob) {
-    if (licenseKey === undefined) handleInstallationJob('failed')
-    else {
-      handleInstallationJob('running')
-      await sleep(500)
-      handleInstallationJob('successful')
-    }
+  async sideloadApp (appYaml, handleInstallationJob) {
+    handleInstallationJob('running')
+    await sleep(500)
+    handleInstallationJob('successful')
     this.lastAPICallSuccessful = true
   }
 

@@ -21,24 +21,15 @@ import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
-import Button from '@mui/material/Button'
-import SelectTicket from './SelectTicket'
 import InstallApp from './InstallApp'
 import SideloadApp from './SideloadApp'
 import UpdateApp from './UpdateApp'
 
-const steps = ['Checking tickets', 'Getting ready', 'Installing', 'All done']
+const steps = ['Getting ready', 'Installing', 'All done']
 
 export default function InstallAppStepper (props) {
   const { app, version, sideload, update } = props
-  const [begin, setBegin] = React.useState(false)
-  const [tickets, setTickets] = React.useState([])
   const [activeStep, setActiveStep] = React.useState(0)
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1)
-    setBegin(true)
-  }
 
   const handleActiveStep = (status) => {
     setActiveStep(status)
@@ -58,19 +49,9 @@ export default function InstallAppStepper (props) {
         })}
       </Stepper>
         <React.Fragment>
-          {(!begin) && <SelectTicket app={app} tickets={tickets} setTickets={setTickets}/>}
-          {(begin && !(sideload || update)) && <InstallApp app={app} version={version || app?.appKey.version} tickets={tickets} install={(begin)} handleActiveStep={handleActiveStep} />}
-          {(begin && sideload) && <SideloadApp yaml={app} tickets={tickets} install={(begin)} handleActiveStep={handleActiveStep} />}
-          {(begin && update) && <UpdateApp app={app} from={app.installedVersions[0]} to={version} tickets={tickets} update={(begin)} handleActiveStep={handleActiveStep} />}
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Box sx={{ flex: '1 1 auto' }} />
-            {!begin
-              ? <Button data-testid='next-button' variant='contained' onClick={handleNext} disabled={tickets.length === 0} >
-                  Next
-                </Button>
-              : null
-            }
-          </Box>
+          {(!(sideload || update)) && <InstallApp app={app} version={version || app?.appKey.version} handleActiveStep={handleActiveStep} />}
+          {(sideload) && <SideloadApp yaml={app} handleActiveStep={handleActiveStep} />}
+          {(update) && <UpdateApp app={app} from={app?.installedVersions[0]} to={version} handleActiveStep={handleActiveStep} />}
         </React.Fragment>
     </Box>
   )

@@ -26,12 +26,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import AppAPI from '../api/device/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
 
 export default function SideloadApp (props) {
-  const { install, yaml, tickets, handleActiveStep } = (props)
+  const { yaml, handleActiveStep } = (props)
   const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
@@ -41,7 +40,7 @@ export default function SideloadApp (props) {
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [infoMessage, setInfoMessage] = React.useState(false)
   const [completion, setCompletion] = React.useState(0)
-  const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
+  const { setFetchingJobs } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
 
   function loadReferenceData (props) {
@@ -62,25 +61,23 @@ export default function SideloadApp (props) {
 
     const appAPI = new AppAPI(yaml)
     appAPI.setAppData(loadReferenceData(yaml))
-    await appAPI.sideloadApp(yaml, tickets[currentInstallations()]?.license_key, handleInstallationJob)
+    await appAPI.sideloadApp(yaml, handleInstallationJob)
 
     if (appAPI.lastAPICallSuccessful) {
       // trigger a reload of all installed apps
-      setLicensedApp(tickets[currentInstallations()]?.license_key, yaml?.title)
-        .then()
-        .catch()
-        .finally(() => {
-          setUpdateAppList(true)
-        })
+      setUpdateAppList(true)
     }
     setFetchingJobs(false)
   })
 
   React.useEffect(() => {
     if (executedRef.current) { return }
-    if (tickets?.length > 0 && yaml && install && !installing && (!success || !error)) {
+    if (yaml && !installing && (!success || !error)) {
       setRetry(false)
       sideloadApp(yaml)
+    } else {
+      setError(true)
+      setInstallationMessage('Error during the installation of ' + yaml?.title + '.')
     }
     executedRef.current = true
   }, [retry])
@@ -105,13 +102,13 @@ export default function SideloadApp (props) {
 
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 1) {
+    if (mappedStatus === 0) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${yaml.title} will begin soon.`)
-    } else if (mappedStatus === 2) {
+    } else if (mappedStatus === 1) {
       setRunning(true)
       setInstallationMessage('Installing ' + yaml.title + '.')
       setInfoMessage(true)
-    } else if (mappedStatus === 4) {
+    } else if (mappedStatus === 3) {
       setRunning(false)
       setInstallationMessage(yaml.title + ' successfully installed.')
       setInfoMessage(false)
@@ -157,8 +154,6 @@ export default function SideloadApp (props) {
 }
 
 SideloadApp.propTypes = {
-  install: PropTypes.bool,
   yaml: PropTypes.object,
-  tickets: PropTypes.array,
   handleActiveStep: PropTypes.func
 }

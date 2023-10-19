@@ -30,13 +30,13 @@ describe('UpdateAppService', () => {
   const mockInstances = [{ instanceId: '123' }, { instanceId: '456' }]
 
   test('calls successful UpdateAppService', async () => {
-    const response = await waitFor(() => UpdateAppService('app', '2.0.0', 'ABC', [], handleInstallationJob))
+    const response = await waitFor(() => UpdateAppService('app', '2.0.0', [], handleInstallationJob))
 
     expect(response).toBe('App successfully updated.')
   })
 
   test('calls successful UpdateAppService with instances', async () => {
-    const response = await waitFor(() => UpdateAppService('app', '2.0.0', 'ABC', mockInstances, handleInstallationJob))
+    const response = await waitFor(() => UpdateAppService('app', '2.0.0', mockInstances, handleInstallationJob))
 
     expect(response).toHaveLength(2)
   })

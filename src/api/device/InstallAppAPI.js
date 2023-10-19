@@ -19,12 +19,12 @@ import BaseAPI from './BaseAPI'
 import { DeviceAPIConfiguration } from '../api-config'
 
 export default class PostInstallAppAPI extends BaseAPI {
-  async installApp (app, version, licenseKey) {
+  async installApp (app, version) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ appKey: { name: app, version }, licenseKey })
+      body: JSON.stringify({ appKey: { name: app, version } })
     }
 
     try {

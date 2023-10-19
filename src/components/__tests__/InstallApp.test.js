@@ -23,7 +23,6 @@ import InstallApp from '../InstallApp'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../data/JobsContext'
 
-jest.mock('../../api/marketplace/LicenseService')
 jest.mock('../../api/device/AppAPI')
 jest.mock('../../api/device/DeviceAuthAPI')
 
@@ -44,7 +43,7 @@ describe('Test Install App', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp app={app}></InstallApp>
+          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -54,7 +53,7 @@ describe('Test Install App', () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp app={app} install={true} tickets={[{ license_key: 'abc' }]} handleActiveStep={handleActiveStep}></InstallApp>
+          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -67,15 +66,16 @@ describe('Test Install App', () => {
   })
 
   test('Failed to install app', async () => {
+    // will fail because no app is passed to InstallApp
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp app={app} install={true} tickets={[{ license_key: undefined }]} handleActiveStep={handleActiveStep}></InstallApp>
+          <InstallApp handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
 
-    await screen.findByText('Error during the installation of ' + app.title + '.')
+    await screen.findByText('Error during the installation of undefined.')
 
     const icon = getByTestId('error-icon')
     expect(icon).toBeVisible()
@@ -83,6 +83,6 @@ describe('Test Install App', () => {
     const retry = screen.getByRole('button', { name: 'Retry' })
     fireEvent.click(retry)
 
-    await screen.findByText('Error during the installation of ' + app.title + '.')
+    await screen.findByText('Error during the installation of undefined.')
   })
 })

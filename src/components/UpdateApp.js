@@ -25,7 +25,6 @@ import AlertTitle from '@mui/material/AlertTitle'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { UpdateAppService } from '../api/device/UpdateAppService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
@@ -34,7 +33,7 @@ import AuthService from '../api/marketplace/AuthService'
 import { postMPLogin } from '../api/device/DeviceAuthAPI'
 
 export default function UpdateApp (props) {
-  const { update, app, from, to, tickets, handleActiveStep } = (props)
+  const { app, from, to, handleActiveStep } = (props)
   const executedRef = React.useRef(false)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [updating, setUpdating] = React.useState(false)
@@ -43,10 +42,10 @@ export default function UpdateApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [infoMessage, setInfoMessage] = React.useState(false)
-  const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
+  const { setFetchingJobs } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
 
-  const updateApp = React.useCallback(async (app, from, to, tickets) => {
+  const updateApp = React.useCallback(async (app, from, to) => {
     const installedApp = appList?.filter(obj => { return (obj.appKey.name === app.appKey.name && obj.appKey.version === from) }) || []
     setUpdating(true)
     setSuccess(false)
@@ -55,20 +54,15 @@ export default function UpdateApp (props) {
 
     const currentUser = AuthService.getCurrentUser()
     postMPLogin(currentUser)
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
           // call update endpoint
-          UpdateAppService(app?.appKey.name, to, tickets[currentInstallations()]?.license_key, installedApp[0]?.instances, handleInstallationJob)
-            .then(() => {
+          await UpdateAppService(app?.appKey.name, to, installedApp[0]?.instances, handleInstallationJob)
+            .then(async () => {
               // trigger a reload of all installed apps
-              setLicensedApp(tickets[currentInstallations()]?.license_key, app?.title)
-                .then()
-                .catch()
-                .finally(async () => {
-                  setUpdateAppList(true)
-                  await sleep(1000)
-                  setFetchingJobs(false)
-                })
+              setUpdateAppList(true)
+              await sleep(1000)
+              setFetchingJobs(false)
             })
             .catch((error) => {
               console.log(error)
@@ -87,9 +81,9 @@ export default function UpdateApp (props) {
 
   React.useEffect(() => {
     if (executedRef.current) { return }
-    if (tickets?.length > 0 && app && update && from && to && !updating && (!success || !error)) {
+    if (app && from && to && !updating && (!success || !error)) {
       setRetry(false)
-      updateApp(app, from, to, tickets)
+      updateApp(app, from, to)
     }
     executedRef.current = true
   }, [retry])
@@ -101,13 +95,13 @@ export default function UpdateApp (props) {
 
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 1) {
+    if (mappedStatus === 0) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
-    } else if (mappedStatus === 2) {
+    } else if (mappedStatus === 1) {
       setRunning(true)
       setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
       setInfoMessage(true)
-    } else if (mappedStatus === 4) {
+    } else if (mappedStatus === 3) {
       setRunning(false)
       setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
       setInfoMessage(false)
@@ -153,10 +147,8 @@ export default function UpdateApp (props) {
 }
 
 UpdateApp.propTypes = {
-  update: PropTypes.bool,
   app: PropTypes.object,
   from: PropTypes.string,
   to: PropTypes.string,
-  tickets: PropTypes.array,
   handleActiveStep: PropTypes.func
 }

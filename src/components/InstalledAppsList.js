@@ -218,14 +218,14 @@ export default function DeviceAppsList (props) {
                 ? (<>Loading Apps...<CircularProgress align='center' size='1.1rem' sx={{ ml: 1 }} /></>)
                 : (<>Installed Apps</>)}
           </Typography>
-          <Tooltip title={user?.user ? 'Export all apps and their data from this device' : 'Please log in to be able to export your apps'}>
+          <Tooltip title={'Export all apps and their data from this device'}>
             <div>
-              <Export disabled={!user?.user || tmpAppList?.length === 0} sx={{ ml: 1 }}></Export>
+              <Export disabled={tmpAppList?.length === 0} sx={{ ml: 1 }}></Export>
             </div>
           </Tooltip>
-          <Tooltip title={user?.user ? 'Import apps from file' : 'Please log in to be able to import apps'}>
+          <Tooltip title={'Import apps from file'}>
             <div>
-              <Import disabled={!user?.user} sx={{ ml: 1 }}></Import>
+              <Import sx={{ ml: 1 }}></Import>
             </div>
           </Tooltip>
           <Tooltip title={user?.user ? 'Install your own app on this device' : 'Please log in to be able to sideload apps'}>

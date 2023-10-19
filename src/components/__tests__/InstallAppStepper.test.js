@@ -17,12 +17,10 @@
  */
 
 import React from 'react'
-import { render, fireEvent, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallAppStepper from '../InstallAppStepper'
 import { act } from 'react-dom/test-utils'
-
-jest.mock('../../api/marketplace/LicenseService')
 
 describe('Test InstallAppStepper', () => {
   beforeAll(() => {
@@ -58,26 +56,5 @@ describe('Test InstallAppStepper', () => {
     const stepper = screen.getByTestId('install-app-stepper')
 
     expect(stepper).toBeVisible()
-  })
-
-  test('one step forward', async () => {
-    await act(async () => {
-      render(<InstallAppStepper />)
-    })
-    await screen.findByText('3 Tickets available.')
-    const stepper = screen.getByTestId('install-app-stepper')
-
-    expect(stepper).toBeVisible()
-
-    const nextButton = screen.getByTestId('next-button')
-    const selectTicket = screen.getByTestId('select-ticket-step')
-    expect(nextButton).toBeEnabled()
-    expect(selectTicket).toBeVisible()
-
-    // next step
-    await act(async () => { fireEvent.click(nextButton) })
-    const installApp = await waitFor(() => screen.getByTestId('install-app-step'))
-    expect(nextButton).not.toBeVisible()
-    expect(installApp).toBeVisible()
   })
 })

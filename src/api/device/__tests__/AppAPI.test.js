@@ -299,7 +299,7 @@ describe('AppAPI', () => {
     expect(appAPI.app.appKey.name).toBe(testApp.appKey.name)
     expect(appAPI.app.status).toBe(testApp.status)
 
-    await appAPI.sideloadApp('fakeYaml', 'fakeLicenseKey')
+    await appAPI.sideloadApp('fakeYaml')
     await appAPI.fetchInstances()
 
     expect(appAPI.lastAPICallSuccessful).toBeTruthy()

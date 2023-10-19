@@ -20,8 +20,8 @@ import { UpdateInstanceService } from './UpdateInstanceService'
 import JobsAPI from './JobsAPI'
 import { sleep } from '../../utils/sleep'
 
-async function UpdateAppService (app, to, licenseKey, instances, handleInstallationJob) {
-  const jobStatus = await installApp(app, to, licenseKey, handleInstallationJob)
+async function UpdateAppService (app, to, instances, handleInstallationJob) {
+  const jobStatus = await installApp(app, to, handleInstallationJob)
   if (jobStatus === 'successful') {
     // migrate instances to the new version
     let responses = Promise.resolve('App successfully updated.')
@@ -36,12 +36,12 @@ async function UpdateAppService (app, to, licenseKey, instances, handleInstallat
   }
 }
 
-const installApp = async (app, version, licenseKey, handleInstallationJob) => {
+const installApp = async (app, version, handleInstallationJob) => {
   let jobStatus
   try {
     if (app) {
       const installAPI = new PostInstallAppAPI()
-      await installAPI.installApp(app, version, licenseKey)
+      await installAPI.installApp(app, version)
       const jobId = installAPI.state.responseData.jobId
       jobStatus = await waitUntilJobIsComplete(jobId, handleInstallationJob)
 

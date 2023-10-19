@@ -26,14 +26,13 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import AppAPI from '../api/device/AppAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { setLicensedApp } from '../api/marketplace/LicenseService'
 import { JobsContext } from '../data/JobsContext'
 import { mapJobStatus } from '../utils/mapJobStatus'
 import { postMPLogin } from '../api/device/DeviceAuthAPI'
 import AuthService from '../api/marketplace/AuthService'
 
 export default function InstallApp (props) {
-  const { install, app, version, tickets, handleActiveStep } = (props)
+  const { app, version, handleActiveStep } = (props)
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -41,7 +40,7 @@ export default function InstallApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [infoMessage, setInfoMessage] = React.useState(false)
-  const { setFetchingJobs, currentInstallations } = React.useContext(JobsContext)
+  const { setFetchingJobs } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
   const executedRef = React.useRef(false)
 
@@ -66,16 +65,10 @@ export default function InstallApp (props) {
     if (mpLogin.status === 200) {
       const appAPI = new AppAPI(app)
       appAPI.setAppData(loadReferenceData(app))
-      await appAPI.installFromMarketplace(version, tickets[currentInstallations()]?.license_key, handleInstallationJob)
+      await appAPI.installFromMarketplace(version, handleInstallationJob)
 
       if (appAPI.lastAPICallSuccessful) {
-        // trigger a reload of all installed apps
-        setLicensedApp(tickets[currentInstallations()]?.license_key, app.title)
-          .then()
-          .catch()
-          .finally(() => {
-            setUpdateAppList(true)
-          })
+        setUpdateAppList(true)
       }
     } else {
       setError(true)
@@ -86,9 +79,12 @@ export default function InstallApp (props) {
 
   React.useEffect(() => {
     if (executedRef.current) { return }
-    if (tickets?.length > 0 && app && install && !installing && (!success || !error)) {
+    if (app && !installing && (!success || !error)) {
       setRetry(false)
       installApp(app)
+    } else {
+      setError(true)
+      setInstallationMessage('Error during the installation of ' + app?.title + '.')
     }
     executedRef.current = true
   }, [retry])
@@ -100,13 +96,13 @@ export default function InstallApp (props) {
 
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 1) {
+    if (mappedStatus === 0) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
-    } else if (mappedStatus === 2) {
+    } else if (mappedStatus === 1) {
       setRunning(true)
       setInstallationMessage('Installing ' + app.title + '.')
       setInfoMessage(true)
-    } else if (mappedStatus === 4) {
+    } else if (mappedStatus === 3) {
       setRunning(false)
       setInstallationMessage(app.title + ' successfully installed.')
       setInfoMessage(false)
@@ -152,10 +148,8 @@ export default function InstallApp (props) {
 }
 
 InstallApp.propTypes = {
-  install: PropTypes.bool,
   app: PropTypes.object,
   appKey: PropTypes.object,
   version: PropTypes.string,
-  tickets: PropTypes.array,
   handleActiveStep: PropTypes.func
 }

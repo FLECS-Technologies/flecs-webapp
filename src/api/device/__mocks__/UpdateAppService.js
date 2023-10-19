@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-async function UpdateAppService (app, to, licenseKey, instances, handleInstallationJob) {
+async function UpdateAppService (app, to, instances, handleInstallationJob) {
   return new Promise((resolve, reject) => {
     if (app === 'pass') {
       handleInstallationJob('successful')

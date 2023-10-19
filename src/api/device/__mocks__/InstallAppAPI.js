@@ -18,7 +18,7 @@
 import BaseAPI from '../BaseAPI'
 
 export default class PostInstallAppAPI extends BaseAPI {
-  async installApp (app, version, licenseKey) {
+  async installApp (app, version) {
     if (app) {
       this.state.success = true
       this.state.responseData = { jobId: 1 }

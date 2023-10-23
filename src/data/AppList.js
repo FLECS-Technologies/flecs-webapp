@@ -23,39 +23,46 @@ import DeviceAPI from '../api/device/DeviceAPI'
 import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
 
 function AppList (props) {
-  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, setLoadedProducts } = useReferenceDataContext()
+  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, loadedProducts, setLoadedProducts } = useReferenceDataContext()
+
   React.useEffect(() => {
     if (!appListLoading) {
-      loadAppList()
-      setUpdateAppList(false)
+      if (!loadedProducts) {
+        loadProducts()
+      } else {
+        loadAppList()
+        setUpdateAppList(false)
+      }
     }
-  }, [updateAppList])
+  }, [updateAppList, loadedProducts])
 
-  const loadAppList = async (props) => {
-    let marketplaceAppList = []
-    let mergedList = []
-    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
-
+  const loadProducts = async () => {
     setAppListLoading(true)
     try {
       const products = await getProducts()
       products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
       setLoadedProducts(products)
-      marketplaceAppList = marketplaceAppList.concat(products)
     } catch (error) {
       console.log(error)
       setAppListError(true)
+    } finally {
+      setAppListLoading(false)
     }
+  }
+
+  const loadAppList = async (props) => {
+    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
+    setAppListLoading(true)
 
     // call api from the device to get all installed apps
     const deviceAPI = new DeviceAPI()
     await deviceAPI.getInstances()
     await deviceAPI.getInstalledApps()
     if (deviceAPI.lastAPICallSuccessful) {
-      mergedList = deviceAPI.appList
+      const mergedList = deviceAPI.appList
 
       mergedList.forEach((app) => {
-        const mpApp = findApp(app.appKey, marketplaceAppList)
+        const mpApp = findApp(app.appKey, loadedProducts)
         if (mpApp) {
           app.avatar = getAppIcon(mpApp)
           app.title = mpApp?.name
@@ -74,7 +81,7 @@ function AppList (props) {
       setAppListLoading(false)
       setAppListError(false)
     } else {
-      setAppList(appList => [...marketplaceAppList])
+      setAppList(appList => [...loadedProducts])
       setAppListLoading(false)
       setAppListError(true)
       console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)

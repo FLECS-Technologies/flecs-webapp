@@ -70,7 +70,7 @@ export default function OutlinedCard (props) {
   function loadReferenceData (props) {
     if (appList) {
       const tmpApp = appList.find(obj => {
-        return (obj.app === props.app && obj.version === props.version)
+        return (obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version)
       })
 
       return tmpApp
@@ -233,6 +233,7 @@ export default function OutlinedCard (props) {
 
 OutlinedCard.propTypes = {
   app: PropTypes.string,
+  appKey: PropTypes.object,
   avatar: PropTypes.string,
   title: PropTypes.string,
   author: PropTypes.string,

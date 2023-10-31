@@ -30,21 +30,21 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#ff2e63',
+            color: '#34383c',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#5c5f63'
             }
           },
           '&$selected:hover': {
-            color: 'ff2e63',
+            color: '34383c',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#5c5f63'
             }
           },
           '&:hover': {
-            color: '#08D9D6',
+            color: '#5c5f63',
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: '#5c5f63'
             }
           }
         },
@@ -64,17 +64,17 @@ const darkTheme = createTheme({
     type: 'dark',
 
     primary: {
-      // pink
-      main: '#FF2E63'
+      // dark grey
+      main: '#34383c'
     },
 
     // cyan
     secondary: {
-      main: '#08D9D6'
+      main: '#5c5f63'
     },
 
     text: {
-      primary: '#fff',
+      primary: '#34383c',
       secondary: 'rgba(255, 255, 255, 0.7)',
       disabled: 'rgba(255, 255, 255, 0.5)'
     },
@@ -89,7 +89,7 @@ const darkTheme = createTheme({
 
     background: {
       default: '#212121',
-      paper: '#313131'
+      paper: '#cccfd0'
     },
 
     divider: 'rgba(255, 255, 255, 0.12)'
@@ -103,16 +103,16 @@ const lightTheme = createTheme({
 
     primary: {
       // cyan
-      main: '#08D9D6'
+      main: '#5c5f63'
     },
     // pink
     secondary: {
-      main: '#FF2E63'
+      main: '#34383c'
     },
 
     background: {
       default: '#FAFAFA',
-      paper: '#fff'
+      paper: '#cccfd0'
     }
   }
 })

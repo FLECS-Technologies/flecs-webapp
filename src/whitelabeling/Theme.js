@@ -30,21 +30,21 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#34383c',
+            color: '#DEE0E0',
             '& .MuiListItemIcon-root': {
-              color: '#5c5f63'
+              color: '#171F24'
             }
           },
           '&$selected:hover': {
-            color: '34383c',
+            color: '#171F24',
             '& .MuiListItemIcon-root': {
-              color: '#5c5f63'
+              color: '#324048'
             }
           },
           '&:hover': {
-            color: '#5c5f63',
+            color: '#171F24',
             '& .MuiListItemIcon-root': {
-              color: '#5c5f63'
+              color: '#324048'
             }
           }
         },
@@ -102,17 +102,31 @@ const lightTheme = createTheme({
     type: 'light',
 
     primary: {
-      // cyan
-      main: '#5c5f63'
+      // dark grey
+      main: '#171F24'
     },
     // pink
     secondary: {
-      main: '#34383c'
+      main: '#DEE0E0'
     },
 
     background: {
-      default: '#FAFAFA',
-      paper: '#cccfd0'
+      default: '#DEE0E0',
+      paper: '#324048'
+    },
+
+    text: {
+      primary: '#DEE0E0',
+      secondary: 'rgba(255, 255, 255, 0.7)',
+      disabled: 'rgba(255, 255, 255, 0.5)'
+    },
+
+    action: {
+      active: '#DEE0E0',
+      hover: 'rgba(255, 255, 255, 1)',
+      selected: 'rgba(255, 255, 255, 1)',
+      disabled: 'rgba(255, 255, 255, 0.3)',
+      disabledBackground: 'rgba(255, 255, 255, 0.12)'
     }
   }
 })

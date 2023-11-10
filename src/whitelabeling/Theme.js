@@ -30,21 +30,8 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#DEE0E0',
             '& .MuiListItemIcon-root': {
-              color: '#171F24'
-            }
-          },
-          '&$selected:hover': {
-            color: '#171F24',
-            '& .MuiListItemIcon-root': {
-              color: '#324048'
-            }
-          },
-          '&:hover': {
-            color: '#171F24',
-            '& .MuiListItemIcon-root': {
-              color: '#324048'
+              color: '#e30018'
             }
           }
         },
@@ -65,31 +52,31 @@ const darkTheme = createTheme({
 
     primary: {
       // dark grey
-      main: '#34383c'
+      main: '#171F24'
     },
 
     // cyan
     secondary: {
-      main: '#5c5f63'
+      main: '#425b75'
     },
 
     text: {
-      primary: '#34383c',
+      primary: '#DEE0E0',
       secondary: 'rgba(255, 255, 255, 0.7)',
       disabled: 'rgba(255, 255, 255, 0.5)'
     },
 
     action: {
       active: '#fff',
-      hover: 'rgba(255, 255, 255, 0.08)',
+      hover: 'rgba(255, 255, 255, 1)',
       selected: 'rgba(255, 255, 255, 0.16)',
       disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)'
+      disabledBackground: 'rgba(255, 255, 255, 0.3)'
     },
 
     background: {
-      default: '#212121',
-      paper: '#cccfd0'
+      default: '#34383c',
+      paper: '#5c5f63'
     },
 
     divider: 'rgba(255, 255, 255, 0.12)'
@@ -103,30 +90,16 @@ const lightTheme = createTheme({
 
     primary: {
       // dark grey
-      main: '#171F24'
+      main: '#425b75'
     },
     // pink
     secondary: {
-      main: '#DEE0E0'
+      main: '#34383c'
     },
 
     background: {
       default: '#DEE0E0',
-      paper: '#324048'
-    },
-
-    text: {
-      primary: '#DEE0E0',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-      disabled: 'rgba(255, 255, 255, 0.5)'
-    },
-
-    action: {
-      active: '#DEE0E0',
-      hover: 'rgba(255, 255, 255, 1)',
-      selected: 'rgba(255, 255, 255, 1)',
-      disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)'
+      paper: '#f0f0f0'
     }
   }
 })

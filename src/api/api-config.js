@@ -98,7 +98,7 @@ const POST_VALIDATE_URL = '/api/v2/auth/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL =
   '/api/license/get-current-user-licenses'
 const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta'
-const GET_PRODUCTS_URL = '/api/v2/products/apps'
+const GET_PRODUCTS_URL = '/api/v2/products/apps?store_id=261'
 const GET_LATEST_VERSION_URL = '/api/v1/core/version/latest'
 const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews'
 

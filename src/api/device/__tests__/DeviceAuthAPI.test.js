@@ -24,14 +24,12 @@ jest.mock('axios')
 
 const testUser = {
   user: {
-    data: {
-      user_login: 'test-customer',
-      user_nicename: 'test-customer',
-      display_name: 'test-customer',
-      user_url: '',
-      user_email: 'test-customer@test.test',
-      user_registered: '2022-01-13 08:43:14'
-    }
+    user_login: 'test-customer',
+    user_nicename: 'test-customer',
+    display_name: 'test-customer',
+    user_url: '',
+    user_email: 'test-customer@test.test',
+    user_registered: '2022-01-13 08:43:14'
   },
   redirect: null,
   jwt: {
@@ -54,7 +52,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogin(testUser)
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.data.user_login, token: testUser.jwt.token })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.user_login, token: testUser.jwt.token })
   })
 
   test('calls  mp-logout', async () => {
@@ -63,7 +61,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogout(testUser)
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.data.user_login })
+    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.user_login })
   })
 
   test('calls failed mp-login', async () => {

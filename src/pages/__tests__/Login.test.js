@@ -30,20 +30,23 @@ jest.mock('../../components/AuthProvider', () => ({ useAuth: jest.fn() }))
 
 describe('Login', () => {
   const homer = {
-    user: {
-      data: {
-        ID: 4,
-        user_login: 'homer-simpson',
-        user_nicename: 'Homer Simpson',
-        display_name: 'Homer Simpson',
-        user_url: '',
-        user_email: 'homer-simpson@springfield.io',
-        user_registered: '2022-01-13 08:43:14'
-      },
-      redirect: null,
-      jwt: {
-        token: 'supersafetoken',
-        token_expires: 1642255418
+    statusCode: 200,
+    data: {
+      user: {
+        data: {
+          ID: 4,
+          user_login: 'homer-simpson',
+          user_nicename: 'Homer Simpson',
+          display_name: 'Homer Simpson',
+          user_url: '',
+          user_email: 'homer-simpson@springfield.io',
+          user_registered: '2022-01-13 08:43:14'
+        },
+        redirect: null,
+        jwt: {
+          token: 'supersafetoken',
+          token_expires: 1642255418
+        }
       }
     },
     setUser: jest.fn()

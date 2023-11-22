@@ -21,7 +21,7 @@ import axios from 'axios'
 async function postMPLogin (currentUser) {
   try {
     let url = ''
-    const user = currentUser?.user?.data?.user_login
+    const user = currentUser?.user?.user_login
     const token = currentUser?.jwt?.token
 
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {

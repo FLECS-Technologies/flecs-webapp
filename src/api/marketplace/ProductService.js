@@ -22,8 +22,8 @@ async function getProducts () {
   return axios
     .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL)
     .then(response => {
-      if (response.data && response.data.success && response.data.products) {
-        return response.data.products
+      if (response.data && response.data.statusCode === 200 && response.data.data.products) {
+        return response.data.data.products
       }
     })
     .catch(error => {

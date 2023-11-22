@@ -30,26 +30,27 @@ class AuthService {
         issueJWT
       })
       .then(response => {
-        if (response.data?.jwt?.token) {
-          localStorage.setItem('user', JSON.stringify(response.data))
+        if (response.data.statusCode === 200 && response.data.data?.jwt?.token) {
+          localStorage.setItem('user', JSON.stringify(response.data.data))
         }
 
-        return response.data
+        return response.data.data
       })
       .catch(error => {
         return Promise.reject(error)
       })
   }
 
-  validate (jwt) {
+  validate (token) {
+    const jwt = { token }
     const url = MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL
     return axios
       .post(url, {
         jwt
       })
       .then(response => {
-        if (response.data?.isValid) {
-          return response.data
+        if (response.data.statusCode === 200 && response.data.data.isValid) {
+          return response.data.data
         }
       })
       .catch(error => {

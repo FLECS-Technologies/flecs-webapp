@@ -44,7 +44,7 @@ async function postMPLogout (currentUser) {
   try {
     if (currentUser) {
       let url = ''
-      const user = currentUser?.user?.data?.user_login
+      const user = currentUser?.user?.user_login
 
       if (process.env.REACT_APP_ENVIRONMENT === 'development') {
         url = process.env.REACT_APP_DEV_CORE_URL

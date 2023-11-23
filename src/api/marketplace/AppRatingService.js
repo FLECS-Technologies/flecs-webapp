@@ -19,7 +19,7 @@
 import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
 
-function createAppRating (product_id, reviewer, reviewer_email, rating, jwt) {
+function createAppRating (product_id, reviewer, reviewer_email, rating, token) {
   const data = {
     product_id,
     review: 'This is an in-app rating without review.',
@@ -27,6 +27,7 @@ function createAppRating (product_id, reviewer, reviewer_email, rating, jwt) {
     reviewer_email,
     rating
   }
+  const jwt = { token }
   return axios
     .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_PRODUCT_RATING_URL, { data, jwt })
     .then(response => {

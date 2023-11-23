@@ -48,7 +48,7 @@ export default function AppRating (props) {
   const saveAppRating = async (props) => {
     setSavingAppRating(true)
 
-    createAppRating(app?.id, user?.user?.user?.data?.display_name, user?.user?.user?.data?.user_email, value, jwt())
+    createAppRating(app?.id, user?.user?.user?.display_name, user?.user?.user?.user_email, value, jwt())
       .then((response) => {
         setSnackbarState({
           alertSeverity: 'success',
@@ -58,7 +58,7 @@ export default function AppRating (props) {
       .catch((error) => {
         setSnackbarState({
           alertSeverity: 'error',
-          snackbarText: error?.response?.data?.error
+          snackbarText: error?.response?.data?.reason
         })
       })
       .finally(() => {

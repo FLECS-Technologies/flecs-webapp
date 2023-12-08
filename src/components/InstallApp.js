@@ -62,7 +62,7 @@ export default function InstallApp (props) {
 
     const currentUser = AuthService.getCurrentUser()
     const mpLogin = await postMPLogin(currentUser)
-    if (mpLogin.status === 200) {
+    if (mpLogin.status === 204) {
       const appAPI = new AppAPI(app)
       appAPI.setAppData(loadReferenceData(app))
       await appAPI.installFromMarketplace(version, handleInstallationJob)

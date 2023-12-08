@@ -60,7 +60,7 @@ class AuthService {
   }
 
   logout () {
-    postMPLogout(this.getCurrentUser())
+    postMPLogout()
       .then(
         () => { /* successfully logged out from the device */ },
         error => { console.log(error.message) }

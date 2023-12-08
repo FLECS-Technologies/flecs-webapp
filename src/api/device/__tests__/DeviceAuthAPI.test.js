@@ -47,30 +47,30 @@ describe('DeviceAuthAPI', () => {
   })
 
   test('calls successful mp-login', async () => {
-    axios.post.mockResolvedValueOnce()
+    axios.put.mockResolvedValueOnce()
     await act(async () => {
       postMPLogin(testUser)
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: testUser.user.user_login, token: testUser.jwt.token })
+    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, testUser)
   })
 
   test('calls  mp-logout', async () => {
-    axios.post.mockResolvedValueOnce()
+    axios.delete.mockResolvedValueOnce()
     await act(async () => {
-      postMPLogout(testUser)
+      postMPLogout()
     })
 
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL, { user: testUser.user.user_login })
+    expect(axios.delete).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL)
   })
 
   test('calls failed mp-login', async () => {
-    axios.post.mockReturnValue(Promise.reject(new Error('Failed to login user at the device')))
+    axios.put.mockReturnValue(Promise.reject(new Error('Failed to login user at the device')))
     await act(async () => { expect(postMPLogin(testUser)).rejects.toThrowError() })
   })
 
   test('calls successful mp-logout', async () => {
-    axios.post.mockReturnValue(Promise.reject(new Error('Failed to log out user from the device')))
-    await act(async () => { expect(postMPLogout(testUser)).rejects.toThrowError() })
+    axios.delete.mockReturnValue(Promise.reject(new Error('Failed to log out user from the device')))
+    await act(async () => { expect(postMPLogout()).rejects.toThrowError() })
   })
 })

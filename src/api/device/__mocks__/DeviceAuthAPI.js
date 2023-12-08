@@ -19,7 +19,7 @@
 export const postMPLogin = async (currentUser) => {
   return new Promise((resolve, reject) => {
     currentUser !== 'fail'
-      ? resolve({ status: 200 })
+      ? resolve({ status: 204 })
       : reject(new Error('Mock: Failed to log in.'))
   })
 }

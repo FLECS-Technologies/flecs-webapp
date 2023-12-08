@@ -55,7 +55,7 @@ export default function UpdateApp (props) {
     const currentUser = AuthService.getCurrentUser()
     postMPLogin(currentUser)
       .then(async (response) => {
-        if (response.status === 200) {
+        if (response.status === 204) {
           // call update endpoint
           await UpdateAppService(app?.appKey.name, to, installedApp[0]?.instances, handleInstallationJob)
             .then(async () => {

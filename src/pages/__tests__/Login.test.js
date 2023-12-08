@@ -144,7 +144,7 @@ describe('Login', () => {
 
   test('Successful Login', async () => {
     axios.post.mockResolvedValueOnce(homer)
-    axios.post.mockResolvedValueOnce()
+    axios.put.mockResolvedValueOnce()
     useAuth.mockReturnValue(homer)
     const user = userEvent.setup()
     await act(async () => {
@@ -169,9 +169,10 @@ describe('Login', () => {
     const message = screen.getByLabelText('message')
 
     expect(message).toHaveTextContent('Successfully logged in!')
-    expect(axios.post).toHaveBeenCalledTimes(2)
+    expect(axios.post).toHaveBeenCalledTimes(1)
+    expect(axios.put).toHaveBeenCalledTimes(1)
     expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
-    expect(axios.post).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL, { user: undefined, token: undefined })
+    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, null)
   })
 
   test('Unsuccessful Login', async () => {

@@ -21,15 +21,13 @@ import axios from 'axios'
 async function postMPLogin (currentUser) {
   try {
     let url = ''
-    const user = currentUser?.user?.user_login
-    const token = currentUser?.jwt?.token
 
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       url = process.env.REACT_APP_DEV_CORE_URL
     }
-    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGIN_URL
+    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL
     return axios
-      .post(url, { user, token })
+      .put(url, currentUser)
       .then(response => {
         return response
       })
@@ -40,25 +38,22 @@ async function postMPLogin (currentUser) {
     return Promise.reject(error)
   }
 }
-async function postMPLogout (currentUser) {
+async function postMPLogout () {
   try {
-    if (currentUser) {
-      let url = ''
-      const user = currentUser?.user?.user_login
+    let url = ''
 
-      if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-        url = process.env.REACT_APP_DEV_CORE_URL
-      }
-      url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.MARKETPLACE_ROUTE + DeviceAPIConfiguration.POST_MP_LOGOUT_URL
-      return axios
-        .post(url, { user })
-        .then(response => {
-          return response
-        })
-        .catch(error => {
-          return Promise.reject(error)
-        })
-    } else { return Promise.resolve() }
+    if (process.env.REACT_APP_ENVIRONMENT === 'development') {
+      url = process.env.REACT_APP_DEV_CORE_URL
+    }
+    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
+    return axios
+      .delete(url)
+      .then(response => {
+        return response
+      })
+      .catch(error => {
+        return Promise.reject(error)
+      })
   } catch (error) {
     return Promise.reject(error)
   }

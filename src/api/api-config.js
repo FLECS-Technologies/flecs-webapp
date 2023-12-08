@@ -21,8 +21,8 @@ import { Component } from 'react'
 const DEVICE_ROUTE = '../api/v2'
 const DEVICE_ROUTE_TEST = '/api/v2'
 const APP_ROUTE = '/apps'
+const CONSOLE_ROUTE = '/console'
 const INSTANCES_ROUTE = '/instances'
-const MARKETPLACE_ROUTE = '/marketplace'
 const SYSTEM_ROUTE = '/system'
 const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
@@ -49,11 +49,11 @@ const POST_CREATE_INSTANCE_URL = INSTANCES_ROUTE + '/create'
 const POST_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const POST_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs'
 const POST_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config'
-const POST_MP_LOGIN_URL = '/login'
-const POST_MP_LOGOUT_URL = '/logout'
 const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
 const POST_SIDELOAD_APP = '/sideload'
 const POST_IMPORT_URL = '/imports'
+
+const PUT_CONSOLE_AUTH_URL = '/authentication'
 
 const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 
@@ -61,6 +61,7 @@ const DELETE_UNINSTALL_APP_URL = ''
 const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`
 const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const DELETE_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
+const DELETE_CONSOLE_AUTH_URL = '/authentication'
 
 const MP_BASE_URL = 'https://console.flecs.tech'
 const MP_BETA_BASE_URL = 'https://console-dev.flecs.tech'
@@ -101,12 +102,12 @@ class DeviceAPIConfiguration extends Component {
     return APP_ROUTE
   }
 
-  static get INSTANCES_ROUTE () {
-    return INSTANCES_ROUTE
+  static get CONSOLE_ROUTE () {
+    return CONSOLE_ROUTE
   }
 
-  static get MARKETPLACE_ROUTE () {
-    return MARKETPLACE_ROUTE
+  static get INSTANCES_ROUTE () {
+    return INSTANCES_ROUTE
   }
 
   static get SYSTEM_ROUTE () {
@@ -142,14 +143,6 @@ class DeviceAPIConfiguration extends Component {
     return POST_SIDELOAD_APP
   }
 
-  static get POST_MP_LOGIN_URL () {
-    return POST_MP_LOGIN_URL
-  }
-
-  static get POST_MP_LOGOUT_URL () {
-    return POST_MP_LOGOUT_URL
-  }
-
   static get POST_INSTANCE_DETAILS_URL () {
     return POST_INSTANCE_DETAILS_URL
   }
@@ -172,6 +165,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get POST_IMPORT_URL () {
     return POST_IMPORT_URL
+  }
+
+  static get PUT_CONSOLE_AUTH_URL () {
+    return PUT_CONSOLE_AUTH_URL
   }
 
   // get requests
@@ -243,6 +240,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get DELETE_JOB_URL () {
     return DELETE_JOB_URL
+  }
+
+  static get DELETE_CONSOLE_AUTH_URL () {
+    return DELETE_CONSOLE_AUTH_URL
   }
 }
 

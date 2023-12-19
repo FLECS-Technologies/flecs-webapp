@@ -114,13 +114,13 @@ jobs:
           inlineScript: |
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "latest_flecs-webapp_*"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/flecs-webapp/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/$(basename ${i}) --file ${i} --overwrite
             done
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/flecs-webapp/deb/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/deb/$(basename ${i}) --file ${i} --overwrite
             done
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/flecs-webapp/tar/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/tar/$(basename ${i}) --file ${i} --overwrite
             done

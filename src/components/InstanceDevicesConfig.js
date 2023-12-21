@@ -57,8 +57,6 @@ export default function InstanceDevicesConfig (props) {
                             <Typography variant='body2'>This means that the app can then access USB devices, CAN interfaces, or other hardware devices.</Typography>
                             <Typography variant='body2'>A common use case is giving an app access to a license dongle.</Typography>
                             <Typography variant='body2'>  </Typography>
-                            <AlertTitle>Note</AlertTitle>
-                            <Typography variant='body2'>If you have activated a USB device, you need to stop and restart the app instance once so that the USB device is recognized in this instance.</Typography>
                         </Alert>
                         <Alert sx={{ mb: 2 }} severity='info'>
                             <AlertTitle>Note</AlertTitle>

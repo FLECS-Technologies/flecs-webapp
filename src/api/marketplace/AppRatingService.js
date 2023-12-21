@@ -18,6 +18,7 @@
 
 import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
+import { authorizationHeaderUseBearer } from '../auth-header'
 
 function createAppRating (product_id, reviewer, reviewer_email, rating, token) {
   const data = {
@@ -27,9 +28,9 @@ function createAppRating (product_id, reviewer, reviewer_email, rating, token) {
     reviewer_email,
     rating
   }
-  const jwt = { token }
+  const authHeader = authorizationHeaderUseBearer()
   return axios
-    .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_PRODUCT_RATING_URL, { data, jwt })
+    .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_PRODUCT_RATING_URL, { data }, { headers: authHeader })
     .then(response => {
       if (response.data && response.data.success) {
         return response.data

@@ -68,6 +68,7 @@ const MP_BETA_BASE_URL = 'https://console-dev.flecs.tech'
 const MP_CART_ROUTE = '/cart?cocart-load-cart='
 
 const MP_PROXY_DEV = 'https://console-dev.flecs.tech'
+const MP_PROXY_TEST = 'https://console-dev.flecs.tech'
 const MP_PROXY_PRODUCTION = 'https://console.flecs.tech'
 
 const MP_DEV = 'https://staging.flecs-technologies.com'
@@ -256,6 +257,9 @@ class MarketplaceAPIConfiguration {
         break
       case 'development':
         mpUrl = MP_PROXY_DEV
+        break
+      case 'test':
+        mpUrl = MP_PROXY_TEST
         break
       default:
         mpUrl = MP_PROXY_PRODUCTION

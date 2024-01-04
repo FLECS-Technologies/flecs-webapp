@@ -73,7 +73,9 @@ export default function Login () {
         setMessage(resMessage)
       }
     )
-    setLoginInProgress(false)
+      .finally(() => {
+        setLoginInProgress(false)
+      })
   }
 
   return (

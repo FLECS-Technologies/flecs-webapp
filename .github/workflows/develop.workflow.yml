@@ -120,7 +120,7 @@ jobs:
               echo "Uploading ${i}"; \
               az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/deb/$(basename ${i}) --file ${i} --overwrite
             done
-            for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
+            for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.tar"`; do \
               echo "Uploading ${i}"; \
               az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/tar/$(basename ${i}) --file ${i} --overwrite
             done

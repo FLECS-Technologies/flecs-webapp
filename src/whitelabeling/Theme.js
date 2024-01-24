@@ -21,7 +21,7 @@ import './Theme.css'
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: "'Quicksand'"
+    fontFamily: "'PT Sans'"
     // fontFamilySecondary: "'Roboto Condensed', sans-serif"
   },
 

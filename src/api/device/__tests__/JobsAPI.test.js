@@ -55,7 +55,7 @@ describe('JobsAPI', () => {
 
   test('calls successful JobsAPI.getJobs', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
       .reply(200, jobs)
     const jobsAPI = new JobsAPI()
     await jobsAPI.getJobs()
@@ -66,7 +66,7 @@ describe('JobsAPI', () => {
 
   test('calls failed JobsAPI.getJobs', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -81,7 +81,7 @@ describe('JobsAPI', () => {
 
   test('calls successful JobsAPI.getJob', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOB_URL(jobs[0].id))
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_JOB_URL(jobs[0].id))
       .reply(200, jobs[0])
     const jobsAPI = new JobsAPI()
     await jobsAPI.getJob(jobs[0].id)
@@ -92,7 +92,7 @@ describe('JobsAPI', () => {
 
   test('calls failed JobsAPI.getJob', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_JOB_URL(jobs[0].id))
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_JOB_URL(jobs[0].id))
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -107,7 +107,7 @@ describe('JobsAPI', () => {
 
   test('calls successful JobsAPI.deleteJob', async () => {
     nock('http://localhost')
-      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_JOB_URL(jobs[0].id))
+      .delete(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DELETE_JOB_URL(jobs[0].id))
       .reply(200)
     const jobsAPI = new JobsAPI()
     await jobsAPI.deleteJob(jobs[0].id)
@@ -118,7 +118,7 @@ describe('JobsAPI', () => {
 
   test('calls failed JobsAPI.deleteJob', async () => {
     nock('http://localhost')
-      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_JOB_URL(jobs[0].id))
+      .delete(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DELETE_JOB_URL(jobs[0].id))
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

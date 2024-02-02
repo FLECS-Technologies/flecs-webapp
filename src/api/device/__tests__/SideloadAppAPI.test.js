@@ -35,7 +35,7 @@ describe('PostSideloadAppAPI', () => {
   })
   test('calls PostSideloadAppAPI with success response', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
       .reply(202, {
         jobId: 1
       })
@@ -49,7 +49,7 @@ describe('PostSideloadAppAPI', () => {
 
   test('calls PostSideloadAppAPI with unsuccessful response', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
       .reply(405, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

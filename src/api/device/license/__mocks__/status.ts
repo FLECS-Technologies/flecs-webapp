@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Fri Apr 08 2022
+ * Created on Thu Apr 07 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
-async function getInstanceLog (instanceId) {
-  return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_INSTANCE_LOG_URL(instanceId))
-    .then(response => {
-      return response.data
-    })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+
+import { ValidateDeviceAPIResponse } from '../status'
+
+export const mockValidateDeviceAPIResponse = {
+  data: {
+    isValid: true
+  } as ValidateDeviceAPIResponse
 }
 
-function getLog (data) {
-  return '--- stdout\n\n' + data.stdout + '--- stderr\n\n' + data.stderr
+function ValidateDeviceAPI() {
+  return new Promise((resolve, reject) => {
+    resolve({
+      isValid: true
+    } as ValidateDeviceAPIResponse)
+  })
 }
 
-export { getInstanceLog, getLog }
+export { ValidateDeviceAPI }

@@ -172,7 +172,7 @@ describe('Login', () => {
     expect(axios.post).toHaveBeenCalledTimes(1)
     expect(axios.put).toHaveBeenCalledTimes(1)
     expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
-    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, null)
+    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, null)
   })
 
   test('Unsuccessful Login', async () => {

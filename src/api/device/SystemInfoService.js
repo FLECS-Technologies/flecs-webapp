@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 async function SystemInfo () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_SYSTEM_INFO_URL)
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_SYSTEM_INFO_URL)
     .then(response => {
       return response.data
     })

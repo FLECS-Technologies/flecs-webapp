@@ -20,7 +20,7 @@ import { DeviceAPIConfiguration } from '../api-config'
 
 async function SystemPing () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_PING_URL)
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_PING_URL)
     .then(response => {
       return response.data
     })

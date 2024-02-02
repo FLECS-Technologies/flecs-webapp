@@ -24,13 +24,13 @@ import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { UpdateAppService } from '../api/device/UpdateAppService'
-import { JobsContext } from '../data/JobsContext'
-import { mapJobStatus } from '../utils/mapJobStatus'
-import { sleep } from '../utils/sleep'
-import AuthService from '../api/marketplace/AuthService'
-import { postMPLogin } from '../api/device/DeviceAuthAPI'
+import { ReferenceDataContext } from '../../../data/ReferenceDataContext'
+import { UpdateAppService } from '../../../api/device/UpdateAppService'
+import { JobsContext } from '../../../data/JobsContext'
+import { mapJobStatus } from '../../../utils/mapJobStatus'
+import { sleep } from '../../../utils/sleep'
+import AuthService from '../../../api/marketplace/AuthService'
+import { postMPLogin } from '../../../api/device/DeviceAuthAPI'
 
 export default function UpdateApp (props) {
   const { app, from, to, handleActiveStep } = (props)
@@ -95,13 +95,13 @@ export default function UpdateApp (props) {
 
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 0) {
+    if (mappedStatus === 1) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
-    } else if (mappedStatus === 1) {
+    } else if (mappedStatus === 2) {
       setRunning(true)
       setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
       setInfoMessage(true)
-    } else if (mappedStatus === 3) {
+    } else if (mappedStatus === 4) {
       setRunning(false)
       setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
       setInfoMessage(false)

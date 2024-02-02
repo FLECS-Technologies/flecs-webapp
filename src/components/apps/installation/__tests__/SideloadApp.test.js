@@ -20,10 +20,10 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SideloadApp from '../SideloadApp'
-import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../data/JobsContext'
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
+import { JobsContextProvider } from '../../../../data/JobsContext'
 
-jest.mock('../../api/device/AppAPI')
+jest.mock('../../../../api/device/AppAPI')
 
 const yaml = {
   appKey: {
@@ -38,6 +38,9 @@ const yaml = {
 const handleActiveStep = jest.fn()
 
 describe('Test Sideload App', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
   test('renders SideloadApp component', () => {
     render(
       <JobsContextProvider>

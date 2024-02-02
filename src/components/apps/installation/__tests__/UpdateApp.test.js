@@ -22,13 +22,13 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import UpdateApp from '../UpdateApp'
-import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../data/JobsContext'
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
+import { JobsContextProvider } from '../../../../data/JobsContext'
 
-jest.mock('../../api/device/UpdateAppService')
-jest.mock('../../api/device/AppAPI')
-jest.mock('../../api/device/ExportAppsService')
-jest.mock('../../api/device/DeviceAuthAPI')
+jest.mock('../../../../api/device/UpdateAppService')
+jest.mock('../../../../api/device/AppAPI')
+jest.mock('../../../../api/device/ExportAppsService')
+jest.mock('../../../../api/device/DeviceAuthAPI')
 
 const app = {
   title: 'test app',

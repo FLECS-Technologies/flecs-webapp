@@ -43,10 +43,11 @@ import usePagination from '../hooks/usePagination'
 import { useAuth } from './AuthProvider'
 import { CircularProgress } from '@mui/material'
 import { useSystemContext } from '../data/SystemProvider'
-import InstallAppStepper from './InstallAppStepper'
+// import InstallAppStepper from './InstallAppStepper'
 import ContentDialog from './ContentDialog'
 import Export from './Export'
 import Import from './Import'
+import InstallationStepper from './apps/installation/InstallationStepper'
 
 const headCells = [
 
@@ -306,7 +307,7 @@ export default function DeviceAppsList (props) {
           setOpen={setSideloadAppOpen}
           title={'Sideload App'}
         >
-          <InstallAppStepper app={yaml} sideload={true} />
+          <InstallationStepper app={yaml} sideload={true} />
         </ContentDialog>
     </Box>
   )

@@ -20,11 +20,11 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallApp from '../InstallApp'
-import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../data/JobsContext'
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
+import { JobsContextProvider } from '../../../../data/JobsContext'
 
-jest.mock('../../api/device/AppAPI')
-jest.mock('../../api/device/DeviceAuthAPI')
+jest.mock('../../../../api/device/AppAPI')
+jest.mock('../../../../api/device/DeviceAuthAPI')
 
 const app = {
   appKey: {
@@ -39,6 +39,10 @@ const app = {
 const handleActiveStep = jest.fn()
 
 describe('Test Install App', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
   test('renders InstallApp component', () => {
     render(
       <JobsContextProvider>

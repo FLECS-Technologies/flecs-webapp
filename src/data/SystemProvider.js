@@ -17,6 +17,7 @@
  */
 import React, { createContext } from 'react'
 import PropTypes from 'prop-types'
+import DeviceActivationProvider from '../components/providers/DeviceActivationProvider'
 
 const SystemContext = createContext([])
 
@@ -27,7 +28,9 @@ const SystemContextProvider = ({ children }) => {
   const [systemInfo, setSystemInfo] = React.useState()
   return (
     <SystemContext.Provider value={{ ping, setPing, loading, setLoading, systemInfo, setSystemInfo }}>
-      {children}
+      <DeviceActivationProvider>
+        {children}
+      </DeviceActivationProvider>
     </SystemContext.Provider>
   )
 }

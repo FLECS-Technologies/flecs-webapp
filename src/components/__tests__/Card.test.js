@@ -15,25 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react'
 import nock from 'nock'
-import { screen, render, fireEvent } from '@testing-library/react'
+import { screen, render, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Card from '../Card'
 import { SystemContextProvider } from '../../data/SystemProvider'
 import { SystemData } from '../../data/SystemData'
-import { act } from 'react-dom/test-utils'
 import { JobsContextProvider } from '../../data/JobsContext'
 jest.mock('../../api/device/SystemInfoService')
 jest.mock('../../api/device/SystemPingService')
 jest.mock('../../api/device/JobsAPI')
+jest.mock('../../api/device/AppAPI')
+jest.mock('../../api/device/DeviceAuthAPI')
+jest.mock('../../api/device/license/activation')
+jest.mock('../../api/device/license/status')
 
 describe('Card', () => {
   const relatedLinks = [
     {
       text: 'Buy',
-      link: 'https://store.codesys.com/de/codesys-control-for-linux-sl-bundle.html'
+      link: 'https://flecs.tech'
     }
   ]
 
@@ -44,6 +46,10 @@ describe('Card', () => {
   afterEach(() => {
     nock.cleanAll()
     nock.enableNetConnect()
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
   })
 
   test('renders Card component', () => {
@@ -70,23 +76,23 @@ describe('Card', () => {
     await act(async () => {
       render(
         <JobsContextProvider>
-        <SystemContextProvider>
-          <SystemData>
-            <Card
-              app='Testapp'
-              avatar=''
-              title='Test App Title'
-              author='Test App author'
-              versions={['Test App Version']}
-              description= 'Test App Description'
-              status='uninstalled'
-              availability='available'
-              requirement={['amd64']} // valid architecture
-              installedVersions={[]}
-              instances={[]}
-            />
-          </SystemData>
-        </SystemContextProvider>
+          <SystemContextProvider>
+            <SystemData>
+              <Card
+                app='Testapp'
+                avatar=''
+                title='Test App Title'
+                author='Test App author'
+                versions={['Test App Version']}
+                description='Test App Description'
+                status='uninstalled'
+                availability='available'
+                requirement={['amd64']} // valid architecture
+                installedVersions={[]}
+                instances={[]}
+              />
+            </SystemData>
+          </SystemContextProvider>
         </JobsContextProvider>
       )
     })
@@ -98,23 +104,23 @@ describe('Card', () => {
     expect(installButton).toBeEnabled()
     expect(uninstallButton).toBeNull()
     expect(requestButton).not.toBeVisible()
-    fireEvent.click(installButton)
-
-    // screen.debug()
   })
 
   test('Click uninstall', async () => {
-    render(<Card
-      app= 'Testapp'
-      avatar= ''
-      title= 'Test App Title'
-      author= 'Test App author'
-      version= 'Test App Version'
-      description= 'Test App Description'
-      status= 'installed'
-      availability='available'
-      installedVersions={['Test App Version']}
-      instances={[]} />)
+    render(
+      <Card
+        app='Testapp'
+        avatar=''
+        title='Test App Title'
+        author='Test App author'
+        version='Test App Version'
+        description='Test App Description'
+        status='installed'
+        availability='available'
+        installedVersions={['Test App Version']}
+        instances={[]}
+      />
+    )
 
     const uninstallButton = screen.queryByText('Uninstall')
     fireEvent.click(uninstallButton)

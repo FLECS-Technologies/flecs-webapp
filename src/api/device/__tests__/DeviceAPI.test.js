@@ -91,7 +91,7 @@ describe('DeviceAPI', () => {
 
   test('calls successful DeviceAPI.getInstalledApps', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
       .reply(200, appList, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -105,7 +105,7 @@ describe('DeviceAPI', () => {
 
   test('calls failed DeviceAPI.getInstalledApps', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -120,7 +120,7 @@ describe('DeviceAPI', () => {
 
   test('calls successful DeviceAPI.browseServiceMesh', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
       .reply(200, { data }, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -135,7 +135,7 @@ describe('DeviceAPI', () => {
 
   test('calls failed DeviceAPI.browseServiceMesh', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
       .reply(400, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'
@@ -150,7 +150,7 @@ describe('DeviceAPI', () => {
 
   test('calls DeviceAPI.browseServiceMesh with null response', async () => {
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DATA_LAYER_ROUTE + DeviceAPIConfiguration.GET_BROWSE_DATA_LAYER)
       .reply(200, { testfail: 'NULL response' }, {
         'Access-Control-Allow-Origin': '*',
         'Content-type': 'application/json'

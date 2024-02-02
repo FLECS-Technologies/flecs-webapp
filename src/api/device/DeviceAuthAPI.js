@@ -25,7 +25,7 @@ async function postMPLogin (currentUser) {
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       url = process.env.REACT_APP_DEV_CORE_URL
     }
-    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL
+    url = url + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL
     return axios
       .put(url, currentUser)
       .then(response => {
@@ -45,7 +45,7 @@ async function postMPLogout () {
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       url = process.env.REACT_APP_DEV_CORE_URL
     }
-    url = url + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
+    url = url + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
     return axios
       .delete(url)
       .then(response => {

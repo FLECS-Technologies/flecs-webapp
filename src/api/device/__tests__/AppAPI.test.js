@@ -89,7 +89,7 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.uninstall', async () => {
     nock('http://localhost')
-      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL + '/' + testApp.appKey.name + '?version=' + testApp.appKey.version)
+      .delete(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL + '/' + testApp.appKey.name + '?version=' + testApp.appKey.version)
       .reply(202, {
         jobId: 1
       })
@@ -107,14 +107,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.createInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
@@ -139,14 +139,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.startInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
@@ -171,14 +171,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.stopInstance', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(testInstance.instanceId))
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'stopped', desired: 'stopped' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
@@ -203,14 +203,14 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.deleteInstance', async () => {
     nock('http://localhost')
-      .delete(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_INSTANCE_URL(testInstance.instanceId))
+      .delete(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DELETE_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
@@ -231,26 +231,26 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.installFromMarketplace', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_INSTALL_APP_URL)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_INSTALL_APP_URL)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 
@@ -270,26 +270,26 @@ describe('AppAPI', () => {
 
   test('calls AppAPI.sideloadApp', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL)
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
+      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_START_INSTANCE_URL(testInstance.instanceId))
       .reply(202, {
         jobId: 1
       })
 
     // used for fetchInstances()
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
       .reply(200, [{ instanceId: testInstance.instanceId, instanceName: 'Mosquitto MQTT broker0', appKey: { name: 'org.eclipse.mosquitto', version: '2.0.14-openssl' }, status: 'running', desired: 'running' }, { instanceId: '0291fa61', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'running', desired: 'running' }]
       )
 

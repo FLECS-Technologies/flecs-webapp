@@ -52,7 +52,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogin(testUser)
     })
 
-    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, testUser)
+    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, testUser)
   })
 
   test('calls  mp-logout', async () => {
@@ -61,7 +61,7 @@ describe('DeviceAuthAPI', () => {
       postMPLogout()
     })
 
-    expect(axios.delete).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL)
+    expect(axios.delete).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL)
   })
 
   test('calls failed mp-login', async () => {

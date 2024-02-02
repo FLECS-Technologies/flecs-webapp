@@ -70,7 +70,7 @@ async function downloadPastExport (exportId) {
 
 async function deleteExport (exportId) {
   return axios
-    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.DELETE_EXPORT_URL(exportId))
+    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DELETE_EXPORT_URL(exportId))
     .then(response => {
       return response
     })
@@ -81,7 +81,7 @@ async function deleteExport (exportId) {
 
 async function getExports () {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.EXPORTS_ROUTE)
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.EXPORTS_ROUTE)
     .then(response => {
       return response.data
     })
@@ -92,7 +92,7 @@ async function getExports () {
 
 async function getDownloadExport (exportId) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_ROUTE + DeviceAPIConfiguration.GET_EXPORT_URL(exportId), { responseType: 'blob' })
+    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_EXPORT_URL(exportId), { responseType: 'blob' })
     .then(response => {
       return { blob: response.data, exportId }
     })

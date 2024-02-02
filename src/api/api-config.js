@@ -18,8 +18,8 @@
 
 import { Component } from 'react'
 
-const DEVICE_ROUTE = '../api/v2'
-const DEVICE_ROUTE_TEST = '/api/v2'
+const DEVICE_BASE_ROUTE = '../api/v2'
+const DEVICE_BASE_ROUTE_TEST = '/api/v2'
 const APP_ROUTE = '/apps'
 const CONSOLE_ROUTE = '/console'
 const INSTANCES_ROUTE = '/instances'
@@ -28,6 +28,7 @@ const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
 const EXPORTS_ROUTE = '/exports'
 const JOBS_ROUTE = '/jobs'
+const DEVICE_ROUTE = '/device'
 
 const GET_INSTALLED_APP_LIST_URL = ''
 const GET_BROWSE_DATA_LAYER = '/browse'
@@ -40,9 +41,10 @@ const GET_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`
 const GET_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`
 const GET_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs'
 const GET_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config'
+const GET_VALIDATE_URL = DEVICE_ROUTE + '/license/activation/status'
 
 const POST_INSTALL_APP_URL = '/install'
-const POST_UPDATE_APP_URL = DEVICE_ROUTE + APP_ROUTE + '/update'
+const POST_UPDATE_APP_URL = DEVICE_BASE_ROUTE + APP_ROUTE + '/update'
 const POST_START_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/start'
 const POST_STOP_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/stop'
 const POST_CREATE_INSTANCE_URL = INSTANCES_ROUTE + '/create'
@@ -52,6 +54,7 @@ const POST_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceI
 const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
 const POST_SIDELOAD_APP = '/sideload'
 const POST_IMPORT_URL = '/imports'
+const POST_ACTIVATE_URL = DEVICE_ROUTE + '/license/activation'
 
 const PUT_CONSOLE_AUTH_URL = '/authentication'
 
@@ -71,12 +74,12 @@ const MP_PROXY_DEV = 'https://console-dev.flecs.tech'
 const MP_PROXY_TEST = 'https://console-dev.flecs.tech'
 const MP_PROXY_PRODUCTION = 'https://console.flecs.tech'
 
-const MP_DEV = 'https://staging.flecs-technologies.com'
-const MP_TEST = 'https://staging.flecs-technologies.com'
+const MP_DEV = 'https://staging.flecs.tech'
+const MP_TEST = 'https://staging.flecs.tech'
 const MP_PRODUCTION = 'https://flecs.tech'
 
-const POST_AUTHENTICATE_URL = '/api/v2/auth/login' // '/api/access/authenticate'
-const POST_VALIDATE_URL = '/api/v2/auth/validate' // api/access/jwt/validate'
+const POST_AUTHENTICATE_URL = '/api/v2/auth/login'
+const POST_VALIDATE_URL = '/api/v2/auth/validate'
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses'
 const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta'
 const GET_PRODUCTS_URL = '/api/v2/products/apps'
@@ -92,11 +95,11 @@ class DeviceAPIConfiguration extends Component {
     return target
   }
 
-  static get DEVICE_ROUTE () {
+  static get DEVICE_BASE_ROUTE () {
     if ((process.env.REACT_APP_ENVIRONMENT === 'test') || (process.env.REACT_APP_ENVIRONMENT === 'development')) {
-      return DEVICE_ROUTE_TEST
+      return DEVICE_BASE_ROUTE_TEST
     }
-    return DEVICE_ROUTE
+    return DEVICE_BASE_ROUTE
   }
 
   static get APP_ROUTE () {
@@ -168,6 +171,10 @@ class DeviceAPIConfiguration extends Component {
     return POST_IMPORT_URL
   }
 
+  static get POST_ACTIVATE_URL () {
+    return POST_ACTIVATE_URL
+  }
+
   static get PUT_CONSOLE_AUTH_URL () {
     return PUT_CONSOLE_AUTH_URL
   }
@@ -219,6 +226,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_INSTANCE_CONFIG_URL () {
     return GET_INSTANCE_CONFIG_URL
+  }
+
+  static get GET_VALIDATE_URL () {
+    return GET_VALIDATE_URL
   }
 
   // patch requests

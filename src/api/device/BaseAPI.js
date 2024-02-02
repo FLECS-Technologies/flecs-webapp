@@ -37,9 +37,9 @@ export default class BaseAPI extends React.Component {
       let url
       let data
       if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-        url = process.env.REACT_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_ROUTE + apiURL
+        url = process.env.REACT_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
       } else {
-        url = DeviceAPIConfiguration.DEVICE_ROUTE + apiURL
+        url = DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
       }
       const response = await fetch(url, requestOptions)
 

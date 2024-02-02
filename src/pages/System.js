@@ -21,6 +21,7 @@ import styled from 'styled-components'
 import { BottomNavigation, Box, Divider, Paper, Toolbar, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import Version from '../components/Version'
+import DeviceActivation from '../components/device/DeviceActivation'
 
 const Header = styled.div`
   display: 'flex';
@@ -54,6 +55,13 @@ const System = () => {
             You are currently running FLECS on {window.location.hostname}.
         </Typography>
         <Version></Version>
+      </Box>
+      <Divider/>
+      <Box sx={{
+        width: '100%',
+        p: { xs: 1, sm: 2 }
+      }} >
+        <DeviceActivation variant='line'/>
       </Box>
     </Paper>
   )

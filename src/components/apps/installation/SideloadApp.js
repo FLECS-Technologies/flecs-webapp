@@ -24,10 +24,10 @@ import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import PropTypes from 'prop-types'
 import React from 'react'
-import AppAPI from '../api/device/AppAPI'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { JobsContext } from '../data/JobsContext'
-import { mapJobStatus } from '../utils/mapJobStatus'
+import AppAPI from '../../../api/device/AppAPI'
+import { ReferenceDataContext } from '../../../data/ReferenceDataContext'
+import { JobsContext } from '../../../data/JobsContext'
+import { mapJobStatus } from '../../../utils/mapJobStatus'
 
 export default function SideloadApp (props) {
   const { yaml, handleActiveStep } = (props)
@@ -88,13 +88,13 @@ export default function SideloadApp (props) {
 
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 0) {
+    if (mappedStatus === 1) {
       setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${yaml.title} will begin soon.`)
-    } else if (mappedStatus === 1) {
+    } else if (mappedStatus === 2) {
       setRunning(true)
       setInstallationMessage('Installing ' + yaml.title + '.')
       setInfoMessage(true)
-    } else if (mappedStatus === 3) {
+    } else if (mappedStatus === 4) {
       setRunning(false)
       setInstallationMessage(yaml.title + ' successfully installed.')
       setInfoMessage(false)

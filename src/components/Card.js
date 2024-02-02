@@ -34,12 +34,13 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
 import AppLinksMenu from './AppLinksMenu'
 import ContentDialog from './ContentDialog'
-import InstallAppStepper from './InstallAppStepper'
+// import InstallAppStepper from './InstallAppStepper'
 import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
 import AppRating from './AppRating'
 import { useSystemContext } from '../data/SystemProvider'
 import { isBlacklisted } from '../api/marketplace/ProductService'
 import { JobsContext } from '../data/JobsContext'
+import InstallationStepper from './apps/installation/InstallationStepper'
 
 export default function OutlinedCard (props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -217,14 +218,14 @@ export default function OutlinedCard (props) {
           setOpen={setInstallAppOpen}
           title={'Install ' + props.title}
         >
-          <InstallAppStepper app={props} version={selectedVersion.version} />
+          <InstallationStepper app={props} version={selectedVersion.version} />
         </ContentDialog>
         <ContentDialog
           open={updateAppOpen}
           setOpen={setUpdateAppOpen}
           title={'Update ' + props.title + ' to ' + selectedVersion.version}
         >
-          <InstallAppStepper app={props} version={selectedVersion.version} update={true}/>
+          <InstallationStepper app={props} version={selectedVersion.version} update={true}/>
         </ContentDialog>
       </CardActions>
     </Card>

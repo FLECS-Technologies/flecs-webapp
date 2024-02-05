@@ -185,7 +185,9 @@ jobs:
           version: v0.9.1
           driver-opts: image=moby/buildkit:v0.11.0
       - name: build Docker image
-        run: make VERSION_SPECIAL=-${{ matrix.special }} docker_${{ matrix.arch }}
+        run: |
+          make VERSION_SPECIAL=-${{ matrix.special }} special_${{ matrix.special }}
+          make VERSION_SPECIAL=-${{ matrix.special }} docker_${{ matrix.arch }}
 
   special-container-registry:
     needs: special-docker

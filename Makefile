@@ -1,9 +1,9 @@
-VERSION=3.0.0-hedgehog
-DOCKER_TAG=$(VERSION)$(VERSION_SPECIAL)
+VERSION=3.0.0-hedgehog$(VERSION_SPECIAL)
+DOCKER_TAG=$(VERSION)
 
 .PHONY: version
 version:
-	@echo $(VERSION)$(VERSION_SPECIAL)
+	@echo $(VERSION)
 
 .PHONY: ci
 ci:

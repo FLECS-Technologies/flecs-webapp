@@ -22,10 +22,10 @@ PLATFORM=$(arch_to_platform ${ARCH})
 
 echo "Building tag ${DOCKER_TAG} for arch ${ARCH} (${PLATFORM})"
 
-docker login -u ${REGISTRY_USER} -p ${REGISTRY_AUTH} cr.flecs.tech
+docker login -u ${REGISTRY_USER} -p ${REGISTRY_AUTH} flecspublic.azurecr.io
 docker buildx build \
   --push \
   --platform ${PLATFORM} \
-  --tag cr.flecs.tech/webapp:${DOCKER_TAG}-${ARCH} \
+  --tag flecspublic.azurecr.io/webapp:${DOCKER_TAG}-${ARCH} \
   --file docker/Dockerfile \
   .

@@ -1,4 +1,4 @@
-VERSION=3.1.0-hedgehog$(VERSION_SPECIAL)
+VERSION=$(shell cat package.json | jg '.version')$(VERSION_SPECIAL)
 DOCKER_TAG=$(VERSION)
 
 .PHONY: version

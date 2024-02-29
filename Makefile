@@ -42,7 +42,7 @@ tar-pkg_%:
 	@cp -prT pkg/fs out/$*/pkg/tar
 	@cp -prT pkg/tar out/$*/pkg/tar
 	@sed -i 's/DOCKER_TAG=.*/DOCKER_TAG=$(DOCKER_TAG)/g' out/$*/pkg/tar/opt/flecs-webapp/bin/flecs-webapp.sh
-	@tar -C out/$*/pkg/tar -cf out/$*/pkg/flecs-webapp_$(VERSION)_$*.tar .
+	@tar -C out/$*/pkg/tar -cf out/$*/pkg/flecs-webapp_$(VERSION)_$*.tar . --group=root:0 --owner=root:0
 
 package_%: deb-pkg_% tar-pkg_%
 	@echo "Building package_$*"

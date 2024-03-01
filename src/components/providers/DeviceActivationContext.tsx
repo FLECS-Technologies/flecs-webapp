@@ -26,6 +26,8 @@ export interface DeviceActivationContextProps {
   readonly activated: boolean
   readonly activate: () => Promise<void>
   readonly activating: boolean
+  readonly error: boolean
+  readonly statusText: string
 }
 
 export const DeviceActivationContext =
@@ -34,5 +36,7 @@ export const DeviceActivationContext =
     validating: false,
     activated: false,
     activate: async () => {},
-    activating: false
+    activating: false,
+    error: false,
+    statusText: ''
   })

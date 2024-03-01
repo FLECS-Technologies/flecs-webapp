@@ -29,15 +29,28 @@ const DeviceActivationProvider = ({
   const [validating, setValidating] = React.useState(false)
   const [activated, setActivated] = React.useState(false)
   const [activating, setActivating] = React.useState(false)
+  const [error, setError] = React.useState(false)
+  const [statusText, setStatusText] = React.useState('')
 
   const validate = async () => {
     setValidating(true)
+    setStatusText('Checking the device activation status...')
     await ValidateDeviceAPI()
       .then((response) => {
         setValidated(response.isValid)
         setActivated(response.isValid)
+        if (response.isValid) {
+          setStatusText('Device is activated!')
+        } else {
+          setStatusText('Device is not activated!')
+        }
+        setError(false)
       })
       .catch(() => {
+        setError(true)
+        setStatusText(
+          'Failed to check activation status! Please login with your account and try again.'
+        )
         setActivated(false)
         setValidated(false)
       })
@@ -46,14 +59,21 @@ const DeviceActivationProvider = ({
 
   const activate = async () => {
     setActivating(true)
+    setStatusText('Activating the device...')
     await ActivateDeviceAPI()
       .then((response) => {
         setActivated(true)
         setValidated(true)
+        setError(false)
+        setStatusText('Device is activated!')
       })
       .catch(() => {
         setActivated(false)
         setValidated(false)
+        setError(true)
+        setStatusText(
+          'Failed to activate the device! Please login with your account and try again.'
+        )
       })
     setActivating(false)
   }
@@ -64,7 +84,9 @@ const DeviceActivationProvider = ({
     validating,
     activated,
     activate,
-    activating
+    activating,
+    error,
+    statusText
   }
 
   React.useEffect(() => {

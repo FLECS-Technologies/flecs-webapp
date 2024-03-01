@@ -36,7 +36,9 @@ describe('DeviceActivation Component', () => {
             activating: false,
             activate: async () => {},
             validating: false,
-            validate: async () => {}
+            validate: async () => {},
+            error: false,
+            statusText: 'Device is activated!'
           }}
         >
           <DeviceActivation />
@@ -60,7 +62,9 @@ describe('DeviceActivation Component', () => {
             activating: false,
             activate: async () => {},
             validating: false,
-            validate: async () => {}
+            validate: async () => {},
+            error: false,
+            statusText: 'Device is not activated!'
           }}
         >
           <DeviceActivation />
@@ -84,7 +88,9 @@ describe('DeviceActivation Component', () => {
             activating: true,
             activate: async () => {},
             validating: false,
-            validate: async () => {}
+            validate: async () => {},
+            error: false,
+            statusText: 'Activating the device...'
           }}
         >
           <DeviceActivation />
@@ -108,7 +114,9 @@ describe('DeviceActivation Component', () => {
             activating: false,
             activate: async () => {},
             validating: true,
-            validate: async () => {}
+            validate: async () => {},
+            error: false,
+            statusText: 'Checking the device activation status...'
           }}
         >
           <DeviceActivation />
@@ -134,7 +142,9 @@ describe('DeviceActivation Component', () => {
             activating: false,
             activate: async () => {},
             validating: false,
-            validate: async () => {}
+            validate: async () => {},
+            error: false,
+            statusText: 'Device is activated!'
           }}
         >
           <DeviceActivation variant='line' />
@@ -143,6 +153,35 @@ describe('DeviceActivation Component', () => {
     })
 
     const infoText = screen.getByText('Device is activated!')
+    expect(infoText).toBeInTheDocument()
+    const activateButton = screen.getByText('Activate Device')
+    expect(activateButton).toBeVisible()
+    expect(activateButton).not.toBeEnabled()
+  })
+
+  it('Error on checking the device activation status', () => {
+    act(() => {
+      render(
+        <DeviceActivationContext.Provider
+          value={{
+            activated: false,
+            activating: false,
+            activate: async () => {},
+            validating: false,
+            validate: async () => {},
+            error: true,
+            statusText:
+              'Failed to check activation status! Please login with your account and try again.'
+          }}
+        >
+          <DeviceActivation />
+        </DeviceActivationContext.Provider>
+      )
+    })
+
+    const infoText = screen.getByText(
+      'Failed to check activation status! Please login with your account and try again.'
+    )
     expect(infoText).toBeInTheDocument()
     const activateButton = screen.getByText('Activate Device')
     expect(activateButton).toBeVisible()

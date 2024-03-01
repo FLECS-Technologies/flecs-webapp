@@ -34,8 +34,15 @@ function DeviceActivation(
   props: InferProps<typeof DeviceActivation.propTypes>
 ) {
   const { variant } = props
-  const { validate, validating, activated, activate, activating } =
-    React.useContext(DeviceActivationContext)
+  const {
+    validate,
+    validating,
+    activated,
+    activate,
+    activating,
+    error,
+    statusText
+  } = React.useContext(DeviceActivationContext)
   const [infoText, setInfoText] = React.useState('')
 
   React.useEffect(() => {
@@ -45,8 +52,12 @@ function DeviceActivation(
       setInfoText('Activating the device...')
     } else if (activated) {
       setInfoText('Device is activated!')
-    } else {
+    } else if (!activated && !error) {
       setInfoText('Device is not activated!')
+    } else if (error) {
+      setInfoText(
+        'Failed to check activation status! Please login with your account and try again.'
+      )
     }
   }, [activated, validating, activating])
 
@@ -86,7 +97,7 @@ function DeviceActivation(
       <Button
         variant='contained'
         onClick={activate}
-        disabled={validating || activating || activated}
+        disabled={validating || activating || activated || error}
       >
         Activate Device
       </Button>

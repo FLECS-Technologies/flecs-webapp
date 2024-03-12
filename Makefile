@@ -1,4 +1,4 @@
-VERSION=$(shell cat package.json | jg '.version')$(VERSION_SPECIAL)
+VERSION=$(shell cat package.json | jq -r '.version')$(VERSION_SPECIAL)
 DOCKER_TAG=$(VERSION)
 
 .PHONY: version

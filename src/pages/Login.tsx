@@ -18,61 +18,75 @@
 import * as React from 'react'
 import { LoadingButton } from '@mui/lab'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { Grid, Link, Paper, TextField, Typography, IconButton, Box } from '@mui/material'
+import {
+  Grid,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+  IconButton,
+  Box
+} from '@mui/material'
 import styled from 'styled-components'
 import AuthService from '../api/marketplace/AuthService'
 import { useAuth } from '../components/AuthProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { postMPLogin } from '../api/device/DeviceAuthAPI'
+import { DeviceActivationContext } from '../components/providers/DeviceActivationContext'
 
 const Header = styled.div`
   display: 'flex';
-  alignItems: 'center';
-  justifyContent: 'flex-end';
+  alignitems: 'center';
+  justifycontent: 'flex-end';
   padding: 32px 32px;
 `
 
-export default function Login () {
+export default function Login() {
   const [username, setUsername] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [showPassword, setShowPassword] = React.useState(false)
   const [loginInProgress, setLoginInProgress] = React.useState(false)
   const [message, setMessage] = React.useState('')
+  const { validate } = React.useContext(DeviceActivationContext)
 
   const user = useAuth()
   const navigate = useNavigate()
   const [location] = React.useState(useLocation())
   const from = location.state?.from?.pathname || '/'
 
-  function handleLogin (event: React.FormEvent<HTMLFormElement>) {
+  function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     setMessage('')
     setLoginInProgress(true)
 
-    AuthService.login(username, password).then(
-      () => {
-        setMessage('Successfully logged in!')
+    AuthService.login(username, password)
+      .then(
+        () => {
+          setMessage('Successfully logged in!')
 
-        user.setUser(AuthService.getCurrentUser())
-        postMPLogin(AuthService.getCurrentUser())
-          .then(() => {
-            navigate(from, { replace: true })
-          }, error => {
-            setMessage(error.message)
-          })
-      },
-      error => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.reason) ||
-          error.message ||
-          error.toString()
+          user.setUser(AuthService.getCurrentUser())
+          postMPLogin(AuthService.getCurrentUser()).then(
+            () => {
+              validate()
+              navigate(from, { replace: true })
+            },
+            (error) => {
+              setMessage(error.message)
+            }
+          )
+        },
+        (error) => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.reason) ||
+            error.message ||
+            error.toString()
 
-        setMessage(resMessage)
-      }
-    )
+          setMessage(resMessage)
+        }
+      )
       .finally(() => {
         setLoginInProgress(false)
       })
@@ -85,73 +99,100 @@ export default function Login () {
         aria-label='login-page'
         container
         spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        style={{ minHeight: '80vh' }
-        }
+        direction='column'
+        alignItems='center'
+        justifyContent='center'
+        style={{ minHeight: '80vh' }}
       >
         <Paper sx={{ width: '50%', minWidth: '670px' }}>
           <Grid
             container
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="flex-start"
+            direction='row'
+            justifyContent='flex-start'
+            alignItems='flex-start'
           >
             <Grid item xs={12}>
-              <Typography aria-label='login' variant='h2' color='primary.main' align='center' sx={{ width: '100%', mt: 2, mb: 2 }}>Login</Typography>
+              <Typography
+                aria-label='login'
+                variant='h2'
+                color='primary.main'
+                align='center'
+                sx={{ width: '100%', mt: 2, mb: 2 }}
+              >
+                Login
+              </Typography>
             </Grid>
             <Grid item xs={6}>
               <form onSubmit={handleLogin}>
                 <Grid
                   container
                   spacing={2}
-                  direction="column"
-                  alignItems="center"
-                  justifyContent="center"
+                  direction='column'
+                  alignItems='center'
+                  justifyContent='center'
                   sx={{ backgroundColor: 'standard' }}
                 >
                   <Grid item xs={4}>
                     <TextField
                       sx={{ width: '300px' }}
                       autoFocus={true}
-                      aria-label="user-name"
-                      name="user-name"
-                      label="Username"
-                      variant="standard"
-                      type="text"
+                      aria-label='user-name'
+                      name='user-name'
+                      label='Username'
+                      variant='standard'
+                      type='text'
                       required
-                      onChange={(event) => setUsername(event.currentTarget.value)}
+                      onChange={(event) =>
+                        setUsername(event.currentTarget.value)
+                      }
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <TextField
                       sx={{ width: '300px' }}
-                      aria-label="password"
-                      name="password"
-                      label="Password"
-                      variant="standard"
+                      aria-label='password'
+                      name='password'
+                      label='Password'
+                      variant='standard'
                       type={showPassword ? 'text' : 'password'}
                       required
-                      onChange={(event) => setPassword(event.currentTarget.value)}
+                      onChange={(event) =>
+                        setPassword(event.currentTarget.value)
+                      }
                       InputProps={{
                         'aria-label': 'password-input',
-                        endAdornment:
+                        endAdornment: (
                           <IconButton
-                            aria-label="toggle password visibility"
+                            aria-label='toggle password visibility'
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
+                        )
                       }}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <LoadingButton sx={{ width: '300px' }} variant="contained" aria-label="login-button" loading={loginInProgress} type="submit" disabled={!username || !password}> GO </LoadingButton>
+                    <LoadingButton
+                      sx={{ width: '300px' }}
+                      variant='contained'
+                      aria-label='login-button'
+                      loading={loginInProgress}
+                      type='submit'
+                      disabled={!username || !password}
+                    >
+                      {' '}
+                      GO{' '}
+                    </LoadingButton>
                   </Grid>
                   <Grid item xs={4}>
-                    <Box maxWidth="300px">
-                      {message && (<div aria-label='message' dangerouslySetInnerHTML={{ __html: message }} />)}
+                    <Box maxWidth='300px'>
+                      {message && (
+                        <div
+                          aria-label='message'
+                          dangerouslySetInnerHTML={{ __html: message }}
+                        />
+                      )}
                     </Box>
                   </Grid>
                 </Grid>
@@ -161,26 +202,48 @@ export default function Login () {
               <Grid
                 container
                 spacing={2}
-                direction="column"
-                alignItems="left"
-                justifyContent="center"
+                direction='column'
+                alignItems='left'
+                justifyContent='center'
               >
                 <Grid item xs={6}>
                   <Typography aria-label='create-account' variant='body1'>
                     Don&apos;t have an account yet? <br />
-                    <Link aria-label='create-account-link' href="https://flecs.tech/my-account" target="_blank"> Create an account </Link>
+                    <Link
+                      aria-label='create-account-link'
+                      href='https://flecs.tech/my-account'
+                      target='_blank'
+                    >
+                      {' '}
+                      Create an account{' '}
+                    </Link>
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography aria-label='forgot-password' variant='body1'>
                     Forgot your password ? <br />
-                    <Link aria-label='forgot-password-link' href="https://flecs.tech/my-account/lost-password" target="_blank"> Reset password </Link>
+                    <Link
+                      aria-label='forgot-password-link'
+                      href='https://flecs.tech/my-account/lost-password'
+                      target='_blank'
+                    >
+                      {' '}
+                      Reset password{' '}
+                    </Link>
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography aria-label='privacy-policy' variant='body1'>
                     How do we treat your data ? <br />
-                    <Link aria-label='privacy-policy-link' href="https://flecs.tech/privacy-policy" target="_blank"> Read our privacy policy </Link><br /> <br />
+                    <Link
+                      aria-label='privacy-policy-link'
+                      href='https://flecs.tech/privacy-policy'
+                      target='_blank'
+                    >
+                      {' '}
+                      Read our privacy policy{' '}
+                    </Link>
+                    <br /> <br />
                   </Typography>
                 </Grid>
               </Grid>

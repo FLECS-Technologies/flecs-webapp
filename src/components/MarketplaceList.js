@@ -25,7 +25,20 @@ import Box from '@mui/material/Box'
 import TablePagination from '@mui/material/TablePagination'
 import SearchBar from './SearchBar'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
-import { getAppIcon, getAuthor, getAverageRating, getBlacklist, getCustomLinks, getId, getCategories, getRatingCount, getRequirement, getReverseDomainName, getShortDescription, getVersions } from '../api/marketplace/ProductService'
+import {
+  getAppIcon,
+  getAuthor,
+  getAverageRating,
+  getBlacklist,
+  getCustomLinks,
+  getId,
+  getCategories,
+  getRatingCount,
+  getRequirement,
+  getReverseDomainName,
+  getShortDescription,
+  getVersions
+} from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
@@ -35,10 +48,25 @@ import usePagination from '../hooks/usePagination'
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
-  const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext)
+  const { appList, loadedProducts, appListError } =
+    useContext(ReferenceDataContext)
   const [loading, setLoading] = useState(true)
-  const { categories, filterParams, setFilterParams, getFilteredProducts, setAvailableFilter, setCategoryFilter, setSearchFilter, isSearchEnabled, setIsSearchEnabled, toggleFilter, showFilter, finalProducts } = React.useContext(FilterContext)
-  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = usePagination('marketplaceApps', 0, 100)
+  const {
+    categories,
+    filterParams,
+    setFilterParams,
+    getFilteredProducts,
+    setAvailableFilter,
+    setCategoryFilter,
+    setSearchFilter,
+    isSearchEnabled,
+    setIsSearchEnabled,
+    toggleFilter,
+    showFilter,
+    finalProducts
+  } = React.useContext(FilterContext)
+  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } =
+    usePagination('marketplaceApps', 0, 100)
 
   const createFinalProducts = () => {
     const productCards = createProductCards(finalProducts)
@@ -47,19 +75,24 @@ const MarketplaceList = (props) => {
 
   const createProductCards = (newProducts) => {
     let productCards = []
-    if (newProducts) {
+    if (newProducts && !appListError) {
       productCards = newProducts.map((app) => (
         <Card
           key={getReverseDomainName(app) ? getReverseDomainName(app) : app?.id}
           appKey={{
             name: getReverseDomainName(app),
-            version: appList?.find(o => o.appKey.name === getReverseDomainName(app))?.appKey.version
+            version: appList?.find(
+              (o) => o.appKey.name === getReverseDomainName(app)
+            )?.appKey.version
           }}
           avatar={getAppIcon(app)}
           title={app.name}
           author={getAuthor(app)}
           description={getShortDescription(app)}
-          status={appList?.find(o => o.appKey.name === getReverseDomainName(app))?.status || 'uninstalled'}
+          status={
+            appList?.find((o) => o.appKey.name === getReverseDomainName(app))
+              ?.status || 'uninstalled'
+          }
           availability={app.stock_status}
           relatedLinks={getCustomLinks(app)}
           requirement={getRequirement(app)}
@@ -69,7 +102,10 @@ const MarketplaceList = (props) => {
           average_rating={getAverageRating(app)}
           rating_count={getRatingCount(app)}
           blacklist={getBlacklist(app)}
-          installedVersions={getInstalledVersions(appList, getReverseDomainName(app))}
+          installedVersions={getInstalledVersions(
+            appList,
+            getReverseDomainName(app)
+          )}
         />
       ))
       return productCards
@@ -82,91 +118,192 @@ const MarketplaceList = (props) => {
         ...app,
         props: {
           ...app.props,
-          status: appList?.find(o => o.appKey.name === app.props.appKey.name)?.status || 'uninstalled',
-          version: appList?.find(o => o.appKey.name === app.props.appKey.name)?.appKey.version,
-          installedVersions: getInstalledVersions(appList, app.props.appKey.name)
+          status:
+            appList?.find((o) => o.appKey.name === app.props.appKey.name)
+              ?.status || 'uninstalled',
+          version: appList?.find((o) => o.appKey.name === app.props.appKey.name)
+            ?.appKey.version,
+          installedVersions: getInstalledVersions(
+            appList,
+            app.props.appKey.name
+          )
         }
       }))
       setProducts(updatedProducts)
     }
   }
 
-  React.useEffect(() => { // loadedProducts received, ready to start filtering
-    setFilterParams(previousState => {
+  React.useEffect(() => {
+    // loadedProducts received, ready to start filtering
+    setFilterParams((previousState) => {
       return { ...previousState, caller: 'loadProducts' }
     })
   }, [loadedProducts])
 
-  React.useEffect(() => { // initial app loading, or filters got updated
+  React.useEffect(() => {
+    // initial app loading, or filters got updated
     if (loadedProducts?.length > 0) {
       getFilteredProducts(loadedProducts)
       setLoading(false)
     }
   }, [filterParams])
 
-  React.useEffect(() => { // filtered apps received
+  React.useEffect(() => {
+    // filtered apps received
     createFinalProducts()
     handleChangePage('', 0)
   }, [finalProducts])
 
-  React.useEffect(() => { // when apps get installed, uninstalled ou updated
+  React.useEffect(() => {
+    // when apps get installed, uninstalled ou updated
     if (!loading) {
       updateProductCards()
     }
   }, [appList])
 
   return (
-  <Box aria-label="marketplace-apps-list" display="flex">
-    <Grid
-      container
-      direction="row"
-      justify="flex-start"
-      alignItems="flex-start"
-    >
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
-
-            <SearchBar key='search-bar' data-testid='search-bar' defaultSearchValue={filterParams.search} searchTitle='Search apps by author, name or description' setToggleFilter={toggleFilter} search={setSearchFilter}/>
-            <Collapse key='filter' in={showFilter} timeout="auto" unmountOnExit>
-              <AppFilter open={showFilter} setAvailableFilter={setAvailableFilter} availableFilter={(filterParams.available)} setCategoryFilter={setCategoryFilter} categories={categories} hiddenCategories={filterParams.hiddenCategories} search={filterParams.search} isSearchEnabled={isSearchEnabled} setIsSearchEnabled={setIsSearchEnabled}/>
-            </Collapse>
-
-      </Grid>
-      {loading && (
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
-          <CircularProgress color='primary'></CircularProgress>
-        </Grid>
-      )}
-      {loading && (
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
-          <Typography>Let&apos;s see what we can find for you in our marketplace...</Typography>
-        </Grid>
-      )}
-      {(appListError && !loading) &&
-      (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2, mt: 2 }}>
-        <CloudOffIcon fontSize='large'/>
-      </Grid>)}
-      {(appListError && !loading) &&
-      (<Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', mr: 2, mb: 2 }}>
-          <Typography>Oops... Sorry, we failed to load apps from the marketplace. Please try again later.</Typography>
-        </Grid>)
-      }
-      {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mr: 2, mb: 2 }}>
-        <Paper data-testid='app-paginator' component="form" sx={{ p: '2px 4px' }}>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50, 100]}
-            component="div"
-            count={products?.length || 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage="Apps per page:"
+    <Box aria-label='marketplace-apps-list' display='flex'>
+      <Grid
+        container
+        direction='row'
+        justify='flex-start'
+        alignItems='flex-start'
+      >
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+            mr: 2,
+            mb: 2
+          }}
+        >
+          <SearchBar
+            key='search-bar'
+            data-testid='search-bar'
+            defaultSearchValue={filterParams.search}
+            searchTitle='Search apps by author, name or description'
+            setToggleFilter={toggleFilter}
+            search={setSearchFilter}
           />
-        </Paper>
+          <Collapse key='filter' in={showFilter} timeout='auto' unmountOnExit>
+            <AppFilter
+              open={showFilter}
+              setAvailableFilter={setAvailableFilter}
+              availableFilter={filterParams.available}
+              setCategoryFilter={setCategoryFilter}
+              categories={categories}
+              hiddenCategories={filterParams.hiddenCategories}
+              search={filterParams.search}
+              isSearchEnabled={isSearchEnabled}
+              setIsSearchEnabled={setIsSearchEnabled}
+            />
+          </Collapse>
+        </Grid>
+        {loading && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              mr: 2,
+              mb: 2,
+              mt: 2
+            }}
+          >
+            <CircularProgress color='primary'></CircularProgress>
+          </Grid>
+        )}
+        {loading && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              mr: 2,
+              mb: 2
+            }}
+          >
+            <Typography>
+              Let&apos;s see what we can find for you in our marketplace...
+            </Typography>
+          </Grid>
+        )}
+        {appListError && !loading && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              mr: 2,
+              mb: 2,
+              mt: 2
+            }}
+          >
+            <CloudOffIcon fontSize='large' />
+          </Grid>
+        )}
+        {appListError && !loading && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              mr: 2,
+              mb: 2
+            }}
+          >
+            <Typography>
+              Oops... Sorry, we failed to load apps from the marketplace. Please
+              try again later.
+            </Typography>
+          </Grid>
+        )}
+        {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+            mr: 2,
+            mb: 2
+          }}
+        >
+          <Paper
+            data-testid='app-paginator'
+            component='form'
+            sx={{ p: '2px 4px' }}
+          >
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 50, 100]}
+              component='div'
+              count={products?.length || 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              labelRowsPerPage='Apps per page:'
+            />
+          </Paper>
+        </Grid>
       </Grid>
-    </Grid>
-  </Box>
+    </Box>
   )
 }
 

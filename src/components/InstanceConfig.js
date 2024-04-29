@@ -17,15 +17,26 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getInstanceConfig, postInstanceConfig } from '../api/device/InstanceConfigService'
+import {
+  getInstanceConfig,
+  postInstanceConfig
+} from '../api/device/InstanceConfigService'
 import NICConfig from './NICConfig'
-import { Box, Button, LinearProgress, Tab, Toolbar, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  LinearProgress,
+  Tab,
+  Toolbar,
+  Typography
+} from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import SaveIcon from '@mui/icons-material/Save'
 import ClearIcon from '@mui/icons-material/Clear'
 import InstanceDevicesConfig from './InstanceDevicesConfig'
+import InstanceEnvironments from './apps/instance/InstanceEnvironments'
 
-export default function InstanceConfig (props) {
+export default function InstanceConfig(props) {
   const { instance } = props
   const executedRef = React.useRef(false)
   const [tab, setTab] = React.useState('1')
@@ -45,7 +56,9 @@ export default function InstanceConfig (props) {
   }, [triggerSaveConfig])
 
   React.useEffect(() => {
-    if (executedRef.current) { return }
+    if (executedRef.current) {
+      return
+    }
     if (!loadingConfig) {
       fetchConfig()
     }
@@ -78,7 +91,11 @@ export default function InstanceConfig (props) {
 
   const saveConfig = async (props) => {
     setSavingConfig(true)
-    postInstanceConfig(instance.instanceId, instanceConfig.networkAdapters, instanceConfig?.devices)
+    postInstanceConfig(
+      instance.instanceId,
+      instanceConfig.networkAdapters,
+      instanceConfig?.devices
+    )
       .then((response) => {
         if (response) {
           // read back the saved configuration
@@ -110,38 +127,76 @@ export default function InstanceConfig (props) {
   }
 
   return (
-  <Box>
-    <Toolbar>
-        <Button variant='contained' sx={{ mr: 1 }} data-testid='save-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => saveConfig()}>
-            <SaveIcon sx={{ mr: 1 }}/> Save
+    <Box>
+      <Toolbar>
+        <Button
+          variant='contained'
+          sx={{ mr: 1 }}
+          data-testid='save-button'
+          disabled={loadingConfig || savingConfig || !configChanged}
+          onClick={() => saveConfig()}
+        >
+          <SaveIcon sx={{ mr: 1 }} /> Save
         </Button>
-        <Button variant='outlined' sx={{ mr: 1 }} data-testid='discard-button' disabled={loadingConfig || savingConfig || !configChanged} onClick={() => handleReloadConfigClick()}>
-            <ClearIcon sx={{ mr: 1 }}/> Discard changes
+        <Button
+          variant='outlined'
+          sx={{ mr: 1 }}
+          data-testid='discard-button'
+          disabled={loadingConfig || savingConfig || !configChanged}
+          onClick={() => handleReloadConfigClick()}
+        >
+          <ClearIcon sx={{ mr: 1 }} /> Discard changes
         </Button>
-    </Toolbar>
-    <Box alignContent='center'>
-        {(error && !(loadingConfig || savingConfig)) && <Typography align='center'>Oops... {errorText}</Typography>}
-        {(loadingConfig || savingConfig) && <LinearProgress color="primary"/>}
-        {(loadingConfig) && <Typography align='center'>Loading configuration...</Typography>}
-        {(savingConfig) && <Typography align='center'>Saving configuration...</Typography>}
-    </Box>
-    {(!error) &&
-    <TabContext value={tab}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Network" value="1" />
-            <Tab label="Devices" value="2" />
-          </TabList>
-        </Box>
+      </Toolbar>
+      <Box alignContent='center'>
+        {error && !(loadingConfig || savingConfig) && (
+          <Typography align='center'>Oops... {errorText}</Typography>
+        )}
+        {(loadingConfig || savingConfig) && <LinearProgress color='primary' />}
+        {loadingConfig && (
+          <Typography align='center'>Loading configuration...</Typography>
+        )}
+        {savingConfig && (
+          <Typography align='center'>Saving configuration...</Typography>
+        )}
+      </Box>
+      {!error && (
+        <TabContext value={tab}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleChange} aria-label='lab API tabs example'>
+              <Tab label='Network' value='1' />
+              <Tab label='Devices' value='2' />
+              <Tab label='Environments' value='3' />
+            </TabList>
+          </Box>
 
-        <TabPanel value="1">
-          <NICConfig testID='nic-config' nicConfig={instanceConfig} setNicConfig={setInstanceConfig} setConfigChanged={setConfigChanged} saveConfig={setSaveConfig}></NICConfig>
-        </TabPanel>
-        <TabPanel value="2">
-          <InstanceDevicesConfig testID='devices-config' instanceConfig={instanceConfig} setDevicesConfig={setInstanceConfig} setConfigChanged={setConfigChanged} ></InstanceDevicesConfig>
-        </TabPanel>
-      </TabContext>}
-  </Box>)
+          <TabPanel value='1'>
+            <NICConfig
+              testID='nic-config'
+              nicConfig={instanceConfig}
+              setNicConfig={setInstanceConfig}
+              setConfigChanged={setConfigChanged}
+              saveConfig={setSaveConfig}
+            ></NICConfig>
+          </TabPanel>
+          <TabPanel value='2'>
+            <InstanceDevicesConfig
+              testID='devices-config'
+              instanceConfig={instanceConfig}
+              setDevicesConfig={setInstanceConfig}
+              setConfigChanged={setConfigChanged}
+            ></InstanceDevicesConfig>
+          </TabPanel>
+          <TabPanel value='3'>
+            <InstanceEnvironments
+              saveConfig={setSaveConfig}
+              instanceId={instance?.instanceId}
+            ></InstanceEnvironments>
+          </TabPanel>
+        </TabContext>
+      )}
+    </Box>
+  )
 }
 
 InstanceConfig.propTypes = {

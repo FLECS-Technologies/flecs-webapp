@@ -37,7 +37,10 @@ import {
   getRequirement,
   getReverseDomainName,
   getShortDescription,
-  getVersions
+  getVersions,
+  getPermalink,
+  getPrice,
+  getPurchasable
 } from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
@@ -106,6 +109,9 @@ const MarketplaceList = (props) => {
             appList,
             getReverseDomainName(app)
           )}
+          permalink={getPermalink(app)}
+          price={getPrice(app)}
+          purchasable={getPurchasable(app)}
         />
       ))
       return productCards

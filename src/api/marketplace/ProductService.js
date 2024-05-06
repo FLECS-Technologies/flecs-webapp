@@ -18,46 +18,58 @@
 import { MarketplaceAPIConfiguration } from '../api-config'
 import axios from 'axios'
 
-async function getProducts () {
+async function getProducts() {
   return axios
-    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL)
-    .then(response => {
-      if (response.data && response.data.statusCode === 200 && response.data.data.products) {
+    .get(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.GET_PRODUCTS_URL
+    )
+    .then((response) => {
+      if (
+        response.data &&
+        response.data.statusCode === 200 &&
+        response.data.data.products
+      ) {
         return response.data.data.products
       }
     })
-    .catch(error => {
+    .catch((error) => {
       return Promise.reject(error)
     })
 }
 
-function getReverseDomainName (app) {
+function getReverseDomainName(app) {
   let reverseDomainName
   if (app) {
-    reverseDomainName = app.attributes?.find(o => o.name === 'reverse-domain-name')?.options[0]
+    reverseDomainName = app.attributes?.find(
+      (o) => o.name === 'reverse-domain-name'
+    )?.options[0]
   }
   return reverseDomainName
 }
 
-function getEditorAddress (app) {
-  return app?.attributes?.find(o => o.name === 'editor')?.options[0]
+function getEditorAddress(app) {
+  return app?.attributes?.find((o) => o.name === 'editor')?.options[0]
 }
 
-function getAppIcon (app) {
-  return app?.meta_data.find(o => o.key === 'app-icon')?.value
+function getAppIcon(app) {
+  return app?.meta_data.find((o) => o.key === 'app-icon')?.value
 }
 
-function getAuthor (app) {
-  return app?.meta_data.find(o => o.key === 'port-author-name')?.value
+function getAuthor(app) {
+  return app?.meta_data.find((o) => o.key === 'port-author-name')?.value
 }
 
-function getVersion (app) {
-  return app?.meta_data.find(o => o.key === 'port-version')?.value
+function getVersion(app) {
+  return app?.meta_data.find((o) => o.key === 'port-version')?.value
 }
 
-function getVersions (app) {
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
-  const versions = app?.attributes?.find(o => o.name === 'versions')?.options
+function getVersions(app) {
+  const collator = new Intl.Collator('en', {
+    numeric: true,
+    sensitivity: 'base'
+  })
+  const versions = app?.attributes?.find((o) => o.name === 'versions')?.options
   if (versions) {
     versions.sort((a, b) => collator.compare(a, b))
     versions.reverse()
@@ -65,13 +77,15 @@ function getVersions (app) {
   return versions
 }
 
-function getBlacklist (app) {
-  const blacklist = app?.attributes?.find(o => o.name === 'blacklist')?.options
+function getBlacklist(app) {
+  const blacklist = app?.attributes?.find(
+    (o) => o.name === 'blacklist'
+  )?.options
 
   return blacklist
 }
 
-function isBlacklisted (systemInfo, blacklist) {
+function isBlacklisted(systemInfo, blacklist) {
   let isListed = false
   if (blacklist && systemInfo?.platform) {
     isListed = blacklist.includes(systemInfo?.platform)
@@ -80,44 +94,82 @@ function isBlacklisted (systemInfo, blacklist) {
   return isListed
 }
 
-function getShortDescription (app) {
+function getShortDescription(app) {
   return app?.short_description?.replace(/<[^>]+>/g, '')
 }
 
-function getCustomLinks (app) {
-  const customLinks = app?.meta_data.find(o => o.key === 'app-custom-link')?.value
+function getCustomLinks(app) {
+  const customLinks = app?.meta_data.find(
+    (o) => o.key === 'app-custom-link'
+  )?.value
   if (!customLinks || customLinks === '') {
     return undefined
   } else if (!Array.isArray(customLinks)) {
     const retval = []
     retval.push(customLinks['1'])
     return retval
-  } else { return customLinks }
+  } else {
+    return customLinks
+  }
 }
 
-function getMultiInstance (app) {
-  const multiInstance = app.attributes?.find(o => o.name === 'multiInstance')?.options[0]
-  return (!!multiInstance)
+function getMultiInstance(app) {
+  const multiInstance = app.attributes?.find((o) => o.name === 'multiInstance')
+    ?.options[0]
+  return !!multiInstance
 }
 
-function getRequirement (app) {
-  return app?.attributes.find(o => o.name === 'archs')?.options
+function getRequirement(app) {
+  return app?.attributes.find((o) => o.name === 'archs')?.options
 }
 
-function getId (app) {
+function getId(app) {
   return app?.id
 }
 
-function getCategories (app) {
+function getCategories(app) {
   return app?.categories
 }
 
-function getAverageRating (app) {
+function getAverageRating(app) {
   return app?.average_rating
 }
 
-function getRatingCount (app) {
+function getRatingCount(app) {
   return app?.rating_count
 }
 
-export { getProducts, getAverageRating, getBlacklist, isBlacklisted, getRatingCount, getReverseDomainName, getEditorAddress, getAppIcon, getId, getCategories, getAuthor, getVersion, getVersions, getShortDescription, getCustomLinks, getMultiInstance, getRequirement }
+function getPrice(app) {
+  return app?.price
+}
+
+function getPermalink(app) {
+  return app?.permalink
+}
+
+function getPurchasable(app) {
+  return app?.purchasable
+}
+
+export {
+  getProducts,
+  getAverageRating,
+  getBlacklist,
+  isBlacklisted,
+  getRatingCount,
+  getReverseDomainName,
+  getEditorAddress,
+  getAppIcon,
+  getId,
+  getCategories,
+  getAuthor,
+  getVersion,
+  getVersions,
+  getShortDescription,
+  getCustomLinks,
+  getMultiInstance,
+  getRequirement,
+  getPurchasable,
+  getPermalink,
+  getPrice
+}

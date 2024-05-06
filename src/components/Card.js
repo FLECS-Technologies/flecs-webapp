@@ -25,7 +25,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
-import { Tooltip } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import LoadButton from './LoadButton'
 import ConfirmDialog from './ConfirmDialog'
 import AppAPI from '../api/device/AppAPI'
@@ -35,24 +35,40 @@ import ActionSnackbar from './ActionSnackbar'
 import AppLinksMenu from './AppLinksMenu'
 import ContentDialog from './ContentDialog'
 // import InstallAppStepper from './InstallAppStepper'
-import { createVersion, createVersions, getLatestVersion, VersionSelector } from './VersionSelector'
+import {
+  createVersion,
+  createVersions,
+  getLatestVersion,
+  VersionSelector
+} from './VersionSelector'
 import AppRating from './AppRating'
 import { useSystemContext } from '../data/SystemProvider'
 import { isBlacklisted } from '../api/marketplace/ProductService'
 import { JobsContext } from '../data/JobsContext'
 import InstallationStepper from './apps/installation/InstallationStepper'
+import { ShoppingCart } from '@mui/icons-material'
 
-export default function OutlinedCard (props) {
+export default function OutlinedCard(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
   const { systemInfo } = useSystemContext()
   const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist))
-  const installed = (props.status === 'installed')
-  const [selectedVersion, setSelectedVersion] = useState(createVersion((props.installedVersions?.length > 0 ? getLatestVersion(props.installedVersions) : getLatestVersion(props.versions)), null, null, props.version))
+  const installed = props.status === 'installed'
+  const [selectedVersion, setSelectedVersion] = useState(
+    createVersion(
+      props.installedVersions?.length > 0
+        ? getLatestVersion(props.installedVersions)
+        : getLatestVersion(props.versions),
+      null,
+      null,
+      props.version
+    )
+  )
   const [uninstalling, setUninstalling] = useState(false)
   const [available] = useState(
-    (props.availability === 'available') || (props.availability === 'instock')
+    props.availability === 'available' || props.availability === 'instock'
   )
-  const installable = props.requirement && props.requirement?.includes(systemInfo?.arch)
+  const installable =
+    props.requirement && props.requirement?.includes(systemInfo?.arch)
   const displayStateRequest = available ? 'none' : 'block'
   const displayState = available ? 'block' : 'none'
   const [open, setConfirmOpen] = useState(false)
@@ -68,10 +84,13 @@ export default function OutlinedCard (props) {
   const [updateAppOpen, setUpdateAppOpen] = useState(false)
   const { setFetchingJobs } = useContext(JobsContext)
 
-  function loadReferenceData (props) {
+  function loadReferenceData(props) {
     if (appList) {
-      const tmpApp = appList.find(obj => {
-        return (obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version)
+      const tmpApp = appList.find((obj) => {
+        return (
+          obj.appKey.name === props.appKey.name &&
+          obj.appKey.version === props.appKey.version
+        )
       })
 
       return tmpApp
@@ -112,12 +131,17 @@ export default function OutlinedCard (props) {
     setFetchingJobs(false)
   }
 
-  function requestApp (props, success) {
+  function requestApp(props, success) {
     const alertSeverity = success ? 'success' : 'error'
     const displayCopyIcon = success ? 'none' : 'block'
     let snackbarText = ''
     if (success) {
-      snackbarText = 'Successfully requested ' + props.title + ' as a new app from ' + props.author + '.'
+      snackbarText =
+        'Successfully requested ' +
+        props.title +
+        ' as a new app from ' +
+        props.author +
+        '.'
     } else {
       snackbarText = 'Failed to send us the request. Please try again later.'
     }
@@ -131,66 +155,118 @@ export default function OutlinedCard (props) {
   }
 
   return (
-    <Card data-testid='app-card' sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', minWidth: 300, maxWidth: 300, minHeight: 260, mr: 2, mb: 2 }}>
+    <Card
+      data-testid='app-card'
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'column',
+        minWidth: 300,
+        maxWidth: 300,
+        minHeight: 260,
+        mr: 2,
+        mb: 2
+      }}
+    >
       <CardHeader
         avatar={<Avatar src={props.avatar} />}
         title={props.title}
-        subheader={<div><div>{props.author}</div><AppRating app={props}/></div>}
-        action={[props.relatedLinks && <AppLinksMenu data_testid='relatedLinks' key='relatedLinks' vertIcon={true} appLinks={props.relatedLinks}/>]}
-      >
-      </CardHeader>
+        subheader={
+          <div>
+            <div>{props.author}</div>
+            <AppRating app={props} />
+          </div>
+        }
+        action={[
+          props.relatedLinks && (
+            <AppLinksMenu
+              data_testid='relatedLinks'
+              key='relatedLinks'
+              vertIcon={true}
+              appLinks={props.relatedLinks}
+            />
+          )
+        ]}
+      ></CardHeader>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+        <Typography sx={{ fontSize: 14 }} color='text.primary' gutterBottom>
           {props.description}
         </Typography>
-        <VersionSelector availableVersions={createVersions(props.versions, props.installedVersions)} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion}></VersionSelector>
+        <VersionSelector
+          availableVersions={createVersions(
+            props.versions,
+            props.installedVersions
+          )}
+          selectedVersion={selectedVersion}
+          setSelectedVersion={setSelectedVersion}
+        ></VersionSelector>
       </CardContent>
       <CardActions>
         <Button
-          data-testid ="app-request-button"
-          variant="outlined"
-          aria-label="app-request-button"
-          color="info"
+          data-testid='app-request-button'
+          variant='outlined'
+          aria-label='app-request-button'
+          color='info'
           disabled={available}
           onClick={() => setRequestOpen(true)}
           style={{ display: displayStateRequest }}
         >
           Request
         </Button>
-        <Tooltip title={installable ? '' : `This app can only be installed on ${props.requirement}`}>
-            <div>
-            {!installed && <LoadButton
-          text="Install"
-          variant="contained"
-          color="success"
-          label="install-app-button"
-          disabled={installed || blackListed || !installable}
-          onClick={() => setInstallAppOpen(true)}
-          displaystate={displayState}
-        />}
-            </div>
+        <Tooltip
+          title={
+            installable
+              ? ''
+              : `This app can only be installed on ${props.requirement}`
+          }
+        >
+          <div>
+            {!installed && (
+              <LoadButton
+                text='Install'
+                variant='contained'
+                color='success'
+                label='install-app-button'
+                disabled={installed || blackListed || !installable}
+                onClick={() => setInstallAppOpen(true)}
+                displaystate={displayState}
+              />
+            )}
+          </div>
+        </Tooltip>
+        {!props.installedVersions?.includes(selectedVersion.version) &&
+          installed && (
+            <LoadButton
+              text='Update'
+              variant='contained'
+              color='primary'
+              label='update-app-button'
+              disabled={blackListed}
+              onClick={() => setUpdateAppOpen(true)}
+              displaystate={displayState}
+            />
+          )}
+        {props.installedVersions?.includes(selectedVersion.version) && (
+          <LoadButton
+            text='Uninstall'
+            variant='outlined'
+            label='uninstall-app-button'
+            disabled={uninstalling}
+            color='error'
+            onClick={() => setConfirmOpen(true)}
+            displaystate={displayState}
+            loading={uninstalling || false}
+          />
+        )}
+        {props.purchasable && Number(props.price) > 0 && (
+          <Tooltip title={`Buy license for ${props.title}`}>
+            <IconButton href={props.permalink} target='_blank' rel='noreferrer'>
+              <ShoppingCart></ShoppingCart>
+            </IconButton>
           </Tooltip>
-        {(!props.installedVersions?.includes(selectedVersion.version)) && installed && <LoadButton
-          text= 'Update'
-          variant="contained"
-          color="primary"
-          label="update-app-button"
-          disabled={blackListed}
-          onClick={() => setUpdateAppOpen(true)}
-          displaystate={displayState}
-        />}
-        {(props.installedVersions?.includes(selectedVersion.version)) && <LoadButton
-          text="Uninstall"
-          variant="outlined"
-          label="uninstall-app-button"
-          disabled={uninstalling}
-          color="error"
-          onClick={() => setConfirmOpen(true)}
-          displaystate={displayState}
-          loading={uninstalling || false}
-        />}
+        )}
         <ConfirmDialog
-          data-testid="confirm-dialog"
+          data-testid='confirm-dialog'
           title={'Uninstall ' + props.title + '?'}
           open={open}
           setOpen={setConfirmOpen}
@@ -204,8 +280,7 @@ export default function OutlinedCard (props) {
           open={requestOpen}
           setOpen={setRequestOpen}
           onConfirm={(success) => requestApp(props, success)}
-        >
-        </RequestAppDialog>
+        ></RequestAppDialog>
         <ActionSnackbar
           text={snackbarText}
           errorText={clipBoardContent}
@@ -225,7 +300,11 @@ export default function OutlinedCard (props) {
           setOpen={setUpdateAppOpen}
           title={'Update ' + props.title + ' to ' + selectedVersion.version}
         >
-          <InstallationStepper app={props} version={selectedVersion.version} update={true}/>
+          <InstallationStepper
+            app={props}
+            version={selectedVersion.version}
+            update={true}
+          />
         </ContentDialog>
       </CardActions>
     </Card>
@@ -250,5 +329,8 @@ OutlinedCard.propTypes = {
   average_rating: PropTypes.string,
   rating_count: PropTypes.number,
   blacklist: PropTypes.array,
-  installedVersions: PropTypes.array
+  installedVersions: PropTypes.array,
+  price: PropTypes.string,
+  purchasable: PropTypes.bool,
+  permalink: PropTypes.string
 }

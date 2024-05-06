@@ -20,10 +20,28 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useReferenceDataContext } from './ReferenceDataContext'
 import DeviceAPI from '../api/device/DeviceAPI'
-import { getAppIcon, getAuthor, getCustomLinks, getProducts, getReverseDomainName } from '../api/marketplace/ProductService'
+import {
+  getAppIcon,
+  getAuthor,
+  getCustomLinks,
+  getPermalink,
+  getPrice,
+  getProducts,
+  getPurchasable,
+  getReverseDomainName
+} from '../api/marketplace/ProductService'
 
-function AppList (props) {
-  const { setAppList, setAppListLoading, setAppListError, updateAppList, appListLoading, setUpdateAppList, loadedProducts, setLoadedProducts } = useReferenceDataContext()
+function AppList(props) {
+  const {
+    setAppList,
+    setAppListLoading,
+    setAppListError,
+    updateAppList,
+    appListLoading,
+    setUpdateAppList,
+    loadedProducts,
+    setLoadedProducts
+  } = useReferenceDataContext()
 
   React.useEffect(() => {
     if (!appListLoading) {
@@ -40,7 +58,13 @@ function AppList (props) {
     setAppListLoading(true)
     try {
       const products = await getProducts()
-      products.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
+      products.sort((a, b) =>
+        a.name.toLowerCase() > b.name.toLowerCase()
+          ? 1
+          : b.name.toLowerCase() > a.name.toLowerCase()
+          ? -1
+          : 0
+      )
       setLoadedProducts(products)
     } catch (error) {
       console.log(error)
@@ -51,7 +75,10 @@ function AppList (props) {
   }
 
   const loadAppList = async (props) => {
-    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' })
+    const collator = new Intl.Collator('en', {
+      numeric: true,
+      sensitivity: 'base'
+    })
     setAppListLoading(true)
 
     // call api from the device to get all installed apps
@@ -68,33 +95,42 @@ function AppList (props) {
           app.title = mpApp?.name
           app.author = getAuthor(mpApp)
           app.relatedLinks = getCustomLinks(mpApp)
+          app.price = getPrice(mpApp)
+          app.permalink = getPermalink(mpApp)
+          app.purchasable = getPurchasable(mpApp)
         }
         if (typeof app === 'object' && app !== null) {
-          app.installedVersions = getInstalledVersions(mergedList, app.appKey.name)
+          app.installedVersions = getInstalledVersions(
+            mergedList,
+            app.appKey.name
+          )
           app.installedVersions.sort((a, b) => collator.compare(a, b))
           app.installedVersions.reverse()
           app.instances = getAppInstances(app, deviceAPI.instances)
         }
       })
 
-      setAppList(appList => [...mergedList])
+      setAppList((appList) => [...mergedList])
       setAppListLoading(false)
       setAppListError(false)
     } else {
-      setAppList(appList => [...loadedProducts])
+      setAppList((appList) => [...loadedProducts])
       setAppListLoading(false)
       setAppListError(true)
-      console.error('Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' + deviceAPI.lastAPIError)
+      console.error(
+        'Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' +
+          deviceAPI.lastAPIError
+      )
     }
   }
 
-  return (<>{props.children}</>)
+  return <>{props.children}</>
 }
 AppList.propTypes = {
   children: PropTypes.any
 }
 
-function findApp (app, list) {
+function findApp(app, list) {
   let result
   list.forEach((product) => {
     if (app.name === getReverseDomainName(product)) {
@@ -105,20 +141,24 @@ function findApp (app, list) {
   return result
 }
 
-function getInstalledVersions (apps, app) {
+function getInstalledVersions(apps, app) {
   let result
   if (apps && app) {
-    const installedApps = apps.filter(obj => (obj.appKey.name === app))
+    const installedApps = apps.filter((obj) => obj.appKey.name === app)
     if (installedApps) {
-      result = installedApps.map(obj => obj.appKey.version)
+      result = installedApps.map((obj) => obj.appKey.version)
     }
   }
   return result
 }
 
-function getAppInstances (app, instances) {
+function getAppInstances(app, instances) {
   if (app && instances) {
-    return instances.filter(i => (i.appKey.name === app.appKey.name && i.appKey.version === app.appKey.version))
+    return instances.filter(
+      (i) =>
+        i.appKey.name === app.appKey.name &&
+        i.appKey.version === app.appKey.version
+    )
   }
 }
 

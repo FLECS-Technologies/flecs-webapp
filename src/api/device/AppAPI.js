@@ -144,14 +144,14 @@ export default class AppAPI extends React.Component {
   async waitUntilJobIsComplete (jobId, jobType, handleInstallationJob) {
     const jobsAPI = new JobsAPI()
     await jobsAPI.getJob(jobId)
-    this.jobStatus = jobsAPI.state.responseData[0].status
+    this.jobStatus = jobsAPI.state.responseData.status
     if (handleInstallationJob) {
       handleInstallationJob(this.jobStatus)
     }
 
     while (this.jobStatus !== 'successful' && this.jobStatus !== 'failed' && this.jobStatus !== 'cancelled') {
       await jobsAPI.getJob(jobId)
-      this.jobStatus = jobsAPI.state.responseData[0].status
+      this.jobStatus = jobsAPI.state.responseData.status
       if (handleInstallationJob) {
         handleInstallationJob(this.jobStatus)
       }
@@ -159,7 +159,7 @@ export default class AppAPI extends React.Component {
     }
 
     if (jobType === 'create-instance') {
-      this.instanceId = jobsAPI.state.responseData[0].result.message
+      this.instanceId = jobsAPI.state.responseData.result.message
     }
   }
 

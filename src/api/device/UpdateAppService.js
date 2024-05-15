@@ -59,12 +59,12 @@ const installApp = async (app, version, handleInstallationJob) => {
 const waitUntilJobIsComplete = async (jobId, handleInstallationJob) => {
   const jobsAPI = new JobsAPI()
   await jobsAPI.getJob(jobId)
-  let jobStatus = jobsAPI.state.responseData[0].status
+  let jobStatus = jobsAPI.state.responseData.status
   handleInstallationJob(jobStatus)
 
   while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
     await jobsAPI.getJob(jobId)
-    jobStatus = jobsAPI.state.responseData[0].status
+    jobStatus = jobsAPI.state.responseData.status
     handleInstallationJob(jobStatus)
     await sleep(500)
   }

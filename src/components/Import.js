@@ -78,11 +78,11 @@ export default function Import (props) {
     const waitUntilJobIsComplete = async (jobId) => {
       const jobsAPI = new JobsAPI()
       await jobsAPI.getJob(jobId)
-      let jobStatus = jobsAPI.state.responseData[0].status
+      let jobStatus = jobsAPI.state.responseData.status
 
       while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
         await jobsAPI.getJob(jobId)
-        jobStatus = jobsAPI.state.responseData[0].status
+        jobStatus = jobsAPI.state.responseData.status
         await sleep(500)
       }
       return jobStatus

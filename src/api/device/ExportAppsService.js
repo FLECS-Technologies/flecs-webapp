@@ -104,15 +104,15 @@ async function getDownloadExport (exportId) {
 const waitUntilJobIsComplete = async (jobId) => {
   const jobsAPI = new JobsAPI()
   await jobsAPI.getJob(jobId)
-  let jobStatus = jobsAPI.state.responseData[0].status
+  let jobStatus = jobsAPI.state.responseData.status
 
   while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
     await jobsAPI.getJob(jobId)
-    jobStatus = jobsAPI.state.responseData[0].status
+    jobStatus = jobsAPI.state.responseData.status
     await sleep(500)
   }
 
-  const exportId = jobsAPI.state.responseData[0].result.message
+  const exportId = jobsAPI.state.responseData.result.message
 
   return { jobStatus, exportId }
 }

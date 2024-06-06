@@ -44,6 +44,8 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from 'react-router-dom'
 import { JobsContext } from '../data/JobsContext'
 import BasicTable from './AppBarTable'
+import HelpButton from './help/HelpButton'
+import { helpdomain } from './help/helplinks'
 
 function ElevationScroll(props) {
   const { children, window } = props
@@ -141,7 +143,7 @@ export default function ElevateAppBar(props) {
         >
           <Toolbar>
             <Logo></Logo>
-
+            <HelpButton url={helpdomain} />
             <Button
               sx={{
                 display: jobs?.length > 0 ? 'block' : 'none',

@@ -37,6 +37,8 @@ import {
   putEnvironments
 } from '../../../api/device/instances/environment/environment'
 import { Delete } from '@mui/icons-material'
+import HelpButton from '../../help/HelpButton'
+import { instanceenvconfig } from '../../help/helplinks'
 
 function InstanceEnvironments(
   props: InferProps<typeof InstanceEnvironments.propTypes>
@@ -108,7 +110,13 @@ function InstanceEnvironments(
         <TableHead>
           <TableRow>
             <TableCell colSpan={6}>
-              <Typography variant='h6'>Environment Variables</Typography>
+              <Typography variant='h6'>
+                Environment Variables
+                <HelpButton
+                  url={instanceenvconfig}
+                  label='Help for settings of app environments'
+                ></HelpButton>
+              </Typography>
             </TableCell>
           </TableRow>
           <TableRow>

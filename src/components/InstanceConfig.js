@@ -35,6 +35,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import ClearIcon from '@mui/icons-material/Clear'
 import InstanceDevicesConfig from './InstanceDevicesConfig'
 import InstanceEnvironments from './apps/instance/InstanceEnvironments'
+import InstancePorts from './apps/instance/InstancePorts'
 
 export default function InstanceConfig(props) {
   const { instance } = props
@@ -167,6 +168,7 @@ export default function InstanceConfig(props) {
               <Tab label='Network' value='1' />
               <Tab label='Devices' value='2' />
               <Tab label='Environments' value='3' />
+              <Tab label='Ports' value='4' />
             </TabList>
           </Box>
 
@@ -192,6 +194,12 @@ export default function InstanceConfig(props) {
               saveConfig={setSaveConfig}
               instanceId={instance?.instanceId}
             ></InstanceEnvironments>
+          </TabPanel>
+          <TabPanel value='4'>
+            <InstancePorts
+              saveConfig={setSaveConfig}
+              instanceId={instance?.instanceId}
+            ></InstancePorts>
           </TabPanel>
         </TabContext>
       )}

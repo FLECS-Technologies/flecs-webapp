@@ -68,6 +68,7 @@ function AppList(props) {
       setLoadedProducts(products)
     } catch (error) {
       console.log(error)
+      setLoadedProducts([])
       setAppListError(true)
     } finally {
       setAppListLoading(false)

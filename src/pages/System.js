@@ -18,61 +18,76 @@
 
 import React from 'react'
 import styled from 'styled-components'
-import { BottomNavigation, Box, Divider, Paper, Toolbar, Typography } from '@mui/material'
+import {
+  BottomNavigation,
+  Box,
+  Divider,
+  Paper,
+  Toolbar,
+  Typography
+} from '@mui/material'
 import { Link } from 'react-router-dom'
 import Version from '../components/Version'
 import DeviceActivation from '../components/device/DeviceActivation'
+import LicenseInfo from '../components/device/license/LicenseInfo'
 
 const Header = styled.div`
   display: 'flex';
-  alignItems: 'center';
-  justifyContent: 'flex-end';
+  alignitems: 'center';
+  justifycontent: 'flex-end';
   padding: 32px 32px;
 `
 
 const System = () => {
   const data = (
-    <Paper aria-label='system-page' className="box">
+    <Paper aria-label='system-page' className='box'>
       <Toolbar
         sx={{
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 }
         }}
       >
-        <Typography
-          sx={{ flex: '0.1 0.1 10%' }}
-          variant="h6"
-        >
+        <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h6'>
           System
         </Typography>
       </Toolbar>
-      <Divider/>
-      <Box sx={{
-        width: '100%',
-        p: { xs: 1, sm: 2 }
-      }} >
-        <Typography variant='body' >
-            You are currently running FLECS on {window.location.hostname}.
+      <Divider />
+      <Box
+        sx={{
+          width: '100%',
+          p: { xs: 1, sm: 2 }
+        }}
+      >
+        <Typography variant='body'>
+          You are currently running FLECS on {window.location.hostname}.
         </Typography>
         <Version></Version>
       </Box>
-      <Divider/>
-      <Box sx={{
-        width: '100%',
-        p: { xs: 1, sm: 2 }
-      }} >
-        <DeviceActivation variant='line'/>
+      <Divider />
+      <Box
+        sx={{
+          width: '100%',
+          p: { xs: 1, sm: 2 }
+        }}
+      >
+        <LicenseInfo />
+        <DeviceActivation variant='line' />
       </Box>
     </Paper>
   )
   return (
     <div>
-      <Header/>
+      <Header />
       {data}
-      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+      <Paper
+        sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+        elevation={3}
+      >
         <BottomNavigation>
-          <Toolbar sx={{ p: { xs: 1, sm: 2 } }} >
-            <Link aria-label="open-source" to="/open-source">Open-Source</Link>
+          <Toolbar sx={{ p: { xs: 1, sm: 2 } }}>
+            <Link aria-label='open-source' to='/open-source'>
+              Open-Source
+            </Link>
           </Toolbar>
         </BottomNavigation>
       </Paper>

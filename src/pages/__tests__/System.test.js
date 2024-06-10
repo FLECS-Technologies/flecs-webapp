@@ -22,9 +22,18 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import System from '../System'
 
+import { LicenseInfoAPI } from '../../api/device/license/info'
+
+jest.mock('../../api/device/license/info')
+jest.mock('../../api/device/license/status')
+
 describe('System', () => {
   test('renders System page', () => {
-    render(<Router><System /></Router>)
+    render(
+      <Router>
+        <System />
+      </Router>
+    )
 
     expect(screen.getByLabelText('system-page')).toBeVisible()
 

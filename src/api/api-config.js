@@ -47,6 +47,7 @@ const GET_INSTANCE_CONFIG_URL = (instanceId) =>
 const GET_INSTANCE_ENVIRONMENT_URL = (instanceId) =>
   GET_INSTANCE_CONFIG_URL(instanceId) + '/environment'
 const GET_VALIDATE_URL = DEVICE_ROUTE + '/license/activation/status'
+const GET_LICENSE_INFO_URL = DEVICE_ROUTE + '/license/info'
 
 const POST_INSTALL_APP_URL = '/install'
 const POST_UPDATE_APP_URL = DEVICE_BASE_ROUTE + APP_ROUTE + '/update'
@@ -245,6 +246,10 @@ class DeviceAPIConfiguration extends Component {
 
   static get GET_VALIDATE_URL() {
     return GET_VALIDATE_URL
+  }
+
+  static get GET_LICENSE_INFO_URL() {
+    return GET_LICENSE_INFO_URL
   }
 
   static get GET_INSTANCE_ENVIRONMENT_URL() {

@@ -42,7 +42,7 @@ function LicenseInfo() {
         setInfo(response)
         setError(false)
       })
-      .catch((error) => {
+      .catch(() => {
         setError(true)
       })
     setLoading(false)

@@ -29,11 +29,13 @@ import {
   TableRow,
   Typography
 } from '@mui/material'
+import { DeviceActivationContext } from '../../providers/DeviceActivationContext'
 
 function LicenseInfo() {
   const [info, setInfo] = React.useState<LicenseInfoAPIResponse>()
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState(false)
+  const { activated } = React.useContext(DeviceActivationContext)
 
   const fetchLicenseInfo = async () => {
     setLoading(true)
@@ -49,7 +51,7 @@ function LicenseInfo() {
   }
   React.useEffect(() => {
     if (!loading) fetchLicenseInfo()
-  }, [])
+  }, [activated])
 
   return (
     <React.Fragment>
@@ -84,35 +86,46 @@ function LicenseInfo() {
         )}
         {info && (
           <TableBody>
-            <TableRow key={info.license} style={{ borderBottom: 'none' }}>
-              <TableCell style={{ borderBottom: 'none' }}>License</TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>
-                {info.license}
-              </TableCell>
-            </TableRow>
+            {info.license && (
+              <TableRow key={info.license} style={{ borderBottom: 'none' }}>
+                <TableCell style={{ borderBottom: 'none' }}>License</TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>
+                  {info.license}
+                </TableCell>
+              </TableRow>
+            )}
             <TableRow key={String(info.type)} style={{ borderBottom: 'none' }}>
               <TableCell style={{ borderBottom: 'none' }}>Type</TableCell>
               <TableCell style={{ borderBottom: 'none' }}>
                 {String(info.type)}
               </TableCell>
             </TableRow>
-            <TableRow key={info.sessionId.id} style={{ borderBottom: 'none' }}>
-              <TableCell style={{ borderBottom: 'none' }}>Session ID</TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>
-                {info.sessionId.id}
-              </TableCell>
-            </TableRow>
-            <TableRow
-              key={String(info.sessionId.timestamp)}
-              style={{ borderBottom: 'none' }}
-            >
-              <TableCell style={{ borderBottom: 'none' }}>
-                Last session renewal
-              </TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>
-                {String(info.sessionId.timestamp)}
-              </TableCell>
-            </TableRow>
+            {info.sessionId && info.sessionId.id && (
+              <TableRow
+                key={info.sessionId.id}
+                style={{ borderBottom: 'none' }}
+              >
+                <TableCell style={{ borderBottom: 'none' }}>
+                  Session ID
+                </TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>
+                  {info.sessionId.id}
+                </TableCell>
+              </TableRow>
+            )}
+            {info.sessionId && info.sessionId.timestamp && (
+              <TableRow
+                key={String(info.sessionId.timestamp)}
+                style={{ borderBottom: 'none' }}
+              >
+                <TableCell style={{ borderBottom: 'none' }}>
+                  Last session renewal
+                </TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>
+                  {String(info.sessionId.timestamp)}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         )}
       </Table>

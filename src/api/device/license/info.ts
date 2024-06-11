@@ -36,7 +36,8 @@ export async function LicenseInfoAPI() {
     )
     .then((response) => {
       const value = response.data as LicenseInfoAPIResponse
-      value.sessionId.timestamp = new Date(value.sessionId.timestamp)
+      if (value.sessionId)
+        value.sessionId.timestamp = new Date(value.sessionId.timestamp)
       return value
     })
     .catch((error) => {

@@ -19,16 +19,21 @@
 import React from 'react'
 import { IconButton, Typography } from '@mui/material'
 import { ReactComponent as LogoSVG } from './logo.svg'
+import { ReactComponent as SomicLogo } from './somic.svg'
 
-export default function Logo () {
+export default function Logo() {
   return (
-        <React.Fragment>
-            <IconButton aria-label='logo' disabled={true}>
-              <LogoSVG width="24" height="24" />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              FLECS
-            </Typography>
-        </React.Fragment>
+    <React.Fragment>
+      <IconButton aria-label='Somic-Logo' disabled={true}>
+        <SomicLogo height='48' />
+      </IconButton>
+      <Typography variant='caption' component='div' sx={{ flexGrow: 1 }}>
+        powered by
+        <IconButton aria-label='FLECS-Logo' disabled={true}>
+          <LogoSVG width='16' height='16' />
+        </IconButton>
+        <Typography variant='caption'>FLECS</Typography>
+      </Typography>
+    </React.Fragment>
   )
 }

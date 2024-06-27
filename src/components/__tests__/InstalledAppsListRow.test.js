@@ -41,7 +41,8 @@ describe('Test Installed Apps List row', () => {
         status: 'running',
         appKey: {
           version: '4.2.0'
-        }
+        },
+        editor: '/api/v2/instances/01234567/editor'
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
@@ -49,7 +50,8 @@ describe('Test Installed Apps List row', () => {
         status: 'stopped',
         appKey: {
           version: '4.2.0'
-        }
+        },
+        editor: '/api/v2/instances/12345678/editor'
       }
     ]
   }
@@ -60,11 +62,14 @@ describe('Test Installed Apps List row', () => {
     await act(async () => {
       render(
         <JobsContextProvider>
-          <Row key = {app.appKey.name} row = {app} />
-        </JobsContextProvider>)
+          <Row key={app.appKey.name} row={app} />
+        </JobsContextProvider>
+      )
     })
 
-    const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const crtInstnButton = screen.getByTestId(
+      'start-new-instance-icon-button-icon'
+    )
     const deleteButton = screen.getByTestId('DeleteIcon')
 
     expect(crtInstnButton).toBeVisible()
@@ -74,11 +79,14 @@ describe('Test Installed Apps List row', () => {
   test('create new instance', async () => {
     await act(async () => {
       render(
-      <JobsContextProvider>
-        <Row key = {app.appKey.name} row = {app} />
-      </JobsContextProvider>)
+        <JobsContextProvider>
+          <Row key={app.appKey.name} row={app} />
+        </JobsContextProvider>
+      )
     })
-    const crtInstnButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const crtInstnButton = screen.getByTestId(
+      'start-new-instance-icon-button-icon'
+    )
     const deleteButton = screen.getByTestId('DeleteIcon')
 
     fireEvent.click(crtInstnButton)
@@ -91,10 +99,13 @@ describe('Test Installed Apps List row', () => {
     await act(async () => {
       render(
         <JobsContextProvider>
-          <Row key = {app.appKey.name} row = {app} />
-        </JobsContextProvider>)
+          <Row key={app.appKey.name} row={app} />
+        </JobsContextProvider>
+      )
     })
-    const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon')
+    const createInstanceButton = screen.getByTestId(
+      'start-new-instance-icon-button-icon'
+    )
     const deleteButton = screen.getByTestId('DeleteIcon')
 
     fireEvent.click(deleteButton)
@@ -114,7 +125,7 @@ describe('Test Installed Apps List row', () => {
       }
     ]
     await act(async () => {
-      render(<Row key = {app.appKey.name} row = {app} />)
+      render(<Row key={app.appKey.name} row={app} />)
     })
 
     const relatedLinks = screen.getByTestId('more-horiz-icon')
@@ -130,10 +141,9 @@ describe('Test Installed Apps List row', () => {
 
   test('test app without relatedLinks', () => {
     app.relatedLinks = null
-    const { getByTestId /*, getByLabelText */ } = render(<Row
-        key = {app.appKey.name}
-        row = {app}
-   />)
+    const { getByTestId /*, getByLabelText */ } = render(
+      <Row key={app.appKey.name} row={app} />
+    )
 
     expect(() => getByTestId('more-horiz-icon')).toThrow()
     // screen.debug()
@@ -143,7 +153,7 @@ describe('Test Installed Apps List row', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
-    render(<Row key = {app.appKey.name} row = {app} />)
+    render(<Row key={app.appKey.name} row={app} />)
 
     const expandButton = screen.getByLabelText('expand row')
     fireEvent.click(expandButton)
@@ -153,6 +163,8 @@ describe('Test Installed Apps List row', () => {
 
     expect(editorButton).toBeEnabled()
     expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('http://localhost:8080')
+    expect(window.open).toHaveBeenCalledWith(
+      'http://localhost/api/v2/instances/01234567/editor'
+    )
   })
 })

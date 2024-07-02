@@ -88,6 +88,11 @@ jobs:
   package:
     needs: build
     runs-on: ubuntu-22.04
+    environment: deploy-dl
+
+    permissions:
+      id-token: write
+      contents: read
 
     env:
       VERSION_SPECIAL: -dev
@@ -103,24 +108,26 @@ jobs:
           make package_${{ matrix.arch }}
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy packages and latest files
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: 2.53.0
           inlineScript: |
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "latest_flecs-webapp_*"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --auth-mode login --account-name flecs --container-name flecs-dl --name dev/webapp/$(basename ${i}) --file ${i} --overwrite
             done
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.deb"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/$(make version)/deb/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --auth-mode login --account-name flecs --container-name flecs-dl --name dev/webapp/$(make version)/deb/$(basename ${i}) --file ${i} --overwrite
             done
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.tar"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --account-name flecs --container-name flecs-dl --name dev/webapp/$(make version)/tar/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --auth-mode login --account-name flecs --container-name flecs-dl --name dev/webapp/$(make version)/tar/$(basename ${i}) --file ${i} --overwrite
             done

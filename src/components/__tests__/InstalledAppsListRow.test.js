@@ -125,7 +125,11 @@ describe('Test Installed Apps List row', () => {
       }
     ]
     await act(async () => {
-      render(<Row key={app.appKey.name} row={app} />)
+      render(
+        <JobsContextProvider>
+          <Row key={app.appKey.name} row={app} />
+        </JobsContextProvider>
+      )
     })
 
     const relatedLinks = screen.getByTestId('more-horiz-icon')
@@ -142,7 +146,9 @@ describe('Test Installed Apps List row', () => {
   test('test app without relatedLinks', () => {
     app.relatedLinks = null
     const { getByTestId /*, getByLabelText */ } = render(
-      <Row key={app.appKey.name} row={app} />
+      <JobsContextProvider>
+        <Row key={app.appKey.name} row={app} />
+      </JobsContextProvider>
     )
 
     expect(() => getByTestId('more-horiz-icon')).toThrow()
@@ -153,7 +159,11 @@ describe('Test Installed Apps List row', () => {
     const closeSpy = jest.fn()
     window.open = jest.fn().mockReturnValue({ close: closeSpy })
 
-    render(<Row key={app.appKey.name} row={app} />)
+    render(
+      <JobsContextProvider>
+        <Row key={app.appKey.name} row={app} />
+      </JobsContextProvider>
+    )
 
     const expandButton = screen.getByLabelText('expand row')
     fireEvent.click(expandButton)

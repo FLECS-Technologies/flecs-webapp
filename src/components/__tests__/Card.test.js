@@ -53,13 +53,21 @@ describe('Card', () => {
   })
 
   test('renders Card component', () => {
-    render(<Card />)
+    render(
+      <JobsContextProvider>
+        <Card />
+      </JobsContextProvider>
+    )
 
     // screen.debug()
   })
 
   test('Click request', async () => {
-    const { getByTestId } = render(<Card />)
+    const { getByTestId } = render(
+      <JobsContextProvider>
+        <Card />
+      </JobsContextProvider>
+    )
 
     const requestButton = getByTestId('app-request-button')
     // const confirmDialog = getByTestId('confirm-dialog')
@@ -108,18 +116,20 @@ describe('Card', () => {
 
   test('Click uninstall', async () => {
     render(
-      <Card
-        app='Testapp'
-        avatar=''
-        title='Test App Title'
-        author='Test App author'
-        version='Test App Version'
-        description='Test App Description'
-        status='installed'
-        availability='available'
-        installedVersions={['Test App Version']}
-        instances={[]}
-      />
+      <JobsContextProvider>
+        <Card
+          app='Testapp'
+          avatar=''
+          title='Test App Title'
+          author='Test App author'
+          version='Test App Version'
+          description='Test App Description'
+          status='installed'
+          availability='available'
+          installedVersions={['Test App Version']}
+          instances={[]}
+        />
+      </JobsContextProvider>
     )
 
     const uninstallButton = screen.queryByText('Uninstall')
@@ -132,13 +142,21 @@ describe('Card', () => {
   })
 
   test('Card with related links', async () => {
-    const { getByTestId } = render(<Card relatedLinks={relatedLinks} />)
+    const { getByTestId } = render(
+      <JobsContextProvider>
+        <Card relatedLinks={relatedLinks} />
+      </JobsContextProvider>
+    )
 
     expect(getByTestId('more-vert-icon')).toBeVisible()
   })
 
   test('Card without related links', async () => {
-    const { getByTestId } = render(<Card />)
+    const { getByTestId } = render(
+      <JobsContextProvider>
+        <Card />
+      </JobsContextProvider>
+    )
 
     expect(() => getByTestId('more-vert-icon')).toThrow()
   })

@@ -22,46 +22,19 @@ import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
 import BasicTable from '../AppBarTable'
+import { JobsContextProvider } from '../../data/JobsContext'
+import { mockJob, mockSuccessJob } from '../../types/__mocks__/job'
 
-const jobs = [
-  {
-    id: 1,
-    description: 'Went fishing',
-    status: 'running',
-    result: {
-      message: ''
-    }
-  },
-  {
-    id: 2,
-    description: 'Do the laundry',
-    status: 'failed',
-    result: {
-      message: ''
-    }
-  },
-  {
-    id: 3,
-    description: 'Repair sink',
-    status: 'pending',
-    result: {
-      message: ''
-    }
-  },
-  {
-    id: 4,
-    description: 'Drive home',
-    status: 'successful',
-    result: {
-      message: ''
-    }
-  }
-]
+const jobs = [mockJob, mockSuccessJob]
 
 describe('AppBarTable', () => {
   test('renders AppBarTable component', async () => {
     await act(async () => {
-      render(<BasicTable jobs={[]}></BasicTable>)
+      render(
+        <JobsContextProvider>
+          <BasicTable jobs={[]}></BasicTable>
+        </JobsContextProvider>
+      )
     })
     expect(screen.getByText('Installation Log')).toBeVisible()
     expect(screen.getByText('Clear All')).toBeVisible()
@@ -72,7 +45,16 @@ describe('AppBarTable', () => {
     const deleteJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(<BasicTable jobs={[]} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonIsDisabled={false} />)
+      render(
+        <JobsContextProvider>
+          <BasicTable
+            jobs={[]}
+            deleteJobs={deleteJobs}
+            clearAllFinishedJobs={clearAllFinishedJobs}
+            clearAllButtonIsDisabled={false}
+          />
+        </JobsContextProvider>
+      )
     })
     expect(screen.getByText('Clear All')).toBeVisible()
     const clearAllButton = screen.getByText('Clear All')
@@ -82,11 +64,15 @@ describe('AppBarTable', () => {
 
   test('render with jobs', async () => {
     await act(async () => {
-      render(<BasicTable jobs={jobs} />)
+      render(
+        <JobsContextProvider>
+          <BasicTable jobs={jobs} />
+        </JobsContextProvider>
+      )
     })
 
-    expect(screen.getByText(jobs[1].description)).toBeVisible()
-    expect(screen.getByText(jobs[2].status)).toBeVisible()
+    expect(screen.getByText(jobs[0].status)).toBeVisible()
+    expect(screen.getByText(jobs[1].status)).toBeVisible()
   })
 
   test('render with jobs and click on Clear', async () => {
@@ -94,7 +80,16 @@ describe('AppBarTable', () => {
     const clearAllFinishedJobs = jest.fn()
     const user = userEvent.setup()
     await act(async () => {
-      render(<BasicTable jobs={jobs} deleteJobs={deleteJobs} clearAllFinishedJobs={clearAllFinishedJobs} clearAllButtonIsDisabled={true} />)
+      render(
+        <JobsContextProvider>
+          <BasicTable
+            jobs={jobs}
+            deleteJobs={deleteJobs}
+            clearAllFinishedJobs={clearAllFinishedJobs}
+            clearAllButtonIsDisabled={true}
+          />
+        </JobsContextProvider>
+      )
     })
 
     const clearButton = screen.getAllByTestId('icon-button')

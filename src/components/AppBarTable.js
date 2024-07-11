@@ -34,12 +34,25 @@ import ClearIcon from '@mui/icons-material/Clear'
 import LoadIconButton from './LoadIconButton'
 import InfoIcon from './InfoIcon'
 import { Grid } from '@mui/material'
-import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService'
+import {
+  downloadPastExport,
+  deleteExport
+} from '../api/device/ExportAppsService'
 import { JobsContext } from '../data/JobsContext'
 
-export default function BasicTable (props) {
-  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonIsDisabled } = props
-  const rows = jobs?.sort((a, b) => b.id - a.id).map(j => ({ id: j.id, description: j.description, status: j.status, message: j.result.message }))
+export default function BasicTable(props) {
+  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonIsDisabled } =
+    props
+  const rows = jobs
+    ?.sort((a, b) => b.id - a.id)
+    .map((j) => ({
+      id: j.id,
+      description: j.description,
+      status: j.status,
+      message: j.result.message,
+      numSteps: j.numSteps,
+      currentStep: j.currentStep
+    }))
   const { exports, fetchExports } = React.useContext(JobsContext)
 
   const handleDownloadPastExport = async (exportId) => {
@@ -64,34 +77,46 @@ export default function BasicTable (props) {
   return (
     <React.Fragment>
       <Toolbar
-          sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-            justifyContent: 'space-between'
-          }}
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          justifyContent: 'space-between'
+        }}
+      >
+        <Typography variant='h12' id='tableTitle' component='div'>
+          Installation Log
+        </Typography>
+        <Tooltip
+          title={
+            'Clear the log (this does not uninstall or remove any apps or instances)'
+          }
         >
-          <Typography
-            variant="h12"
-            id="tableTitle"
-            component="div"
-          >
-            Installation Log
-          </Typography>
-          <Tooltip title={'Clear the log (this does not uninstall or remove any apps or instances)'}>
-            <div>
-            <Button variant='outlined' sx={{ mr: 1 }} disabled={clearAllButtonIsDisabled} data-testid='clear-all-button' onClick={() => clearAllFinishedJobs()}>
+          <div>
+            <Button
+              variant='outlined'
+              sx={{ mr: 1 }}
+              disabled={clearAllButtonIsDisabled}
+              data-testid='clear-all-button'
+              onClick={() => clearAllFinishedJobs()}
+            >
               Clear All
             </Button>
-            </div>
-          </Tooltip>
+          </div>
+        </Tooltip>
       </Toolbar>
       <TableContainer>
-        <Table size='small' aria-label="simple table">
+        <Table size='small' aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Description</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+                Description
+              </TableCell>
+              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+                Status
+              </TableCell>
+              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,39 +125,78 @@ export default function BasicTable (props) {
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell align="left">{row.description}</TableCell>
-                <TableCell align="left">
-                    {row.status === 'failed'
-                      ? <div style={{
+                <TableCell align='left'>
+                  {row.description +
+                    ' (' +
+                    row.currentStep.num +
+                    '/' +
+                    row.numSteps +
+                    ' Steps)'}
+                </TableCell>
+                <TableCell align='left'>
+                  {row.status === 'failed' ? (
+                    <div
+                      style={{
                         display: 'flex',
                         alignItems: 'center'
-                      }}>
-                        {row.status}
-                        <InfoIcon message={row.message}/>
-                      </div>
-                      : row.status}
+                      }}
+                    >
+                      {row.status}
+                      <InfoIcon message={row.message} />
+                    </div>
+                  ) : (
+                    row.status
+                  )}
                 </TableCell>
-                <TableCell align="left">
-                  <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                    <LoadIconButton disabled={row.status === 'running'} onClick={() => deleteJobs(row.id)} icon={
-                      <Tooltip title={'Clear this entry from the log'}>
-                        <ClearIcon aria-label='clear-button' sx={{ width: '60%', cursor: 'pointer' }} />
-                      </Tooltip>
-                    }/>
-                    {(row.description === 'Creating export' && row.status === 'successful')
-                      ? <>
-                          <LoadIconButton title={'Download this export'} disabled={!checkExport(row.message)} onClick={() => handleDownloadPastExport(row.message)} icon={
+                <TableCell align='left'>
+                  <Grid
+                    container
+                    direction='row'
+                    justify='flex-start'
+                    alignItems='flex-start'
+                  >
+                    <LoadIconButton
+                      disabled={row.status === 'running'}
+                      onClick={() => deleteJobs(row.id)}
+                      icon={
+                        <Tooltip title={'Clear this entry from the log'}>
+                          <ClearIcon
+                            aria-label='clear-button'
+                            sx={{ width: '60%', cursor: 'pointer' }}
+                          />
+                        </Tooltip>
+                      }
+                    />
+                    {row.description === 'Creating export' &&
+                    row.status === 'successful' ? (
+                      <>
+                        <LoadIconButton
+                          title={'Download this export'}
+                          disabled={!checkExport(row.message)}
+                          onClick={() => handleDownloadPastExport(row.message)}
+                          icon={
                             <Tooltip title={'Download this export'}>
-                              <DownloadIcon aria-label='download-button' sx={{ cursor: 'pointer' }} />
+                              <DownloadIcon
+                                aria-label='download-button'
+                                sx={{ cursor: 'pointer' }}
+                              />
                             </Tooltip>
-                          }/>
-                          <LoadIconButton disabled={!checkExport(row.message)} onClick={() => handleDeleteExport(row.message)} icon={
+                          }
+                        />
+                        <LoadIconButton
+                          disabled={!checkExport(row.message)}
+                          onClick={() => handleDeleteExport(row.message)}
+                          icon={
                             <Tooltip title={'Delete this export'}>
-                              <DeleteIcon aria-label='delete-button' sx={{ cursor: 'pointer' }} />
+                              <DeleteIcon
+                                aria-label='delete-button'
+                                sx={{ cursor: 'pointer' }}
+                              />
                             </Tooltip>
-                          }/>
-                        </>
-                      : null}
+                          }
+                        />
+                      </>
+                    ) : null}
                   </Grid>
                 </TableCell>
               </TableRow>

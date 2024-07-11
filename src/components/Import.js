@@ -21,12 +21,11 @@ import DownloadIcon from '@mui/icons-material/Download'
 import { postImportApps } from '../api/device/ImportAppsService'
 import ActionSnackbar from './ActionSnackbar'
 import FileOpen from './FileOpen'
-import JobsAPI from '../api/device/JobsAPI'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { JobsContext } from '../data/JobsContext'
-import { sleep } from '../utils/sleep'
+import { OnboardingDeviceAPI } from '../api/device/onboarding/onboarding'
 
-export default function Import (props) {
+export default function Import(props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext)
   const { ...buttonProps } = props
   const [importing, setImporting] = React.useState(false)
@@ -35,11 +34,85 @@ export default function Import (props) {
     snackbarText: 'Info',
     alertSeverity: 'success'
   })
-  const { setFetchingJobs } = React.useContext(JobsContext)
+  const { jobs, fetchJobs, fetchJobById } = React.useContext(JobsContext)
+  const [jobId, setJobId] = React.useState(null)
 
-  const importApps = async (props) => {
+  React.useEffect(() => {
+    let interval
+    if (jobId) {
+      const job = jobs.find((job) => job.id === jobId)
+      if (job && (job.status === 'running' || job.status === 'queued')) {
+        // Start polling
+        interval = setInterval(async () => {
+          await fetchJobById(jobId)
+        }, 2000) // Poll every 2 seconds
+      } else if (job && job.status === 'successful') {
+        setUpdateAppList(true)
+        clearInterval(interval) // Clear interval when job is finished
+        setSnackbarState({
+          alertSeverity: 'success',
+          snackbarText: 'Importing finished successfully'
+        })
+        setSnackbarOpen(true)
+        setImporting(false)
+        setJobId(null)
+      } else if (job && job.status === 'failed') {
+        setSnackbarState({
+          alertSeverity: 'error',
+          snackbarText: 'Importing failed'
+        })
+        setSnackbarOpen(true)
+        setImporting(false)
+        setJobId(null)
+        clearInterval(interval) // Clear interval when job is finished
+      } else {
+        clearInterval(interval) // Clear interval when job is finished
+      }
+    }
+    return () => clearInterval(interval) // Cleanup interval on component unmount
+  }, [jobId, jobs])
+
+  const handleFileUpload = (file) => {
+    if (file) {
+      const fileName = file.name.toLowerCase()
+      if (fileName.endsWith('.tar.gz')) {
+        handleTarFile(file)
+      } else if (fileName.endsWith('.json')) {
+        handleJsonFile(file)
+      } else {
+        setSnackbarState({
+          alertSeverity: 'error',
+          snackbarText:
+            'Unsupported file type. Please upload a .tar.gz or .json file.'
+        })
+        setSnackbarOpen(true)
+      }
+    }
+  }
+
+  const handleJsonFile = async (file) => {
     setImporting(true)
-    setFetchingJobs(true)
+    OnboardingDeviceAPI(file)
+      .then(async (response) => {
+        if (response.jobId) {
+          await fetchJobs()
+          setJobId(response.jobId)
+        }
+      })
+      .catch((error) => {
+        setImporting(false)
+        setSnackbarState({
+          alertSeverity: 'error',
+          snackbarText: error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
+        })
+        setSnackbarOpen(true)
+      })
+  }
+
+  const handleTarFile = async (props) => {
+    setImporting(true)
 
     const file = props
     const fileName = props.name
@@ -47,66 +120,42 @@ export default function Import (props) {
     postImportApps(file, fileName)
       .then(async (response) => {
         const jobId = JSON.parse(response).jobId
-        const jobStatus = await waitUntilJobIsComplete(jobId)
-        if (jobStatus === 'successful') {
-          setUpdateAppList(true)
-          setSnackbarState({
-            alertSeverity: 'success',
-            snackbarText: ('Importing finished successfully')
-          })
-          setSnackbarOpen(true)
-        } else {
-          setSnackbarState({
-            alertSeverity: 'error',
-            snackbarText: ('Importing failed')
-          })
-          setSnackbarOpen(true)
+        if (jobId) {
+          await fetchJobs()
+          setJobId(jobId)
         }
       })
       .catch((error) => {
+        setImporting(false)
         setSnackbarState({
           alertSeverity: 'error',
-          snackbarText: (error?.response?.data?.message ? error?.response?.data?.message : error?.message)
+          snackbarText: error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
         })
         setSnackbarOpen(true)
       })
-      .finally(() => {
-        setImporting(false)
-        setFetchingJobs(false)
-      })
-
-    const waitUntilJobIsComplete = async (jobId) => {
-      const jobsAPI = new JobsAPI()
-      await jobsAPI.getJob(jobId)
-      let jobStatus = jobsAPI.state.responseData.status
-
-      while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
-        await jobsAPI.getJob(jobId)
-        jobStatus = jobsAPI.state.responseData.status
-        await sleep(500)
-      }
-      return jobStatus
-    }
   }
 
   return (
     <>
-    <FileOpen
+      <FileOpen
         {...buttonProps}
-        data-testid="import-apps-button"
-        buttonText="Import"
-        buttonIcon={<DownloadIcon/>}
-        accept='.tar*'
-        onConfirm={importApps}
+        data-testid='import-apps-button'
+        buttonText='Import'
+        buttonIcon={<DownloadIcon />}
+        accept='.tar.gz, .json'
+        onConfirm={handleFileUpload}
         loading={importing}
         wholeFile={true}
         disabled={buttonProps.disabled || importing}
-    ></FileOpen>
-    <ActionSnackbar
+      ></FileOpen>
+      <ActionSnackbar
         text={snackbarState.snackbarText}
         open={snackbarOpen}
         setOpen={setSnackbarOpen}
-        alertSeverity={snackbarState.alertSeverity}/>
+        alertSeverity={snackbarState.alertSeverity}
+      />
     </>
   )
 }

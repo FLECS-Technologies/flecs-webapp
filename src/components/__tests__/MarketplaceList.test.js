@@ -21,13 +21,21 @@ import nock from 'nock'
 import '@testing-library/jest-dom'
 import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
-import { render, fireEvent, within, waitFor, screen } from '@testing-library/react'
+import {
+  render,
+  fireEvent,
+  within,
+  waitFor,
+  screen
+} from '@testing-library/react'
 import { DeviceAPIConfiguration } from '../../api/api-config'
 import { FilterContextProvider } from '../../data/FilterContext'
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext'
 import { AppList } from '../../data/AppList'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 jest.mock('../../api/marketplace/ProductService')
+jest.mock('../../api/device/JobsAPI')
 
 const installedApps = [
   {
@@ -35,7 +43,8 @@ const installedApps = [
       name: 'com.codesys.control',
       version: '4.2.0'
     },
-    avatar: 'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+    avatar:
+      'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     title: 'CODESYS Control',
     author: 'CODESYS GmbH',
     description: 'IEC61131-3 Runtime.',
@@ -49,7 +58,8 @@ const installedApps = [
       name: 'com.codesys.edge',
       version: '4.1.0'
     },
-    avatar: 'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
+    avatar:
+      'https://store.codesys.com/media/catalog/product/cache/adefa4dac3229abc7b8dba2f1e919681/c/o/codesys-200px_1.png',
     title: 'CODESYS Edge Gateway',
     author: 'CODESYS GmbH',
     description: 'Gateway to connect to CODESYS RTS.',
@@ -63,7 +73,8 @@ const installedApps = [
       name: 'org.mosquitto.broker',
       version: '2.0.14-openssl'
     },
-    avatar: 'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
+    avatar:
+      'https://d1q6f0aelx0por.cloudfront.net/product-logos/library-eclipse-mosquitto-logo.png',
     title: 'Mosquitto MQTT',
     author: 'Eclipse Foundation',
     description: 'MQTT broker.',
@@ -87,11 +98,18 @@ describe('Marketplace List', () => {
     document.body.appendChild(container)
 
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL)
+      .get(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.APP_ROUTE +
+          DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL
+      )
       .reply(200, installedApps)
 
     nock('http://localhost')
-      .get(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.INSTANCES_ROUTE)
+      .get(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.INSTANCES_ROUTE
+      )
       .reply(200, [])
   })
 
@@ -102,7 +120,18 @@ describe('Marketplace List', () => {
 
   test('renders marketplace list component', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>, container)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>,
+        container
+      )
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -116,7 +145,17 @@ describe('Marketplace List', () => {
 
   test('filter apps by free text', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -133,7 +172,17 @@ describe('Marketplace List', () => {
 
   test('filter apps by available filter', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -145,7 +194,9 @@ describe('Marketplace List', () => {
       fireEvent.click(filterButton)
     })
 
-    const filterByAvailable = await waitFor(() => screen.getByTestId('available-filter'))
+    const filterByAvailable = await waitFor(() =>
+      screen.getByTestId('available-filter')
+    )
     expect(filterByAvailable).toBeEnabled()
 
     await act(async () => {
@@ -162,7 +213,17 @@ describe('Marketplace List', () => {
 
   test('filter apps by category filter', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     })
 
     const searchBar = await waitFor(() => screen.getByTestId('search-bar'))
@@ -174,13 +235,16 @@ describe('Marketplace List', () => {
       fireEvent.click(filterButton)
     })
 
-    const filterByCategory = await waitFor(() => screen.getByTestId('category-filter'))
+    const filterByCategory = await waitFor(() =>
+      screen.getByTestId('category-filter')
+    )
     expect(filterByCategory).toBeEnabled()
 
     let apps = await waitFor(() => screen.queryAllByTestId('app-card'))
     expect(apps).toHaveLength(1)
 
-    await act(async () => { // disables the app category
+    await act(async () => {
+      // disables the app category
       fireEvent.click(filterByCategory)
     })
 
@@ -190,7 +254,17 @@ describe('Marketplace List', () => {
 
   test('filter apps by search filter', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     })
 
     // searches for a valid app
@@ -208,7 +282,9 @@ describe('Marketplace List', () => {
     })
 
     // searches for the filter-by-search button
-    const filterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
+    const filterBySearchButton = await waitFor(() =>
+      screen.getByTestId('search-filter')
+    )
     expect(filterBySearchButton).toBeEnabled()
 
     // expects to find the app it searched for
@@ -221,7 +297,9 @@ describe('Marketplace List', () => {
     })
 
     // expects the filter-by-search button to have the disabled background colour
-    const disabledFilterBySearchButton = await waitFor(() => screen.getByTestId('search-filter'))
+    const disabledFilterBySearchButton = await waitFor(() =>
+      screen.getByTestId('search-filter')
+    )
     const buttonStyle = window.getComputedStyle(disabledFilterBySearchButton)
     const color = buttonStyle.backgroundColor
     expect(color).toEqual('transparent')
@@ -244,7 +322,15 @@ describe('Marketplace List', () => {
 
   test('fetching products failed', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><MPList /></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <MPList />
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     }) // missing <AppList></AppList> so that products won't be loaded
 
     const apps = screen.queryAllByTestId('app-card')
@@ -253,13 +339,29 @@ describe('Marketplace List', () => {
 
   test('pagination', async () => {
     await act(async () => {
-      render(<FilterContextProvider><ReferenceDataContextProvider><AppList><MPList /></AppList></ReferenceDataContextProvider></FilterContextProvider>)
+      render(
+        <JobsContextProvider>
+          <FilterContextProvider>
+            <ReferenceDataContextProvider>
+              <AppList>
+                <MPList />
+              </AppList>
+            </ReferenceDataContextProvider>
+          </FilterContextProvider>
+        </JobsContextProvider>
+      )
     })
 
-    const nextPageButton = await waitFor(() => screen.getByLabelText('Go to next page'))
-    const previousPageButton = await waitFor(() => screen.getByLabelText('Go to previous page'))
+    const nextPageButton = await waitFor(() =>
+      screen.getByLabelText('Go to next page')
+    )
+    const previousPageButton = await waitFor(() =>
+      screen.getByLabelText('Go to previous page')
+    )
 
-    const currentPage = document.getElementsByClassName('MuiTablePagination-displayedRows')[0]
+    const currentPage = document.getElementsByClassName(
+      'MuiTablePagination-displayedRows'
+    )[0]
     expect(currentPage).toBeInTheDocument()
     expect(currentPage.textContent).toBe('1–1 of 1')
 

@@ -21,10 +21,17 @@ import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 import DeviceAppsList from '../InstalledAppsList'
+import { JobsContextProvider } from '../../data/JobsContext'
 
 describe('Test Installed Apps List', () => {
   test('renders installed apps list component', () => {
-    const { getByTestId } = render(<Router><DeviceAppsList /></Router>)
+    const { getByTestId } = render(
+      <JobsContextProvider>
+        <Router>
+          <DeviceAppsList />
+        </Router>
+      </JobsContextProvider>
+    )
 
     const sideloadButton = getByTestId('DeveloperModeIcon')
 

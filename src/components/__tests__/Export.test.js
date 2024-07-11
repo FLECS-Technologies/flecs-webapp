@@ -35,7 +35,11 @@ describe('Export', () => {
   })
   test('renders Export component', async () => {
     await act(async () => {
-      render(<Export></Export>)
+      render(
+        <JobsContextProvider>
+          <Export></Export>
+        </JobsContextProvider>
+      )
     })
     expect(screen.getByText('Export')).toBeVisible()
   })
@@ -43,7 +47,11 @@ describe('Export', () => {
   test('click on export button', async () => {
     const user = userEvent.setup()
     await act(async () => {
-      render(<JobsContextProvider><Export></Export></JobsContextProvider>)
+      render(
+        <JobsContextProvider>
+          <Export></Export>
+        </JobsContextProvider>
+      )
     })
     expect(screen.getByText('Export')).toBeVisible()
     const exportButton = screen.getByText('Export')

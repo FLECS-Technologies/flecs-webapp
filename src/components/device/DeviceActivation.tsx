@@ -56,7 +56,8 @@ function DeviceActivation(
       setInfoText('Device is not activated!')
     } else if (error) {
       setInfoText(
-        'Failed to check activation status! Please login with your account and try again.'
+        statusText ||
+          'Failed to check activation status! Please login with your account and try again.'
       )
     }
   }, [activated, validating, activating])

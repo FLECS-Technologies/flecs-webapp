@@ -67,12 +67,13 @@ const DeviceActivationProvider = ({
         setError(false)
         setStatusText('Device is activated!')
       })
-      .catch(() => {
+      .catch((error) => {
         setActivated(false)
         setValidated(false)
         setError(true)
         setStatusText(
-          'Failed to activate the device! Please login with your account and try again.'
+          error.response.data.additionalInfo ||
+            'Failed to activate the device! Please login with your account and try again.'
         )
       })
     setActivating(false)

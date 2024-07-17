@@ -72,8 +72,8 @@ const DeviceActivationProvider = ({
         setValidated(false)
         setError(true)
         setStatusText(
-          error.response.data.additionalInfo ||
-            'Failed to activate the device! Please login with your account and try again.'
+          'Failed to activate the device! Please make sure that you are logged in and that your account has device licences: ' +
+            error.response.data.additionalInfo
         )
       })
     setActivating(false)

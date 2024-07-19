@@ -37,17 +37,15 @@ import ContentDialog from './ContentDialog'
 import InstanceInfo from './InstanceInfo'
 import InstanceConfig from './InstanceConfig'
 import { JobsContext } from '../data/JobsContext'
-import { OpenAppButton } from './apps/instance/OpenAppButton'
 
-export default function AppInstanceRow(props) {
+export default function AppInstanceRow (props) {
   const { app, appInstance, loadAppReferenceData } = props
   const { setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [instanceStarting, setInstanceStarting] = React.useState(false)
   const [instanceStopping, setInstanceStopping] = React.useState(false)
   const [instanceDeleting, setInstanceDeleting] = React.useState(false)
   const [instanceNotReady] = React.useState(
-    props.appInstance.status !== 'running' &&
-      props.appInstance.status !== 'stopped'
+    props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped'
   )
   const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false)
   const [instanceSettingsOpen, setInstanceSettingsOpen] = React.useState(false)
@@ -71,20 +69,10 @@ export default function AppInstanceRow(props) {
 
     if (appAPI.lastAPICallSuccessful) {
       setUpdateAppList(true)
-      snackbarText =
-        'Successully stopped ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
-        }).instanceName +
-        '.'
+      snackbarText = 'Successully stopped ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
     } else {
       // error snackbar
-      snackbarText =
-        'Failed to stop ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
-        }).instanceName +
-        '.'
+      snackbarText = 'Failed to stop ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'success'
       setSnackbarState({
         alertSeverity,
@@ -110,21 +98,11 @@ export default function AppInstanceRow(props) {
 
       if (appAPI.lastAPICallSuccessful) {
         setUpdateAppList(true)
-        snackbarText =
-          'Successully started ' +
-          appAPI.app.instances.find((obj) => {
-            return obj.instanceId === instanceId
-          }).instanceName +
-          '.'
+        snackbarText = 'Successully started ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       }
     } catch {
       // error snackbar
-      snackbarText =
-        'Failed to start ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
-        }).instanceName +
-        '.'
+      snackbarText = 'Failed to start ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
       setSnackbarState({
         alertSeverity,
@@ -153,12 +131,7 @@ export default function AppInstanceRow(props) {
       alertSeverity = 'success'
     } else {
       // error snackbar
-      snackbarText =
-        'Failed to delete ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
-        }).instanceName +
-        '.'
+      snackbarText = 'Failed to delete ' + appAPI.app.instances.find(obj => { return obj.instanceId === instanceId }).instanceName + '.'
       alertSeverity = 'error'
     }
     setSnackbarState({
@@ -172,124 +145,104 @@ export default function AppInstanceRow(props) {
   }
 
   return (
-    <Fragment>
-      <TableRow>
-        <TableCell component='th' scope='row'>
-          <Tooltip title={'App ' + appInstance.status}>
-            {appInstance.status === 'running' ? (
-              <CircleIcon color='success' />
-            ) : (
-              <ErrorIcon color='warning' />
-            )}
-          </Tooltip>
+      <Fragment>
+        <TableRow>
+        <TableCell component="th" scope="row">
+        <Tooltip title={'App ' + appInstance.status}>
+            {appInstance.status === 'running'
+              ? (
+            <CircleIcon color="success" />
+                )
+              : (
+            <ErrorIcon color="warning" />
+                )}
+        </Tooltip>
         </TableCell>
         <TableCell>{appInstance.instanceName}</TableCell>
         <TableCell>{appInstance.appKey.version}</TableCell>
         <TableCell>
-          <Grid
-            container
-            direction='row'
-            justify='flex-start'
-            alignItems='flex-start'
-          >
-            <Tooltip title='Open app in new tab'>
-              <span>
-                <OpenAppButton
-                  instance={appInstance}
-                  variant='icon'
-                ></OpenAppButton>
-              </span>
-            </Tooltip>
-            <Tooltip title='Info to this instance'>
-              <span>
-                <LoadIconButton
-                  label='instance-info-button'
-                  icon={<InfoIcon />}
-                  onClick={() => setInstanceInfoOpen(true)}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip title='Start instance'>
-              <span>
-                <LoadIconButton
-                  label='start-instance-button'
-                  icon={<PlayCircleIcon />}
-                  color='success'
-                  disabled={
-                    appInstance.status === 'running' ||
-                    instanceStarting ||
-                    instanceStopping ||
-                    instanceDeleting ||
-                    instanceNotReady
-                  }
-                  onClick={() => startInstance(appInstance.instanceId)}
-                  loading={instanceStarting}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip title='Stop instance'>
-              <span>
-                <LoadIconButton
-                  label='stop-instance-button'
-                  icon={<StopCircleIcon />}
-                  disabled={
-                    appInstance.status === 'stopped' ||
-                    instanceStopping ||
-                    instanceStarting ||
-                    instanceDeleting ||
-                    instanceNotReady
-                  }
-                  onClick={() => stopInstance(appInstance.instanceId)}
-                  loading={instanceStopping}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip title='Settings of this instance'>
-              <span>
-                <LoadIconButton
-                  label='instance-settings-button'
-                  icon={<SettingsIcon />}
-                  onClick={() => setInstanceSettingsOpen(true)}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip title='Delete instance'>
-              <span>
-                <LoadIconButton
-                  label='delete-instance-button'
-                  icon={<DeleteIcon />}
-                  disabled={
-                    instanceDeleting || instanceStopping || instanceStarting
-                  }
-                  onClick={() => deleteInstance(appInstance.instanceId)}
-                  loading={instanceDeleting}
-                />
-              </span>
-            </Tooltip>
-          </Grid>
-        </TableCell>
-      </TableRow>
-      <ActionSnackbar
-        text={snackbarText}
-        errorText={snackbarErrorText}
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        alertSeverity={alertSeverity}
-      />
-      <ContentDialog
-        title={'Info to ' + appInstance.instanceName}
-        open={instanceInfoOpen}
-        setOpen={setInstanceInfoOpen}
-      >
-        <InstanceInfo instance={appInstance}></InstanceInfo>
-      </ContentDialog>
-      <ContentDialog
-        title={'Settings of ' + appInstance.instanceName}
-        open={instanceSettingsOpen}
-        setOpen={setInstanceSettingsOpen}
-      >
-        <InstanceConfig instance={appInstance}></InstanceConfig>
-      </ContentDialog>
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Tooltip title="Info to this instance">
+                    <span>
+                    <LoadIconButton
+                        label="instance-info-button"
+                        icon={<InfoIcon />}
+                        onClick={() => setInstanceInfoOpen(true)}
+                    />
+                    </span>
+                </Tooltip>
+                <Tooltip title="Start instance">
+                    <span>
+                    <LoadIconButton
+                        label="start-instance-button"
+                        icon={<PlayCircleIcon />}
+                        color="success"
+                        disabled={appInstance.status === 'running' || instanceStarting || instanceStopping || instanceDeleting || instanceNotReady}
+                        onClick={() => startInstance(appInstance.instanceId)}
+                        loading={instanceStarting}
+                    />
+                    </span>
+                </Tooltip>
+                <Tooltip title="Stop instance">
+                    <span>
+                    <LoadIconButton
+                        label="stop-instance-button"
+                        icon={<StopCircleIcon />}
+                        disabled={appInstance.status === 'stopped' || instanceStopping || instanceStarting || instanceDeleting || instanceNotReady}
+                        onClick={() => stopInstance(appInstance.instanceId)}
+                        loading={instanceStopping}
+                    />
+                    </span>
+                </Tooltip>
+                <Tooltip title="Settings of this instance">
+                    <span>
+                    <LoadIconButton
+                        label="instance-settings-button"
+                        icon={<SettingsIcon />}
+                        onClick={() => setInstanceSettingsOpen(true)}
+                    />
+                    </span>
+                </Tooltip>
+                <Tooltip title="Delete instance">
+                    <span>
+                    <LoadIconButton
+                        label="delete-instance-button"
+                        icon={<DeleteIcon />}
+                        disabled={instanceDeleting || instanceStopping || instanceStarting}
+                        onClick={() => deleteInstance(appInstance.instanceId)}
+                        loading={instanceDeleting}
+                    />
+                    </span>
+                </Tooltip>
+            </Grid>
+            </TableCell>
+        </TableRow>
+        <ActionSnackbar
+            text={snackbarText}
+            errorText={snackbarErrorText}
+            open={snackbarOpen}
+            setOpen={setSnackbarOpen}
+            alertSeverity={alertSeverity}
+        />
+        <ContentDialog
+          title = {'Info to ' + appInstance.instanceName}
+          open={instanceInfoOpen}
+          setOpen={setInstanceInfoOpen}
+        >
+          <InstanceInfo instance={appInstance}></InstanceInfo>
+        </ContentDialog>
+        <ContentDialog
+          title = {'Settings of ' + appInstance.instanceName}
+          open={instanceSettingsOpen}
+          setOpen={setInstanceSettingsOpen}
+        >
+          <InstanceConfig instance={appInstance}></InstanceConfig>
+        </ContentDialog>
     </Fragment>
   )
 }

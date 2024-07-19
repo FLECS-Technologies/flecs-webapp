@@ -42,7 +42,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editor: '/v2/instances/01234567/editor'
+        editor: '/api/v2/instances/01234567/editor'
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
@@ -51,7 +51,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editor: '/v2/instances/12345678/editor'
+        editor: '/api/v2/instances/12345678/editor'
       }
     ]
   }

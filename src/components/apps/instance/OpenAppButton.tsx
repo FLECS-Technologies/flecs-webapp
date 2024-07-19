@@ -39,7 +39,7 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
       editorURL = editorURL.concat(window.location.hostname)
     }
 
-    editorURL = editorURL.concat('/api' + instance.editor)
+    editorURL = editorURL.concat(instance.editor)
     window.open(editorURL)
   }
   return (

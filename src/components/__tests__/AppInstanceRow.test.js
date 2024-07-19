@@ -39,7 +39,7 @@ describe('AppInstanceRow', () => {
     appKey: {
       version: 'Test App Version'
     },
-    editor: '/v2/instances/01234567/editor'
+    editor: '/api/v2/instances/01234567/editor'
   }
   test('render running instance and stop instance', () => {
     testAppInstance.status = 'running'

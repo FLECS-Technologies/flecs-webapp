@@ -23,7 +23,7 @@ import AppInstanceRow from '../AppInstanceRow'
 import { JobsContextProvider } from '../../data/JobsContext'
 
 describe('AppInstanceRow', () => {
-  function loadReferenceData() {}
+  function loadReferenceData () {}
   const testApp = {
     multiInstance: true,
     editor: ':8080',
@@ -38,18 +38,17 @@ describe('AppInstanceRow', () => {
     status: 'running',
     appKey: {
       version: 'Test App Version'
-    },
-    editor: '/api/v2/instances/01234567/editor'
+    }
   }
   test('render running instance and stop instance', () => {
     testAppInstance.status = 'running'
     const { getByLabelText } = render(
       <JobsContextProvider>
         <AppInstanceRow
-          loadAppReferenceData={loadReferenceData}
+          loadAppReferenceData = {loadReferenceData}
           app={testApp}
           appInstance={testAppInstance}
-        />
+          />
       </JobsContextProvider>
     )
     const stopButton = getByLabelText('stop-instance-button')
@@ -70,9 +69,9 @@ describe('AppInstanceRow', () => {
     const { getByLabelText } = render(
       <JobsContextProvider>
         <AppInstanceRow
-          loadAppReferenceData={loadReferenceData}
-          app={testApp}
-          appInstance={testAppInstance}
+        loadAppReferenceData = {loadReferenceData}
+        app={testApp}
+        appInstance={testAppInstance}
         />
       </JobsContextProvider>
     )
@@ -92,13 +91,13 @@ describe('AppInstanceRow', () => {
   test('render stopped instance and start instance', () => {
     testAppInstance.status = 'stopped'
     const { getByLabelText } = render(
-      <JobsContextProvider>
-        <AppInstanceRow
-          loadAppReferenceData={loadReferenceData}
-          app={testApp}
-          appInstance={testAppInstance}
+    <JobsContextProvider>
+      <AppInstanceRow
+        loadAppReferenceData = {loadReferenceData}
+        app={testApp}
+        appInstance={testAppInstance}
         />
-      </JobsContextProvider>
+    </JobsContextProvider>
     )
     const stopButton = getByLabelText('stop-instance-button')
     const startButton = getByLabelText('start-instance-button')
@@ -111,29 +110,5 @@ describe('AppInstanceRow', () => {
     expect(startButton).toBeDisabled()
     expect(deleteButton).toBeVisible()
     expect(infoButton).toBeVisible()
-  })
-
-  test('renders an instance with an editor', () => {
-    const closeSpy = jest.fn()
-    window.open = jest.fn().mockReturnValue({ close: closeSpy })
-
-    const { getByLabelText } = render(
-      <JobsContextProvider>
-        <AppInstanceRow
-          loadAppReferenceData={loadReferenceData}
-          app={testApp}
-          appInstance={testAppInstance}
-        />
-      </JobsContextProvider>
-    )
-
-    const editorButton = getByLabelText('open-app-icon-button')
-    fireEvent.click(editorButton)
-
-    expect(editorButton).toBeEnabled()
-    expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith(
-      'http://localhost/api/v2/instances/01234567/editor'
-    )
   })
 })

@@ -55,10 +55,7 @@ export default function Row(props) {
     false
   )
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [uninstalling, setUninstalling] = useStateWithLocalStorage(
-    props.row.appKey.name + '.row.uninstalling',
-    false
-  ) // useState(false)
+  const [uninstalling, setUninstalling] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',

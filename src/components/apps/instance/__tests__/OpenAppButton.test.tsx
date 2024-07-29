@@ -52,7 +52,7 @@ describe('OpenAppButton', () => {
     process.env.REACT_APP_DEV_CORE_URL = 'http://localhost:3000'
     render(<OpenAppButton instance={testInstance} variant='contained' />)
     fireEvent.click(screen.getByRole('button'))
-    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/editor')
+    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor')
   })
 
   it('opens editor URL in new window on button click in production environment', () => {
@@ -61,7 +61,7 @@ describe('OpenAppButton', () => {
     render(<OpenAppButton instance={testInstance} variant='contained' />)
     fireEvent.click(screen.getByRole('button'))
     expect(window.open).toHaveBeenCalledWith(
-      `http://${window.location.hostname}/editor`
+      `http://${window.location.hostname}/api/editor`
     )
   })
 

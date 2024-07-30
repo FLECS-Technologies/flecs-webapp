@@ -4,7 +4,7 @@ export interface AppInstance {
   appKey: AppKey
   status: string
   desired: string
-  editor: string
+  editor: string[]
 }
 
 export interface AppKey {

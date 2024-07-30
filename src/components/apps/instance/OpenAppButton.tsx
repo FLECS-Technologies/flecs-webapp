@@ -39,12 +39,12 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
       editorURL = editorURL.concat(window.location.hostname)
     }
 
-    editorURL = editorURL.concat('/api' + instance.editor)
+    editorURL = editorURL.concat('/api' + instance.editor[0])
     window.open(editorURL)
   }
   return (
     <React.Fragment>
-      {instance.editor && (
+      {instance.editor.length > 0 && (
         <React.Fragment>
           {(variant === undefined || variant === 'contained') && (
             <LoadingButton

@@ -5,7 +5,7 @@ import { OpenAppButton } from '../OpenAppButton'
 import { AppInstance } from '../../../../api/device/instances/instance'
 
 const testInstance: AppInstance = {
-  editor: '/editor',
+  editors: [{ name: '', url: '/editor', supportsReverseProxy: false }],
   appKey: { name: 'com.test.app', version: '1.1.0' },
   desired: 'running',
   status: 'running',
@@ -14,7 +14,7 @@ const testInstance: AppInstance = {
 }
 
 const noEditorInstance: AppInstance = {
-  editor: '',
+  editors: [],
   appKey: { name: 'com.test.app', version: '1.1.0' },
   desired: 'running',
   status: 'running',

@@ -26,7 +26,7 @@ describe('AppInstanceRow', () => {
   function loadReferenceData() {}
   const testApp = {
     multiInstance: true,
-    editor: ':8080',
+    editors: [{ name: 'editor', url: '/editor' }],
     appKey: {
       name: 'Test app',
       version: 'Test App Version'
@@ -39,7 +39,7 @@ describe('AppInstanceRow', () => {
     appKey: {
       version: 'Test App Version'
     },
-    editor: '/v2/instances/01234567/editor'
+    editors: [{ name: 'editor', url: '/editor' }]
   }
   test('render running instance and stop instance', () => {
     testAppInstance.status = 'running'
@@ -132,8 +132,6 @@ describe('AppInstanceRow', () => {
 
     expect(editorButton).toBeEnabled()
     expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith(
-      'http://localhost/api/v2/instances/01234567/editor'
-    )
+    expect(window.open).toHaveBeenCalledWith('http://localhost/api/editor')
   })
 })

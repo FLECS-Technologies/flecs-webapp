@@ -42,7 +42,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editor: '/v2/instances/01234567/editor'
+        editors: [{ name: 'editor', url: '/editor' }]
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
@@ -51,7 +51,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editor: '/v2/instances/12345678/editor'
+        editors: [{ name: 'editor', url: '/editor' }]
       }
     ]
   }
@@ -173,8 +173,6 @@ describe('Test Installed Apps List row', () => {
 
     expect(editorButton).toBeEnabled()
     expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith(
-      'http://localhost/api/v2/instances/01234567/editor'
-    )
+    expect(window.open).toHaveBeenCalledWith('http://localhost/api/editor')
   })
 })

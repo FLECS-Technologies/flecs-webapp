@@ -4,10 +4,16 @@ export interface AppInstance {
   appKey: AppKey
   status: string
   desired: string
-  editor: string[]
+  editors: Editor[]
 }
 
 export interface AppKey {
   name: string
   version: string
+}
+
+export interface Editor {
+  name: string
+  url: string
+  supportsReverseProxy: boolean
 }

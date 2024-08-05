@@ -87,9 +87,16 @@ const JobsContextProvider = ({ children }: { children: ReactNode }) => {
       await jobsAPI.getJob(id)
       const response = jobsAPI.state.responseData as unknown as Job
       if (response) {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) => (job.id === id ? response : job))
-        )
+        setJobs((prevJobs) => {
+          const jobIndex = prevJobs.findIndex((job) => job.id === id)
+          if (jobIndex !== -1) {
+            const updatedJobs = [...prevJobs]
+            updatedJobs[jobIndex] = response
+            return updatedJobs
+          } else {
+            return [...prevJobs, response]
+          }
+        })
       }
     } catch (error) {
       console.error('Failed to fetch job', error)
@@ -115,8 +122,14 @@ const JobsContextProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-function useJobsContext() {
-  return React.useContext(JobsContext)
+function useJobsContext(): JobsContextType {
+  const context = React.useContext(JobsContext)
+
+  if (context === undefined) {
+    throw new Error('useJobsContext must be used within a JobsProvider')
+  }
+
+  return context
 }
 
 export { JobsContext, JobsContextProvider, useJobsContext }

@@ -17,86 +17,95 @@
  */
 
 import React from 'react'
-import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import UpdateApp from '../UpdateApp'
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
+import { ReferenceDataContext } from '../../../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../../../data/JobsContext'
+import { mockInstalledApps } from '../../../../data/__mocks__/AppList'
+import { mockApp } from '../../../../types/__mocks__/app'
 
-jest.mock('../../../../api/device/UpdateAppService')
+jest.mock('../../../../api/device/apps/install')
+jest.mock('../../../../api/device/instances/instance')
 jest.mock('../../../../api/device/AppAPI')
 jest.mock('../../../../api/device/ExportAppsService')
 jest.mock('../../../../api/device/DeviceAuthAPI')
+jest.mock('../../../../api/device/JobsAPI')
+jest.mock('../../../../utils/sleep')
 
-const app = {
-  title: 'test app',
-  status: 'installed',
-  appKey: {
-    name: 'pass',
-    version: '4.2.0'
-  },
-  instances: []
-}
+const app = mockInstalledApps[0]
 
 const handleActiveStep = jest.fn()
 
 describe('Test Update App', () => {
-  beforeAll(() => {
-  })
+  beforeAll(() => {})
 
   afterAll(() => {
     jest.resetAllMocks()
   })
-  test('renders Update component', async () => {
-    await act(async () => {
-      render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <UpdateApp app={app}></UpdateApp>
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
-  })
 
   test('Successfully update app', async () => {
-    await act(async () => {
-      render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <UpdateApp app={app} from={app.appKey.version} to="4.3.0" handleActiveStep={handleActiveStep} />
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
+    render(
+      <JobsContextProvider>
+        <ReferenceDataContext.Provider
+          value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
+        >
+          <UpdateApp
+            app={app}
+            from={app.appKey.version}
+            to='4.3.0'
+            handleActiveStep={handleActiveStep}
+          />
+        </ReferenceDataContext.Provider>
+      </JobsContextProvider>
+    )
 
-    // 1. check success icon
-    await screen.findByText('Congratulations! ' + app.title + ' was successfully updated from version ' + app.appKey.version + ' to version ' + '4.3.0!')
-    const icon = screen.getByTestId('success-icon')
-    expect(icon).toBeVisible()
+    await waitFor(() => {
+      // 1. check success text
+      const text = screen.getByText(
+        'Congratulations! ' +
+          app.title +
+          ' was successfully updated from version ' +
+          app.appKey.version +
+          ' to version ' +
+          '4.3.0!'
+      )
+      expect(text).toBeInTheDocument()
+
+      // 2. check success icon
+      const icon = screen.getByTestId('success-icon')
+      expect(icon).toBeVisible()
+    })
   })
 
   test('Failed to update app', async () => {
     const user = userEvent.setup()
 
-    app.appKey.name = 'fail'
-    await act(async () => {
-      render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-          <UpdateApp app={app} from={app.appKey.version} to="4.3.0" handleActiveStep={handleActiveStep} />
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>)
+    render(
+      <JobsContextProvider>
+        <ReferenceDataContext.Provider
+          value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
+        >
+          <UpdateApp
+            app={mockApp}
+            from={mockApp.appKey.version}
+            to='4.3.0'
+            handleActiveStep={handleActiveStep}
+          />
+        </ReferenceDataContext.Provider>
+      </JobsContextProvider>
+    )
+
+    await waitFor(() => {
+      // 1. check error icon
+      const icon = screen.getByTestId('error-icon')
+      expect(icon).toBeVisible()
+
+      // 2. click on retry
+      const retryButton = screen.getByRole('button', { name: 'Retry' })
+
+      user.click(retryButton)
     })
-    // 1. check error icon
-    const icon = screen.getByTestId('error-icon')
-    expect(icon).toBeVisible()
-
-    // 2. click on retry
-    const retryButton = screen.getByRole('button', { name: 'Retry' })
-
-    await user.click(retryButton)
   })
 })

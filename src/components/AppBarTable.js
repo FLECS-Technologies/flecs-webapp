@@ -53,7 +53,13 @@ export default function BasicTable(props) {
       numSteps: j.numSteps,
       currentStep: j.currentStep
     }))
-  const { exports, fetchExports } = React.useContext(JobsContext)
+  const { exports, fetchExports, setFetchingJobs } =
+    React.useContext(JobsContext)
+
+  React.useEffect(() => {
+    setFetchingJobs(true)
+    return () => setFetchingJobs(false) // stop fetching on component unmount
+  }, [])
 
   const handleDownloadPastExport = async (exportId) => {
     if (exports.includes(exportId)) {

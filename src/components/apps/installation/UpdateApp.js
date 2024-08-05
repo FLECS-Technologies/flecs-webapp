@@ -1,146 +1,174 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Created on Thu Oct 13 2022
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import { Button, Grid, Typography } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import ReplayIcon from '@mui/icons-material/Replay'
-import ReportIcon from '@mui/icons-material/Report'
-import Alert from '@mui/material/Alert'
-import AlertTitle from '@mui/material/AlertTitle'
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext
+} from 'react'
+import {
+  Button,
+  Grid,
+  Typography,
+  CircularProgress,
+  Alert,
+  AlertTitle
+} from '@mui/material'
+import {
+  CheckCircle as CheckCircleIcon,
+  Replay as ReplayIcon,
+  Report as ReportIcon
+} from '@mui/icons-material'
 import PropTypes from 'prop-types'
-import React from 'react'
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext'
-import { UpdateAppService } from '../../../api/device/UpdateAppService'
-import { JobsContext } from '../../../data/JobsContext'
-import { mapJobStatus } from '../../../utils/mapJobStatus'
-import { sleep } from '../../../utils/sleep'
-import AuthService from '../../../api/marketplace/AuthService'
-import { postMPLogin } from '../../../api/device/DeviceAuthAPI'
+import { InstallAppAPI } from '../../../api/device/apps/install'
+import {
+  checkAllJobStatuses,
+  checkJobStatus
+} from '../../../utils/checkJobStatus'
+import { UpdateInstances } from '../../../api/device/instances/instance'
+import Job from '../../job/Job'
 
-export default function UpdateApp (props) {
-  const { app, from, to, handleActiveStep } = (props)
-  const executedRef = React.useRef(false)
-  const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
-  const [updating, setUpdating] = React.useState(false)
-  const [success, setSuccess] = React.useState(false)
-  const [error, setError] = React.useState(false)
-  const [retry, setRetry] = React.useState(false)
-  const [installationMessage, setInstallationMessage] = React.useState('')
-  const [infoMessage, setInfoMessage] = React.useState(false)
-  const { setFetchingJobs } = React.useContext(JobsContext)
-  const [running, setRunning] = React.useState(false)
+export default function UpdateApp({ app, from, to, handleActiveStep }) {
+  const executedRef = useRef(false)
+  const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
 
-  const updateApp = React.useCallback(async (app, from, to) => {
-    const installedApp = appList?.filter(obj => { return (obj.appKey.name === app.appKey.name && obj.appKey.version === from) }) || []
-    setUpdating(true)
-    setSuccess(false)
-    setError(false)
-    setFetchingJobs(true)
+  const [updating, setUpdating] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState(false)
+  const [retry, setRetry] = useState(false)
+  const [installationMessage, setInstallationMessage] = useState('')
+  const [jobId, setJobId] = useState()
+  const [status, setStatus] = useState()
 
-    const currentUser = AuthService.getCurrentUser()
-    postMPLogin(currentUser)
-      .then(async (response) => {
-        if (response.status === 204) {
-          // call update endpoint
-          await UpdateAppService(app?.appKey.name, to, installedApp[0]?.instances, handleInstallationJob)
-            .then(async () => {
-              // trigger a reload of all installed apps
-              setUpdateAppList(true)
-              await sleep(1000)
-              setFetchingJobs(false)
-            })
-            .catch((error) => {
-              console.log(error)
-            })
-        } else {
-          setError(true)
-          setUpdating(false)
+  const updateApp = useCallback(
+    async (app, from, to) => {
+      try {
+        const installedApp = appList?.find(
+          (obj) =>
+            obj.appKey.name === app.appKey.name && obj.appKey.version === from
+        )
+
+        if (!installedApp)
+          throw new Error(
+            `${app.appKey.name} is not installed and therefore can't be updated!`
+          )
+
+        setUpdating(true)
+
+        // 1. install the requested version
+        setInstallationMessage(from < to ? 'Updating...' : 'Downgrading...')
+        const installJobId = await InstallAppAPI(app.appKey.name, to)
+        setJobId(installJobId)
+
+        // 2. wait until installation is finished
+        const installStatus = await checkJobStatus(installJobId)
+        if (installStatus !== 'successful')
+          throw new Error('Installation failed')
+
+        // 3. update all instances
+        setInstallationMessage(
+          `Migrating ${installedApp?.instances?.length} instances...`
+        )
+        const updateJobIds = await UpdateInstances(installedApp?.instances, to)
+        // 4. wait until all instances are updated
+        const updateStatuses = await checkAllJobStatuses(updateJobIds)
+        const unsuccessfulJob = updateStatuses.find(
+          (status) => status !== 'successful'
+        )
+        if (unsuccessfulJob) {
+          throw new Error(
+            `One or more instance migrations failed with status: ${unsuccessfulJob}`
+          )
         }
-      })
-      .catch((error) => {
-        setError(true)
-        setUpdating(false)
-        console.log(error)
-      })
-  })
 
-  React.useEffect(() => {
-    if (executedRef.current) { return }
+        setInstallationMessage(
+          `Congratulations! ${app?.title} was successfully ${
+            from < to ? 'updated' : 'downgraded'
+          } from version ${from} to version ${to}!`
+        )
+        setUpdateAppList(true)
+        setUpdating(false)
+        setSuccess(true)
+        setError(false)
+        handleActiveStep()
+      } catch (error) {
+        setInstallationMessage(
+          `Oops... ${
+            error.message ||
+            `Error during the ${from < to ? 'update' : 'downgrade'} of ${
+              app?.title
+            }.`
+          }`
+        )
+
+        setError(true)
+        setSuccess(false)
+        setUpdating(false)
+        handleActiveStep(-1)
+      }
+    },
+    [appList, setUpdateAppList, checkJobStatus]
+  )
+
+  useEffect(() => {
+    if (executedRef.current) return
+
     if (app && from && to && !updating && (!success || !error)) {
       setRetry(false)
       updateApp(app, from, to)
     }
-    executedRef.current = true
-  }, [retry])
 
-  const handleRetryClick = (event) => {
+    executedRef.current = true
+  }, [retry, app, from, to, updating, success, error, updateApp])
+
+  const handleRetryClick = () => {
     setRetry(true)
     executedRef.current = false
   }
 
-  const handleInstallationJob = (status) => {
-    const mappedStatus = mapJobStatus(status)
-    if (mappedStatus === 1) {
-      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
-    } else if (mappedStatus === 2) {
-      setRunning(true)
-      setInstallationMessage(((from < to) ? 'Updating...' : 'Downgrading'))
-      setInfoMessage(true)
-    } else if (mappedStatus === 4) {
-      setRunning(false)
-      setInstallationMessage('Congratulations! ' + app?.title + ' was successfully ' + ((from < to) ? 'updated' : 'downgraded') + ' from version ' + from + ' to version ' + to + '!')
-      setInfoMessage(false)
-      setSuccess(true)
-      setUpdating(false)
-    } else if (mappedStatus === -1) {
-      setRunning(false)
-      setInstallationMessage('Oops... ' + (error.message || 'Error during the ' + ((from < to) ? 'update' : 'downgrade') + ' of ' + app?.title + '.'))
-      setSuccess(false)
-      setError(true)
-      setUpdating(false)
-    }
-    handleActiveStep(mappedStatus)
-  }
-
   return (
     <div>
-      <Grid data-testid='update-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
-        <Grid item >
-          {(updating && !running) && <CircularProgress color='secondary' />} {/* pending job */}
-          {running && <CircularProgress />}
-          {(success && !updating) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
-          {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
-        </Grid>
-        <Grid item >
-          <Typography data-testid='installationMessage'>{installationMessage}</Typography>
+      <Grid
+        data-testid='update-app-step'
+        container
+        direction='column'
+        spacing={1}
+        style={{ minHeight: 350, marginTop: 16 }}
+        justifyContent='center'
+        alignItems='center'
+      >
+        <Grid item>
+          {updating && <CircularProgress />}
+          {success && !updating && (
+            <CheckCircleIcon
+              data-testid='success-icon'
+              fontSize='large'
+              color='success'
+            />
+          )}
+          {error && (
+            <ReportIcon
+              data-testid='error-icon'
+              fontSize='large'
+              color='error'
+            />
+          )}
         </Grid>
         <Grid item>
-        {infoMessage
-          ? <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
-            <AlertTitle>Info</AlertTitle>
-            <Typography variant='body2'>You can close this window. Installation takes place automatically in the background.</Typography>
-          </Alert>
-          : null}
+          <Typography data-testid='installationMessage'>
+            {installationMessage}
+          </Typography>
         </Grid>
-        {(error) &&
-        <Grid item >
-          <Button onClick={() => handleRetryClick()} startIcon={<ReplayIcon />}>Retry</Button>
-        </Grid>}
+        <Grid item>
+          <Job jobId={jobId} setStatus={setStatus}></Job>
+        </Grid>
+        {error && (
+          <Grid item>
+            <Button onClick={handleRetryClick} startIcon={<ReplayIcon />}>
+              Retry
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </div>
   )

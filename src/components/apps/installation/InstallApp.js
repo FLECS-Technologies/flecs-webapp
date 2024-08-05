@@ -31,8 +31,8 @@ import { mapJobStatus } from '../../../utils/mapJobStatus'
 import { postMPLogin } from '../../../api/device/DeviceAuthAPI'
 import AuthService from '../../../api/marketplace/AuthService'
 
-export default function InstallApp (props) {
-  const { app, version, handleActiveStep } = (props)
+export default function InstallApp(props) {
+  const { app, version, handleActiveStep } = props
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [installing, setInstalling] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
@@ -40,14 +40,17 @@ export default function InstallApp (props) {
   const [retry, setRetry] = React.useState(false)
   const [installationMessage, setInstallationMessage] = React.useState('')
   const [infoMessage, setInfoMessage] = React.useState(false)
-  const { setFetchingJobs } = React.useContext(JobsContext)
+  const { setFetchingJobs, fetchJobs } = React.useContext(JobsContext)
   const [running, setRunning] = React.useState(false)
   const executedRef = React.useRef(false)
 
-  function loadReferenceData (props) {
+  function loadReferenceData(props) {
     if (appList) {
-      const tmpApp = appList.find(obj => {
-        return (obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version)
+      const tmpApp = appList.find((obj) => {
+        return (
+          obj.appKey.name === props.appKey.name &&
+          obj.appKey.version === props.appKey.version
+        )
       })
 
       return tmpApp
@@ -68,6 +71,7 @@ export default function InstallApp (props) {
       await appAPI.installFromMarketplace(version, handleInstallationJob)
 
       if (appAPI.lastAPICallSuccessful) {
+        await fetchJobs()
         setUpdateAppList(true)
       }
     } else {
@@ -78,13 +82,17 @@ export default function InstallApp (props) {
   })
 
   React.useEffect(() => {
-    if (executedRef.current) { return }
+    if (executedRef.current) {
+      return
+    }
     if (app && !installing && (!success || !error)) {
       setRetry(false)
       installApp(app)
     } else {
       setError(true)
-      setInstallationMessage('Error during the installation of ' + app?.title + '.')
+      setInstallationMessage(
+        'Error during the installation of ' + app?.title + '.'
+      )
     }
     executedRef.current = true
   }, [retry])
@@ -97,7 +105,9 @@ export default function InstallApp (props) {
   const handleInstallationJob = (status) => {
     const mappedStatus = mapJobStatus(status)
     if (mappedStatus === 1) {
-      setInstallationMessage(`We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`)
+      setInstallationMessage(
+        `We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`
+      )
     } else if (mappedStatus === 2) {
       setRunning(true)
       setInstallationMessage('Installing ' + app.title + '.')
@@ -110,7 +120,9 @@ export default function InstallApp (props) {
       setInstalling(false)
     } else if (mappedStatus === -1) {
       setRunning(false)
-      setInstallationMessage('Error during the installation of ' + app.title + '.')
+      setInstallationMessage(
+        'Error during the installation of ' + app.title + '.'
+      )
       setSuccess(false)
       setError(true)
       setInstalling(false)
@@ -120,28 +132,57 @@ export default function InstallApp (props) {
 
   return (
     <div>
-      <Grid data-testid='install-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
-        <Grid item >
-          {(installing && !running) && <CircularProgress color='secondary' />} {/* pending job */}
+      <Grid
+        data-testid='install-app-step'
+        container
+        direction='column'
+        spacing={1}
+        style={{ minHeight: 350, marginTop: 16 }}
+        justifyContent='center'
+        alignItems='center'
+      >
+        <Grid item>
+          {installing && !running && <CircularProgress color='secondary' />}{' '}
+          {/* pending job */}
           {running && <CircularProgress />}
-          {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
-          {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
-        </Grid>
-        <Grid item >
-          <Typography data-testid='installationMessage'>{installationMessage}</Typography>
+          {success && !installing && (
+            <CheckCircleIcon
+              data-testid='success-icon'
+              fontSize='large'
+              color='success'
+            ></CheckCircleIcon>
+          )}
+          {error && (
+            <ReportIcon
+              data-testid='error-icon'
+              fontSize='large'
+              color='error'
+            ></ReportIcon>
+          )}
         </Grid>
         <Grid item>
-        {infoMessage
-          ? <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
-            <AlertTitle>Info</AlertTitle>
-            <Typography variant='body2'>You can close this window. Installation takes place automatically in the background.</Typography>
-          </Alert>
-          : null}
+          <Typography data-testid='installationMessage'>
+            {installationMessage}
+          </Typography>
         </Grid>
-        {(error) &&
-        <Grid item >
-          <Button onClick={onRetryButtonClick} startIcon={<ReplayIcon />}>Retry</Button>
-        </Grid>}
+        <Grid item>
+          {infoMessage ? (
+            <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
+              <AlertTitle>Info</AlertTitle>
+              <Typography variant='body2'>
+                You can close this window. Installation takes place
+                automatically in the background.
+              </Typography>
+            </Alert>
+          ) : null}
+        </Grid>
+        {error && (
+          <Grid item>
+            <Button onClick={onRetryButtonClick} startIcon={<ReplayIcon />}>
+              Retry
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </div>
   )

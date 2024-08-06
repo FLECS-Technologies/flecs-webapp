@@ -36,7 +36,7 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
       editorURL = process.env.REACT_APP_DEV_CORE_URL || ''
     } else {
-      editorURL = editorURL.concat(window.location.hostname)
+      editorURL = editorURL.concat(window.location.host)
     }
 
     editorURL = editorURL.concat('/api' + instance.editors[0].url)

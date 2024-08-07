@@ -118,7 +118,7 @@ case ${1} in
       --name ${CONTAINER} \
       --network flecs \
       --ip ${IP} \
-      --add-host flecs-flecsd:${GATEWAY} \
+      --add-host flecs-floxy:${GATEWAY} \
       --publish ${PORTS[$i]}:80 \
       --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
     exit $?

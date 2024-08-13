@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-import React from 'react'
+import React, { act } from 'react'
 
 import { BrowserRouter as Router } from 'react-router-dom'
 import { render } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
 import '@testing-library/jest-dom'
 
 import App from '../App'

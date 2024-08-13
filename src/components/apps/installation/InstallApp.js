@@ -28,8 +28,6 @@ import AppAPI from '../../../api/device/AppAPI'
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext'
 import { JobsContext } from '../../../data/JobsContext'
 import { mapJobStatus } from '../../../utils/mapJobStatus'
-import { postMPLogin } from '../../../api/device/DeviceAuthAPI'
-import AuthService from '../../../api/marketplace/AuthService'
 
 export default function InstallApp(props) {
   const { app, version, handleActiveStep } = props
@@ -63,21 +61,15 @@ export default function InstallApp(props) {
     setError(false)
     setFetchingJobs(true)
 
-    const currentUser = AuthService.getCurrentUser()
-    const mpLogin = await postMPLogin(currentUser)
-    if (mpLogin.status === 204) {
-      const appAPI = new AppAPI(app)
-      appAPI.setAppData(loadReferenceData(app))
-      await appAPI.installFromMarketplace(version, handleInstallationJob)
+    const appAPI = new AppAPI(app)
+    appAPI.setAppData(loadReferenceData(app))
+    await appAPI.installFromMarketplace(version, handleInstallationJob)
 
-      if (appAPI.lastAPICallSuccessful) {
-        await fetchJobs()
-        setUpdateAppList(true)
-      }
-    } else {
-      setError(true)
-      setInstalling(false)
+    if (appAPI.lastAPICallSuccessful) {
+      await fetchJobs()
+      setUpdateAppList(true)
     }
+
     setFetchingJobs(false)
   })
 

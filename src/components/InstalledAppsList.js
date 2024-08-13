@@ -40,17 +40,14 @@ import FileOpen from './FileOpen'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import useStateWithLocalStorage from './LocalStorage'
 import usePagination from '../hooks/usePagination'
-import { useAuth } from './AuthProvider'
 import { CircularProgress } from '@mui/material'
 import { useSystemContext } from '../data/SystemProvider'
-// import InstallAppStepper from './InstallAppStepper'
 import ContentDialog from './ContentDialog'
 import Export from './Export'
 import Import from './Import'
 import InstallationStepper from './apps/installation/InstallationStepper'
 
 const headCells = [
-
   {
     id: 'title',
     numeric: false,
@@ -71,12 +68,8 @@ const headCells = [
   }
 ]
 
-function EnhancedTableHead (props) {
-  const {
-    order,
-    orderBy,
-    onRequestSort
-  } = props
+function EnhancedTableHead(props) {
+  const { order, orderBy, onRequestSort } = props
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property)
   }
@@ -84,8 +77,8 @@ function EnhancedTableHead (props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell/>
-        <TableCell/>
+        <TableCell />
+        <TableCell />
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -99,13 +92,11 @@ function EnhancedTableHead (props) {
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
-              {orderBy === headCell.id
-                ? (
-                <Box component="span" sx={visuallyHidden}>
+              {orderBy === headCell.id ? (
+                <Box component='span' sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                 </Box>
-                  )
-                : null}
+              ) : null}
             </TableSortLabel>
           </TableCell>
         ))}
@@ -122,7 +113,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number
 }
 
-function descendingComparator (a, b, orderBy) {
+function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1
   }
@@ -132,7 +123,7 @@ function descendingComparator (a, b, orderBy) {
   return 0
 }
 
-function getComparator (order, orderBy) {
+function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -140,7 +131,7 @@ function getComparator (order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-function stableSort (array, comparator) {
+function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
@@ -152,13 +143,20 @@ function stableSort (array, comparator) {
   return stabilizedThis.map((el) => el[0])
 }
 
-export default function DeviceAppsList (props) {
-  const { appListLoading, appListError } = React.useContext(ReferenceDataContext)
-  const user = useAuth()
+export default function DeviceAppsList(props) {
+  const { appListLoading, appListError } =
+    React.useContext(ReferenceDataContext)
   const { ping } = useSystemContext()
-  const [order, setOrder] = useStateWithLocalStorage('installedApps.table.order', 'asc')
-  const [orderBy, setOrderBy] = useStateWithLocalStorage('installedApps.table.orderby', 'apps')
-  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = usePagination('installedApps', 0, 5)
+  const [order, setOrder] = useStateWithLocalStorage(
+    'installedApps.table.order',
+    'asc'
+  )
+  const [orderBy, setOrderBy] = useStateWithLocalStorage(
+    'installedApps.table.orderby',
+    'apps'
+  )
+  const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } =
+    usePagination('installedApps', 0, 5)
 
   const [yaml, setYaml] = React.useState()
   const [sideloadAppOpen, setSideloadAppOpen] = React.useState(false)
@@ -183,24 +181,22 @@ export default function DeviceAppsList (props) {
 
   if (props.appData) {
     // filter on only installed apps
-    tmpAppList = props.appData.filter(app => app?.status === 'installed')
+    tmpAppList = props.appData.filter((app) => app?.status === 'installed')
     numberOfInstalledApps = tmpAppList.length
     tmpAppList = stableSort(tmpAppList, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((app) => {
-        return (<Row
-          key={app.appKey.name + app.appKey.version}
-          row={app}
-        />)
+        return <Row key={app.appKey.name + app.appKey.version} row={app} />
       })
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tmpAppList.length) : 0
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tmpAppList.length) : 0
   return (
     <Box
-     // sx={{ width: '100%' /*, mt: 10, mr: 10, ml: 32 */ }}
-      aria-label="installed-apps-list"
+      // sx={{ width: '100%' /*, mt: 10, mr: 10, ml: 32 */ }}
+      aria-label='installed-apps-list'
     >
       <Paper>
         <Toolbar
@@ -211,17 +207,25 @@ export default function DeviceAppsList (props) {
         >
           <Typography
             sx={{ flex: '0.1 0.1 10%' }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-            >
-              {(appListLoading && ping)
-                ? (<>Loading Apps...<CircularProgress align='center' size='1.1rem' sx={{ ml: 1 }} /></>)
-                : (<>Installed Apps</>)}
+            variant='h6'
+            id='tableTitle'
+            component='div'
+          >
+            {appListLoading && ping ? (
+              <>
+                Loading Apps...
+                <CircularProgress align='center' size='1.1rem' sx={{ ml: 1 }} />
+              </>
+            ) : (
+              <>Installed Apps</>
+            )}
           </Typography>
           <Tooltip title={'Export all apps and their data from this device'}>
             <div>
-              <Export disabled={tmpAppList?.length === 0} sx={{ ml: 1 }}></Export>
+              <Export
+                disabled={tmpAppList?.length === 0}
+                sx={{ ml: 1 }}
+              ></Export>
             </div>
           </Tooltip>
           <Tooltip title={'Import apps from file'}>
@@ -229,62 +233,64 @@ export default function DeviceAppsList (props) {
               <Import sx={{ ml: 1 }}></Import>
             </div>
           </Tooltip>
-          <Tooltip title={user?.user ? 'Install your own app on this device' : 'Please log in to be able to sideload apps'}>
+          <Tooltip title='Install your own app on this device'>
             <div>
-            <FileOpen
-              data-testid="sideload-app-button"
-              sx={{ ml: 1 }}
-              buttonText="Sideload App"
-              buttonIcon={<DeveloperModeIcon/>}
-              accept='.yml, .json'
-              onConfirm={handleOnSideloadConfirm}
-              disabled={!user?.user}
-            ></FileOpen>
+              <FileOpen
+                data-testid='sideload-app-button'
+                sx={{ ml: 1 }}
+                buttonText='Sideload App'
+                buttonIcon={<DeveloperModeIcon />}
+                accept='.yml, .json'
+                onConfirm={handleOnSideloadConfirm}
+              ></FileOpen>
             </div>
           </Tooltip>
         </Toolbar>
-        <TableContainer >
-          <Table aria-label="installed-apps-table">
-          <EnhancedTableHead
+        <TableContainer>
+          <Table aria-label='installed-apps-table'>
+            <EnhancedTableHead
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={props.length}
             />
             <TableBody>
-              {(!ping) &&
-                <TableRow>
-                  <TableCell colSpan={6} >
-                    <Typography align='center'>
-                      The FLECS services are not ready. Please try again in a couple of seconds.
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              }
-              {(tmpAppList.length === 0 && !appListLoading && !appListError && ping) && (
+              {!ping && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <Typography align='center'>
-                      There are no apps installed on this device.
-                      Go to the&nbsp;
-                      <Link to="/Marketplace">marketplace</Link>
-                      &nbsp;or sideload your own app.
+                      The FLECS services are not ready. Please try again in a
+                      couple of seconds.
                     </Typography>
                   </TableCell>
                 </TableRow>
               )}
-              {(appListError && ping) &&
+              {tmpAppList.length === 0 &&
+                !appListLoading &&
+                !appListError &&
+                ping && (
                   <TableRow>
+                    <TableCell colSpan={6}>
+                      <Typography align='center'>
+                        There are no apps installed on this device. Go to
+                        the&nbsp;
+                        <Link to='/Marketplace'>marketplace</Link>
+                        &nbsp;or sideload your own app.
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              {appListError && ping && (
+                <TableRow>
                   <TableCell colSpan={6} align='center'>
                     <Typography align='center'>
                       Oops! Failed to load installed apps from the device...
                     </Typography>
                   </TableCell>
                 </TableRow>
-              }
+              )}
               {tmpAppList}
               {emptyRows > 0 && (
-
                 <TableRow>
                   <TableCell colSpan={6} />
                 </TableRow>
@@ -293,22 +299,22 @@ export default function DeviceAppsList (props) {
           </Table>
         </TableContainer>
         <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={numberOfInstalledApps}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-        <ContentDialog
-          open={sideloadAppOpen}
-          setOpen={setSideloadAppOpen}
-          title={'Sideload App'}
-        >
-          <InstallationStepper app={yaml} sideload={true} />
-        </ContentDialog>
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={numberOfInstalledApps}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+      <ContentDialog
+        open={sideloadAppOpen}
+        setOpen={setSideloadAppOpen}
+        title={'Sideload App'}
+      >
+        <InstallationStepper app={yaml} sideload={true} />
+      </ContentDialog>
     </Box>
   )
 }

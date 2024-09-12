@@ -57,7 +57,8 @@ function AppList(props) {
   const loadProducts = async () => {
     setAppListLoading(true)
     try {
-      const products = await getProducts()
+      let products = await getProducts()
+      products = removeDuplicates(products)
       products.sort((a, b) =>
         a.name.toLowerCase() > b.name.toLowerCase()
           ? 1
@@ -161,6 +162,27 @@ function getAppInstances(app, instances) {
         i.appKey.version === app.appKey.version
     )
   }
+}
+
+function removeDuplicates(products) {
+  // Create a Set to keep track of unique reverse domain names
+  const seenDomainNames = new Set()
+
+  // Filter the products array to remove duplicates
+  const uniqueProducts = products.filter((product) => {
+    const reverseDomainName = getReverseDomainName(product)
+
+    // If the domain is already seen, we skip it (i.e., it's a duplicate)
+    if (seenDomainNames.has(reverseDomainName)) {
+      return false
+    }
+
+    // Otherwise, add the domain to the set and keep the product
+    seenDomainNames.add(reverseDomainName)
+    return true
+  })
+
+  return uniqueProducts
 }
 
 export { AppList, getInstalledVersions, getAppInstances }

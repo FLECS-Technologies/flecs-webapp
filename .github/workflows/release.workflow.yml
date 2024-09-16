@@ -122,7 +122,7 @@ jobs:
             done
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "*.tgz"`; do \
               echo "Uploading ${i}"; \
-              az storage blob upload --auth-mode login --account-name flecs --container-name flecs-dl --name public/webapp/$(make version)/tar/$(basename ${i}) --file ${i} --overwrite
+              az storage blob upload --auth-mode login --account-name flecs --container-name flecs-dl --name public/webapp/$(make version)/tgz/$(basename ${i}) --file ${i} --overwrite
             done
 
   special-build:

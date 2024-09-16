@@ -18,7 +18,7 @@ jobs:
       - name: build
         run: make build
       - name: archive raw artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build/
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: download raw artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build
           path: build/
@@ -156,7 +156,7 @@ jobs:
           make VERSION_SPECIAL=-${{ matrix.special }} special_${{ matrix.special }}
           make VERSION_SPECIAL=-${{ matrix.special }} build
       - name: archive raw artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: special-build
           path: build/
@@ -178,7 +178,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: download raw artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: special-build
           path: build/

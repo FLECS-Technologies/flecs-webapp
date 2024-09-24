@@ -20,6 +20,8 @@ import LaunchIcon from '@mui/icons-material/Launch'
 import { LoadingButton } from '@mui/lab'
 import { AppInstance } from '../../../api/device/instances/instance'
 import LoadIconButton from '../../LoadIconButton'
+import { Button, ButtonGroup, Tooltip } from '@mui/material'
+import { ContentCopy } from '@mui/icons-material'
 
 interface OpenAppProps {
   instance: AppInstance
@@ -31,6 +33,14 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
   variant
 }: OpenAppProps) => {
   function openApp() {
+    window.open(createUrl())
+  }
+
+  function copyAppUrl() {
+    navigator.clipboard.writeText(createUrl())
+  }
+
+  function createUrl() {
     let editorURL: string = 'http://'
 
     if (process.env.REACT_APP_ENVIRONMENT === 'development') {
@@ -40,22 +50,33 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
     }
 
     editorURL = editorURL.concat('/api' + instance.editors[0].url)
-    window.open(editorURL)
+    return editorURL
   }
+
   return (
     <React.Fragment>
       {instance.editors.length > 0 && (
         <React.Fragment>
           {(variant === undefined || variant === 'contained') && (
-            <LoadingButton
-              aria-label='open-app-button'
-              variant='contained'
-              sx={{ mr: 1 }}
-              onClick={() => openApp()}
-              startIcon={<LaunchIcon />}
-            >
-              open app
-            </LoadingButton>
+            <ButtonGroup disableElevation variant='contained'>
+              <Tooltip title='Click to open the app in a new tab'>
+                <Button
+                  aria-label='open-app-button'
+                  onClick={() => openApp()}
+                  startIcon={<LaunchIcon />}
+                >
+                  open app
+                </Button>
+              </Tooltip>
+              <Tooltip title='Click to copy app URL to clipboard'>
+                <Button
+                  aria-label='copy-url-button'
+                  onClick={() => copyAppUrl()}
+                >
+                  <ContentCopy fontSize='small' />
+                </Button>
+              </Tooltip>
+            </ButtonGroup>
           )}
           {variant === 'icon' && (
             <LoadIconButton

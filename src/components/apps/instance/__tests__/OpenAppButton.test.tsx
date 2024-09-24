@@ -22,10 +22,18 @@ const noEditorInstance: AppInstance = {
   instanceName: 'testInstance'
 }
 
+// Mocking the clipboard API
+Object.assign(navigator, {
+  clipboard: {
+    writeText: jest.fn()
+  }
+})
+
 describe('OpenAppButton', () => {
   const originalEnv = process.env
 
   beforeEach(() => {
+    jest.clearAllMocks()
     jest.resetModules()
     process.env = { ...originalEnv }
     window.open = jest.fn()
@@ -51,7 +59,7 @@ describe('OpenAppButton', () => {
     process.env.REACT_APP_ENVIRONMENT = 'development'
     process.env.REACT_APP_DEV_CORE_URL = 'http://localhost:3000'
     render(<OpenAppButton instance={testInstance} variant='contained' />)
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByLabelText('open-app-button'))
     expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor')
   })
 
@@ -59,10 +67,34 @@ describe('OpenAppButton', () => {
     process.env.REACT_APP_ENVIRONMENT = 'production'
     delete process.env.REACT_APP_DEV_CORE_URL
     render(<OpenAppButton instance={testInstance} variant='contained' />)
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByLabelText('open-app-button'))
     expect(window.open).toHaveBeenCalledWith(
       `http://${window.location.hostname}/api/editor`
     )
+  })
+
+  it('should render the copy button', () => {
+    render(<OpenAppButton instance={testInstance} variant='contained' />)
+    const copyButton = screen.getByLabelText('copy-url-button')
+    expect(copyButton).toBeInTheDocument()
+  })
+
+  it('should call the clipboard API with the correct URL on button click in development mode', () => {
+    render(<OpenAppButton instance={testInstance} variant='contained' />)
+    const copyButton = screen.getByLabelText('copy-url-button')
+
+    fireEvent.click(copyButton)
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `http://${window.location.hostname}/api/editor`
+    )
+  })
+
+  it('should not render copy button if there are no editors', () => {
+    render(<OpenAppButton instance={noEditorInstance} variant='contained' />)
+
+    const copyButton = screen.queryByLabelText('copy-url-button')
+    expect(copyButton).not.toBeInTheDocument()
   })
 
   it('does not render button when instance.editor is not defined', () => {

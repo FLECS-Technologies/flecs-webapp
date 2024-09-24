@@ -279,7 +279,7 @@ export default function Row(props) {
                   data-testid='start-new-instance-button'
                   text='start new instance'
                   variant='outlined'
-                  sx={{ mr: 1 }}
+                  sx={{ ml: 1, mr: 1 }}
                   onClick={() => startNewInstance(props)}
                   startIcon={<AddTaskIcon />}
                   disabled={

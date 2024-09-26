@@ -145,7 +145,7 @@ function findApp(app, list) {
 
 function getInstalledVersions(apps, app) {
   let result
-  if (apps && app) {
+  if (apps && app !== undefined && app !== null) {
     const installedApps = apps.filter((obj) => obj.appKey.name === app)
     if (installedApps) {
       result = installedApps.map((obj) => obj.appKey.version)

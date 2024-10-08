@@ -16,10 +16,9 @@
  * limitations under the License.
  */
 
-import React from 'react'
+import React, { act } from 'react'
 import nock from 'nock'
 import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
 import MPList from '../MarketplaceList'
 import {
   render,
@@ -36,6 +35,8 @@ import { JobsContextProvider } from '../../data/JobsContext'
 
 jest.mock('../../api/marketplace/ProductService')
 jest.mock('../../api/device/JobsAPI')
+// Mock the FLECSLogo component to avoid rendering its implementation in tests
+jest.mock('../navigation/PoweredBy')
 
 const installedApps = [
   {

@@ -46,6 +46,7 @@ import ContentDialog from './ContentDialog'
 import Export from './Export'
 import Import from './Import'
 import InstallationStepper from './apps/installation/InstallationStepper'
+import PoweredBy from './navigation/PoweredBy'
 
 const headCells = [
   {
@@ -298,15 +299,27 @@ export default function DeviceAppsList(props) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component='div'
-          count={numberOfInstalledApps}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+
+        <Box
+          sx={{
+            display: 'flex', // Flexbox layout to align items in a row
+            justifyContent: 'space-between', // Space between paginator and logo
+            alignItems: 'center', // Vertically align items
+            width: '100%', // Ensure it takes the full width of the container
+            padding: '8px' // Add some padding around the paginator and logo
+          }}
+        >
+          <PoweredBy />
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component='div'
+            count={numberOfInstalledApps}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
       </Paper>
       <ContentDialog
         open={sideloadAppOpen}

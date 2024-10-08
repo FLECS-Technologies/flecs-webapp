@@ -15,21 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Alert, AlertTitle, CircularProgress, Grid, Paper, Toolbar, Typography } from '@mui/material'
+import {
+  Alert,
+  AlertTitle,
+  CircularProgress,
+  Grid,
+  Paper,
+  Toolbar,
+  Typography
+} from '@mui/material'
 import { Link } from 'react-router-dom'
 import React from 'react'
-import styled from 'styled-components'
 import ReportIcon from '@mui/icons-material/Report'
 import DeviceAPI from '../api/device/DeviceAPI'
 import DataTable from '../components/DataTable'
 
-const Header = styled.div`
-  display: 'flex';
-  alignItems: 'center';
-  justifyContent: 'flex-end';
-  padding: 32px 32px;
-`
-export default function ServiceMesh () {
+export default function ServiceMesh() {
   const executedRef = React.useRef(false)
   const [loading, setLoading] = React.useState(false)
   const [refresh, setRefresh] = React.useState(false)
@@ -47,13 +48,18 @@ export default function ServiceMesh () {
     if (deviceAPI.lastAPICallSuccessful) {
       setData(deviceAPI?.serviceMeshData)
     } else {
-      setErrorText('Something went wrong while loading the data! ' + deviceAPI?.lastAPIError)
+      setErrorText(
+        'Something went wrong while loading the data! ' +
+          deviceAPI?.lastAPIError
+      )
       setError(true)
     }
     setLoading(false)
   }
   React.useEffect(() => {
-    if (executedRef.current) { return }
+    if (executedRef.current) {
+      return
+    }
     if (!loading) {
       browseServiceMesh()
     }
@@ -73,40 +79,74 @@ export default function ServiceMesh () {
 
   return (
     <>
-        <Header aria-label='Header-Placeholder'/>
-        <Paper data-testid='service-mesh' sx={{ flexGrow: 1, overflowY: 'auto' }}>
-            <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }} >
-                <Typography data-testid='service-mesh-title' sx={{ flex: '0.1 0.1 10%' }} variant="h6" id="service-mesh-title" component="div" >
-                    Service Mesh
+      <Paper data-testid='service-mesh' sx={{ flexGrow: 1, overflowY: 'auto' }}>
+        <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
+          <Typography
+            data-testid='service-mesh-title'
+            sx={{ flex: '0.1 0.1 10%' }}
+            variant='h6'
+            id='service-mesh-title'
+            component='div'
+          >
+            Service Mesh
+          </Typography>
+          {loading && <CircularProgress color='primary' />}
+        </Toolbar>
+        <Grid
+          container
+          direction='column'
+          justifyContent='center'
+          alignItems='center'
+          sx={{ pb: { sm: 2 } }}
+        >
+          <Grid item>
+            {error && <ReportIcon fontSize='large' color='error' />}
+          </Grid>
+          <Grid item>
+            {loading && (
+              <Typography>Loading data from the service mesh...</Typography>
+            )}
+            {error && <Typography>Oops... {errorText}</Typography>}
+            {!error && data?.length === 0 && (
+              <Alert severity='info'>
+                <AlertTitle>Info</AlertTitle>
+                <Typography>
+                  There is no provider that supplies data...
                 </Typography>
-                {loading && <CircularProgress color="primary" />}
-            </Toolbar>
-            <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ pb: { sm: 2 } }} >
-                <Grid item>
-                  {error && <ReportIcon fontSize='large' color='error'/> }
-                </Grid>
-                <Grid item>
-                  {loading && <Typography>Loading data from the service mesh...</Typography>}
-                  {error &&
-                    <Typography>Oops... {errorText}</Typography>}
-                  {(!error && data?.length === 0) &&
-                    <Alert severity='info'>
-                      <AlertTitle>Info</AlertTitle>
-                      <Typography>There is no provider that supplies data...</Typography>
-                      <Typography>In order to see data here, you need to install a provider.</Typography>
-                      <Typography>Currently you can use the Mosquitto MQTT Broker and the FLECS MQTT Bridge from our <Link to="/Marketplace">marketplace</Link>.</Typography>
-                      <Typography>Just publish MQTT from your app to this broker and you will see the topics here.</Typography>
-                      <Typography>Other apps can then easily access and use this data.</Typography>
-                      <Typography>If you want to learn how to do this, just watch this short video on <a href="https://youtu.be/lu0EES_aenA" target='_blank' rel="noopener noreferrer" aria-label='YouTube' >
-                        YouTube
-                        </a>.</Typography>
-                    </Alert> }
-                </Grid>
-            </Grid>
-            {(data?.length > 0) &&
-              <DataTable data={data}>
-              </DataTable>}
-        </Paper>
+                <Typography>
+                  In order to see data here, you need to install a provider.
+                </Typography>
+                <Typography>
+                  Currently you can use the Mosquitto MQTT Broker and the FLECS
+                  MQTT Bridge from our{' '}
+                  <Link to='/Marketplace'>marketplace</Link>.
+                </Typography>
+                <Typography>
+                  Just publish MQTT from your app to this broker and you will
+                  see the topics here.
+                </Typography>
+                <Typography>
+                  Other apps can then easily access and use this data.
+                </Typography>
+                <Typography>
+                  If you want to learn how to do this, just watch this short
+                  video on{' '}
+                  <a
+                    href='https://youtu.be/lu0EES_aenA'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label='YouTube'
+                  >
+                    YouTube
+                  </a>
+                  .
+                </Typography>
+              </Alert>
+            )}
+          </Grid>
+        </Grid>
+        {data?.length > 0 && <DataTable data={data}></DataTable>}
+      </Paper>
     </>
   )
 }

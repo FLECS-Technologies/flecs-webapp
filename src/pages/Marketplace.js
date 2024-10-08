@@ -17,20 +17,11 @@
  */
 
 import { React } from 'react'
-import styled from 'styled-components'
 import MarketplaceList from '../components/MarketplaceList'
 
-const Header = styled.div`
-  display: 'flex';
-  alignItems: 'center';
-  justifyContent: 'flex-end';
-  padding: 32px 32px;
-`
-
-export default function Marketplace () {
+export default function Marketplace() {
   return (
     <div>
-      <Header aria-label='Header-Placeholder'/>
       <MarketplaceList aria-label='Marketplace-List' />
     </div>
   )

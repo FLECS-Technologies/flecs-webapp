@@ -29,7 +29,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import WidgetIcon from '@mui/icons-material/Widgets'
 import MarketplaceIcon from '@mui/icons-material/Store'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import BarChartIcon from '@mui/icons-material/BarChart'
@@ -86,8 +86,9 @@ const Drawer = styled(MuiDrawer, {
 }))
 
 const MiniDrawer = (props) => {
-  // const { history } = props
+  const [visible, setIsVisible] = React.useState(true)
   const [open, setOpen] = React.useState(true)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const handleDrawerMove = () => {
     setOpen(!open)
@@ -96,7 +97,18 @@ const MiniDrawer = (props) => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // const [selectedIndex, setSelectedIndex] = React.useState()
+  React.useEffect(() => {
+    isVisible()
+  }, [])
+
+  const isVisible = () => {
+    const hideAppBar = searchParams.get('hideDrawer')
+    if (hideAppBar === 'true') {
+      setIsVisible(false) // Hide when hideDrawer is explicitly 'true'
+    } else {
+      setIsVisible(true) // Show otherwise (including when hideDrawer is null or undefined)
+    }
+  }
 
   const handleListItemClick = (event, index) => {
     // setSelectedIndex(index)
@@ -120,57 +132,61 @@ const MiniDrawer = (props) => {
   }
 
   return (
-      <Drawer aria-label="FLECS-Drawer" variant="permanent" open={open}>
-        <DrawerHeader aria-label="FLECS-Drawer-Header"/>
-        <List component="nav" aria-label="Drawer-List-FLECS" align="right">
-          <IconButton onClick={handleDrawerMove} aria-label="Minimize-Drawer">
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+    <React.Fragment>
+      {visible && (
+        <Drawer aria-label='FLECS-Drawer' variant='permanent' open={open}>
+          <DrawerHeader aria-label='FLECS-Drawer-Header' />
+          <List component='nav' aria-label='Drawer-List-FLECS' align='right'>
+            <IconButton onClick={handleDrawerMove} aria-label='Minimize-Drawer'>
+              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+            <Divider />
+            <ListItemButton
+              selected={location.pathname === '/'}
+              onClick={(event) => handleListItemClick(event, 0)}
+              aria-label='Apps'
+            >
+              <ListItemIcon>
+                <WidgetIcon />
+              </ListItemIcon>
+              <ListItemText primary='Apps' />
+            </ListItemButton>
+            <ListItemButton
+              selected={location.pathname === '/marketplace'}
+              onClick={(event) => handleListItemClick(event, 1)}
+              aria-label='/marketplace'
+            >
+              <ListItemIcon>
+                <MarketplaceIcon />
+              </ListItemIcon>
+              <ListItemText primary='Marketplace' />
+            </ListItemButton>
+            <ListItemButton
+              selected={location.pathname === '/service-mesh'}
+              onClick={(event) => handleListItemClick(event, 2)}
+              aria-label='/service-mesh'
+            >
+              <ListItemIcon>
+                <BarChartIcon />
+              </ListItemIcon>
+              <ListItemText primary='Service Mesh' />
+            </ListItemButton>
+          </List>
           <Divider />
-          <ListItemButton
-            selected={location.pathname === '/'}
-            onClick={(event) => handleListItemClick(event, 0)}
-            aria-label="Apps"
-          >
-            <ListItemIcon>
-              <WidgetIcon />
-            </ListItemIcon>
-            <ListItemText primary="Apps" />
-          </ListItemButton>
-          <ListItemButton
-            selected={location.pathname === '/marketplace'}
-            onClick={(event) => handleListItemClick(event, 1)}
-            aria-label="/marketplace"
-          >
-            <ListItemIcon>
-              <MarketplaceIcon />
-            </ListItemIcon>
-            <ListItemText primary="Marketplace" />
-          </ListItemButton>
-          <ListItemButton
-            selected={location.pathname === '/service-mesh'}
-            onClick={(event) => handleListItemClick(event, 2)}
-            aria-label="/service-mesh"
-          >
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Service Mesh" />
-          </ListItemButton>
-        </List>
-        <Divider />
-        <List component="nav" aria-label="Drawer-List-System">
-          <ListItemButton
-            selected={location.pathname === '/system'}
-            onClick={(event) => handleListItemClick(event, 3)}
-          >
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="System" />
-          </ListItemButton>
-        </List>
-      </Drawer>
+          <List component='nav' aria-label='Drawer-List-System'>
+            <ListItemButton
+              selected={location.pathname === '/system'}
+              onClick={(event) => handleListItemClick(event, 3)}
+            >
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary='System' />
+            </ListItemButton>
+          </List>
+        </Drawer>
+      )}
+    </React.Fragment>
   )
 }
 

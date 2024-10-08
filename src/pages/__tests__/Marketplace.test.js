@@ -22,9 +22,9 @@ import '@testing-library/jest-dom'
 import Marketplace from '../Marketplace'
 import { FilterContextProvider } from '../../data/FilterContext'
 
+jest.mock('../../components/navigation/PoweredBy')
 jest.mock('../../api/marketplace/ProductService', () => ({
-  getProducts: jest.fn()
-    .mockReturnValue(Promise.resolve())
+  getProducts: jest.fn().mockReturnValue(Promise.resolve())
 }))
 
 describe('Marketplace', () => {
@@ -33,7 +33,11 @@ describe('Marketplace', () => {
   })
 
   test('renders Marketplace page', () => {
-    render(<FilterContextProvider><Marketplace /></FilterContextProvider>)
+    render(
+      <FilterContextProvider>
+        <Marketplace />
+      </FilterContextProvider>
+    )
 
     expect(screen.getByLabelText('marketplace-apps-list')).toBeVisible()
 

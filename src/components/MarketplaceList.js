@@ -48,6 +48,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import { getInstalledVersions } from '../data/AppList'
 import { FilterContext } from '../data/FilterContext'
 import usePagination from '../hooks/usePagination'
+import PoweredByFLECS from './navigation/PoweredBy'
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState()
@@ -294,8 +295,15 @@ const MarketplaceList = (props) => {
           <Paper
             data-testid='app-paginator'
             component='form'
-            sx={{ p: '2px 4px' }}
+            sx={{
+              display: 'flex', // Flexbox layout to align items in a row
+              justifyContent: 'space-between', // Space between paginator and logo
+              alignItems: 'center', // Vertically align items
+              width: '100%', // Ensure it takes the full width of the container
+              padding: '8px' // Add some padding around the paginator and logo
+            }}
           >
+            <PoweredByFLECS />
             <TablePagination
               rowsPerPageOptions={[10, 25, 50, 100]}
               component='div'

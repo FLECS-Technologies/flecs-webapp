@@ -17,7 +17,6 @@
  */
 
 import React from 'react'
-import styled from 'styled-components'
 import {
   BottomNavigation,
   Box,
@@ -30,13 +29,6 @@ import { Link } from 'react-router-dom'
 import Version from '../components/Version'
 import DeviceActivation from '../components/device/DeviceActivation'
 import LicenseInfo from '../components/device/license/LicenseInfo'
-
-const Header = styled.div`
-  display: 'flex';
-  alignitems: 'center';
-  justifycontent: 'flex-end';
-  padding: 32px 32px;
-`
 
 const System = () => {
   const data = (
@@ -77,7 +69,6 @@ const System = () => {
   )
   return (
     <div>
-      <Header />
       {data}
       <Paper
         sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}

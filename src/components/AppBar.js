@@ -41,7 +41,7 @@ import { useAuth } from './AuthProvider'
 import AuthService from '../api/marketplace/AuthService'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonIcon from '@mui/icons-material/Person'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { JobsContext } from '../data/JobsContext'
 import BasicTable from './AppBarTable'
 import HelpButton from './help/HelpButton'
@@ -68,10 +68,12 @@ ElevationScroll.propTypes = {
 }
 
 export default function ElevateAppBar(props) {
+  const [visible, setIsVisible] = React.useState(true)
   const [anchorElMenu, setAnchorElMenu] = React.useState(null)
   const [anchorElPopover, setAnchorElPopover] = React.useState(null)
   const user = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { jobs, deleteJobs, fetchExports } = React.useContext(JobsContext)
   const finishedJobs = jobs?.filter(
     (j) =>
@@ -131,123 +133,135 @@ export default function ElevateAppBar(props) {
 
   React.useEffect(() => {
     fetchExports()
+    isVisible()
   }, [])
+
+  const isVisible = () => {
+    const hideAppBar = searchParams.get('hideAppBar')
+    if (hideAppBar === 'true') {
+      setIsVisible(false) // Hide when hideAppBar is explicitly 'true'
+    } else {
+      setIsVisible(true) // Show otherwise (including when hideAppBar is null or undefined)
+    }
+  }
 
   return (
     <React.Fragment>
       <CssBaseline />
-      <ElevationScroll {...props}>
-        <AppBar
-          position='fixed'
-          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        >
-          <Toolbar>
-            <Logo></Logo>
-            <HelpButton url={helpdomain} />
-            <Button
-              sx={{
-                display: jobs?.length > 0 ? 'block' : 'none',
-                minWidth: '24px'
-              }}
-              aria-describedby={id}
-              variant='text'
-              onClick={handleClickPopover}
-            >
-              <Badge
-                badgeContent={
-                  finishedJobs?.length < jobs?.length
-                    ? jobs?.length - finishedJobs?.length
-                    : null
-                }
+      {visible && (
+        <ElevationScroll {...props}>
+          <AppBar
+            position='fixed'
+            sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          >
+            <Toolbar>
+              <Logo></Logo>
+              <HelpButton url={helpdomain} />
+              <Button
                 sx={{
-                  '& .MuiBadge-badge': {
-                    color: 'white',
-                    backgroundColor: '#868686'
+                  display: jobs?.length > 0 ? 'block' : 'none',
+                  minWidth: '24px'
+                }}
+                aria-describedby={id}
+                variant='text'
+                onClick={handleClickPopover}
+              >
+                <Badge
+                  badgeContent={
+                    finishedJobs?.length < jobs?.length
+                      ? jobs?.length - finishedJobs?.length
+                      : null
                   }
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      color: 'white',
+                      backgroundColor: '#868686'
+                    }
+                  }}
+                >
+                  {jobs?.filter((j) => j.status !== 'successful').length > 0 ? (
+                    jobs?.filter(
+                      (j) => j.status === 'failed' || j.status === 'cancelled'
+                    ).length > 0 ? (
+                      <AssignmentLateIcon color='action' /> // at least one job failed or cancelled
+                    ) : (
+                      <AssignmentIcon color='action' />
+                    ) // still running some jobs
+                  ) : (
+                    <AssignmentTurnedInIcon color='action' />
+                  )}
+                </Badge>
+              </Button>
+
+              <Popover
+                id={id}
+                open={Boolean(open && jobs?.length)} // if there are no more jobs to show, then close it
+                anchorEl={anchorElPopover}
+                onClose={handleClosePopover}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left'
                 }}
               >
-                {jobs?.filter((j) => j.status !== 'successful').length > 0 ? (
-                  jobs?.filter(
-                    (j) => j.status === 'failed' || j.status === 'cancelled'
-                  ).length > 0 ? (
-                    <AssignmentLateIcon color='action' /> // at least one job failed or cancelled
-                  ) : (
-                    <AssignmentIcon color='action' />
-                  ) // still running some jobs
-                ) : (
-                  <AssignmentTurnedInIcon color='action' />
-                )}
-              </Badge>
-            </Button>
+                <Typography component={'div'} sx={{ p: 2 }}>
+                  <BasicTable
+                    jobs={jobs}
+                    deleteJobs={deleteJobs}
+                    clearAllFinishedJobs={clearAllFinishedJobs}
+                    clearAllButtonIsDisabled={clearAllButtonIsDisabled}
+                  />
+                </Typography>
+              </Popover>
 
-            <Popover
-              id={id}
-              open={Boolean(open && jobs?.length)} // if there are no more jobs to show, then close it
-              anchorEl={anchorElPopover}
-              onClose={handleClosePopover}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left'
-              }}
-            >
-              <Typography component={'div'} sx={{ p: 2 }}>
-                <BasicTable
-                  jobs={jobs}
-                  deleteJobs={deleteJobs}
-                  clearAllFinishedJobs={clearAllFinishedJobs}
-                  clearAllButtonIsDisabled={clearAllButtonIsDisabled}
-                />
-              </Typography>
-            </Popover>
-
-            <IconButton
-              aria-label='change-theme-button'
-              sx={{ ml: 1, mr: 1 }}
-              onClick={handleThemeChange}
-            >
-              {darkMode ? (
-                <LightModeIcon aria-label='LightModeIcon' />
-              ) : (
-                <DarkModeIcon aria-label='DarkModeIcon' />
-              )}
-            </IconButton>
-
-            <div>
               <IconButton
-                aria-label='avatar-button'
-                component='span'
-                onClick={user?.user ? handleMenu : handleSignIn}
-                size='small'
+                aria-label='change-theme-button'
+                sx={{ ml: 1, mr: 1 }}
+                onClick={handleThemeChange}
               >
-                {user?.user ? (
-                  <PersonIcon aria-label='user-menu-button' />
+                {darkMode ? (
+                  <LightModeIcon aria-label='LightModeIcon' />
                 ) : (
-                  <LoginIcon aria-label='login-button' />
+                  <DarkModeIcon aria-label='DarkModeIcon' />
                 )}
               </IconButton>
-              <Menu
-                id='user-menu'
-                aria-label='user-menu'
-                anchorEl={anchorElMenu}
-                keepMounted
-                open={Boolean(anchorElMenu)}
-                onClose={handleCloseMenu}
-              >
-                <MenuItem divider={true} style={{ pointerEvents: 'none' }}>
-                  <Stack>
-                    <Typography variant='caption'>Signed in as</Typography>
-                    <Typography variant='caption' style={{ fontWeight: 600 }}>
-                      {user?.user?.user?.display_name}
-                    </Typography>
-                  </Stack>
-                </MenuItem>
-                <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
-                <MenuItem onClick={handleSignout}>Sign out</MenuItem>
-              </Menu>
-            </div>
-          </Toolbar>
-        </AppBar>
-      </ElevationScroll>
+
+              <div>
+                <IconButton
+                  aria-label='avatar-button'
+                  component='span'
+                  onClick={user?.user ? handleMenu : handleSignIn}
+                  size='small'
+                >
+                  {user?.user ? (
+                    <PersonIcon aria-label='user-menu-button' />
+                  ) : (
+                    <LoginIcon aria-label='login-button' />
+                  )}
+                </IconButton>
+                <Menu
+                  id='user-menu'
+                  aria-label='user-menu'
+                  anchorEl={anchorElMenu}
+                  keepMounted
+                  open={Boolean(anchorElMenu)}
+                  onClose={handleCloseMenu}
+                >
+                  <MenuItem divider={true} style={{ pointerEvents: 'none' }}>
+                    <Stack>
+                      <Typography variant='caption'>Signed in as</Typography>
+                      <Typography variant='caption' style={{ fontWeight: 600 }}>
+                        {user?.user?.user?.display_name}
+                      </Typography>
+                    </Stack>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
+                  <MenuItem onClick={handleSignout}>Sign out</MenuItem>
+                </Menu>
+              </div>
+            </Toolbar>
+          </AppBar>
+        </ElevationScroll>
+      )}
     </React.Fragment>
   )
 }

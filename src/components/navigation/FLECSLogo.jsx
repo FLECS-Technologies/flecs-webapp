@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021 FLECS Technologies GmbH
+ * Copyright (c) 2024 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Tue Oct 08 2024
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useContext, React } from 'react'
-import InstalledAppsList from '../components/InstalledAppsList'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import React from 'react'
+import { ReactComponent as Logo } from './logo.svg' // Importing as a React component
+import { useTheme } from '@mui/material/styles'
 
-export default function installedApps() {
-  const { appList } = useContext(ReferenceDataContext)
+export default function FLECSLogo() {
+  const theme = useTheme() // Access the Material-UI theme
 
   return (
-    <div>
-      <InstalledAppsList appData={appList} />
-    </div>
+    <Logo
+      width='24'
+      height='24'
+      style={{ color: theme.palette.primary.main }} // Set the "color" property for currentColor
+    />
   )
 }

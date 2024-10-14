@@ -137,7 +137,7 @@ export default function ElevateAppBar(props) {
   }, [])
 
   const isVisible = () => {
-    const hideAppBar = searchParams.get('hideAppBar')
+    const hideAppBar = searchParams.get('hideappbar')
     if (hideAppBar === 'true') {
       setIsVisible(false) // Hide when hideAppBar is explicitly 'true'
     } else {

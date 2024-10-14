@@ -30,8 +30,8 @@ const PoweredByFLECS: React.FC = () => {
   }, [searchParams])
 
   const isVisible = () => {
-    const hideAppBar = searchParams.get('hideAppBar')
-    if (hideAppBar === 'true') {
+    const hideAppBar = searchParams.get('hideappbar')
+    if (hideAppBar?.toLowerCase() === 'true') {
       setIsVisible(true)
     } else {
       setIsVisible(false)

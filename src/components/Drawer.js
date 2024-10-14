@@ -102,8 +102,8 @@ const MiniDrawer = (props) => {
   }, [])
 
   const isVisible = () => {
-    const hideAppBar = searchParams.get('hideDrawer')
-    if (hideAppBar === 'true') {
+    const hideDrawer = searchParams.get('hidedrawer')
+    if (hideDrawer?.toLowerCase() === 'true') {
       setIsVisible(false) // Hide when hideDrawer is explicitly 'true'
     } else {
       setIsVisible(true) // Show otherwise (including when hideDrawer is null or undefined)

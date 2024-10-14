@@ -41,8 +41,8 @@ const Frame = ({ children }) => {
   }, [])
 
   const isAppBarVisible = () => {
-    const hideAppBar = searchParams.get('hideAppBar')
-    if (hideAppBar === 'true') {
+    const hideAppBar = searchParams.get('hideappbar')
+    if (hideAppBar?.toLowerCase() === 'true') {
       setAppBarIsVisible(false) // Hide when hideAppBar is explicitly 'true'
     } else {
       setAppBarIsVisible(true) // Show otherwise (including when hideAppBar is null or undefined)

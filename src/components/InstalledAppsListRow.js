@@ -42,10 +42,10 @@ import AppAPI from '../api/device/AppAPI'
 import AppInstanceRow from './AppInstanceRow'
 import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
-import AppLinksMenu from './AppLinksMenu'
 import useStateWithLocalStorage from './LocalStorage'
 import { JobsContext } from '../data/JobsContext'
 import { OpenAppButton } from './apps/instance/OpenAppButton'
+import HelpButton from './help/HelpButton'
 
 export default function Row(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -244,13 +244,8 @@ export default function Row(props) {
                 />
               </span>
             </Tooltip>
-            {row.relatedLinks && (
-              <AppLinksMenu
-                data_testid='relatedLinks'
-                key='relatedLinks'
-                vertIcon={false}
-                appLinks={row.relatedLinks}
-              />
+            {row.documentationUrl && (
+              <HelpButton url={row.documentationUrl} label='Documentation' />
             )}
           </Toolbar>
         </TableCell>

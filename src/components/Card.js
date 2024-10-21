@@ -32,7 +32,6 @@ import AppAPI from '../api/device/AppAPI'
 import RequestAppDialog from './RequestAppDialog'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ActionSnackbar from './ActionSnackbar'
-import AppLinksMenu from './AppLinksMenu'
 import ContentDialog from './ContentDialog'
 // import InstallAppStepper from './InstallAppStepper'
 import {
@@ -47,6 +46,7 @@ import { isBlacklisted } from '../api/marketplace/ProductService'
 import { JobsContext } from '../data/JobsContext'
 import InstallationStepper from './apps/installation/InstallationStepper'
 import { ShoppingCart } from '@mui/icons-material'
+import HelpButton from './help/HelpButton'
 
 export default function OutlinedCard(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -177,16 +177,6 @@ export default function OutlinedCard(props) {
             <AppRating app={props} />
           </div>
         }
-        action={[
-          props.relatedLinks && (
-            <AppLinksMenu
-              data_testid='relatedLinks'
-              key='relatedLinks'
-              vertIcon={true}
-              appLinks={props.relatedLinks}
-            />
-          )
-        ]}
       ></CardHeader>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color='text.primary' gutterBottom>
@@ -265,6 +255,9 @@ export default function OutlinedCard(props) {
             </IconButton>
           </Tooltip>
         )}
+        {props.documentationUrl && (
+          <HelpButton url={props.documentationUrl} label='Documentation' />
+        )}
         <ConfirmDialog
           data-testid='confirm-dialog'
           title={'Uninstall ' + props.title + '?'}
@@ -332,5 +325,6 @@ OutlinedCard.propTypes = {
   installedVersions: PropTypes.array,
   price: PropTypes.string,
   purchasable: PropTypes.bool,
-  permalink: PropTypes.string
+  permalink: PropTypes.string,
+  documentationUrl: PropTypes.string
 }

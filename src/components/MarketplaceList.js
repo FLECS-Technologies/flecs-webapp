@@ -40,7 +40,8 @@ import {
   getVersions,
   getPermalink,
   getPrice,
-  getPurchasable
+  getPurchasable,
+  getDocumentationUrl
 } from '../api/marketplace/ProductService'
 import { CircularProgress, Collapse, Typography } from '@mui/material'
 import { AppFilter } from './AppFilter'
@@ -113,6 +114,7 @@ const MarketplaceList = (props) => {
           permalink={getPermalink(app)}
           price={getPrice(app)}
           purchasable={getPurchasable(app)}
+          documentationUrl={getDocumentationUrl(app)}
         />
       ))
       return productCards

@@ -180,11 +180,17 @@ function getPurchasable(app) {
   else return false
 }
 
+function getDocumentationUrl(app) {
+  if (app) return 'https://google.com'
+  else return undefined
+}
+
 export {
   getProducts,
   getAverageRating,
   getBlacklist,
   isBlacklisted,
+  getDocumentationUrl,
   getRatingCount,
   getReverseDomainName,
   getEditorAddress,

@@ -24,6 +24,7 @@ import {
   getAppIcon,
   getAuthor,
   getCustomLinks,
+  getDocumentationUrl,
   getPermalink,
   getPrice,
   getProducts,
@@ -100,6 +101,7 @@ function AppList(props) {
           app.price = getPrice(mpApp)
           app.permalink = getPermalink(mpApp)
           app.purchasable = getPurchasable(mpApp)
+          app.documentationUrl = getDocumentationUrl(mpApp)
         }
         if (typeof app === 'object' && app !== null) {
           app.installedVersions = getInstalledVersions(

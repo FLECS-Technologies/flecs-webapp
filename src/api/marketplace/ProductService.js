@@ -151,11 +151,23 @@ function getPurchasable(app) {
   return app?.purchasable
 }
 
+function getDocumentationUrl(app) {
+  const documenationUrl = app?.meta_data.find(
+    (o) => o.key === '_documentation_url'
+  )?.value
+  if (!documenationUrl || documenationUrl === '') {
+    return undefined
+  } else {
+    return documenationUrl
+  }
+}
+
 export {
   getProducts,
   getAverageRating,
   getBlacklist,
   isBlacklisted,
+  getDocumentationUrl,
   getRatingCount,
   getReverseDomainName,
   getEditorAddress,

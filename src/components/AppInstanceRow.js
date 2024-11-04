@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 import React, { Fragment } from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
@@ -38,6 +39,7 @@ import InstanceInfo from './InstanceInfo'
 import InstanceConfig from './InstanceConfig'
 import { JobsContext } from '../data/JobsContext'
 import { OpenAppButton } from './apps/instance/OpenAppButton'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function AppInstanceRow(props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -45,6 +47,7 @@ export default function AppInstanceRow(props) {
   const [instanceStarting, setInstanceStarting] = React.useState(false)
   const [instanceStopping, setInstanceStopping] = React.useState(false)
   const [instanceDeleting, setInstanceDeleting] = React.useState(false)
+  const [confirmOpen, setConfirmOpen] = React.useState(false)
   const [instanceNotReady] = React.useState(
     props.appInstance.status !== 'running' &&
       props.appInstance.status !== 'stopped'
@@ -261,7 +264,7 @@ export default function AppInstanceRow(props) {
                   disabled={
                     instanceDeleting || instanceStopping || instanceStarting
                   }
-                  onClick={() => deleteInstance(appInstance.instanceId)}
+                  onClick={() => setConfirmOpen(true)}
                   loading={instanceDeleting}
                 />
               </span>
@@ -269,27 +272,46 @@ export default function AppInstanceRow(props) {
           </Grid>
         </TableCell>
       </TableRow>
-      <ActionSnackbar
-        text={snackbarText}
-        errorText={snackbarErrorText}
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        alertSeverity={alertSeverity}
-      />
-      <ContentDialog
-        title={'Info to ' + appInstance.instanceName}
-        open={instanceInfoOpen}
-        setOpen={setInstanceInfoOpen}
-      >
-        <InstanceInfo instance={appInstance}></InstanceInfo>
-      </ContentDialog>
-      <ContentDialog
-        title={'Settings of ' + appInstance.instanceName}
-        open={instanceSettingsOpen}
-        setOpen={setInstanceSettingsOpen}
-      >
-        <InstanceConfig instance={appInstance}></InstanceConfig>
-      </ContentDialog>
+      {/* Portals for Dialogs and Snackbar */}
+      {ReactDOM.createPortal(
+        <ActionSnackbar
+          text={snackbarText}
+          errorText={snackbarErrorText}
+          open={snackbarOpen}
+          setOpen={setSnackbarOpen}
+          alertSeverity={alertSeverity}
+        />,
+        document.body
+      )}
+      {ReactDOM.createPortal(
+        <ContentDialog
+          title={'Info to ' + appInstance.instanceName}
+          open={instanceInfoOpen}
+          setOpen={setInstanceInfoOpen}
+        >
+          <InstanceInfo instance={appInstance} />
+        </ContentDialog>,
+        document.body
+      )}
+      {ReactDOM.createPortal(
+        <ContentDialog
+          title={'Settings of ' + appInstance.instanceName}
+          open={instanceSettingsOpen}
+          setOpen={setInstanceSettingsOpen}
+        >
+          <InstanceConfig instance={appInstance} />
+        </ContentDialog>,
+        document.body
+      )}
+      {ReactDOM.createPortal(
+        <ConfirmDialog
+          title={'Remove ' + appInstance.instanceName + ' instance?'}
+          open={confirmOpen}
+          setOpen={setConfirmOpen}
+          onConfirm={() => deleteInstance(appInstance.instanceId)}
+        />,
+        document.body
+      )}
     </Fragment>
   )
 }

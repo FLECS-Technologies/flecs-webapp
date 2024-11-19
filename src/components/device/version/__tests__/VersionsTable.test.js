@@ -17,20 +17,26 @@
  */
 import React from 'react'
 import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
 import VersionsTable from '../VersionsTable'
 
 const mockCoreVersion = {
-  core: '1.2.0-porpoise-ABCDE'
+  core: '1.2.0-porpoise-ABCDE',
+  api: '2.0.0'
 }
+
 describe('VersionsTable', () => {
   test('renders VersionsTable component', async () => {
-    await act(async () => {
-      render(<VersionsTable coreVersion={mockCoreVersion} webappVersion={'1.2.0-porpoise'}></VersionsTable>)
-    })
-    expect(screen.getByText('Versions')).toBeVisible()
+    render(
+      <VersionsTable
+        coreVersion={mockCoreVersion}
+        webappVersion={'1.2.0-porpoise'}
+      />
+    )
+
+    expect(await screen.findByText('Versions')).toBeVisible()
     expect(screen.getByText('Core')).toBeVisible()
+    expect(screen.getByText('API')).toBeVisible()
     expect(screen.getByText('UI')).toBeVisible()
     expect(screen.getByText('1.2.0-porpoise')).toBeVisible()
     expect(screen.getByText('1.2.0-porpoise-ABCDE')).toBeVisible()

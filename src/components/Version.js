@@ -16,13 +16,23 @@
  * limitations under the License.
  */
 import React from 'react'
-import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/material'
-import VersionsTable from './VersionsTable'
-import { getLatestVersion, getVersion, isLaterThan } from '../api/VersionService'
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  LinearProgress,
+  Typography
+} from '@mui/material'
+import VersionsTable from '../components/device/version/VersionsTable'
+import {
+  getLatestVersion,
+  getVersion,
+  isLaterThan
+} from '../api/VersionService'
 import { VersionSelector } from './VersionSelector'
 import { useSystemContext } from '../data/SystemProvider'
 
-export default function Version () {
+export default function Version() {
   const executedRef = React.useRef(false)
   const { systemInfo } = useSystemContext()
   const [loadingVersion, setLoadingVersion] = React.useState(false)
@@ -33,7 +43,9 @@ export default function Version () {
   const [errorText, setErrorText] = React.useState()
 
   React.useEffect(() => {
-    if (executedRef.current) { return }
+    if (executedRef.current) {
+      return
+    }
     if (!loadingVersion) {
       fetchVersion()
     }
@@ -83,22 +95,42 @@ export default function Version () {
 
   return (
     <Box>
-        <Box alignContent='center'>
-            {(error && (loadingVersion || loadingLatestVersion)) && <Typography align='center'>Oops... {errorText}</Typography>}
-            {(loadingVersion || loadingLatestVersion) && <LinearProgress color="primary"/>}
-            {(loadingVersion || loadingLatestVersion) && <Typography align='center'>Loading configuration...</Typography>}
-        </Box>
-        <Box>
-          {isLaterThan(latestVersion?.version, version?.core) &&
-            <Alert sx={{ mb: 2 }} severity='info'>
-              <AlertTitle>Info</AlertTitle>
-              <Typography variant='body2'>There is a newer version for FLECS available:</Typography>
-              <VersionSelector availableVersions={[latestVersion]} selectedVersion={latestVersion}></VersionSelector>
-              <Typography variant='body2'>Install this update by running <i>curl -fsSL install.flecs.tech | bash</i> in the terminal of this device ({window.location.hostname}).</Typography>
-            </Alert>
-          }
-        </Box>
-        <VersionsTable coreVersion={version} webappVersion={process.env.REACT_APP_VERSION} distro={systemInfo?.distro} kernel={systemInfo?.kernel}></VersionsTable>
+      <Box alignContent='center'>
+        {error && (loadingVersion || loadingLatestVersion) && (
+          <Typography align='center'>Oops... {errorText}</Typography>
+        )}
+        {(loadingVersion || loadingLatestVersion) && (
+          <LinearProgress color='primary' />
+        )}
+        {(loadingVersion || loadingLatestVersion) && (
+          <Typography align='center'>Loading configuration...</Typography>
+        )}
+      </Box>
+      <Box>
+        {isLaterThan(latestVersion?.version, version?.core) && (
+          <Alert sx={{ mb: 2 }} severity='info'>
+            <AlertTitle>Info</AlertTitle>
+            <Typography variant='body2'>
+              There is a newer version for FLECS available:
+            </Typography>
+            <VersionSelector
+              availableVersions={[latestVersion]}
+              selectedVersion={latestVersion}
+            ></VersionSelector>
+            <Typography variant='body2'>
+              Install this update by running{' '}
+              <i>curl -fsSL install.flecs.tech | bash</i> in the terminal of
+              this device ({window.location.hostname}).
+            </Typography>
+          </Alert>
+        )}
+      </Box>
+      <VersionsTable
+        coreVersion={version}
+        webappVersion={process.env.REACT_APP_VERSION}
+        distro={systemInfo?.distro}
+        kernel={systemInfo?.kernel}
+      ></VersionsTable>
     </Box>
   )
 }

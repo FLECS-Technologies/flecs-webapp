@@ -27,17 +27,18 @@ const Layout = ({ children }) => {
   const { darkMode, setDarkMode } = DarkModeContext
 
   React.useEffect(() => {
-    const theme = localStorage.getItem('preferred-theme')
-    if (theme) {
-      const themePreference = localStorage.getItem('preferred-theme')
-      if (themePreference === 'dark') {
+    const preferredTheme = localStorage.getItem('preferred-theme') || 'system'
+    if (preferredTheme === 'dark') {
+      setDarkMode(true)
+    } else if (preferredTheme === 'light') {
+      setDarkMode(false)
+    } else {
+      localStorage.setItem('preferred-theme', 'system')
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         setDarkMode(true)
       } else {
         setDarkMode(false)
       }
-    } else {
-      localStorage.setItem('preferred-theme', 'light')
-      setDarkMode(true)
     }
     // eslint-disable-next-line
   }, []);

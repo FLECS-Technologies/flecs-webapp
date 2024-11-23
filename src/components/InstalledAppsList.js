@@ -241,7 +241,7 @@ export default function DeviceAppsList(props) {
                 sx={{ ml: 1 }}
                 buttonText='Sideload App'
                 buttonIcon={<DeveloperModeIcon />}
-                accept='.yml, .json'
+                accept='.json'
                 onConfirm={handleOnSideloadConfirm}
               ></FileOpen>
             </div>

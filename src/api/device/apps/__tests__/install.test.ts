@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { InstallAppAPI } from '../install' // Adjust the import path
 import { DeviceAPIConfiguration } from '../../../api-config'
-import { job_meta } from '../../../../types/job'
+import { job_meta } from '../../../../models/job'
 
 jest.mock('axios')
 

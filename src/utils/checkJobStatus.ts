@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import JobsAPI from '../api/device/JobsAPI'
-import { Job } from '../types/job'
+import { Job } from '../models/job'
 import { sleep } from './sleep'
 
 export async function checkJobStatus(jobId: number): Promise<string> {

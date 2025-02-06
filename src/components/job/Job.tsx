@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import { useJobsContext } from '../../data/JobsContext'
-import { Job as Job_Type } from '../../types/job'
+import { Job as Job_Type } from '../../models/job'
 import { Typography } from '@mui/material'
 
 interface JobProps {

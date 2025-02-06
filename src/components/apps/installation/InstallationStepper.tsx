@@ -22,7 +22,7 @@ import SideloadApp from './SideloadApp'
 import UpdateApp from './UpdateApp'
 import { Box, Step, StepLabel, Stepper } from '@mui/material'
 import DeviceActivationStep from './DeviceActivationStep'
-import { App } from '../../../types/app'
+import { App } from '../../../models/app'
 
 const steps = ['Check Device Activation', 'Installing', 'Done']
 

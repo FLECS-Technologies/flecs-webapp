@@ -17,7 +17,7 @@
  */
 import axios from 'axios'
 import { DeviceAPIConfiguration } from '../../api-config'
-import { job_meta } from '../../../types/job'
+import { job_meta } from '../../../models/job'
 
 export async function InstallAppAPI(app: string, version: string) {
   return axios

@@ -23,7 +23,7 @@ import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
 import BasicTable from '../AppBarTable'
 import { JobsContextProvider } from '../../data/JobsContext'
-import { mockJob, mockSuccessJob } from '../../types/__mocks__/job'
+import { mockJob, mockSuccessJob } from '../../models/__mocks__/job'
 
 const jobs = [mockJob, mockSuccessJob]
 

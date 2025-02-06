@@ -29,7 +29,7 @@ import {
   getVersion,
   isLaterThan
 } from '../api/VersionService'
-import { VersionSelector } from './VersionSelector'
+import { VersionSelector } from './autocomplete/VersionSelector'
 import { useSystemContext } from '../data/SystemProvider'
 
 export default function Version() {

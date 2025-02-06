@@ -37,9 +37,9 @@ import ContentDialog from './ContentDialog'
 import {
   createVersion,
   createVersions,
-  getLatestVersion,
-  VersionSelector
-} from './VersionSelector'
+  getLatestVersion
+} from '../utils/version-utils'
+import { VersionSelector } from './autocomplete/VersionSelector'
 import AppRating from './AppRating'
 import { useSystemContext } from '../data/SystemProvider'
 import { isBlacklisted } from '../api/marketplace/ProductService'

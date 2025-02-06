@@ -19,7 +19,7 @@ import React, { createContext, ReactNode } from 'react'
 import PropTypes from 'prop-types'
 import JobsAPI from '../api/device/JobsAPI'
 import { getExports } from '../api/device/ExportAppsService'
-import { Job } from '../types/job'
+import { Job } from '../models/job'
 
 interface JobsContextType {
   jobs: Job[]

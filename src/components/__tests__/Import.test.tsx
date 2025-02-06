@@ -27,7 +27,7 @@ import {
   mockJob,
   mockQueuedJob,
   mockSuccessJob
-} from '../../types/__mocks__/job'
+} from '../../models/__mocks__/job'
 
 jest.mock('../../api/device/ImportAppsService')
 jest.mock('../../api/device/onboarding/onboarding')

@@ -19,7 +19,7 @@ import { render, act, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import InstallationStepper from '../InstallationStepper'
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext'
-import { mockApp } from '../../../../types/__mocks__/app'
+import { mockApp } from '../../../../models/__mocks__/app'
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../../../data/JobsContext'
 

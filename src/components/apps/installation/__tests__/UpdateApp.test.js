@@ -24,7 +24,7 @@ import UpdateApp from '../UpdateApp'
 import { ReferenceDataContext } from '../../../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../../../data/JobsContext'
 import { mockInstalledApps } from '../../../../data/__mocks__/AppList'
-import { mockApp } from '../../../../types/__mocks__/app'
+import { mockApp } from '../../../../models/__mocks__/app'
 
 jest.mock('../../../../api/device/apps/install')
 jest.mock('../../../../api/device/instances/instance')

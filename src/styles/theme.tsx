@@ -17,7 +17,7 @@
  */
 import { createTheme, ThemeOptions } from '@mui/material/styles'
 import '../styles/fonts.css'
-import colors from './tokens'
+import { colors } from './tokens'
 
 const baseTheme: ThemeOptions = createTheme({
   typography: {

@@ -4,10 +4,20 @@ interface Colors {
   accent: string
 }
 
+const tokyoSunset = '#FF2E63'
+const cyberMint = '#08D9D6'
+const nordicSky = '#73A9CA'
+
 const colors: Colors = {
-  primary: '#FF2E63', // tokyoSunset
-  secondary: '#08D9D6', // cyberMint
-  accent: '#73A9CA' // nordicSky
+  primary: tokyoSunset,
+  secondary: cyberMint,
+  accent: nordicSky
 }
 
-export default colors
+const appBarIconColors: Colors = {
+  primary: 'white',
+  secondary: 'black',
+  accent: nordicSky
+}
+
+export { colors, appBarIconColors }

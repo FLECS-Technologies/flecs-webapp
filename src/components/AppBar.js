@@ -46,6 +46,7 @@ import { JobsContext } from '../data/JobsContext'
 import BasicTable from './AppBarTable'
 import HelpButton from './help/HelpButton'
 import { helpdomain } from './help/helplinks'
+import { appBarIconColors } from '../whitelabeling/custom-tokens'
 
 function ElevationScroll(props) {
   const { children, window } = props
@@ -156,7 +157,10 @@ export default function ElevateAppBar(props) {
           >
             <Toolbar>
               <Logo></Logo>
-              <HelpButton url={helpdomain} />
+              <HelpButton
+                url={helpdomain}
+                sx={{ color: appBarIconColors.primary }}
+              />
               <Button
                 sx={{
                   display: jobs?.length > 0 ? 'block' : 'none',
@@ -183,12 +187,12 @@ export default function ElevateAppBar(props) {
                     jobs?.filter(
                       (j) => j.status === 'failed' || j.status === 'cancelled'
                     ).length > 0 ? (
-                      <AssignmentLateIcon color='action' /> // at least one job failed or cancelled
+                      <AssignmentLateIcon color={appBarIconColors.primary} /> // at least one job failed or cancelled
                     ) : (
-                      <AssignmentIcon color='action' />
+                      <AssignmentIcon color={appBarIconColors.primary} />
                     ) // still running some jobs
                   ) : (
-                    <AssignmentTurnedInIcon color='action' />
+                    <AssignmentTurnedInIcon color={appBarIconColors.primary} />
                   )}
                 </Badge>
               </Button>
@@ -215,7 +219,7 @@ export default function ElevateAppBar(props) {
 
               <IconButton
                 aria-label='change-theme-button'
-                sx={{ ml: 1, mr: 1 }}
+                sx={{ ml: 1, mr: 1, color: appBarIconColors.primary }}
                 onClick={handleThemeChange}
               >
                 {darkMode ? (
@@ -231,6 +235,7 @@ export default function ElevateAppBar(props) {
                   component='span'
                   onClick={user?.user ? handleMenu : handleSignIn}
                   size='small'
+                  sx={{ color: appBarIconColors.primary }}
                 >
                   {user?.user ? (
                     <PersonIcon aria-label='user-menu-button' />

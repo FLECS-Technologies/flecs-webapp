@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Help, HelpCenter, HelpOutline } from '@mui/icons-material'
+import { HelpCenter } from '@mui/icons-material'
 import { IconButton, Tooltip } from '@mui/material'
 import React from 'react'
 
@@ -24,15 +24,19 @@ interface HelpButtonProps {
   label?: string
 }
 
-const HelpButton: React.FC<HelpButtonProps> = ({ url, label = 'Help' }) => {
+const HelpButton: React.FC<HelpButtonProps> = ({
+  url,
+  label = 'Help',
+  ...props
+}) => {
   const handleClick = () => {
     window.open(url)
   }
 
   return (
     <Tooltip title={label}>
-      <IconButton onClick={handleClick} className='help-button'>
-        <HelpCenter></HelpCenter>
+      <IconButton onClick={handleClick} className='help-button' {...props}>
+        <HelpCenter />
       </IconButton>
     </Tooltip>
   )

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Mon Feb 10 2025
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,4 +16,9 @@
  * limitations under the License.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&display=swap");
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-VariableFont_opsz,wght.ttf') format('ttf');
+  font-weight: 400;
+  font-style: normal;
+}

@@ -15,14 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { createTheme, ThemeOptions } from '@mui/material/styles'
+import '../styles/fonts.css'
+import colors from './tokens'
 
-import { createTheme } from '@mui/material/styles'
-import './Theme.css'
-
-const baseTheme = createTheme({
+const baseTheme: ThemeOptions = createTheme({
   typography: {
-    fontFamily: "'Quicksand'"
-    // fontFamilySecondary: "'Roboto Condensed', sans-serif"
+    fontFamily: "'Inter', sans-serif"
+  },
+
+  palette: {
+    primary: {
+      main: colors.primary
+    },
+    secondary: {
+      main: colors.secondary
+    },
+    success: {
+      main: colors.secondary
+    },
+    info: {
+      main: colors.accent
+    }
   },
 
   components: {
@@ -30,57 +44,44 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: '#ff2e63',
+            color: colors.primary,
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: colors.secondary
             }
           },
           '&$selected:hover': {
-            color: 'ff2e63',
+            color: colors.primary,
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: colors.secondary
             }
           },
           '&:hover': {
-            color: '#08D9D6',
+            color: colors.secondary,
             '& .MuiListItemIcon-root': {
-              color: '#08D9D6'
+              color: colors.secondary
             }
           }
         },
         selected: {}
       }
     }
-  },
-
-  container: {
-    display: 'flex'
   }
 })
 
 const darkTheme = createTheme({
   ...baseTheme,
   palette: {
-    type: 'dark',
-
-    primary: {
-      // pink
-      main: '#FF2E63'
-    },
-
-    // cyan
-    secondary: {
-      main: '#08D9D6'
-    },
+    ...baseTheme.palette,
+    mode: 'dark',
 
     text: {
-      primary: '#fff',
+      primary: '#F5F5F5',
       secondary: 'rgba(255, 255, 255, 0.7)',
       disabled: 'rgba(255, 255, 255, 0.5)'
     },
 
     action: {
-      active: '#fff',
+      active: '#F5F5F5',
       hover: 'rgba(255, 255, 255, 0.08)',
       selected: 'rgba(255, 255, 255, 0.16)',
       disabled: 'rgba(255, 255, 255, 0.3)',
@@ -88,31 +89,37 @@ const darkTheme = createTheme({
     },
 
     background: {
-      default: '#212121',
+      default: '#0A0A0A',
       paper: '#313131'
     },
 
     divider: 'rgba(255, 255, 255, 0.12)'
+  },
+  components: {
+    ...baseTheme.components,
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: colors.primary
+        }
+      }
+    }
   }
 })
 
 const lightTheme = createTheme({
   ...baseTheme,
   palette: {
-    type: 'light',
-
-    primary: {
-      // cyan
-      main: '#08D9D6'
-    },
-    // pink
-    secondary: {
-      main: '#FF2E63'
-    },
+    ...baseTheme.palette,
+    mode: 'light',
 
     background: {
-      default: '#FAFAFA',
+      default: '#F5F5F5',
       paper: '#fff'
+    },
+
+    text: {
+      primary: '#0A0A0A'
     }
   }
 })

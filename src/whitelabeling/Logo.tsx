@@ -15,20 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react'
 import { IconButton, Typography } from '@mui/material'
-import { ReactComponent as LogoSVG } from './logo.svg'
+import FLECSLogo from '../components/navigation/FLECSLogo'
+import { useTheme } from '@mui/material/styles'
 
-export default function Logo () {
+const Logo: React.FC = () => {
+  const theme = useTheme() // Access the Material-UI theme
   return (
-        <React.Fragment>
-            <IconButton aria-label='logo' disabled={true}>
-              <LogoSVG width="24" height="24" />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              FLECS
-            </Typography>
-        </React.Fragment>
+    <React.Fragment>
+      <IconButton aria-label='logo' disabled={true}>
+        <FLECSLogo logoColor='white' />
+      </IconButton>
+      <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+        FLECS
+      </Typography>
+    </React.Fragment>
   )
 }
+
+export default Logo

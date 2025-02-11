@@ -19,7 +19,7 @@ import PropTypes from 'prop-types'
 import React, { useContext } from 'react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
-import { darkTheme, lightTheme } from '../whitelabeling/Theme'
+import { darkTheme, lightTheme } from '../whitelabeling/custom-theme'
 import { darkModeContext } from './ThemeHandler'
 
 const Layout = ({ children }) => {
@@ -34,22 +34,23 @@ const Layout = ({ children }) => {
       setDarkMode(false)
     } else {
       localStorage.setItem('preferred-theme', 'system')
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
         setDarkMode(true)
       } else {
         setDarkMode(false)
       }
     }
     // eslint-disable-next-line
-  }, []);
+  }, [])
 
   return (
-
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
-
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
   )
 }
 

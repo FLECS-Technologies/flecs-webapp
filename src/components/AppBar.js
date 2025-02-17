@@ -164,35 +164,31 @@ export default function ElevateAppBar(props) {
               <Button
                 sx={{
                   display: jobs?.length > 0 ? 'block' : 'none',
-                  minWidth: '24px'
+                  minWidth: '24px',
+                  color: appBarIconColors.primary
                 }}
                 aria-describedby={id}
                 variant='text'
                 onClick={handleClickPopover}
               >
                 <Badge
+                  color='info'
                   badgeContent={
                     finishedJobs?.length < jobs?.length
                       ? jobs?.length - finishedJobs?.length
                       : null
                   }
-                  sx={{
-                    '& .MuiBadge-badge': {
-                      color: 'white',
-                      backgroundColor: '#868686'
-                    }
-                  }}
                 >
                   {jobs?.filter((j) => j.status !== 'successful').length > 0 ? (
                     jobs?.filter(
                       (j) => j.status === 'failed' || j.status === 'cancelled'
                     ).length > 0 ? (
-                      <AssignmentLateIcon color={appBarIconColors.primary} /> // at least one job failed or cancelled
+                      <AssignmentLateIcon /> // at least one job failed or cancelled
                     ) : (
-                      <AssignmentIcon color={appBarIconColors.primary} />
+                      <AssignmentIcon />
                     ) // still running some jobs
                   ) : (
-                    <AssignmentTurnedInIcon color={appBarIconColors.primary} />
+                    <AssignmentTurnedInIcon />
                   )}
                 </Badge>
               </Button>

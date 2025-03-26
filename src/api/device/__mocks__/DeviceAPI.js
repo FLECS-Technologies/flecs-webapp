@@ -20,43 +20,59 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class DeviceAPI extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.appList = null
     this.lastAPICallSuccessful = false
     this.lastAPIError = null
-    this.serviceMeshData = null
     this.instances = null
   }
 
-  async getInstances () {
+  async getInstances() {
     this.lastAPICallSuccessful = true
-    this.instances = [{ instanceId: '4f75d3b9', instanceName: 'AnyViz Cloud Adapter0', appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' }, status: 'stopped', desired: 'stopped' }, { instanceId: '409f3f70', instanceName: 'edgeConnector Modbus0', appKey: { name: 'com.softingindustrial.edgeconnector-modbus', version: 'v2-35-1' }, status: 'running', desired: 'running' }]
+    this.instances = [
+      {
+        instanceId: '4f75d3b9',
+        instanceName: 'AnyViz Cloud Adapter0',
+        appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' },
+        status: 'stopped',
+        desired: 'stopped'
+      },
+      {
+        instanceId: '409f3f70',
+        instanceName: 'edgeConnector Modbus0',
+        appKey: {
+          name: 'com.softingindustrial.edgeconnector-modbus',
+          version: 'v2-35-1'
+        },
+        status: 'running',
+        desired: 'running'
+      }
+    ]
   }
 
-  async getInstalledApps () {
+  async getInstalledApps() {
     this.lastAPICallSuccessful = true
-    this.appList = [{
-      appKey: {
-        name: 1,
-        version: '1'
+    this.appList = [
+      {
+        appKey: {
+          name: 1,
+          version: '1'
+        }
+      },
+      {
+        appKey: {
+          name: 2,
+          version: '2'
+        }
+      },
+      {
+        appKey: {
+          name: 3,
+          version: '3'
+        }
       }
-    }, {
-      appKey: {
-        name: 2,
-        version: '2'
-      }
-    }, {
-      appKey: {
-        name: 3,
-        version: '3'
-      }
-    }]
-  }
-
-  async browseServiceMesh () {
-    this.lastAPICallSuccessful = true
-    this.serviceMeshData = [1, 2, 3]
+    ]
   }
 }
 

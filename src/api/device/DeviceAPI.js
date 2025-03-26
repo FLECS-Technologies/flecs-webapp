@@ -27,7 +27,6 @@ export default class DeviceAPI extends React.Component {
     this.appList = null
     this.lastAPICallSuccessful = false
     this.lastAPIError = null
-    this.serviceMeshData = null
     this.instances = null
   }
 

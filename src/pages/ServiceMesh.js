@@ -18,7 +18,6 @@
 import {
   Alert,
   AlertTitle,
-  CircularProgress,
   Grid,
   Paper,
   Toolbar,
@@ -26,56 +25,35 @@ import {
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import React from 'react'
-import ReportIcon from '@mui/icons-material/Report'
-import DeviceAPI from '../api/device/DeviceAPI'
-import DataTable from '../components/DataTable'
+import HelpButton from '../components/help/HelpButton'
+import { servicemesh } from '../components/help/helplinks'
+import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { OpenAppButton } from '../components/apps/instance/OpenAppButton'
 
 export default function ServiceMesh() {
-  const executedRef = React.useRef(false)
-  const [loading, setLoading] = React.useState(false)
-  const [refresh, setRefresh] = React.useState(false)
-  const [error, setError] = React.useState(false)
-  const [errorText, setErrorText] = React.useState()
-  const [data, setData] = React.useState([])
+  const { appList } = React.useContext(ReferenceDataContext)
+  const [serviceMeshInstalled, setServiceMeshInstalled] = React.useState(false)
+  const [serviceMeshInstance, setServiceMeshInstance] = React.useState()
 
-  const browseServiceMesh = async () => {
-    setLoading(true)
-    setError(false)
-    const deviceAPI = new DeviceAPI()
-
-    await deviceAPI.browseServiceMesh()
-
-    if (deviceAPI.lastAPICallSuccessful) {
-      setData(deviceAPI?.serviceMeshData)
-    } else {
-      setErrorText(
-        'Something went wrong while loading the data! ' +
-          deviceAPI?.lastAPIError
+  // check if service mesh is installed
+  React.useEffect(() => {
+    if (appList) {
+      const serviceMeshApp = appList.find(
+        (app) => app.appKey.name === 'tech.flecs.flunder'
       )
-      setError(true)
+      if (
+        serviceMeshApp &&
+        serviceMeshApp.instances.length > 0 &&
+        serviceMeshApp.instances[0].editors.length > 0
+      ) {
+        setServiceMeshInstalled(true)
+        setServiceMeshInstance(serviceMeshApp.instances[0])
+      } else {
+        setServiceMeshInstalled(false)
+        setServiceMeshInstance(null)
+      }
     }
-    setLoading(false)
-  }
-  React.useEffect(() => {
-    if (executedRef.current) {
-      return
-    }
-    if (!loading) {
-      browseServiceMesh()
-    }
-    if (refresh) {
-      setRefresh(false)
-    }
-    executedRef.current = true
-  }, [refresh])
-
-  React.useEffect(() => {
-    const interval = window.setInterval(() => {
-      setRefresh(true)
-      executedRef.current = false
-    }, 5000)
-    return () => window.clearInterval(interval)
-  }, [])
+  }, [appList])
 
   return (
     <>
@@ -89,8 +67,11 @@ export default function ServiceMesh() {
             component='div'
           >
             Service Mesh
+            <HelpButton url={servicemesh}></HelpButton>
           </Typography>
-          {loading && <CircularProgress color='primary' />}
+          {serviceMeshInstalled && serviceMeshInstance && (
+            <OpenAppButton instance={serviceMeshInstance}></OpenAppButton>
+          )}
         </Toolbar>
         <Grid
           container
@@ -100,52 +81,31 @@ export default function ServiceMesh() {
           sx={{ pb: { sm: 2 } }}
         >
           <Grid item>
-            {error && <ReportIcon fontSize='large' color='error' />}
-          </Grid>
-          <Grid item>
-            {loading && (
-              <Typography>Loading data from the service mesh...</Typography>
+            {serviceMeshInstalled && (
+              <React.Fragment>
+                <Alert severity='info'>
+                  <AlertTitle>Info</AlertTitle>
+                  <Typography>
+                    The service mesh is a separate app that has its own ui now.
+                    Click on &quot;Open App&quot; to access the service mesh.
+                  </Typography>
+                </Alert>
+              </React.Fragment>
             )}
-            {error && <Typography>Oops... {errorText}</Typography>}
-            {!error && data?.length === 0 && (
+            {!serviceMeshInstalled && (
               <Alert severity='info'>
                 <AlertTitle>Info</AlertTitle>
                 <Typography>
-                  There is no provider that supplies data...
+                  The service mesh is a separate app that has its own ui now.
                 </Typography>
                 <Typography>
-                  In order to see data here, you need to install a provider.
-                </Typography>
-                <Typography>
-                  Currently you can use the Mosquitto MQTT Broker and the FLECS
-                  MQTT Bridge from our{' '}
-                  <Link to='/Marketplace'>marketplace</Link>.
-                </Typography>
-                <Typography>
-                  Just publish MQTT from your app to this broker and you will
-                  see the topics here.
-                </Typography>
-                <Typography>
-                  Other apps can then easily access and use this data.
-                </Typography>
-                <Typography>
-                  If you want to learn how to do this, just watch this short
-                  video on{' '}
-                  <a
-                    href='https://youtu.be/lu0EES_aenA'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    aria-label='YouTube'
-                  >
-                    YouTube
-                  </a>
-                  .
+                  Please visit our <Link to='/Marketplace'>marketplace</Link> to
+                  install the latest version of the service mesh app.
                 </Typography>
               </Alert>
             )}
           </Grid>
         </Grid>
-        {data?.length > 0 && <DataTable data={data}></DataTable>}
       </Paper>
     </>
   )

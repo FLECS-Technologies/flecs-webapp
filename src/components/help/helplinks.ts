@@ -21,3 +21,5 @@ export const instancedeviceconfig =
   'product-docs/flecs-core/app-management/using-your-app-with-flecs-core#settings-for-network-or-device-access-and-environments'
 export const instancenicconfig = instancedeviceconfig
 export const instanceenvconfig = instancedeviceconfig
+export const servicemesh =
+  helpdomain + '/product-docs/flecs-core/exchanging-data-between-apps'

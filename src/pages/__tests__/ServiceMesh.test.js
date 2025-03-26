@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react'
-import { act } from 'react-dom/test-utils'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ServiceMesh from '../ServiceMesh'
@@ -25,15 +24,17 @@ import { BrowserRouter as Router } from 'react-router-dom'
 jest.mock('../../api/device/DeviceAPI')
 
 describe('ServiceMesh', () => {
-  beforeAll(() => {
-  })
+  beforeAll(() => {})
   afterAll(() => {
     jest.resetAllMocks()
   })
   test('renders Service Mesh page', async () => {
-    await act(async () => {
-      render(<Router><ServiceMesh /></Router>)
-    })
+    render(
+      <Router>
+        <ServiceMesh />
+      </Router>
+    )
+
     expect(screen.getByTestId('service-mesh')).toBeVisible()
     expect(screen.getByTestId('service-mesh-title')).toBeVisible()
   })

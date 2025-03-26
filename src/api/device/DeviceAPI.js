@@ -19,11 +19,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import GetInstalledAppsListAPI from './InstalledAppsListAPI'
-import GetBrowseServiceMesh from './BrowseServiceMeshAPI'
 import GetInstancesAPI from './InstancesAPI'
 
 export default class DeviceAPI extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.appList = null
     this.lastAPICallSuccessful = false
@@ -32,7 +31,7 @@ export default class DeviceAPI extends React.Component {
     this.instances = null
   }
 
-  async getInstances () {
+  async getInstances() {
     try {
       const getInstances = new GetInstancesAPI()
       await getInstances.getInstances()
@@ -50,7 +49,7 @@ export default class DeviceAPI extends React.Component {
     }
   }
 
-  async getInstalledApps () {
+  async getInstalledApps() {
     try {
       const getAppListAPI = new GetInstalledAppsListAPI()
       await getAppListAPI.getAppList()
@@ -60,26 +59,6 @@ export default class DeviceAPI extends React.Component {
       } else {
         if (getAppListAPI.state.errorMessage !== null) {
           this.lastAPIError = getAppListAPI.state.errorMessage
-        }
-      }
-    } catch (error) {
-      this.lastAPICallSuccessful = false
-      this.lastAPIError = error
-    }
-  }
-
-  async browseServiceMesh () {
-    try {
-      const browse = new GetBrowseServiceMesh()
-      await browse.getBrowseServiceMesh()
-
-      if (browse.state.success && browse.state.responseData.data) {
-        this.lastAPICallSuccessful = true
-        this.serviceMeshData = browse.state.responseData.data
-      } else {
-        this.lastAPICallSuccessful = false
-        if (browse.state.errorMessage !== null) {
-          this.lastAPIError = browse.state.errorMessage.message
         }
       }
     } catch (error) {

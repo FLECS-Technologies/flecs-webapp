@@ -24,14 +24,12 @@ const APP_ROUTE = '/apps'
 const CONSOLE_ROUTE = '/console'
 const INSTANCES_ROUTE = '/instances'
 const SYSTEM_ROUTE = '/system'
-const DATA_LAYER_ROUTE = '/data-layer'
 const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download'
 const EXPORTS_ROUTE = '/exports'
 const JOBS_ROUTE = '/jobs'
 const DEVICE_ROUTE = '/device'
 
 const GET_INSTALLED_APP_LIST_URL = ''
-const GET_BROWSE_DATA_LAYER = '/browse'
 const GET_PING_URL = SYSTEM_ROUTE + '/ping'
 const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info'
 const GET_VERSION_URL = SYSTEM_ROUTE + '/version'
@@ -137,10 +135,6 @@ class DeviceAPIConfiguration extends Component {
     return SYSTEM_ROUTE
   }
 
-  static get DATA_LAYER_ROUTE() {
-    return DATA_LAYER_ROUTE
-  }
-
   static get JOBS_ROUTE() {
     return JOBS_ROUTE
   }
@@ -205,10 +199,6 @@ class DeviceAPIConfiguration extends Component {
   // get requests
   static get GET_INSTALLED_APP_LIST_URL() {
     return GET_INSTALLED_APP_LIST_URL
-  }
-
-  static get GET_BROWSE_DATA_LAYER() {
-    return GET_BROWSE_DATA_LAYER
   }
 
   static get GET_PING_URL() {

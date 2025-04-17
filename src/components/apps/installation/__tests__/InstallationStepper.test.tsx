@@ -30,7 +30,7 @@ jest.mock('../../../../api/device/license/activation')
 
 describe('InstallationStepper Component', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   it('App installation', () => {

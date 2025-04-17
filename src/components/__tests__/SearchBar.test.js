@@ -25,11 +25,13 @@ describe('SearchBar', () => {
   const searchFunc = jest.fn()
 
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders SearchBar', () => {
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' search={searchFunc} />)
+    const { getByLabelText } = render(
+      <SearchBar searchTitle='Test Search' search={searchFunc} />
+    )
 
     const autocomplete = getByLabelText('autocomplete')
     const searchField = getByLabelText('search-field')
@@ -45,7 +47,9 @@ describe('SearchBar', () => {
 
   test('Search', async () => {
     const user = userEvent.setup()
-    const { getByLabelText } = render(<SearchBar searchTitle='Test Search' search={searchFunc} />)
+    const { getByLabelText } = render(
+      <SearchBar searchTitle='Test Search' search={searchFunc} />
+    )
 
     const autocomplete = getByLabelText('autocomplete')
 

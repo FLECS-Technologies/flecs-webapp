@@ -30,7 +30,7 @@ describe('ValidateDeviceAPI', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful ValidateDeviceAPI', async () => {
     axios.get.mockResolvedValueOnce(mockValidateDeviceAPIResponse)

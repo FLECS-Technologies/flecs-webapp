@@ -32,7 +32,7 @@ describe('port API', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful fetchPorts', async () => {
     axios.get.mockResolvedValueOnce(mockPorts)

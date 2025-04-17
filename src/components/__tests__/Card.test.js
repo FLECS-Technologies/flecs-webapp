@@ -27,7 +27,7 @@ describe('Card', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders Card component', async () => {

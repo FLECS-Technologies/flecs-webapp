@@ -90,7 +90,7 @@ describe('Marketplace List', () => {
   let container
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   beforeEach(() => {

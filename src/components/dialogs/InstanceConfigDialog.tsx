@@ -57,10 +57,10 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
     if (hasChanges) {
       try {
         await api.instances.instancesInstanceIdStopPost({
-          instanceId: instanceId
+          instanceId
         })
         await api.instances.instancesInstanceIdStartPost({
-          instanceId: instanceId
+          instanceId
         })
         setHasChanges(false)
       } catch (error) {

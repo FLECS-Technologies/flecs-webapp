@@ -56,7 +56,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
     try {
       const environmentData = (
         await api.instances.instancesInstanceIdConfigEnvironmentGet({
-          instanceId: instanceId
+          instanceId
         })
       ).data as InstanceEnvironmentVariable[]
 
@@ -87,7 +87,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
     if (envVars[index].name) {
       api.instances
         .instancesInstanceIdConfigEnvironmentVariableNameDelete({
-          instanceId: instanceId,
+          instanceId,
           variableName: envVars[index].name
         })
         .then(() => {
@@ -118,7 +118,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
         .map(({ name, value }) => ({ name, value }))
 
       await api.instances.instancesInstanceIdConfigEnvironmentPut({
-        instanceId: instanceId,
+        instanceId,
         instanceEnvironmentVariable: variables
       })
       onChange(true)

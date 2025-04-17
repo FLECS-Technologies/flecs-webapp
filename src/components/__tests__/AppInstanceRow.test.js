@@ -144,7 +144,7 @@ describe('AppInstanceRow Component', () => {
 
     fireEvent.click(settingsButton)
 
-    expect(screen.getByText('Settings of Test Instance')).toBeInTheDocument()
+    expect(screen.getByText('Configure Test Instance')).toBeInTheDocument()
   })
 
   test('displays snackbar with success message on successful instance start', async () => {

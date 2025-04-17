@@ -35,7 +35,7 @@ describe('AppRatingService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('calls successful createAppRating', async () => {

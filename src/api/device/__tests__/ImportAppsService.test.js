@@ -21,16 +21,18 @@ import { postImportApps } from '../ImportAppsService'
 import { DeviceAPIConfiguration } from '../../api-config'
 
 describe('ImportAppsService', () => {
-  beforeAll(() => {
-  })
+  beforeAll(() => {})
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('calls successful postImportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_IMPORT_URL
+      )
       .reply(202, {
         jobId: 1
       })
@@ -43,7 +45,10 @@ describe('ImportAppsService', () => {
 
   test('calls unsuccessful postImportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_IMPORT_URL
+      )
       .reply(400, {})
 
     expect(postImportApps()).rejects.toThrowError()

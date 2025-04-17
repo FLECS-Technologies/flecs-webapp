@@ -24,7 +24,7 @@ jest.mock('../../../api/device/license/status')
 
 describe('DeviceActivation Component', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   it('Device is activated', () => {

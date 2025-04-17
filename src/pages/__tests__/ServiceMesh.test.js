@@ -26,7 +26,7 @@ jest.mock('../../api/device/DeviceAPI')
 describe('ServiceMesh', () => {
   beforeAll(() => {})
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('renders Service Mesh page', async () => {
     render(

@@ -21,22 +21,23 @@ import '@testing-library/jest-dom'
 import { AppFilter } from '../AppFilter'
 
 describe('AppFilter', () => {
-  beforeEach(() => {
-  })
+  beforeEach(() => {})
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders AppFilter component', () => {
-    const { getByTestId } = render(<AppFilter/>)
+    const { getByTestId } = render(<AppFilter />)
 
     expect(getByTestId('available-filter')).toBeVisible()
   })
 
   test('toggle AppFilter->Available Button', () => {
     const setAvailableFilter = jest.fn()
-    const { getByTestId } = render(<AppFilter available={true} setAvailableFilter={setAvailableFilter}/>)
+    const { getByTestId } = render(
+      <AppFilter available={true} setAvailableFilter={setAvailableFilter} />
+    )
 
     const toggleAvailable = getByTestId('available-filter')
     fireEvent.click(toggleAvailable)
@@ -45,7 +46,13 @@ describe('AppFilter', () => {
 
   test('toggle AppFilter->Search Button', () => {
     const setIsSearchEnabled = jest.fn()
-    const { getByTestId } = render(<AppFilter search={'test'} isSearchEnabled={true} setIsSearchEnabled={setIsSearchEnabled}/>)
+    const { getByTestId } = render(
+      <AppFilter
+        search={'test'}
+        isSearchEnabled={true}
+        setIsSearchEnabled={setIsSearchEnabled}
+      />
+    )
 
     const toggleAvailable = getByTestId('search-filter')
     fireEvent.click(toggleAvailable)
@@ -54,7 +61,13 @@ describe('AppFilter', () => {
 
   test('toggle AppFilter->Category Button', () => {
     const setCategoryFilter = jest.fn()
-    const { getByTestId } = render(<AppFilter categories={['1']} hiddenCategories={[]} setCategoryFilter={setCategoryFilter}/>)
+    const { getByTestId } = render(
+      <AppFilter
+        categories={['1']}
+        hiddenCategories={[]}
+        setCategoryFilter={setCategoryFilter}
+      />
+    )
 
     const toggleAvailable = getByTestId('category-filter')
     fireEvent.click(toggleAvailable)

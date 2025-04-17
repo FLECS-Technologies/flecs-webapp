@@ -36,7 +36,7 @@ describe('InstanceLogService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful getInstanceLog', async () => {
     axios.get.mockResolvedValueOnce(mockLog)
@@ -54,6 +54,11 @@ describe('InstanceLogService', () => {
 
   test('Get log from the response', () => {
     const log = getLog(mockLog.data)
-    expect(log).toBe('--- stdout\n\n' + mockLog.data.stdout + '--- stderr\n\n' + mockLog.data.stderr)
+    expect(log).toBe(
+      '--- stdout\n\n' +
+        mockLog.data.stdout +
+        '--- stderr\n\n' +
+        mockLog.data.stderr
+    )
   })
 })

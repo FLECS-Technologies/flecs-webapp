@@ -28,7 +28,7 @@ import { SystemData } from './data/SystemData'
 import { JobsContextProvider } from './data/JobsContext'
 import { FilterContextProvider } from './data/FilterContext'
 
-export default function App () {
+export default function App() {
   return (
     <DarkModeState>
       <AuthProvider>

@@ -18,6 +18,7 @@ module.exports = {
     'no-empty-function': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     'no-undef': 'off',
-    'no-unused-vars': 'off'
+    'no-unused-vars': 'off',
+    'no-use-before-define': 'off'
   }
 }

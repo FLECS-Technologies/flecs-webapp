@@ -32,7 +32,7 @@ describe('environment API', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful fetchEnvironments', async () => {
     axios.get.mockResolvedValueOnce(mockEnvs)

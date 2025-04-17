@@ -24,7 +24,7 @@ jest.mock('../../../../api/device/license/info')
 
 describe('LicenseInfo Component', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   it('Show license info', async () => {

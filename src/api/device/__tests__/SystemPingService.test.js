@@ -35,7 +35,7 @@ describe('SystemPing', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful SystemPing', async () => {
     axios.get.mockResolvedValueOnce(mockPing)

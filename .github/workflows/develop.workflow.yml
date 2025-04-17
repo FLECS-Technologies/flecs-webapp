@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -38,7 +40,9 @@ jobs:
       VERSION_SPECIAL: -dev
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: download raw artifacts
         uses: actions/download-artifact@v4
         with:
@@ -64,7 +68,9 @@ jobs:
       VERSION_SPECIAL: -dev
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
@@ -102,7 +108,9 @@ jobs:
         arch: ["amd64", "armhf", "arm64"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: package
         run: |
           make package_${{ matrix.arch }}

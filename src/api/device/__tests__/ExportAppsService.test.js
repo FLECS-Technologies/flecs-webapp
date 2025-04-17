@@ -20,7 +20,12 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { ExportApps, downloadExport, getDownloadExport, getExports } from '../ExportAppsService'
+import {
+  ExportApps,
+  downloadExport,
+  getDownloadExport,
+  getExports
+} from '../ExportAppsService'
 import { DeviceAPIConfiguration } from '../../api-config'
 
 jest.mock('axios')
@@ -39,12 +44,15 @@ describe('ExportAppsService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('calls successful postExportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_EXPORT_URL
+      )
       .reply(202, {
         jobId: 1
       })
@@ -57,7 +65,10 @@ describe('ExportAppsService', () => {
 
   test('calls unsuccessful postExportApps', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_EXPORT_URL
+      )
       .reply(400, {})
 
     const exportApps = new ExportApps()
@@ -92,13 +103,19 @@ describe('ExportAppsService', () => {
 
   test('calls successful downloadExport', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_EXPORT_URL
+      )
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.JOBS_ROUTE
+      )
       .reply(200, [{ status: 'successful', result: { message: '12345678' } }])
 
     axios.get.mockResolvedValueOnce({ data: 'blob downloaded' })
@@ -108,13 +125,19 @@ describe('ExportAppsService', () => {
 
   test('calls unsuccessful downloadExport', async () => {
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_EXPORT_URL)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.POST_EXPORT_URL
+      )
       .reply(202, {
         jobId: 1
       })
 
     nock('http://localhost')
-      .post(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.JOBS_ROUTE)
+      .post(
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+          DeviceAPIConfiguration.JOBS_ROUTE
+      )
       .reply(200, [{ status: 'failed', result: { message: '12345678' } }])
 
     const answer = await downloadExport(['1'], [])

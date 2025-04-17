@@ -21,7 +21,10 @@ import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Login from '../Login'
-import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../../api/api-config'
+import {
+  DeviceAPIConfiguration,
+  MarketplaceAPIConfiguration
+} from '../../api/api-config'
 import axios from 'axios'
 import { useAuth } from '../../components/AuthProvider'
 
@@ -53,12 +56,16 @@ describe('Login', () => {
   }
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders Login page', async () => {
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     expect(screen.getByLabelText('user-name')).toBeVisible()
@@ -72,7 +79,11 @@ describe('Login', () => {
   test('Enter Username', async () => {
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const goButton = screen.getByLabelText('login-button')
@@ -90,7 +101,11 @@ describe('Login', () => {
   test('Enter Password', async () => {
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const goButton = screen.getByLabelText('login-button')
@@ -109,7 +124,11 @@ describe('Login', () => {
   test('Show Password', async () => {
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const showPassword = screen.getByLabelText('toggle password visibility')
@@ -127,7 +146,11 @@ describe('Login', () => {
   test('Enter Username and Password', async () => {
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const goButton = screen.getByLabelText('login-button')
@@ -148,7 +171,11 @@ describe('Login', () => {
     useAuth.mockReturnValue(homer)
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const goButton = screen.getByLabelText('login-button')
@@ -171,15 +198,28 @@ describe('Login', () => {
     expect(message).toHaveTextContent('Successfully logged in!')
     expect(axios.post).toHaveBeenCalledTimes(1)
     expect(axios.put).toHaveBeenCalledTimes(1)
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
-    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, null)
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL,
+      { issueJWT: true, password: 'pass1234', username: 'homer-simpson' }
+    )
+    expect(axios.put).toHaveBeenCalledWith(
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.CONSOLE_ROUTE +
+        DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL,
+      null
+    )
   })
 
   test('Unsuccessful Login', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to login'))
     const user = userEvent.setup()
     await act(async () => {
-      render(<Router><Login /></Router>)
+      render(
+        <Router>
+          <Login />
+        </Router>
+      )
     })
 
     const goButton = screen.getByLabelText('login-button')
@@ -199,6 +239,10 @@ describe('Login', () => {
     const message = screen.getByLabelText('message')
 
     expect(message).toHaveTextContent('Failed to login')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'pass1234', username: 'homer-simpson' })
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL,
+      { issueJWT: true, password: 'pass1234', username: 'homer-simpson' }
+    )
   })
 })

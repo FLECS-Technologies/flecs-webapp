@@ -55,7 +55,7 @@ export const OpenAppButton: React.FC<OpenAppProps> = ({
 
   return (
     <React.Fragment>
-      {instance.editors.length > 0 && (
+      {instance?.editors && instance.editors.length > 0 && (
         <React.Fragment>
           {(variant === undefined || variant === 'contained') && (
             <ButtonGroup disableElevation variant='contained'>

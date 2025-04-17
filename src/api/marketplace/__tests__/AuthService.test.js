@@ -48,8 +48,7 @@ const testUser = {
 const testValidation = {
   data: {
     statusCode: 200,
-    data:
-    {
+    data: {
       iat: 123,
       iss: 'https://mp-dev.flecs.tech',
       exp: 123,
@@ -64,7 +63,7 @@ const testValidation = {
 
 describe('AuthService', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   // test cases for login()
@@ -73,31 +72,55 @@ describe('AuthService', () => {
     const user = await waitFor(() => AuthService.login('tester', 'PW123'))
 
     expect(user.user.user_nicename).toBe('Tester')
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL,
+      { issueJWT: true, password: 'PW123', username: 'tester' }
+    )
   })
 
   test('calls unsuccessful AuthService.login', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to login'))
-    await act(async () => { expect(AuthService.login('tester', 'PW123')).rejects.toThrowError() })
+    await act(async () => {
+      expect(AuthService.login('tester', 'PW123')).rejects.toThrowError()
+    })
 
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL, { issueJWT: true, password: 'PW123', username: 'tester' })
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL,
+      { issueJWT: true, password: 'PW123', username: 'tester' }
+    )
   })
 
   // test cases for validate()
   test('calls successful AuthService.validate', async () => {
     axios.post.mockResolvedValueOnce(testValidation)
     const jwt = { token: testUser.data.data.jwt.token }
-    const validation = await waitFor(() => AuthService.validate(testUser.data.data.jwt.token))
+    const validation = await waitFor(() =>
+      AuthService.validate(testUser.data.data.jwt.token)
+    )
 
     expect(validation.isValid).toBeTruthy()
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt })
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_VALIDATE_URL,
+      { jwt }
+    )
   })
 
   test('calls unsuccessful AuthService.validate', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to validate'))
     const jwt = { token: testUser.data.data.jwt.token }
-    await act(async () => { expect(AuthService.validate(testUser.data.data.jwt.token)).rejects.toThrowError() })
+    await act(async () => {
+      expect(
+        AuthService.validate(testUser.data.data.jwt.token)
+      ).rejects.toThrowError()
+    })
 
-    expect(axios.post).toHaveBeenCalledWith(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL, { jwt })
+    expect(axios.post).toHaveBeenCalledWith(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_VALIDATE_URL,
+      { jwt }
+    )
   })
 })

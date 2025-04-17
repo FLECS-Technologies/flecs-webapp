@@ -30,7 +30,7 @@ describe('LicenseInfoAPI', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful LicenseInfoAPI', async () => {
     axios.get.mockResolvedValueOnce(mockLicenseInfoAPIResponse)

@@ -40,14 +40,17 @@ const handleActiveStep = jest.fn()
 
 describe('Test Install App', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders InstallApp component', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
+          <InstallApp
+            app={app}
+            handleActiveStep={handleActiveStep}
+          ></InstallApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -57,7 +60,10 @@ describe('Test Install App', () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
+          <InstallApp
+            app={app}
+            handleActiveStep={handleActiveStep}
+          ></InstallApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )

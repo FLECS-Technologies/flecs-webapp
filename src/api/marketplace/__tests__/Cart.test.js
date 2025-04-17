@@ -26,14 +26,15 @@ const responseData = {
 }
 
 describe('Cart', () => {
-  beforeEach(() => {
-  })
+  beforeEach(() => {})
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('Successful addToCart call', async () => {
-    const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockResolvedValueOnce(responseData)
+    const spy = jest
+      .spyOn(CoCartAPI.prototype, 'post')
+      .mockResolvedValueOnce(responseData)
     const cartkey = await addToCart(12)
 
     expect(spy).toHaveBeenCalled()
@@ -43,12 +44,13 @@ describe('Cart', () => {
   })
 
   test('Unsuccessful addToCart call', async () => {
-    const spy = jest.spyOn(CoCartAPI.prototype, 'post').mockRejectedValueOnce('failed to add item.')
+    const spy = jest
+      .spyOn(CoCartAPI.prototype, 'post')
+      .mockRejectedValueOnce('failed to add item.')
 
-    await addToCart(12)
-      .catch(e => {
-        expect(e).toEqual('failed to add item.')
-      })
+    await addToCart(12).catch((e) => {
+      expect(e).toEqual('failed to add item.')
+    })
 
     expect(spy).toHaveBeenCalled()
 

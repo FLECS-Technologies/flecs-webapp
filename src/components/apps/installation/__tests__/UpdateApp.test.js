@@ -42,7 +42,7 @@ describe('Test Update App', () => {
   beforeAll(() => {})
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('Successfully update app', async () => {

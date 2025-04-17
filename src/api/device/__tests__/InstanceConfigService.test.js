@@ -25,14 +25,16 @@ jest.mock('axios')
 
 const mockConfig = {
   data: {
-    nicConfig: [{
-      nic: 'eth0',
-      enabled: false
-    },
-    {
-      nic: 'eth1',
-      enabled: true
-    }]
+    nicConfig: [
+      {
+        nic: 'eth0',
+        enabled: false
+      },
+      {
+        nic: 'eth1',
+        enabled: true
+      }
+    ]
   }
 }
 
@@ -43,7 +45,7 @@ describe('InstanceConfigService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful getInstanceConfig', async () => {
     axios.get.mockResolvedValueOnce(mockConfig)

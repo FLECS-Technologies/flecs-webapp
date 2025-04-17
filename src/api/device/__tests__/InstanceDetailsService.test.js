@@ -19,7 +19,12 @@ import '@testing-library/dom'
 import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import { getHostname, getInstanceDetails, getIPAddress, getPorts } from '../InstanceDetailsService'
+import {
+  getHostname,
+  getInstanceDetails,
+  getIPAddress,
+  getPorts
+} from '../InstanceDetailsService'
 
 jest.mock('axios')
 
@@ -64,19 +69,25 @@ describe('InstanceDetailsService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful getInstanceDetails', async () => {
     axios.get.mockResolvedValueOnce(mockDetails)
-    const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId))
+    const details = await waitFor(() =>
+      getInstanceDetails(mockDetails.data.instanceId)
+    )
 
     expect(details.app).toBe(mockDetails.data.app)
   })
 
   test('calls unsuccessful getCurrentUserLicenses', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load instance details'))
+    axios.get.mockRejectedValueOnce(
+      new Error('Failed to load instance details')
+    )
     await act(async () => {
-      expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError()
+      expect(
+        getInstanceDetails(mockDetails.data.instanceId)
+      ).rejects.toThrowError()
     })
   })
 

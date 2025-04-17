@@ -39,11 +39,10 @@ const testUser = {
 }
 
 describe('DeviceAuthAPI', () => {
-  beforeEach(() => {
-  })
+  beforeEach(() => {})
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('calls successful mp-login', async () => {
@@ -52,7 +51,12 @@ describe('DeviceAuthAPI', () => {
       postMPLogin(testUser)
     })
 
-    expect(axios.put).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL, testUser)
+    expect(axios.put).toHaveBeenCalledWith(
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.CONSOLE_ROUTE +
+        DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL,
+      testUser
+    )
   })
 
   test('calls  mp-logout', async () => {
@@ -61,16 +65,28 @@ describe('DeviceAuthAPI', () => {
       postMPLogout()
     })
 
-    expect(axios.delete).toHaveBeenCalledWith(DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL)
+    expect(axios.delete).toHaveBeenCalledWith(
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.CONSOLE_ROUTE +
+        DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
+    )
   })
 
   test('calls failed mp-login', async () => {
-    axios.put.mockReturnValue(Promise.reject(new Error('Failed to login user at the device')))
-    await act(async () => { expect(postMPLogin(testUser)).rejects.toThrowError() })
+    axios.put.mockReturnValue(
+      Promise.reject(new Error('Failed to login user at the device'))
+    )
+    await act(async () => {
+      expect(postMPLogin(testUser)).rejects.toThrowError()
+    })
   })
 
   test('calls successful mp-logout', async () => {
-    axios.delete.mockReturnValue(Promise.reject(new Error('Failed to log out user from the device')))
-    await act(async () => { expect(postMPLogout()).rejects.toThrowError() })
+    axios.delete.mockReturnValue(
+      Promise.reject(new Error('Failed to log out user from the device'))
+    )
+    await act(async () => {
+      expect(postMPLogout()).rejects.toThrowError()
+    })
   })
 })

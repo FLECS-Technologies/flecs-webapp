@@ -29,7 +29,7 @@ jest.mock('../../api/marketplace/ProductService', () => ({
 
 describe('Marketplace', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders Marketplace page', () => {

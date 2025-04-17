@@ -31,4 +31,5 @@ root.render(
     <Router basename='ui/'>
       <App />
     </Router>
-  </StrictMode>)
+  </StrictMode>
+)

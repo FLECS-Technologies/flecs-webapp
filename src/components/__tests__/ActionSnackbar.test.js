@@ -33,7 +33,7 @@ describe('ActionSnackbar', () => {
   })
 
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
     global.navigator.clipboard = originalClipboard
 
     jest.useRealTimers()
@@ -45,15 +45,16 @@ describe('ActionSnackbar', () => {
   })
 
   test('Snackbar success', async () => {
-    function setOpen () {
-
-    }
-    const { getByTestId } = render(<ActionSnackbar
+    function setOpen() {}
+    const { getByTestId } = render(
+      <ActionSnackbar
         text='Successful operation'
         errorText=''
         open={true}
         setOpen={setOpen}
-        alertSeverity='success' />)
+        alertSeverity='success'
+      />
+    )
     const snackbar = getByTestId('snackbar')
     const alert = getByTestId('alert')
     const closeButton = getByTestId('close-button')
@@ -71,12 +72,15 @@ describe('ActionSnackbar', () => {
   })
 
   test('Snackbar error', async () => {
-    const { getByTestId } = render(<ActionSnackbar
+    const { getByTestId } = render(
+      <ActionSnackbar
         text='Operation failed'
         errorText='This operation really failed.'
         open={true}
         setOpen={null}
-        alertSeverity='error' />)
+        alertSeverity='error'
+      />
+    )
     const snackbar = getByTestId('snackbar')
     const alert = getByTestId('alert')
     const closeButton = getByTestId('close-button')
@@ -85,7 +89,9 @@ describe('ActionSnackbar', () => {
     fireEvent.click(copyButton)
 
     expect(navigator.clipboard.writeText).toBeCalledTimes(1)
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('This operation really failed.')
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      'This operation really failed.'
+    )
 
     expect(snackbar).toBeInTheDocument()
     expect(alert).toHaveTextContent('Operation failed')
@@ -96,12 +102,15 @@ describe('ActionSnackbar', () => {
   })
 
   test('Snackbar error without errorText', async () => {
-    const { getByTestId } = render(<ActionSnackbar
+    const { getByTestId } = render(
+      <ActionSnackbar
         text='Operation failed'
         errorText={null}
         open={true}
         setOpen={null}
-        alertSeverity='error' />)
+        alertSeverity='error'
+      />
+    )
     const snackbar = getByTestId('snackbar')
     const alert = getByTestId('alert')
     const closeButton = getByTestId('close-button')
@@ -110,7 +119,9 @@ describe('ActionSnackbar', () => {
     fireEvent.click(copyButton)
 
     expect(navigator.clipboard.writeText).toBeCalledTimes(1)
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('No further error information available. Please check your browser\'s console for further information')
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      "No further error information available. Please check your browser's console for further information"
+    )
 
     expect(snackbar).toBeInTheDocument()
     expect(alert).toHaveTextContent('Operation failed')
@@ -125,12 +136,15 @@ describe('ActionSnackbar', () => {
     // const user = userEvent.setup()
 
     await act(async () => {
-      render(<ActionSnackbar
-        text='Successful operation'
-        errorText=''
-        open={true}
-        setOpen={setOpen}
-        alertSeverity='success' />)
+      render(
+        <ActionSnackbar
+          text='Successful operation'
+          errorText=''
+          open={true}
+          setOpen={setOpen}
+          alertSeverity='success'
+        />
+      )
     })
 
     /*
@@ -151,12 +165,15 @@ describe('ActionSnackbar', () => {
     const setOpen = jest.fn()
 
     await act(async () => {
-      render(<ActionSnackbar
-        text='Successful operation'
-        errorText=''
-        open={true}
-        setOpen={setOpen}
-        alertSeverity='success' />)
+      render(
+        <ActionSnackbar
+          text='Successful operation'
+          errorText=''
+          open={true}
+          setOpen={setOpen}
+          alertSeverity='success'
+        />
+      )
     })
 
     expect(screen.getByTestId('snackbar')).toBeVisible()

@@ -35,7 +35,7 @@ describe('VersionService', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful getVersion', async () => {
     axios.get.mockResolvedValueOnce(mockVersion)

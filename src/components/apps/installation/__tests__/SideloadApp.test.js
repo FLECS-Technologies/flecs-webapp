@@ -39,13 +39,16 @@ const handleActiveStep = jest.fn()
 
 describe('Test Sideload App', () => {
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('renders SideloadApp component', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
+          <SideloadApp
+            yaml={yaml}
+            handleActiveStep={handleActiveStep}
+          ></SideloadApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )
@@ -55,7 +58,10 @@ describe('Test Sideload App', () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
+          <SideloadApp
+            yaml={yaml}
+            handleActiveStep={handleActiveStep}
+          ></SideloadApp>
         </ReferenceDataContextProvider>
       </JobsContextProvider>
     )

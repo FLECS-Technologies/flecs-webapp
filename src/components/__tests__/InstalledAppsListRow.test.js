@@ -38,7 +38,7 @@ describe('Test Installed Apps List row', () => {
   }
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   test('renders installed apps list row component', async () => {

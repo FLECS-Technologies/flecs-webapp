@@ -40,6 +40,7 @@ import InstanceConfig from './InstanceConfig'
 import { JobsContext } from '../data/JobsContext'
 import { OpenAppButton } from './apps/instance/OpenAppButton'
 import ConfirmDialog from './ConfirmDialog'
+import InstanceConfigDialog from './dialogs/InstanceConfigDialog'
 
 export default function AppInstanceRow(props) {
   const { app, appInstance, loadAppReferenceData } = props
@@ -294,13 +295,12 @@ export default function AppInstanceRow(props) {
         document.body
       )}
       {ReactDOM.createPortal(
-        <ContentDialog
-          title={'Settings of ' + appInstance.instanceName}
+        <InstanceConfigDialog
+          instanceId={appInstance.instanceId}
+          instanceName={appInstance.instanceName}
           open={instanceSettingsOpen}
-          setOpen={setInstanceSettingsOpen}
-        >
-          <InstanceConfig instance={appInstance} />
-        </ContentDialog>,
+          onClose={() => setInstanceSettingsOpen(false)}
+        />,
         document.body
       )}
       {ReactDOM.createPortal(

@@ -35,7 +35,7 @@ describe('SystemInfo', () => {
   })
 
   afterAll(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
   test('calls successful SystemInfo', async () => {
     axios.get.mockResolvedValueOnce(mockSystemInfo)

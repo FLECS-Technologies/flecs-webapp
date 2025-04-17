@@ -54,7 +54,7 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
       const systemDevices = await api.system.systemDevicesUsbGet()
       const instanceDevices =
         await api.instances.instancesInstanceIdConfigDevicesUsbGet({
-          instanceId: instanceId
+          instanceId
         })
 
       const devices = systemDevices.data.map((device: any) => ({
@@ -92,13 +92,13 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
     try {
       if (!enabled) {
         await api.instances.instancesInstanceIdConfigDevicesUsbPortPut({
-          instanceId: instanceId,
-          port: port
+          instanceId,
+          port
         })
       } else {
         await api.instances.instancesInstanceIdConfigDevicesUsbPortDelete({
-          instanceId: instanceId,
-          port: port
+          instanceId,
+          port
         })
       }
       setUsbDevices((prev) =>

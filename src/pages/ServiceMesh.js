@@ -25,10 +25,10 @@ import {
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import React from 'react'
-import HelpButton from '../components/help/HelpButton'
+import HelpButton from '../components/buttons/help/HelpButton'
 import { servicemesh } from '../components/help/helplinks'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { OpenAppButton } from '../components/apps/instance/OpenAppButton'
+import { OpenAppButton } from '../components/buttons/open-app/OpenAppButton'
 
 export default function ServiceMesh() {
   const { appList } = React.useContext(ReferenceDataContext)

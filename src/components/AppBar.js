@@ -44,7 +44,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { JobsContext } from '../data/JobsContext'
 import BasicTable from './AppBarTable'
-import HelpButton from './help/HelpButton'
+import HelpButton from './buttons/help/HelpButton'
 import { helpdomain } from './help/helplinks'
 import { appBarIconColors } from '../whitelabeling/custom-tokens'
 

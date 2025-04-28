@@ -37,7 +37,7 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
 import InstanceInfo from './InstanceInfo'
 import { JobsContext } from '../data/JobsContext'
-import { OpenAppButton } from './apps/instance/OpenAppButton'
+import { OpenAppButton } from './buttons/open-app/OpenAppButton'
 import ConfirmDialog from './ConfirmDialog'
 import InstanceConfigDialog from './dialogs/InstanceConfigDialog'
 

@@ -29,7 +29,7 @@ import { api } from '../../../api/flecs-core/api-client'
 import { InstanceEnvironmentVariable } from 'core-client/api'
 import ActionSnackbar from '../../ActionSnackbar'
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard'
-import HelpButton from '../../../components/help/HelpButton'
+import HelpButton from '../../buttons/help/HelpButton'
 import { instancedeviceconfig } from '../../../components/help/helplinks'
 
 interface EnvironmentConfigTabProps {

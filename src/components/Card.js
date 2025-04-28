@@ -46,7 +46,7 @@ import { isBlacklisted } from '../api/marketplace/ProductService'
 import { JobsContext } from '../data/JobsContext'
 import InstallationStepper from './apps/installation/InstallationStepper'
 import { ShoppingCart } from '@mui/icons-material'
-import HelpButton from './help/HelpButton'
+import HelpButton from './buttons/help/HelpButton'
 
 export default function OutlinedCard(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)

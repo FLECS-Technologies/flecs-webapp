@@ -44,8 +44,8 @@ import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import useStateWithLocalStorage from './LocalStorage'
 import { JobsContext } from '../data/JobsContext'
-import { OpenAppButton } from './apps/instance/OpenAppButton'
-import HelpButton from './help/HelpButton'
+import { OpenAppButton } from './buttons/open-app/OpenAppButton'
+import HelpButton from './buttons/help/HelpButton'
 
 export default function Row(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)

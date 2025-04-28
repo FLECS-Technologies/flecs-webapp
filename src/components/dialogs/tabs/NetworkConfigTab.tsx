@@ -25,7 +25,7 @@ import {
   NetworkAdapter
 } from 'core-client/api'
 import NetworkConfigCard from './networks/NetworkConfigCard'
-import HelpButton from '../../../components/help/HelpButton'
+import HelpButton from '../../buttons/help/HelpButton'
 import { instancenicconfig } from '../../../components/help/helplinks'
 import ActionSnackbar from '../../../components/ActionSnackbar'
 

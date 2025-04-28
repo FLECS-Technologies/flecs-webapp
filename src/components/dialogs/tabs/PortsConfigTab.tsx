@@ -28,7 +28,7 @@ import {
   TransportProtocol
 } from 'core-client/api'
 import { api } from '../../../api/flecs-core/api-client'
-import HelpButton from '../../../components/help/HelpButton'
+import HelpButton from '../../buttons/help/HelpButton'
 import { instancedeviceconfig } from '../../../components/help/helplinks'
 
 interface PortsConfigTabProps {

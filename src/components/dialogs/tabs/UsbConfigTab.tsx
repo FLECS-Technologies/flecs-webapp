@@ -136,6 +136,9 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
         <HelpButton url={instancedeviceconfig}></HelpButton>
       </Stack>
       <List>
+        {usbDevices.length === 0 && (
+          <Typography>No USB devices available.</Typography>
+        )}
         {usbDevices.map((device) => (
           <UsbConfigCard
             key={device.port}

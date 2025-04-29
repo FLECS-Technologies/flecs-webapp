@@ -62,7 +62,7 @@ const POST_INSTANCE_LOG_URL = (instanceId) =>
   INSTANCES_ROUTE + `/${instanceId}` + '/logs'
 const POST_INSTANCE_CONFIG_URL = (instanceId) =>
   INSTANCES_ROUTE + `/${instanceId}` + '/config'
-const POST_EXPORT_URL = EXPORTS_ROUTE + '/create'
+const POST_EXPORT_URL = EXPORTS_ROUTE
 const POST_SIDELOAD_APP = '/sideload'
 const POST_IMPORT_URL = '/imports'
 const POST_ACTIVATE_URL = DEVICE_ROUTE + '/license/activation'

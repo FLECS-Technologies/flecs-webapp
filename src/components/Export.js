@@ -45,7 +45,7 @@ export default function Export (props) {
       .then((response) => {
         // create <a> HTML element with href to file & click
         const link = document.createElement('a')
-        link.download = `flecs-export-${response.exportId}.tar.gz`
+        link.download = `flecs-export-${response.exportId}.tar`
         link.href = URL.createObjectURL(response.blob)
         link.click()
 

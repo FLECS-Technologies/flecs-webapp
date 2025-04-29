@@ -60,7 +60,7 @@ async function downloadExport (apps, instances) {
 async function downloadPastExport (exportId) {
   const file = await getDownloadExport(exportId)
   const link = document.createElement('a')
-  link.download = `flecs-export-${exportId}.tar.gz`
+  link.download = `flecs-export-${exportId}.tar`
   link.href = URL.createObjectURL(file.blob)
   link.click()
 

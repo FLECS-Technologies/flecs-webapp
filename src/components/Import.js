@@ -75,7 +75,7 @@ export default function Import(props) {
   const handleFileUpload = (file) => {
     if (file) {
       const fileName = file.name.toLowerCase()
-      if (fileName.endsWith('.tar.gz')) {
+      if (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar')) {
         handleTarFile(file)
       } else if (fileName.endsWith('.json')) {
         handleJsonFile(file)
@@ -83,7 +83,7 @@ export default function Import(props) {
         setSnackbarState({
           alertSeverity: 'error',
           snackbarText:
-            'Unsupported file type. Please upload a .tar.gz or .json file.'
+            'Unsupported file type. Please upload a .tar, .tar.gz or .json file.'
         })
         setSnackbarOpen(true)
       }
@@ -144,7 +144,7 @@ export default function Import(props) {
         data-testid='import-apps-button'
         buttonText='Import'
         buttonIcon={<DownloadIcon />}
-        accept='.tar.gz, .json'
+        accept='.tar.gz, .tar, .json'
         onConfirm={handleFileUpload}
         loading={importing}
         wholeFile={true}

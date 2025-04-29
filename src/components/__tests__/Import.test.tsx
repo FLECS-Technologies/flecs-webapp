@@ -135,7 +135,7 @@ describe('Import component', () => {
 
     expect(
       screen.queryByText(
-        'Unsupported file type. Please upload a .tar.gz or .json file.'
+        'Unsupported file type. Please upload a .tar, .tar.gz or .json file.'
       )
     ).toBeInTheDocument()
   })

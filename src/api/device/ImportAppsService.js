@@ -21,8 +21,10 @@ async function postImportApps (file, fileName) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     const url = DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL
+    const formData = new FormData();
+    formData.append('file', file);
     xhr.open('POST', url, true)
-    xhr.setRequestHeader('X-Uploaded-Filename', fileName)
+    xhr.setRequestHeader('Content-Disposition', fileName)
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 202) {
@@ -33,7 +35,7 @@ async function postImportApps (file, fileName) {
         }
       }
     }
-    xhr.send(file)
+    xhr.send(formData)
   })
 }
 

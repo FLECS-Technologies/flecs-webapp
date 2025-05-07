@@ -40,7 +40,7 @@ const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
     >
       <Tooltip
         title={`USB device ${device.name} ${
-          device.device_connected ? 'connected' : 'not connected'
+          device.enabled ? 'enabled in app' : 'disabled in app'
         }`}
       >
         {device.device_connected ? (

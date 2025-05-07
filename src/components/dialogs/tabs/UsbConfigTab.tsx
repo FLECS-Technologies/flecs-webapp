@@ -57,15 +57,18 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
           instanceId
         })
 
-      const devices = systemDevices.data.map((device: any) => ({
-        port: device.port,
-        name: device.name ?? 'Unknown',
-        vendor: device.vendor ?? 'Unknown',
-        device_connected: device.device_connected ?? false,
-        enabled: instanceDevices.data.some(
+      const devices = systemDevices.data.map((device: any) => {
+        const instanceDevice = instanceDevices.data.find(
           (instanceDevice: any) => instanceDevice.port === device.port
         )
-      }))
+        return {
+          port: device.port,
+          name: device.name ?? 'Unknown',
+          vendor: device.vendor ?? 'Unknown',
+          device_connected: instanceDevice?.device_connected ?? false,
+          enabled: !!instanceDevice
+        }
+      })
       devices.sort((a, b) => a.port.localeCompare(b.port))
       setUsbDevices(devices)
     } catch (error) {

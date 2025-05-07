@@ -71,21 +71,19 @@ describe('UsbConfigTab', () => {
         {
           port: '1',
           name: 'Device1',
-          vendor: 'Vendor1',
-          device_connected: true
+          vendor: 'Vendor1'
         },
         {
           port: '2',
           name: 'Device2',
-          vendor: 'Vendor2',
-          device_connected: false
+          vendor: 'Vendor2'
         }
       ]
     })
     ;(
       api.instances.instancesInstanceIdConfigDevicesUsbGet as jest.Mock
     ).mockResolvedValueOnce({
-      data: [{ port: '1' }]
+      data: [{ port: '1', device_connected: true }]
     })
 
     render(<UsbConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />)
@@ -106,8 +104,7 @@ describe('UsbConfigTab', () => {
         {
           port: '1',
           name: 'Device1',
-          vendor: 'Vendor1',
-          device_connected: true
+          vendor: 'Vendor1'
         }
       ]
     })

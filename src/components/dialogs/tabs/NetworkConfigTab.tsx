@@ -22,7 +22,9 @@ import {
   DeploymentNetwork,
   InstanceConfigNetwork,
   Network,
-  NetworkAdapter
+  NetworkAdapter,
+  NetworkKind,
+  NetworkType
 } from 'core-client/api'
 import NetworkConfigCard from './networks/NetworkConfigCard'
 import HelpButton from '../../buttons/help/HelpButton'
@@ -101,7 +103,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
       // Combine all data sources
       const filteredNetworkAdapters = networkAdapters.filter(
         (adapter) =>
-          adapter.net_type === 'Wired' || adapter.net_type === 'Wireless'
+          adapter.net_type === NetworkType.Wired || adapter.net_type === NetworkType.Wireless
       )
       const sortedNetworkAdapters = filteredNetworkAdapters.sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -168,11 +170,11 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
           // Step 1: Check if deploymentNetworkName is set, if not create one
           if (!deploymentNetworkName) {
             const newDeploymentNetworkName = `flecs-ipvlan_l2-${name}`
-            await api.deployments.deploymentsDeploymentIdNetworksNetworkIdPut({
+            await api.deployments.deploymentsDeploymentIdNetworksPost({
               deploymentId: 'default',
-              networkId: newDeploymentNetworkName,
-              putDeploymentNetwork: {
-                network_kind: 'IpvlanL2',
+              postDeploymentNetwork: {
+                network_id: newDeploymentNetworkName,
+                network_kind: NetworkKind.Ipvlanl2,
                 parent_adapter: name
               }
             })
@@ -194,7 +196,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
             instanceId,
             instancesInstanceIdConfigNetworksPostRequest: {
               network_id: deploymentNetworkName,
-              ip_address_suggestion: reservedIpAddress
+              ipAddress: reservedIpAddress
             }
           })
         } else {

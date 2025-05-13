@@ -20,6 +20,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import NetworkConfigTab from '../NetworkConfigTab'
 import { api } from '../../../../api/flecs-core/api-client'
+import { NetworkKind, NetworkType } from 'core-client/api'
 
 // Mock the API client
 jest.mock('../../../../api/flecs-core/api-client', () => ({
@@ -29,7 +30,7 @@ jest.mock('../../../../api/flecs-core/api-client', () => ({
     },
     deployments: {
       deploymentsDeploymentIdNetworksGet: jest.fn(),
-      deploymentsDeploymentIdNetworksNetworkIdPut: jest.fn(),
+      deploymentsDeploymentIdNetworksPost: jest.fn(),
       deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post: jest.fn()
     },
     instances: {
@@ -84,13 +85,13 @@ describe('NetworkConfigTab', () => {
           name: 'Adapter1',
           is_connected: true,
           networks: [],
-          net_type: 'Wired'
+          net_type: NetworkType.Wired
         },
         {
           name: 'Adapter2',
           is_connected: false,
           networks: [],
-          net_type: 'Wireless'
+          net_type: NetworkType.Wireless
         }
       ]
     })
@@ -131,7 +132,7 @@ describe('NetworkConfigTab', () => {
           name: 'Adapter1',
           is_connected: true,
           networks: [],
-          net_type: 'Wired'
+          net_type: NetworkType.Wired
         }
       ]
     })
@@ -146,7 +147,7 @@ describe('NetworkConfigTab', () => {
       data: []
     })
     ;(
-      api.deployments.deploymentsDeploymentIdNetworksNetworkIdPut as jest.Mock
+      api.deployments.deploymentsDeploymentIdNetworksPost as jest.Mock
     ).mockResolvedValueOnce({})
     ;(
       api.deployments
@@ -174,12 +175,12 @@ describe('NetworkConfigTab', () => {
     // Wait for the API call to be made
     await waitFor(() =>
       expect(
-        api.deployments.deploymentsDeploymentIdNetworksNetworkIdPut
+        api.deployments.deploymentsDeploymentIdNetworksPost
       ).toHaveBeenCalledWith({
         deploymentId: 'default',
-        networkId: 'flecs-ipvlan_l2-Adapter1',
-        putDeploymentNetwork: {
-          network_kind: 'IpvlanL2',
+        postDeploymentNetwork: {
+          network_id: 'flecs-ipvlan_l2-Adapter1',
+          network_kind: NetworkKind.Ipvlanl2,
           parent_adapter: 'Adapter1'
         }
       })
@@ -190,7 +191,7 @@ describe('NetworkConfigTab', () => {
       instanceId: mockInstanceId,
       instancesInstanceIdConfigNetworksPostRequest: {
         network_id: 'flecs-ipvlan_l2-Adapter1',
-        ip_address_suggestion: '192.168.1.2'
+        ipAddress: '192.168.1.2'
       }
     })
   })

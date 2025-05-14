@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React, { useCallback, useEffect, useState } from 'react'
-import { Box, List, CircularProgress, Stack, Typography } from '@mui/material'
+import { Box, List, CircularProgress, Stack, Typography, Tooltip, Button, TextField } from '@mui/material'
 import { api } from '../../../api/flecs-core/api-client'
 import {
   DeploymentNetwork,
@@ -30,6 +30,7 @@ import NetworkConfigCard from './networks/NetworkConfigCard'
 import HelpButton from '../../buttons/help/HelpButton'
 import { instancenicconfig } from '../../../components/help/helplinks'
 import ActionSnackbar from '../../../components/ActionSnackbar'
+import { SwapHoriz } from '@mui/icons-material'
 
 export interface NetworkState {
   id: string
@@ -53,6 +54,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
 }) => {
   const executedRef = React.useRef(false)
   const [networks, setNetworks] = useState<NetworkState[]>([])
+  const [hostname, setHostname] = useState<string>("")
   const [loading, setLoading] = useState(true)
   const [reload, setReload] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -62,8 +64,30 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
     clipBoardContent: ''
   })
 
+
+  const putHostname = async () => {
+    try {
+      // Put hostname
+      await api.instances.instancesInstanceIdConfigHostnamePut({instanceId, instancesInstanceIdConfigHostnamePutRequest: {hostname}});    
+    } catch (error) {
+      setSnackbarState({
+        alertSeverity: 'error',
+        snackbarText: 'Failed to set hostname!',
+        clipBoardContent: ''
+      })
+      setSnackbarOpen(true)
+    } finally {
+      setLoading(false)
+      setReload(false)
+    }
+  }
+
   const fetchNetworks = async () => {
     try {
+      // Fetch hostname
+      const hostname =
+        (await api.instances.instancesInstanceIdConfigHostnameGet({instanceId})).data;
+        
       // Fetch network adapters
       const networkAdaptersResponse =
         await api.system.systemNetworkAdaptersGet()
@@ -126,6 +150,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
         }
       })
 
+      setHostname(hostname)
       setNetworks(combinedNetworks)
     } catch (error) {
       setSnackbarState({
@@ -241,6 +266,29 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
   }
   return (
     <Box>
+      <Stack direction='row' spacing={2} alignItems='center' sx={{ mb: 2 }}>
+        <Typography variant='h6'>Set hostname of App Instance</Typography>
+        <HelpButton url={instancenicconfig}></HelpButton>
+      </Stack>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Tooltip title='Set the hostname to the given value'>
+          <span>
+            <TextField
+              label="Hostname"
+              value={hostname}
+              onChange={(e) => setHostname(e.target.value)}
+            />
+            <Button
+              onClick={putHostname}
+              variant='text'
+              color='secondary'
+              startIcon={<SwapHoriz />}
+            >
+              Set
+            </Button>
+          </span>
+        </Tooltip>
+      </Box>
       <Stack direction='row' spacing={2} alignItems='center' sx={{ mb: 2 }}>
         <Typography variant='h6'>Connect Network Interface to App</Typography>
         <HelpButton url={instancenicconfig}></HelpButton>

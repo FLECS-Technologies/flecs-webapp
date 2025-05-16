@@ -91,6 +91,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
           variableName: envVars[index].name
         })
         .then(() => {
+          onChange(true)
           setEnvVars((prev) => prev.filter((_, i) => i !== index))
           setSnackbarState({
             alertSeverity: 'success',

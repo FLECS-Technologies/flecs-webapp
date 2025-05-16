@@ -48,6 +48,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
   const executedRef = React.useRef(false)
   const [ports, setPorts] = useState<PortWithProtocol[]>([])
   const [loading, setLoading] = useState(true)
+  const [save, setSave] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
@@ -96,6 +97,13 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
     fetchPorts()
     executedRef.current = true
   }, [])
+
+  useEffect(() => {
+    if (save) {
+      handleSave()
+      setSave(false)
+    }
+  }, [save])
 
   const handlePortChange = (
     index: number,
@@ -193,6 +201,8 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
       updatedPorts.splice(index, 1)
       return updatedPorts
     })
+
+    setSave(true)
   }
 
   const handleAddSinglePortMapping = (): void => {

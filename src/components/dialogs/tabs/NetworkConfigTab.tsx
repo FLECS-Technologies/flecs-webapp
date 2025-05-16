@@ -103,7 +103,8 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
       // Combine all data sources
       const filteredNetworkAdapters = networkAdapters.filter(
         (adapter) =>
-          adapter.net_type === NetworkType.Wired || adapter.net_type === NetworkType.Wireless
+          adapter.net_type === NetworkType.Wired ||
+          adapter.net_type === NetworkType.Wireless
       )
       const sortedNetworkAdapters = filteredNetworkAdapters.sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -141,12 +142,13 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
   }
 
   useEffect(() => {
-    if (executedRef.current) {
+    if (executedRef.current && !reload) {
       return
     }
 
     fetchNetworks()
     executedRef.current = true
+    setReload(false)
   }, [reload])
 
   const handleNetworkActivationChange = useCallback(

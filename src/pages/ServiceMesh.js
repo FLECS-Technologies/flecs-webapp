@@ -28,7 +28,7 @@ import React from 'react'
 import HelpButton from '../components/buttons/help/HelpButton'
 import { servicemesh } from '../components/help/helplinks'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { OpenAppButton } from '../components/buttons/open-app/OpenAppButton'
+import { EditorButton } from '../components/buttons/editors/EditorButton'
 
 export default function ServiceMesh() {
   const { appList } = React.useContext(ReferenceDataContext)
@@ -69,8 +69,12 @@ export default function ServiceMesh() {
             Service Mesh
             <HelpButton url={servicemesh}></HelpButton>
           </Typography>
-          {serviceMeshInstalled && serviceMeshInstance && (
-            <OpenAppButton instance={serviceMeshInstance}></OpenAppButton>
+          {serviceMeshInstalled && serviceMeshInstance && serviceMeshInstance.editors && serviceMeshInstance.editors.length > 0 && (
+            <EditorButton
+              key={0}
+              editor={serviceMeshInstance.editors[0]}
+              index={0}
+            />
           )}
         </Toolbar>
         <Grid
@@ -87,7 +91,7 @@ export default function ServiceMesh() {
                   <AlertTitle>Info</AlertTitle>
                   <Typography>
                     The service mesh is a separate app that has its own ui now.
-                    Click on &quot;Open App&quot; to access the service mesh.
+                    Click on &quot;{`Open ${serviceMeshInstance?.editors?.[0]?.name || 'editor'}`}&quot; to access the service mesh.
                   </Typography>
                 </Alert>
               </React.Fragment>

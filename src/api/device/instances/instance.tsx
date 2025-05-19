@@ -20,6 +20,7 @@ export interface Editor {
   name: string
   url: string
   supportsReverseProxy: boolean
+  port: number
 }
 
 export async function UpdateInstanceAPI(instanceId: string, to: string) {

@@ -125,7 +125,7 @@ jobs:
       - name: Deploy packages and latest files
         uses: azure/cli@v2
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.72.0
           inlineScript: |
             for i in `find ./out/${{ matrix.arch }}/pkg -mindepth 1 -maxdepth 1 -name "latest_flecs-webapp_*"`; do \
               echo "Uploading ${i}"; \

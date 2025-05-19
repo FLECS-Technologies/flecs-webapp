@@ -31,19 +31,22 @@ import UsbConfigTab from './tabs/UsbConfigTab'
 import NetworkConfigTab from './tabs/NetworkConfigTab'
 import PortsConfigTab from './tabs/PortsConfigTab'
 import { api } from '../../api/flecs-core/api-client'
+import EditorConfigTab from './tabs/EditorConfigTab'
 
 interface InstanceConfigDialogProps {
   open: boolean
   onClose: () => void
   instanceId: string
   instanceName: string
+  activeTab: number
+  setActiveTab: React.Dispatch<React.SetStateAction<number>>
 }
 
 const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   open,
   onClose,
   instanceId,
-  instanceName
+  instanceName,
 }) => {
   const [activeTab, setActiveTab] = useState(0)
   const [hasChanges, setHasChanges] = useState(false)
@@ -79,15 +82,20 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='md'>
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='lg' PaperProps={{
+      style: {
+        alignSelf: 'flex-start'
+      }
+      }}>
       <DialogTitle>Configure {instanceName}</DialogTitle>
+      <Tabs value={activeTab} onChange={handleTabChange} variant='fullWidth'>
+        <Tab label='USB Devices'></Tab>
+        <Tab label='Network Interfaces' />
+        <Tab label='Ports' />
+        <Tab label='Environment Variables' />
+        <Tab label='Editors' />
+      </Tabs>
       <DialogContent>
-        <Tabs value={activeTab} onChange={handleTabChange} variant='fullWidth'>
-          <Tab label='USB Devices'></Tab>
-          <Tab label='Network Interfaces' />
-          <Tab label='Ports' />
-          <Tab label='Environment Variables' />
-        </Tabs>
         <Box mt={2}>
           {activeTab === 0 && (
             <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />
@@ -103,6 +111,12 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
           )}
           {activeTab === 3 && (
             <EnvironmentConfigTab
+              instanceId={instanceId}
+              onChange={setHasChanges}
+            />
+          )}
+          {activeTab === 4 && (
+            <EditorConfigTab
               instanceId={instanceId}
               onChange={setHasChanges}
             />

@@ -94,6 +94,9 @@ describe('EnvironmentConfigTab', () => {
       ).toHaveBeenCalled()
     )
 
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    )
     const addButton = screen.getByText('Add Environment Variable')
     fireEvent.click(addButton)
 

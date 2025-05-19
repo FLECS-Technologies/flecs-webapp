@@ -17,7 +17,7 @@
  */
 import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+import PropTypes, { bool } from 'prop-types'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import Tooltip from '@mui/material/Tooltip'
@@ -37,12 +37,12 @@ import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import ContentDialog from './ContentDialog'
 import InstanceInfo from './InstanceInfo'
 import { JobsContext } from '../data/JobsContext'
-import { OpenAppButton } from './buttons/open-app/OpenAppButton'
 import ConfirmDialog from './ConfirmDialog'
 import InstanceConfigDialog from './dialogs/InstanceConfigDialog'
+import { EditorButtons } from './buttons/editors/EditorButtons'
 
 export default function AppInstanceRow(props) {
-  const { app, appInstance, loadAppReferenceData } = props
+  const { app, appInstance, loadAppReferenceData, showEditors } = props
   const { setUpdateAppList } = React.useContext(ReferenceDataContext)
   const [instanceStarting, setInstanceStarting] = React.useState(false)
   const [instanceStopping, setInstanceStopping] = React.useState(false)
@@ -195,14 +195,6 @@ export default function AppInstanceRow(props) {
             justify='flex-start'
             alignItems='flex-start'
           >
-            <Tooltip title='Open app in new tab'>
-              <span>
-                <OpenAppButton
-                  instance={appInstance}
-                  variant='icon'
-                ></OpenAppButton>
-              </span>
-            </Tooltip>
             <Tooltip title='Info to this instance'>
               <span>
                 <LoadIconButton
@@ -271,6 +263,13 @@ export default function AppInstanceRow(props) {
             </Tooltip>
           </Grid>
         </TableCell>
+        {showEditors && (<TableCell>
+          <span>
+            <EditorButtons
+              instance={appInstance}
+            ></EditorButtons>
+          </span>
+        </TableCell>)}
       </TableRow>
       {/* Portals for Dialogs and Snackbar */}
       {ReactDOM.createPortal(
@@ -320,5 +319,6 @@ AppInstanceRow.propTypes = {
   appInstance: PropTypes.object,
   loadAppReferenceData: PropTypes.func,
   updateReferenceDataInstances: PropTypes.func,
-  setSnackbarState: PropTypes.func
+  setSnackbarState: PropTypes.func,
+  showEditors: bool
 }

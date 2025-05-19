@@ -23,7 +23,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editors: [{ name: 'editor', url: '/editor' }]
+        editors: [{ name: 'editor', url: '/editor-0', port: 200 }]
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
@@ -32,7 +32,7 @@ describe('Test Installed Apps List row', () => {
         appKey: {
           version: '4.2.0'
         },
-        editors: [{ name: 'editor', url: '/editor' }]
+        editors: [{ name: 'editor', url: '/editor-1', port: 201 }]
       }
     ]
   }
@@ -168,13 +168,21 @@ describe('Test Installed Apps List row', () => {
     )
     fireEvent.click(expandButton)
 
-    const editorButton = await waitFor(() =>
-      screen.getByLabelText('open-app-button')
+    const editorButtons = await waitFor(() =>
+      screen.getAllByLabelText('open-editor-button-0')
     )
-    fireEvent.click(editorButton)
+    expect(editorButtons.length).toBe(2)
+    const editorButton1 = editorButtons[1]
+    fireEvent.click(editorButton1)
 
-    expect(editorButton).toBeEnabled()
+    expect(editorButton1).toBeEnabled()
     expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('http://localhost/api/editor')
+    expect(window.open).toHaveBeenCalledWith('http://localhost/api/editor-1')
+    const editorButton0 = editorButtons[0]
+    fireEvent.click(editorButton0)
+
+    expect(editorButton0).toBeEnabled()
+    expect(window.open).toHaveBeenCalled()
+    expect(window.open).toHaveBeenCalledWith('http://localhost/api/editor-0')
   })
 })

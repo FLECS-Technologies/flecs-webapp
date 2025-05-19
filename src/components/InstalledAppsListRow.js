@@ -44,8 +44,8 @@ import ActionSnackbar from './ActionSnackbar'
 import ConfirmDialog from './ConfirmDialog'
 import useStateWithLocalStorage from './LocalStorage'
 import { JobsContext } from '../data/JobsContext'
-import { OpenAppButton } from './buttons/open-app/OpenAppButton'
 import HelpButton from './buttons/help/HelpButton'
+import { EditorButtons } from './buttons/editors/EditorButtons'
 
 export default function Row(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -267,8 +267,8 @@ export default function Row(props) {
                 >
                   App instances
                 </Typography>
-                {row.instances.length > 0 && (
-                  <OpenAppButton instance={row.instances[0]}></OpenAppButton>
+                {row.instances.length === 1 && (
+                  <EditorButtons instance={row.instances[0]}/>
                 )}
                 <LoadButton
                   data-testid='start-new-instance-button'
@@ -288,7 +288,7 @@ export default function Row(props) {
               <Table
                 data-testid='instances-table'
                 size='small'
-                aria-label='app-instances'
+                aria-label='app-instances'style={{ tableLayout: 'fixed', width: '100%' }}
               >
                 <TableHead data-testid='instances-table-head'>
                   <TableRow>
@@ -304,6 +304,9 @@ export default function Row(props) {
                     <TableCell data-testid='instances-table-header-actions'>
                       Actions
                     </TableCell>
+                    {row.instances.length > 1 && (<TableCell data-testid='instances-table-header-editors'>
+                      Editors
+                    </TableCell>)}
                   </TableRow>
                 </TableHead>
                 <TableBody data-testid='instances-table-body'>
@@ -313,6 +316,7 @@ export default function Row(props) {
                       app={row}
                       appInstance={appInstance}
                       loadAppReferenceData={loadReferenceData}
+                      showEditors={row.instances.length > 1}
                     />
                   ))}
                 </TableBody>

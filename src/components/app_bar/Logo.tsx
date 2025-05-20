@@ -18,7 +18,7 @@
 import React from 'react'
 import { IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import WhiteLabelLogo, { useWhiteLabelLogo } from '../../whitelabeling/WhiteLabelLogo'
+import WhiteLabelLogo, { useWhiteLabelLogo, showPoweredBy } from '../../whitelabeling/WhiteLabelLogo'
 import FLECSLogo from '../navigation/FLECSLogo'
 
 
@@ -36,7 +36,7 @@ const Logo: React.FC = () => {
           </Typography>
         </React.Fragment>
       )}
-      {useWhiteLabelLogo && (
+      {useWhiteLabelLogo && showPoweredBy && (
         <React.Fragment>
           <IconButton aria-label='logo' disabled={true}>
             <WhiteLabelLogo/>
@@ -50,6 +50,14 @@ const Logo: React.FC = () => {
                 FLECS
             </Typography>
           </Typography>
+        </React.Fragment>
+      )}
+      {useWhiteLabelLogo && !showPoweredBy && (
+        <React.Fragment>
+          <IconButton aria-label='logo' disabled={true}>
+            <WhiteLabelLogo/>
+          </IconButton>
+          <Typography variant="caption" component="div" sx={{ flexGrow: 1 }}/>
         </React.Fragment>
       )}
     </React.Fragment>

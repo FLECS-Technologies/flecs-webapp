@@ -72,8 +72,6 @@ const darkTheme = createTheme({
   ...baseTheme,
   palette: {
     ...baseTheme.palette,
-    mode: 'dark',
-
     text: {
       primary: '#F5F5F5',
       secondary: 'rgba(255, 255, 255, 0.7)',

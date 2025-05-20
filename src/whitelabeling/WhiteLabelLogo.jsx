@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 import React from 'react'
-import { ReactComponent as Logo } from '../assets/images/logo.svg' // Change to the custom whitelabel logo
+import { ReactComponent as Logo } from './salz-logo-white-full.svg' // Change to the custom whitelabel logo
 import { useTheme } from '@mui/material/styles'
 import PropTypes from 'prop-types'
 
 // Set to true if the whitelabel logo should be used
-export const useWhiteLabelLogo = false;
+export const useWhiteLabelLogo = true;
 // Set to false if 'powered by flecs' should not be shown
 export const showPoweredBy = true;
 
@@ -30,9 +30,9 @@ export default function WhiteLabelLogo({ logoColor }) {
   // Customize the whitelabel logo here
   return (
     <Logo
-      width='128'
+      width='64'
       height='48'
-      style={{ color: logoColor || theme.palette.primary.main }} // Set the "color" property for currentColor
+      style={{ color: logoColor || '#171716' }} // Set the "color" property for currentColor
     />
   )
 }

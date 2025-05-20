@@ -22,6 +22,8 @@ import PropTypes from 'prop-types'
 
 // Set to true if the whitelabel logo should be used
 export const useWhiteLabelLogo = false;
+// Set to false if 'powered by flecs' should not be shown
+export const showPoweredBy = true;
 
 export default function WhiteLabelLogo({ logoColor }) {
   const theme = useTheme() // Access the Material-UI theme

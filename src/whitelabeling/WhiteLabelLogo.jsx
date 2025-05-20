@@ -16,12 +16,13 @@
  * limitations under the License.
  */
 import React from 'react'
-import { ReactComponent as Logo } from '../assets/images/logo.svg' // Change to the custom whitelabel logo
+import Logo from './OI4_Logo_complete_color_RGB.png' // Change to the custom whitelabel logo
 import { useTheme } from '@mui/material/styles'
+import { IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
 
 // Set to true if the whitelabel logo should be used
-export const useWhiteLabelLogo = false;
+export const useWhiteLabelLogo = true;
 // Set to false if 'powered by flecs' should not be shown
 export const showPoweredBy = true;
 
@@ -29,11 +30,9 @@ export default function WhiteLabelLogo({ logoColor }) {
   const theme = useTheme() // Access the Material-UI theme
   // Customize the whitelabel logo here
   return (
-    <Logo
-      width='128'
-      height='48'
-      style={{ color: logoColor || theme.palette.primary.main }} // Set the "color" property for currentColor
-    />
+    <IconButton aria-label='logo' disabled={true}>
+      <img src={Logo} width="144" height="48" />
+    </IconButton>
   )
 }
 

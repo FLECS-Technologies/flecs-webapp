@@ -23,11 +23,104 @@ import {
 } from '../styles/theme'
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
+  ...flecsDarkTheme,
+  components: {
+    ...flecsDarkTheme.components,
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#00E47C',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          },
+          '&$selected:hover': {
+            color: '00E47C',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          },
+          '&:hover': {
+            color: '#00e47c',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#051D19'
+        }
+      }
+    }
+  },
+  palette: {
+    ...flecsDarkTheme.palette,
+    primary: {
+      main: '#051D19'
+    },
+    secondary: {
+      main: '#00904F'
+    },
+    background: {
+      default: '#212121',
+      paper: '#313131'
+    },
+  }
 } as ThemeOptions)
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
+  ...flecsLightTheme,
+  components: {
+    ...flecsLightTheme.components,
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#00E47C',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          },
+          '&$selected:hover': {
+            color: '00E47C',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          },
+          '&:hover': {
+            color: '#00e47c',
+            '& .MuiListItemIcon-root': {
+              color: '#00e47c'
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#08312A'
+        }
+      }
+    }
+  },
+  palette:{
+    ...flecsLightTheme.palette,
+    primary: {
+      main: '#08312A'
+    },
+    secondary: {
+      main: '#00E47C'
+    },
+  }
+
 } as ThemeOptions)
 
 export { darkTheme, lightTheme }

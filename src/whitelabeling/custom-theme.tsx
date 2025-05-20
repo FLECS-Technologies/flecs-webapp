@@ -23,11 +23,112 @@ import {
 } from '../styles/theme'
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
+  ...flecsDarkTheme,
+  typography: {
+    ...flecsDarkTheme.typography,
+    fontFamily: ["'Neue Haas Unica Pro'", "'Helvetica', sans-serif"].join(',')
+  },
+  components: {
+    ...flecsDarkTheme.components,
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          },
+          '&$selected:hover': {
+            color: '0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          },
+          '&:hover': {
+            color: '#0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#868E96'
+        }
+      }
+    }
+  },
+  palette: {
+    ...flecsDarkTheme.palette,
+
+    primary: {
+      // dark grey
+      main: '#868E96'
+    },
+
+    // blue
+    secondary: {
+      main: '#0AADFF'
+    },
+    text: {
+      ...flecsDarkTheme.palette.text,
+      secondary: '#6c757d',
+    },
+    background: {
+      default: '#343a40',
+      paper: '#383E44'
+    },
+  }
 } as ThemeOptions)
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
+  ...flecsLightTheme,
+  typography: {
+    ...flecsLightTheme.typography,
+    fontFamily: ["'Neue Haas Unica Pro'", "'Helvetica', sans-serif"].join(',')
+  },
+  components: {
+    ...flecsLightTheme.components,
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: '#0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          },
+          '&$selected:hover': {
+            color: '0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          },
+          '&:hover': {
+            color: '#0AADFF',
+            '& .MuiListItemIcon-root': {
+              color: '#0AADFF'
+            }
+          }
+        },
+        selected: {}
+      }
+    }
+  },
+  palette: {
+    ...flecsLightTheme.palette,
+    primary: {
+      main: '#383E44'
+    },
+    secondary: {
+      main: '#0AADFF'
+    },
+  }
 } as ThemeOptions)
 
 export { darkTheme, lightTheme }

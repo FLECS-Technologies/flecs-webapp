@@ -35,7 +35,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Toolbar from '@mui/material/Toolbar'
 import Avatar from '@mui/material/Avatar'
 
-import LoadButton from './LoadButton'
 import LoadIconButton from './LoadIconButton'
 import { ReferenceDataContext } from '../data/ReferenceDataContext'
 import AppAPI from '../api/device/AppAPI'
@@ -46,6 +45,7 @@ import useStateWithLocalStorage from './LocalStorage'
 import { JobsContext } from '../data/JobsContext'
 import HelpButton from './buttons/help/HelpButton'
 import { EditorButtons } from './buttons/editors/EditorButtons'
+import { InstanceStartCreateButtons } from './buttons/instance/InstanceStartCreateButtons'
 
 export default function Row(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext)
@@ -120,49 +120,70 @@ export default function Row(props) {
     setUninstalling(false)
   }
 
-  const startNewInstance = async (props) => {
+  const createNewInstance = async (props, start) => {
     setNewInstanceStarting(true)
     setFetchingJobs(true)
     let snackbarText
     let alertSeverity
+    let instanceId
     const appAPI = new AppAPI(props.row)
 
     try {
-      appAPI.setAppData(loadReferenceData(props.row))
       await appAPI.createInstance(appAPI.createInstanceName())
 
       if (appAPI.jobStatus === 'successful') {
         // instance has been created
-        await appAPI.startInstance(appAPI.instanceId)
-      }
-
-      if (appAPI.jobStatus === 'successful') {
-        // instance has started
         // success snackbar
         snackbarText =
-          'Successfully started a new instance of ' + appAPI.app.title + '.'
+          'Successfully created a new instance of ' + appAPI.app.title + '.'
         alertSeverity = 'success'
       }
+
+      instanceId = appAPI.instanceId;
     } catch {
       // error snackbar
       snackbarText =
-        'Failed to start a new instance of ' + appAPI.app.title + '.'
+        'Failed to create a new instance of ' + appAPI.app.title + '.'
       alertSeverity = 'error'
-    } finally {
+    }
+    setSnackbarState({
+      alertSeverity,
+      snackbarText
+    })
+    setSnackbarOpen(true)
+
+    if (instanceId) {
+      // instance has been created, regardless of status
+      setUpdateAppList(true)
+    }
+
+    if (instanceId && start) {
+      try {
+        await appAPI.startInstance(instanceId)
+
+        if (appAPI.jobStatus === 'successful') {
+          // instance has started
+          // success snackbar
+          snackbarText =
+            'Successfully started a new instance of ' + appAPI.app.title + '.'
+          alertSeverity = 'success'
+        }
+      } catch {
+        // error snackbar
+        snackbarText =
+          'Failed to start the new instance of ' + appAPI.app.title + '.'
+        alertSeverity = 'error'
+      }
       setSnackbarState({
         alertSeverity,
         snackbarText
       })
       setSnackbarOpen(true)
-
-      if (appAPI.instanceId) {
-        // instance has been created, regardless of status
-        setUpdateAppList(true)
-      }
-
-      setNewInstanceStarting(false)
-      setFetchingJobs(false)
+      setUpdateAppList(true)
     }
+
+    setNewInstanceStarting(false)
+    setFetchingJobs(false)
   }
 
   return (
@@ -223,7 +244,7 @@ export default function Row(props) {
                   icon={
                     <AddTaskIcon data-testid='start-new-instance-icon-button-icon' />
                   }
-                  onClick={() => startNewInstance(props)}
+                  onClick={() => createNewInstance(props, true)}
                   disabled={
                     (!row.multiInstance && row.instances.length > 0) ||
                     newInstanceStarting ||
@@ -270,19 +291,12 @@ export default function Row(props) {
                 {row.instances.length === 1 && (
                   <EditorButtons instance={row.instances[0]}/>
                 )}
-                <LoadButton
-                  data-testid='start-new-instance-button'
-                  text='start new instance'
-                  variant='outlined'
-                  sx={{ ml: 1, mr: 1 }}
-                  onClick={() => startNewInstance(props)}
-                  startIcon={<AddTaskIcon />}
-                  disabled={
-                    (!row.multiInstance && row.instances.length > 0) ||
-                    newInstanceStarting ||
-                    uninstalling
-                  }
+                <InstanceStartCreateButtons
+                  app={row}
+                  startNewInstanceCallback={() => createNewInstance(props, true)}
+                  createNewInstanceCallback={() => createNewInstance(props, false)}
                   loading={newInstanceStarting}
+                  uninstalling={uninstalling}
                 />
               </Toolbar>
               <Table

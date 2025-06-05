@@ -17,13 +17,13 @@
  */
 import React from 'react'
 import { render, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom' // still compatible
 import { BrowserRouter as Router } from 'react-router-dom'
 import AppBar from '../AppBar'
 import { DarkModeState } from '../ThemeHandler'
 import { JobsContextProvider } from '../../data/JobsContext'
 import { vi } from 'vitest'
 import * as AuthProvider from '../AuthProvider'
+import { QuestContextProvider } from '../quests/QuestContext'
 
 // mock react-router-dom navigate
 const mockedUsedNavigate = vi.fn()
@@ -75,9 +75,11 @@ describe('AppBar', () => {
   test('renders AppBar component', () => {
     const { getByLabelText, getByText } = render(
       <Router>
-        <JobsContextProvider>
-          <AppBar />
-        </JobsContextProvider>
+        <QuestContextProvider>
+          <JobsContextProvider>
+            <AppBar />
+          </JobsContextProvider>
+        </QuestContextProvider>
       </Router>
     )
 
@@ -88,9 +90,11 @@ describe('AppBar', () => {
   test('Click on login', async () => {
     const { getByLabelText } = render(
       <Router>
-        <JobsContextProvider>
-          <AppBar />
-        </JobsContextProvider>
+        <QuestContextProvider>
+          <JobsContextProvider>
+            <AppBar />
+          </JobsContextProvider>
+        </QuestContextProvider>
       </Router>
     )
 
@@ -105,9 +109,11 @@ describe('AppBar', () => {
 
     const { getByLabelText, getByText } = render(
       <Router>
-        <JobsContextProvider>
-          <AppBar />
-        </JobsContextProvider>
+        <QuestContextProvider>
+          <JobsContextProvider>
+            <AppBar />
+          </JobsContextProvider>
+        </QuestContextProvider>
       </Router>
     )
 
@@ -128,9 +134,11 @@ describe('AppBar', () => {
 
     const { getByLabelText, getByText } = render(
       <Router>
-        <JobsContextProvider>
-          <AppBar />
-        </JobsContextProvider>
+        <QuestContextProvider>
+          <JobsContextProvider>
+            <AppBar />
+          </JobsContextProvider>
+        </QuestContextProvider>
       </Router>
     )
 
@@ -151,9 +159,11 @@ describe('AppBar', () => {
     const { getByLabelText } = render(
       <DarkModeState>
         <Router>
-          <JobsContextProvider>
-            <AppBar />
-          </JobsContextProvider>
+          <QuestContextProvider>
+            <JobsContextProvider>
+              <AppBar />
+            </JobsContextProvider>
+          </QuestContextProvider>
         </Router>
       </DarkModeState>
     )

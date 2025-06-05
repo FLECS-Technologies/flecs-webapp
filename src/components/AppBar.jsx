@@ -17,6 +17,7 @@
  */
 
 import React, { useContext } from 'react'
+import ReactDOM from 'react-dom'
 import CssBaseline from '@mui/material/CssBaseline'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -31,7 +32,6 @@ import Badge from '@mui/material/Badge'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate'
-import Popover from '@mui/material/Popover'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 import { darkModeContext } from './ThemeHandler'
@@ -43,10 +43,10 @@ import LoginIcon from '@mui/icons-material/Login'
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { JobsContext } from '../data/JobsContext'
-import BasicTable from './AppBarTable'
 import HelpButton from './buttons/help/HelpButton'
 import { helpdomain } from './help/helplinks'
 import { appBarIconColors } from '../whitelabeling/custom-tokens'
+import QuestLogDialog from './dialogs/QuestLogDialog'
 
 function ElevationScroll(props) {
   const { children, window } = props
@@ -72,27 +72,19 @@ export default function ElevateAppBar(props) {
   const [visible, setIsVisible] = React.useState(true)
   const [anchorElMenu, setAnchorElMenu] = React.useState(null)
   const [anchorElPopover, setAnchorElPopover] = React.useState(null)
+  const [questLogOpen, setQuestLogOpen] = React.useState(false)
   const user = useAuth()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { jobs, deleteJobs, fetchExports } = React.useContext(JobsContext)
+  const { jobs, fetchExports } = React.useContext(JobsContext)
   const finishedJobs = jobs?.filter(
     (j) =>
       j.status === 'successful' ||
       j.status === 'failed' ||
       j.status === 'cancelled'
   )
-  const clearAllButtonIsDisabled = finishedJobs?.length === 0
   const open = Boolean(anchorElPopover)
   const id = open ? 'simple-popover' : undefined
-
-  const handleClickPopover = (event) => {
-    setAnchorElPopover(event.currentTarget)
-  }
-
-  const handleClosePopover = () => {
-    setAnchorElPopover(null)
-  }
 
   const handleMenu = (event) => {
     setAnchorElMenu(event.currentTarget)
@@ -124,10 +116,6 @@ export default function ElevateAppBar(props) {
       localStorage.setItem('preferred-theme', 'dark')
       setDarkMode(true)
     }
-  }
-
-  const clearAllFinishedJobs = () => {
-    finishedJobs.map((j) => deleteJobs(j.id))
   }
 
   React.useEffect(() => {}, [user])
@@ -169,7 +157,7 @@ export default function ElevateAppBar(props) {
                 }}
                 aria-describedby={id}
                 variant='text'
-                onClick={handleClickPopover}
+                onClick={() => setQuestLogOpen(true)}
               >
                 <Badge
                   color='info'
@@ -192,26 +180,6 @@ export default function ElevateAppBar(props) {
                   )}
                 </Badge>
               </Button>
-
-              <Popover
-                id={id}
-                open={Boolean(open && jobs?.length)} // if there are no more jobs to show, then close it
-                anchorEl={anchorElPopover}
-                onClose={handleClosePopover}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left'
-                }}
-              >
-                <Typography component={'div'} sx={{ p: 2 }}>
-                  <BasicTable
-                    jobs={jobs}
-                    deleteJobs={deleteJobs}
-                    clearAllFinishedJobs={clearAllFinishedJobs}
-                    clearAllButtonIsDisabled={clearAllButtonIsDisabled}
-                  />
-                </Typography>
-              </Popover>
 
               <IconButton
                 aria-label='change-theme-button'
@@ -262,6 +230,13 @@ export default function ElevateAppBar(props) {
             </Toolbar>
           </AppBar>
         </ElevationScroll>
+      )}
+      {ReactDOM.createPortal(
+        <QuestLogDialog
+          open={questLogOpen}
+          onClose={() => setQuestLogOpen(false)}
+        />,
+        document.body
       )}
     </React.Fragment>
   )

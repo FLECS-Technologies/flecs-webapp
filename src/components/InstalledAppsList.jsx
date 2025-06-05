@@ -47,6 +47,7 @@ import Export from './Export'
 import Import from './Import'
 import InstallationStepper from './apps/installation/InstallationStepper'
 import PoweredBy from './navigation/PoweredBy'
+import { QuestLog } from './quests/QuestLog'
 
 const headCells = [
   {

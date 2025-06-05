@@ -23,6 +23,7 @@ import {
   FlecsportApi,
   InstancesApi,
   JobsApi,
+  QuestsApi,
   SystemApi
 } from 'core-client'
 import { Configuration } from 'core-client/configuration'
@@ -36,7 +37,8 @@ export function createApi(config: Configuration) {
     export: new FlecsportApi(config),
     instances: new InstancesApi(config),
     jobs: new JobsApi(config),
-    system: new SystemApi(config)
+    system: new SystemApi(config),
+    quests: new QuestsApi(config),
   }
 }
 

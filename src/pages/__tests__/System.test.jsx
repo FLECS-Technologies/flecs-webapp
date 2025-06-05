@@ -23,9 +23,10 @@ import '@testing-library/jest-dom'
 import System from '../System'
 
 import { LicenseInfoAPI } from '../../api/device/license/info'
+import { vitest } from 'vitest'
 
-jest.mock('../../api/device/license/info')
-jest.mock('../../api/device/license/status')
+vitest.mock('../../api/device/license/info')
+vitest.mock('../../api/device/license/status')
 
 describe('System', () => {
   test('renders System page', () => {

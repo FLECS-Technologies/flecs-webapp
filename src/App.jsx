@@ -27,25 +27,28 @@ import { SystemContextProvider } from './data/SystemProvider'
 import { SystemData } from './data/SystemData'
 import { JobsContextProvider } from './data/JobsContext'
 import { FilterContextProvider } from './data/FilterContext'
+import { QuestContextProvider } from './components/quests/QuestContext'
 
 export default function App() {
   return (
     <DarkModeState>
       <AuthProvider>
         <JobsContextProvider>
-          <FilterContextProvider>
-            <Frame>
-              <SystemContextProvider>
-                <SystemData>
-                  <ReferenceDataContextProvider>
-                    <AppList>
-                      <UIRoutes />
-                    </AppList>
-                  </ReferenceDataContextProvider>
-                </SystemData>
-              </SystemContextProvider>
-            </Frame>
-          </FilterContextProvider>
+          <QuestContextProvider>
+            <FilterContextProvider>
+              <Frame>
+                <SystemContextProvider>
+                  <SystemData>
+                    <ReferenceDataContextProvider>
+                      <AppList>
+                        <UIRoutes />
+                      </AppList>
+                    </ReferenceDataContextProvider>
+                  </SystemData>
+                </SystemContextProvider>
+              </Frame>
+            </FilterContextProvider>
+          </QuestContextProvider>
         </JobsContextProvider>
       </AuthProvider>
     </DarkModeState>

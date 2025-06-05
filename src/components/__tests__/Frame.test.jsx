@@ -23,6 +23,7 @@ import '@testing-library/jest-dom'
 import Frame from '../Frame'
 import { DarkModeState } from '../ThemeHandler'
 import { JobsContextProvider } from '../../data/JobsContext'
+import { QuestContextProvider } from '../quests/QuestContext'
 
 describe('Frame', () => {
   test('renders Frame component', () => {
@@ -30,7 +31,9 @@ describe('Frame', () => {
         <Router>
             <DarkModeState>
               <JobsContextProvider>
-                <Frame />
+                <QuestContextProvider>
+                  <Frame />
+                </QuestContextProvider>
               </JobsContextProvider>
             </DarkModeState>
         </Router>

@@ -20,6 +20,7 @@ import { Container, Typography } from '@mui/material'
 import { Quest } from 'core-client/api'
 import { QuestLogEntry } from './QuestLogEntry'
 import { api } from '../../api/flecs-core/api-client'
+import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
 interface QuestLogProps {
   open: boolean
@@ -56,6 +57,7 @@ export const QuestLog: React.FC<QuestLogProps> = ({open}: QuestLogProps) => {
       {quests.map((quest, index) => (
         <QuestLogEntry key={index} quest={quest} level={0} />
       ))}
+      <RichTreeView children={[]} items={[]}/>
     </Container>
   )
 }

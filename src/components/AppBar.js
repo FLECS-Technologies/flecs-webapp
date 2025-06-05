@@ -47,6 +47,7 @@ import BasicTable from './AppBarTable'
 import HelpButton from './buttons/help/HelpButton'
 import { helpdomain } from './help/helplinks'
 import { appBarIconColors } from '../whitelabeling/custom-tokens'
+import { QuestLog } from './quests/QuestLog'
 
 function ElevationScroll(props) {
   const { children, window } = props
@@ -195,7 +196,7 @@ export default function ElevateAppBar(props) {
 
               <Popover
                 id={id}
-                open={Boolean(open && jobs?.length)} // if there are no more jobs to show, then close it
+                open={open && jobs?.length > 0} // if there are no more jobs to show, then close it
                 anchorEl={anchorElPopover}
                 onClose={handleClosePopover}
                 anchorOrigin={{
@@ -203,14 +204,7 @@ export default function ElevateAppBar(props) {
                   horizontal: 'left'
                 }}
               >
-                <Typography component={'div'} sx={{ p: 2 }}>
-                  <BasicTable
-                    jobs={jobs}
-                    deleteJobs={deleteJobs}
-                    clearAllFinishedJobs={clearAllFinishedJobs}
-                    clearAllButtonIsDisabled={clearAllButtonIsDisabled}
-                  />
-                </Typography>
+                <QuestLog/>
               </Popover>
 
               <IconButton

@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+        label:
+          description: Whitelabel identifier
+          required: false
   release:
     types: [published]
 
@@ -17,6 +21,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
+      - name: Apply whitelabel patch
+        if: ${{ inputs.label != '' }}
+        run: make patch_whitelabel LABEL=${{ inputs.label }}
+      - name: Run special build step
+        if: ${{ inputs.label == 'emerson' }}
+        run: make special_${{ inputs.label }}
       - name: build
         run: make build
       - name: archive raw artifacts

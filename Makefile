@@ -1,5 +1,6 @@
 VERSION=$(shell cat package.json | jq -r '.version')$(VERSION_SPECIAL)
 DOCKER_TAG=$(VERSION)
+LABEL ?= ''
 
 .PHONY: version
 version:
@@ -12,6 +13,18 @@ ci:
 .PHONY: dev-build
 dev-build: ci
 	@npm run build:test --if-present
+
+.PHONY: patch_whitelabel
+
+patch_whitelabel:
+	@git clone git@github.com/FLECS-Technologies/whitelabel-$(LABEL).git /tmp/client
+	@git reset --hard origin/main
+	@git clean -fd
+	@git apply /tmp/client/$(LABEL).patch
+	@if [ -d /tmp/client/assets ]; then \
+		cp -r /tmp/client/assets/* ./src/whitelabeling/; \
+	fi
+	@export VERSION_SPECIAL=-$(LABEL)
 
 .PHONY: build
 build: ci

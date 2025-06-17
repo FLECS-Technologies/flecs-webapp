@@ -17,22 +17,40 @@
  */
 import React from 'react'
 import { Button, Container, Typography } from '@mui/material'
-import { Quest } from 'core-client/api'
+import { Quest, QuestState } from 'core-client/api'
 import { api } from '../../api/flecs-core/api-client'
 import { QuestLogEntry } from './QuestLogEntry';
 
+const questFinished = (quest: Quest): boolean => {
+  switch (quest.state) {
+    case QuestState.Failing:
+    case QuestState.Ongoing:
+    case QuestState.Pending:
+      return false;
+    default:
+      return true;
+  }
+}
+
 export const QuestLog: React.FC = () => {
   const [quests, setQuests] = React.useState<Quest[]>([]);
-  const [loading, setLoading] = React.useState(false);
 
   const fetchQuests = async () => {
-    setLoading(true)
     try {
       setQuests((await api.quests.questsGet()).data);
     } catch (error) {
       console.error(error);
     }
-    setLoading(false)
+  };
+
+  const clearQuests = async () => {
+    quests.filter(questFinished).forEach(async function(quest) {
+      try {
+        await api.quests.questsIdDelete({id: quest.id});
+      } catch (error) {
+        console.error(error);
+      }
+    })
   };
 
   // Initial fetch and interval updater
@@ -46,12 +64,15 @@ export const QuestLog: React.FC = () => {
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-      Quest Log <Button disabled={loading} onClick={fetchQuests}>RELOAD</Button>
-      </Typography>
       {quests.map((quest, index) => (
         <QuestLogEntry key={index} quest={quest} level={0} />
       ))}
+      {quests.length > 0 &&<Typography variant="h4" gutterBottom>
+        <Button onClick={clearQuests}>REMOVE FINISHED QUESTS</Button>
+      </Typography>}
+      {quests.length === 0 && <Typography gutterBottom>
+        No quests present
+      </Typography>}
     </Container>
   )
 }

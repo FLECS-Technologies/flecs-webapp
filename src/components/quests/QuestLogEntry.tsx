@@ -36,6 +36,7 @@ import {
   WarningAmber,
 } from "@mui/icons-material";
 import { Quest, QuestProgress, QuestState } from 'core-client/api'
+import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 
 const hasFailedSubquest = (quest: Quest): boolean => {
   if (!quest.subquests) return false;
@@ -43,6 +44,27 @@ const hasFailedSubquest = (quest: Quest): boolean => {
     (sub) => sub.state === QuestState.Failed || sub.state === QuestState.Failing || hasFailedSubquest(sub)
   );
 };
+
+const questRunning = (quest: Quest): boolean => {
+  switch (quest.state) {
+    case QuestState.Failing:
+    case QuestState.Ongoing:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const questFinished = (quest: Quest): boolean => {
+  switch (quest.state) {
+    case QuestState.Failing:
+    case QuestState.Ongoing:
+    case QuestState.Pending:
+      return false;
+    default:
+      return true;
+  }
+}
 
 const MAX_DEPTH: number = 100;
 
@@ -78,31 +100,66 @@ interface QuestLogEntryProps {
   level: number,
 }
 
-const QuestProgressIndicator: React.FC<QuestProgress> = ({
-  current, total
-}: QuestProgress) => {
+interface QuestProgressIndicatorProps {
+  progress: QuestProgress,
+  state: QuestState,
+  subquests: Quest[],
+}
+
+const QuestProgressIndicator: React.FC<QuestProgressIndicatorProps> = ({
+  progress: {current, total}, state, subquests
+}: QuestProgressIndicatorProps) => {
+  if (!total) return null;
+  const percent = (100 * current) / total;
+  const color = getStatusColor(state);
+  const runningSubquests = subquests.filter(questRunning).length;
+  const finishedSubquests = subquests.filter(questFinished).length;
+
   return (
-      <Typography variant="body2" >
-        {`(${current}/${total || '?'})`}
-      </Typography>
-  )
+    <Box sx={{ width: "100%", mt: 0.5 }}>
+      <LinearProgress
+        variant="determinate"
+        value={percent}
+        sx={{
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: `${color}33`, // optional subtle background (20% opacity)
+          "& .MuiLinearProgress-bar": {
+            backgroundColor: color,
+          },
+        }}
+      />
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
+        <Typography variant="caption">{`${current} of ${total}`}</Typography>
+        <Typography variant="caption">{`${Math.round(percent)}%`}</Typography>
+      </Box>
+    </Box>
+  );
 }
 
 const QuestLogBody: React.FC<QuestLogEntryProps> = ({
   quest, level
 }: QuestLogEntryProps) => {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-      <Tooltip title={quest.detail}>
-        {getStatusIcon(quest.state)}
-      </Tooltip>
-      {quest.state !== QuestState.Failed && hasFailedSubquest(quest) && <WarningAmber color="warning" />}
-      <Typography variant="body2">{quest.description}</Typography>
-      {quest.progress &&
-      <QuestProgressIndicator
-        current={quest.progress.current}
-        total={quest.progress.total}
-      />}
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: 0.5 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Tooltip title={quest.detail}>
+          {getStatusIcon(quest.state)}
+        </Tooltip>
+        {quest.state !== QuestState.Failed && hasFailedSubquest(quest) && (
+          <WarningAmber color="warning" />
+        )}
+        <Typography variant="body2" sx={{ flexGrow: 1 }}>
+          {quest.description}
+        </Typography>
+      </Box>
+      {quest.progress && (
+        <QuestProgressIndicator
+          progress={quest.progress}
+          state={quest.state}
+          subquests={quest.subquests || []}
+        />
+      )}
     </Box>
   )
 }

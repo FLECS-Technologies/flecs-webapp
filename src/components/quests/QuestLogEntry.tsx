@@ -109,11 +109,15 @@ interface QuestProgressIndicatorProps {
 const QuestProgressIndicator: React.FC<QuestProgressIndicatorProps> = ({
   progress: {current, total}, state, subquests
 }: QuestProgressIndicatorProps) => {
-  if (!total) return null;
-  const percent = (100 * current) / total;
+  const percent = (100 * current) / (total || current);
   const color = getStatusColor(state);
-  const runningSubquests = subquests.filter(questRunning).length;
+
+  const totalSubquests = subquests.length;
   const finishedSubquests = subquests.filter(questFinished).length;
+  const runningSubquests = subquests.filter(questRunning).length;
+
+  const finishedPercent = (finishedSubquests / totalSubquests) * 100;
+  const runningPercent = (runningSubquests / totalSubquests) * 100;
 
   return (
     <Box sx={{ width: "100%", mt: 0.5 }}>
@@ -123,9 +127,9 @@ const QuestProgressIndicator: React.FC<QuestProgressIndicatorProps> = ({
         sx={{
           height: 8,
           borderRadius: 4,
-          backgroundColor: `${color}33`, // optional subtle background (20% opacity)
+          backgroundColor: `${color}33`,
           "& .MuiLinearProgress-bar": {
-            backgroundColor: color,
+            backgroundColor: {color},
           },
         }}
       />
@@ -133,6 +137,29 @@ const QuestProgressIndicator: React.FC<QuestProgressIndicatorProps> = ({
         <Typography variant="caption">{`${current} of ${total}`}</Typography>
         <Typography variant="caption">{`${Math.round(percent)}%`}</Typography>
       </Box>
+      {totalSubquests > 0 && (
+        <Box sx={{ mt: 1 }}>
+          <LinearProgress
+            variant="buffer"
+            value={finishedPercent}
+            valueBuffer={finishedPercent + runningPercent}
+            sx={{
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: `${color}33`,
+              "& .MuiLinearProgress-bar": {
+                backgroundColor: {color},
+              },
+            }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
+            <Typography variant="caption">
+              {`${finishedPercent} finished / ${finishedPercent + runningPercent} started`}
+            </Typography>
+            <Typography variant="caption">{`${finishedPercent + runningPercent} started`}</Typography>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }

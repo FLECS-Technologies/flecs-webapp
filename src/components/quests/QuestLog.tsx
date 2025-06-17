@@ -21,6 +21,14 @@ import { Quest, QuestState } from 'core-client/api'
 import { api } from '../../api/flecs-core/api-client'
 import { QuestLogEntry } from './QuestLogEntry';
 
+const questsEqual = (a: Quest[], b: Quest[]): boolean => {
+  return a.length === b.length
+}
+
+const questEqual = (a: Quest, b: Quest): boolean => {
+  return a.id === b.id && a.description === b.description && a.progress === b.progress && a.state === b.state
+}
+
 const questFinished = (quest: Quest): boolean => {
   switch (quest.state) {
     case QuestState.Failing:
@@ -37,7 +45,10 @@ export const QuestLog: React.FC = () => {
 
   const fetchQuests = async () => {
     try {
-      setQuests((await api.quests.questsGet()).data);
+      const data = (await api.quests.questsGet()).data;
+      if (!questsEqual(data, quests)) {
+        setQuests(data);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -56,11 +67,10 @@ export const QuestLog: React.FC = () => {
   // Initial fetch and interval updater
   React.useEffect(() => {
     fetchQuests(); // Fetch once on mount
-    const interval = setInterval(fetchQuests, 1000); // Every 1 seconds
+    const interval = setInterval(fetchQuests, 10000); // Every 1 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
-
 
   return (
     <Container sx={{ mt: 4 }}>

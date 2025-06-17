@@ -36,7 +36,7 @@ const Job: React.FC<JobProps> = ({ jobId, setStatus, displayResult }) => {
       // Start polling
       interval = setInterval(async () => {
         await fetchJobById(jobId)
-      }, 2000) // Poll every 2 seconds
+      }, 20000) // Poll every 2 seconds
       const findJob = jobs.find((job) => job.id === jobId)
 
       if (findJob) {

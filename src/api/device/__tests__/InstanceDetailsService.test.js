@@ -25,8 +25,9 @@ import {
   getIPAddress,
   getPorts
 } from '../InstanceDetailsService'
+import { vitest } from 'vitest'
 
-jest.mock('axios')
+vitest.mock('axios')
 
 const mockDetails = {
   data: {
@@ -65,11 +66,11 @@ const mockDetails = {
 
 describe('InstanceDetailsService', () => {
   beforeAll(() => {
-    axios.post = jest.fn()
+    axios.post = vitest.fn()
   })
 
   afterAll(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
   test('calls successful getInstanceDetails', async () => {
     axios.get.mockResolvedValueOnce(mockDetails)

@@ -28,9 +28,10 @@ import {
   mockQueuedJob,
   mockSuccessJob
 } from '../../models/__mocks__/job'
+import { vitest } from 'vitest'
 
-jest.mock('../../api/device/ImportAppsService')
-jest.mock('../../api/device/onboarding/onboarding')
+vitest.mock('../../api/device/ImportAppsService')
+vitest.mock('../../api/device/onboarding/onboarding')
 
 const renderWithContext = (
   ui: React.ReactElement,
@@ -44,13 +45,13 @@ const renderWithContext = (
 }
 
 describe('Import component', () => {
-  const mockFetchJobs = jest.fn()
-  const mockFetchJobById = jest.fn()
-  const mockSetUpdateAppList = jest.fn()
+  const mockFetchJobs = vitest.fn()
+  const mockFetchJobById = vitest.fn()
+  const mockSetUpdateAppList = vitest.fn()
   const mockJobs = [mockQueuedJob, mockJob, mockSuccessJob]
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   test('renders Import component', () => {
@@ -141,8 +142,8 @@ describe('Import component', () => {
   })
 
   test('shows error snackbar on API failure', async () => {
-    const spyOnboardingDeviceAPI = jest.spyOn(
-      require('../../api/device/onboarding/onboarding'),
+    const spyOnboardingDeviceAPI = vitest.spyOn(
+      await import('../../api/device/onboarding/onboarding'),
       'OnboardingDeviceAPI'
     )
     spyOnboardingDeviceAPI.mockImplementationOnce(() =>

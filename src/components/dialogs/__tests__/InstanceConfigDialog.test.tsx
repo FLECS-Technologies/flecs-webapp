@@ -30,8 +30,21 @@ describe('InstanceConfigDialog', () => {
   const mockInstanceName = 'Test Instance'
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    api.system.systemDevicesUsbGet = jest.fn()
+    api.instances.instancesInstanceIdStopPost = jest.fn()
+    api.instances.instancesInstanceIdStartPost = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbGet = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbPortPut = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbPortDelete = jest.fn()
+    api.instances.instancesInstanceIdConfigPortsGet = jest.fn()
+    api.instances.instancesInstanceIdConfigPortsTransportProtocolPut = jest.fn()
+    api.instances.instancesInstanceIdConfigEnvironmentGet = jest.fn()
+    api.instances.instancesInstanceIdConfigEnvironmentPut = jest.fn()
   })
+
+  afterAll(() => {
+    jest.clearAllMocks()
+  })  
 
   it('renders the dialog with the correct title', async () => {
     render(
@@ -40,6 +53,8 @@ describe('InstanceConfigDialog', () => {
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
+        activeTab={0}
+        setActiveTab={jest.fn()}
       />
     )
 
@@ -57,6 +72,8 @@ describe('InstanceConfigDialog', () => {
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
+        activeTab={0}
+        setActiveTab={jest.fn()}
       />
     )
 
@@ -87,6 +104,8 @@ describe('InstanceConfigDialog', () => {
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
+        activeTab={0}
+        setActiveTab={jest.fn()}
       />
     )
 

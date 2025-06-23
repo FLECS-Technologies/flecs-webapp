@@ -34,7 +34,12 @@ jest.mock('../../../../api/flecs-core/api-client', () => ({
 describe('PortsConfigTab', () => {
   const instanceId = 'test-instance-id'
 
-  afterEach(() => {
+  beforeEach(() => {
+    api.instances.instancesInstanceIdConfigPortsGet = jest.fn()
+    api.instances.instancesInstanceIdConfigPortsTransportProtocolPut = jest.fn()
+  })
+
+  afterAll(() => {
     jest.clearAllMocks()
   })
 

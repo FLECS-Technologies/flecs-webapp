@@ -34,8 +34,9 @@ import {
   getShortDescription,
   getVersion
 } from '../ProductService'
+import { vitest } from 'vitest'
 
-jest.mock('axios')
+vitest.mock('axios')
 
 const mockProducts = {
   data: {

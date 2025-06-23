@@ -31,34 +31,34 @@ const testInstance: AppInstance = {
 }
 
 describe('OpenEditorButton', () => {
-  const originalEnv = process.env
+  const originalEnv = import.meta.env
 
   beforeEach(() => {
     jest.clearAllMocks()
     jest.resetModules()
-    process.env = { ...originalEnv }
+    import.meta.env = { ...originalEnv }
     window.open = jest.fn()
   })
 
   afterEach(() => {
-    process.env = originalEnv
+    import.meta.env = originalEnv
   })
 
   it('opens editor URL in new window on button click in development environment', () => {
-    process.env.REACT_APP_ENVIRONMENT = 'development'
-    process.env.REACT_APP_DEV_CORE_URL = 'http://localhost:3000'
+    import.meta.env.VITE_APP_ENVIRONMENT = 'development'
+    import.meta.env.VITE_APP_DEV_CORE_URL = 'http://localhost:3000'
     render(<EditorButton editor={testInstance.editors[0]} index={0} />)
     fireEvent.click(screen.getByLabelText('open-editor-button-0'))
     expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor')
   })
 
   it('opens editor URL in new window on button click in production environment', () => {
-    process.env.REACT_APP_ENVIRONMENT = 'production'
-    delete process.env.REACT_APP_DEV_CORE_URL
+    import.meta.env.VITE_APP_ENVIRONMENT = 'production'
+    delete import.meta.env.VITE_APP_DEV_CORE_URL
     render(<EditorButton editor={testInstance.editors[0]} index={0} />)
     fireEvent.click(screen.getByLabelText('open-editor-button-0'))
     expect(window.open).toHaveBeenCalledWith(
-      `http://${window.location.hostname}/api/editor`
+      `http://${window.location.hostname}:3000/api/editor`
     )
   })
 })

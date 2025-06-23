@@ -24,7 +24,7 @@ import {
   InstancesApi,
   JobsApi,
   SystemApi
-} from 'core-client/api'
+} from 'core-client'
 import { Configuration } from 'core-client/configuration'
 
 export function createApi(config: Configuration) {
@@ -46,16 +46,16 @@ function getBaseURL(): string {
 
 function host() {
   let target = ''
-  if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-    target = process.env.REACT_APP_DEV_CORE_URL || ''
+  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
+    target = import.meta.env.VITE_APP_DEV_CORE_URL || ''
   }
   return target
 }
 
 function baseURL() {
   if (
-    process.env.REACT_APP_ENVIRONMENT === 'test' ||
-    process.env.REACT_APP_ENVIRONMENT === 'development'
+    import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
+    import.meta.env.VITE_APP_ENVIRONMENT === 'development'
   ) {
     return '/api/v2'
   }

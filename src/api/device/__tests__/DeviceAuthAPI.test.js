@@ -39,7 +39,10 @@ const testUser = {
 }
 
 describe('DeviceAuthAPI', () => {
-  beforeEach(() => {})
+  beforeEach(() => {
+    axios.put = jest.fn()
+    axios.delete = jest.fn()
+  })
 
   afterAll(() => {
     jest.clearAllMocks()

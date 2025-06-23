@@ -22,15 +22,16 @@ import { DeviceActivationContext } from '../../../providers/DeviceActivationCont
 import { mockApp } from '../../../../models/__mocks__/app'
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
 import { JobsContextProvider } from '../../../../data/JobsContext'
+import { vitest } from 'vitest'
 
-jest.mock('../../../../api/device/AppAPI')
-jest.mock('../../../../api/device/DeviceAuthAPI')
-jest.mock('../../../../api/device/license/status')
-jest.mock('../../../../api/device/license/activation')
+vitest.mock('../../../../api/device/AppAPI')
+vitest.mock('../../../../api/device/DeviceAuthAPI')
+vitest.mock('../../../../api/device/license/status')
+vitest.mock('../../../../api/device/license/activation')
 
 describe('InstallationStepper Component', () => {
   afterAll(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   it('App installation', () => {

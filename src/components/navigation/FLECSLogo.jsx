@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react'
-import { ReactComponent as Logo } from '../../assets/images/logo.svg' // Importing as a React component
+import Logo from '../../assets/images/logo.svg?react' // Vite-compatible SVG import using vite-plugin-svgr
 import { useTheme } from '@mui/material/styles'
 import PropTypes from 'prop-types'
 

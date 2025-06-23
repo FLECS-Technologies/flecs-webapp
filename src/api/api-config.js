@@ -103,16 +103,16 @@ const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews'
 class DeviceAPIConfiguration extends Component {
   static get TARGET() {
     let target = ''
-    if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-      target = process.env.REACT_APP_DEV_CORE_URL
+    if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
+      target = import.meta.env.VITE_APP_DEV_CORE_URL
     }
     return target
   }
 
   static get DEVICE_BASE_ROUTE() {
     if (
-      process.env.REACT_APP_ENVIRONMENT === 'test' ||
-      process.env.REACT_APP_ENVIRONMENT === 'development'
+      import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
+      import.meta.env.VITE_APP_ENVIRONMENT === 'development'
     ) {
       return DEVICE_BASE_ROUTE_TEST
     }
@@ -287,7 +287,7 @@ class DeviceAPIConfiguration extends Component {
 class MarketplaceAPIConfiguration {
   static get MP_PROXY_URL() {
     let mpUrl = ''
-    switch (process.env.REACT_APP_ENVIRONMENT) {
+    switch (import.meta.env.VITE_APP_ENVIRONMENT) {
       case 'production':
         mpUrl = MP_PROXY_PRODUCTION
         break
@@ -305,7 +305,7 @@ class MarketplaceAPIConfiguration {
 
   static get MP_URL() {
     let mpUrl = ''
-    switch (process.env.REACT_APP_ENVIRONMENT) {
+    switch (import.meta.env.VITE_APP_ENVIRONMENT) {
       case 'production':
         mpUrl = MP_PRODUCTION
         break
@@ -335,7 +335,7 @@ class MarketplaceAPIConfiguration {
 
   static get MP_INSTALL_TICKET_ID() {
     let ticketID = 0
-    switch (process.env.REACT_APP_ENVIRONMENT) {
+    switch (import.meta.env.VITE_APP_ENVIRONMENT) {
       case 'production':
         ticketID = 737
         break

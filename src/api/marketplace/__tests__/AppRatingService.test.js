@@ -20,8 +20,9 @@ import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
 import { createAppRating } from '../AppRatingService'
+import { vitest } from 'vitest'
 
-jest.mock('axios')
+vitest.mock('axios')
 
 const mockRating = {
   data: {

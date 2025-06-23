@@ -36,6 +36,12 @@ describe('EnvironmentConfigTab', () => {
   const instanceId = 'test-instance-id'
 
   beforeEach(() => {
+    api.instances.instancesInstanceIdConfigEnvironmentGet = jest.fn()
+    api.instances.instancesInstanceIdConfigEnvironmentPut = jest.fn()
+    api.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete = jest.fn()
+  })
+
+  afterAll(() => {
     jest.clearAllMocks()
   })
 

@@ -20,8 +20,9 @@ import { waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
 import { getInstanceLog, getLog } from '../InstanceLogService'
+import { vitest } from 'vitest'
 
-jest.mock('axios')
+vitest.mock('axios')
 
 const mockLog = {
   data: {
@@ -32,11 +33,11 @@ const mockLog = {
 
 describe('InstanceLogService', () => {
   beforeAll(() => {
-    axios.post = jest.fn()
+    axios.post = vitest.fn()
   })
 
   afterAll(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
   test('calls successful getInstanceLog', async () => {
     axios.get.mockResolvedValueOnce(mockLog)

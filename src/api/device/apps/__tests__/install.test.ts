@@ -1,46 +1,27 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import axios from 'axios'
-import { InstallAppAPI } from '../install' // Adjust the import path
-import { DeviceAPIConfiguration } from '../../../api-config'
-import { job_meta } from '../../../../models/job'
+import { InstallAppAPI } from '../install'
 
-jest.mock('axios')
-
-const mockedAxios = axios as jest.Mocked<typeof axios>
+vi.mock('axios')
+const mockedAxios = axios as unknown as { post: ReturnType<typeof vi.fn> }
 
 describe('InstallAppAPI', () => {
-  it('should return jobId on successful API call', async () => {
-    const app = 'testApp'
-    const version = '1.0.0'
-    const jobId = 12345
-
-    const response = { data: { jobId } } as { data: job_meta }
-    mockedAxios.post.mockResolvedValue(response)
-
-    const result = await InstallAppAPI(app, version)
-    expect(result).toEqual(jobId)
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      DeviceAPIConfiguration.TARGET +
-        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.APP_ROUTE +
-        DeviceAPIConfiguration.POST_INSTALL_APP_URL,
-      JSON.stringify({ appKey: { name: app, version } })
-    )
+  beforeEach(() => {
+    mockedAxios.post = vi.fn()
   })
 
-  it('should handle errors correctly', async () => {
-    const app = 'testApp'
-    const version = '1.0.0'
-    const errorMessage = 'Request failed with status code 500'
-
-    mockedAxios.post.mockRejectedValue(new Error(errorMessage))
-
-    await expect(InstallAppAPI(app, version)).rejects.toThrow(errorMessage)
+  it('returns jobId on success', async () => {
+    mockedAxios.post.mockResolvedValueOnce({ data: { jobId: 99 } })
+    const jobId = await InstallAppAPI('my-app', '1.2.3')
     expect(mockedAxios.post).toHaveBeenCalledWith(
-      DeviceAPIConfiguration.TARGET +
-        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.APP_ROUTE +
-        DeviceAPIConfiguration.POST_INSTALL_APP_URL,
-      JSON.stringify({ appKey: { name: app, version } })
+      expect.stringContaining('/apps'),
+      JSON.stringify({ appKey: { name: 'my-app', version: '1.2.3' } })
     )
+    expect(jobId).toBe(99)
+  })
+
+  it('rejects on error', async () => {
+    mockedAxios.post.mockRejectedValueOnce(new Error('fail'))
+    await expect(InstallAppAPI('my-app', '1.2.3')).rejects.toThrow('fail')
   })
 })

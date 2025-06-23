@@ -19,13 +19,14 @@ import { render, act, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import DeviceActivationStep from '../DeviceActivationStep'
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext'
+import { vitest } from 'vitest'
 
-jest.mock('../../../../api/device/license/status')
-jest.mock('../../../../api/device/license/activation')
+vitest.mock('../../../../api/device/license/status')
+vitest.mock('../../../../api/device/license/activation')
 
 describe('DeviceActivationStep Component', () => {
   afterAll(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   it('renders the DeviceActivationStep component', () => {

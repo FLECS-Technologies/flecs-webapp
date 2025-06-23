@@ -19,12 +19,13 @@ import { render, act, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import LicenseInfo from '../LicenseInfo'
 import { mockLicenseInfoAPIResponse } from '../../../../api/device/license/__mocks__/info'
+import { vitest } from 'vitest'
 
-jest.mock('../../../../api/device/license/info')
+vitest.mock('../../../../api/device/license/info')
 
 describe('LicenseInfo Component', () => {
   afterAll(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   it('Show license info', async () => {

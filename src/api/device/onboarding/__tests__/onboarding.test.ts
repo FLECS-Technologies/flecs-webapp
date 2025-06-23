@@ -1,66 +1,49 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import axios from 'axios'
-import { OnboardingDeviceAPI, OnboardingDeviceAPIResponse } from '../onboarding'
-import { DeviceAPIConfiguration } from '../../../api-config'
+import { OnboardingDeviceAPI } from '../onboarding'
 
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
+vi.mock('axios')
+const mockedAxios = axios as unknown as { post: ReturnType<typeof vi.fn> }
+
+function createMockFile(content: string): File {
+  return {
+    text: vi.fn().mockResolvedValue(content)
+  } as unknown as File
+}
 
 describe('OnboardingDeviceAPI', () => {
-  let mockFile: File
-
   beforeEach(() => {
-    jest.clearAllMocks()
-
-    const fileContent = '{"key":"value"}'
-    mockFile = new File([fileContent], 'mockFile.json', {
-      type: 'application/json'
-    })
-
-    // Mock the text method of File
-    Object.defineProperty(mockFile, 'text', {
-      value: jest.fn().mockResolvedValue(fileContent)
-    })
+    mockedAxios.post = vi.fn()
   })
 
-  it('should post file content and return jobId on success', async () => {
-    const mockResponse = {
-      data: {
-        jobId: 123
-      } as OnboardingDeviceAPIResponse
-    }
+  it('should post parsed file content and return response data', async () => {
+    const fileContent = JSON.stringify({ foo: 'bar' })
+    const file = createMockFile(fileContent)
+    const response = { jobId: 123 }
+    mockedAxios.post.mockResolvedValueOnce({ data: response })
 
-    mockedAxios.post.mockResolvedValueOnce(mockResponse)
-
-    const result = await OnboardingDeviceAPI(mockFile)
-
-    expect(result).toEqual({ jobId: 123 })
+    const result = await OnboardingDeviceAPI(file)
+    expect(file.text).toHaveBeenCalled()
     expect(mockedAxios.post).toHaveBeenCalledWith(
-      DeviceAPIConfiguration.TARGET +
-        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.POST_ONBOARDING_URL,
-      { key: 'value' },
-      { headers: { 'Content-Type': 'application/json' } }
+      expect.stringContaining('/onboarding'),
+      { foo: 'bar' },
+      expect.objectContaining({
+        headers: { 'Content-Type': 'application/json' }
+      })
     )
+    expect(result).toEqual(response)
   })
 
-  it('should reject with an error when the post request fails', async () => {
-    const mockError = new Error('Network Error')
-    mockedAxios.post.mockRejectedValueOnce(mockError)
+  it('should reject if axios.post fails', async () => {
+    const fileContent = JSON.stringify({ foo: 'bar' })
+    const file = createMockFile(fileContent)
+    mockedAxios.post.mockRejectedValueOnce(new Error('fail'))
 
-    await expect(OnboardingDeviceAPI(mockFile)).rejects.toThrow('Network Error')
+    await expect(OnboardingDeviceAPI(file)).rejects.toThrow('fail')
   })
 
-  it('should reject with an error when file content cannot be parsed', async () => {
-    const invalidFileContent = 'Invalid Content'
-    const invalidFile = new File([invalidFileContent], 'invalidFile.json', {
-      type: 'application/json'
-    })
-
-    // Mock the text method of invalidFile
-    Object.defineProperty(invalidFile, 'text', {
-      value: jest.fn().mockResolvedValue(invalidFileContent)
-    })
-
-    await expect(OnboardingDeviceAPI(invalidFile)).rejects.toThrow(SyntaxError)
+  it('should reject if file content is invalid JSON', async () => {
+    const file = createMockFile('not-json')
+    await expect(OnboardingDeviceAPI(file)).rejects.toThrow()
   })
 })

@@ -45,6 +45,16 @@ describe('NetworkConfigTab', () => {
   const mockInstanceId = 'test-instance-id'
 
   beforeEach(() => {
+    api.system.systemNetworkAdaptersGet = jest.fn()
+    api.deployments.deploymentsDeploymentIdNetworksGet = jest.fn()
+    api.instances.instancesInstanceIdConfigNetworksGet = jest.fn()
+    api.deployments.deploymentsDeploymentIdNetworksPost = jest.fn()
+    api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post = jest.fn()
+    api.instances.instancesInstanceIdConfigNetworksPost = jest.fn()
+    api.instances.instancesInstanceIdConfigNetworksNetworkIdDelete = jest.fn()
+  })
+
+  afterAll(() => {
     jest.clearAllMocks()
   })
 

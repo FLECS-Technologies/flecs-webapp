@@ -39,6 +39,12 @@ describe('UsbConfigTab', () => {
   const mockInstanceId = 'test-instance-id'
 
   beforeEach(() => {
+    api.system.systemDevicesUsbGet = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbGet = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbPortPut = jest.fn()
+    api.instances.instancesInstanceIdConfigDevicesUsbPortDelete = jest.fn()
+  })
+  afterAll(() => {
     jest.clearAllMocks()
   })
 

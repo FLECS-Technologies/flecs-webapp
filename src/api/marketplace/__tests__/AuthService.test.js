@@ -20,8 +20,9 @@ import axios from 'axios'
 import { act } from 'react-dom/test-utils'
 import { MarketplaceAPIConfiguration } from '../../api-config'
 import AuthService from '../AuthService'
+import { vitest } from 'vitest'
 
-jest.mock('axios')
+vitest.mock('axios')
 
 const testUser = {
   data: {

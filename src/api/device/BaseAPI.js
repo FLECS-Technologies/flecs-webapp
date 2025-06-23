@@ -36,8 +36,8 @@ export default class BaseAPI extends React.Component {
     try {
       let url
       let data
-      if (process.env.REACT_APP_ENVIRONMENT === 'development') {
-        url = process.env.REACT_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
+      if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
+        url = import.meta.env.VITE_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
       } else {
         url = DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
       }

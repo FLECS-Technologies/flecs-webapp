@@ -36,8 +36,14 @@ describe('EditorConfigTab', () => {
   const instanceId = 'test-instance-id'
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    api.instances.instancesInstanceIdConfigEditorsGet = jest.fn()
+    api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete = jest.fn()
+    api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut = jest.fn()
   })
+
+  afterAll(() => {
+    jest.clearAllMocks()
+  })  
 
   it('renders loading spinner while fetching editors', async () => {
     ;(

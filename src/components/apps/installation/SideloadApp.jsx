@@ -113,16 +113,16 @@ export default function SideloadApp (props) {
   return (
     <div>
       <Grid data-testid='sideload-app-step' container direction="column" spacing={1} style={{ minHeight: 350, marginTop: 16 }} justifyContent="center" alignItems="center">
-        <Grid item >
+        <Grid >
           {(installing && !running) && <CircularProgress color='secondary' />} {/* pending job */}
           {running && <CircularProgress />}
           {(success && !installing) && <CheckCircleIcon data-testid='success-icon' fontSize='large' color='success'></CheckCircleIcon>}
           {error && <ReportIcon data-testid='error-icon' fontSize='large' color='error'></ReportIcon>}
         </Grid>
-        <Grid item >
+        <Grid >
           <Typography data-testid='installationMessage'>{installationMessage}</Typography>
         </Grid>
-        <Grid item>
+        <Grid>
         {infoMessage
           ? <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
             <AlertTitle>Info</AlertTitle>
@@ -131,7 +131,7 @@ export default function SideloadApp (props) {
           : null}
         </Grid>
         {(error) &&
-        <Grid item >
+        <Grid >
           <Button onClick={() => handleRetryClick()} startIcon={<ReplayIcon />}>Retry</Button>
         </Grid>}
       </Grid>

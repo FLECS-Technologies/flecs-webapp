@@ -133,7 +133,7 @@ export default function InstallApp(props) {
         justifyContent='center'
         alignItems='center'
       >
-        <Grid item>
+        <Grid>
           {installing && !running && <CircularProgress color='secondary' />}{' '}
           {/* pending job */}
           {running && <CircularProgress />}
@@ -152,12 +152,12 @@ export default function InstallApp(props) {
             ></ReportIcon>
           )}
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography data-testid='installationMessage'>
             {installationMessage}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           {infoMessage ? (
             <Alert sx={{ mb: 2, marginTop: '50px' }} severity='info'>
               <AlertTitle>Info</AlertTitle>
@@ -169,7 +169,7 @@ export default function InstallApp(props) {
           ) : null}
         </Grid>
         {error && (
-          <Grid item>
+          <Grid>
             <Button onClick={onRetryButtonClick} startIcon={<ReplayIcon />}>
               Retry
             </Button>

@@ -43,7 +43,7 @@ function DeviceActivationStep(
       justifyContent='center'
       alignItems='center'
     >
-      <Grid item>
+      <Grid>
         <DeviceActivation></DeviceActivation>
       </Grid>
     </Grid>

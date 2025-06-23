@@ -29,13 +29,13 @@ export default function NotFound () {
       justifyContent="center"
       style={{ minHeight: '95vh' }}
     >
-      <Grid item xs={3}>
+      <Grid size={{xs:3}}>
         <Typography aria-label='404' variant='h1' color='primary.main'>404</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid size={{xs:3}}>
         <Typography aria-label='sorry' variant='body'>Sorry we couldn&apos;t find that page...</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid size={{xs:3}}>
         <Typography aria-label='take-me-back' variant='body'>
           Take me back to&nbsp;
           <Link to="/">my apps</Link>

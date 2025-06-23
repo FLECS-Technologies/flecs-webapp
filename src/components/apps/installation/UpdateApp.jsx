@@ -137,7 +137,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         justifyContent='center'
         alignItems='center'
       >
-        <Grid item>
+        <Grid>
           {updating && <CircularProgress />}
           {success && !updating && (
             <CheckCircleIcon
@@ -154,16 +154,16 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
             />
           )}
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography data-testid='installationMessage'>
             {installationMessage}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <Job jobId={jobId} setStatus={setStatus}></Job>
         </Grid>
         {error && (
-          <Grid item>
+          <Grid>
             <Button onClick={handleRetryClick} startIcon={<ReplayIcon />}>
               Retry
             </Button>

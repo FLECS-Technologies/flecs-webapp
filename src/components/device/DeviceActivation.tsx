@@ -131,13 +131,13 @@ function DeviceActivation(
       )}
       {variant === 'line' && (
         <Grid container direction='row' spacing={5} alignItems='center'>
-          <Grid item>{renderIcon()}</Grid>
-          <Grid item>
+          <Grid>{renderIcon()}</Grid>
+          <Grid>
             <Typography variant='body2' color='text.secondary'>
               {infoText}
             </Typography>
           </Grid>
-          <Grid item>{renderButton()}</Grid>
+          <Grid>{renderButton()}</Grid>
         </Grid>
       )}
     </React.Fragment>

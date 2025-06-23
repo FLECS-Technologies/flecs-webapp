@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import * as React from 'react'
-import { LoadingButton } from '@mui/lab'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import {
   Grid,
@@ -25,7 +24,8 @@ import {
   TextField,
   Typography,
   IconButton,
-  Box
+  Box,
+  Button
 } from '@mui/material'
 import styled from 'styled-components'
 import AuthService from '../api/marketplace/AuthService'
@@ -111,7 +111,7 @@ export default function Login() {
             justifyContent='flex-start'
             alignItems='flex-start'
           >
-            <Grid item xs={12}>
+            <Grid size={{xs:12}}>
               <Typography
                 aria-label='login'
                 variant='h2'
@@ -122,7 +122,7 @@ export default function Login() {
                 Login
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={{xs:6}}>
               <form onSubmit={handleLogin}>
                 <Grid
                   container
@@ -132,7 +132,7 @@ export default function Login() {
                   justifyContent='center'
                   sx={{ backgroundColor: 'standard' }}
                 >
-                  <Grid item xs={4}>
+                  <Grid>
                     <TextField
                       sx={{ width: '300px' }}
                       autoFocus={true}
@@ -147,7 +147,7 @@ export default function Login() {
                       }
                     />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid>
                     <TextField
                       sx={{ width: '300px' }}
                       aria-label='password'
@@ -172,8 +172,8 @@ export default function Login() {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={4}>
-                    <LoadingButton
+                  <Grid>
+                    <Button
                       sx={{ width: '300px' }}
                       variant='contained'
                       aria-label='login-button'
@@ -183,9 +183,9 @@ export default function Login() {
                     >
                       {' '}
                       GO{' '}
-                    </LoadingButton>
+                    </Button>
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid>
                     <Box maxWidth='300px'>
                       {message && (
                         <div
@@ -198,7 +198,7 @@ export default function Login() {
                 </Grid>
               </form>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={{xs:6}}>
               <Grid
                 container
                 spacing={2}
@@ -206,7 +206,7 @@ export default function Login() {
                 alignItems='left'
                 justifyContent='center'
               >
-                <Grid item xs={6}>
+                <Grid>
                   <Typography aria-label='create-account' variant='body1'>
                     Don&apos;t have an account yet? <br />
                     <Link
@@ -219,7 +219,7 @@ export default function Login() {
                     </Link>
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid >
                   <Typography aria-label='forgot-password' variant='body1'>
                     Forgot your password ? <br />
                     <Link
@@ -232,7 +232,7 @@ export default function Login() {
                     </Link>
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid>
                   <Typography aria-label='privacy-policy' variant='body1'>
                     How do we treat your data ? <br />
                     <Link
@@ -248,7 +248,7 @@ export default function Login() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} sx={{ width: '100%', mt: 2, mb: 2 }} />
+            <Grid size={{xs:12}} sx={{ width: '100%', mt: 2, mb: 2 }} />
           </Grid>
         </Paper>
       </Grid>

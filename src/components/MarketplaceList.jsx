@@ -179,8 +179,7 @@ const MarketplaceList = (props) => {
         alignItems='flex-start'
       >
         <Grid
-          item
-          xs={12}
+          size={{xs:12}}
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -213,8 +212,7 @@ const MarketplaceList = (props) => {
         </Grid>
         {loading && (
           <Grid
-            item
-            xs={12}
+            size={{xs:12}}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -230,8 +228,7 @@ const MarketplaceList = (props) => {
         )}
         {loading && (
           <Grid
-            item
-            xs={12}
+            size={{xs:12}}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -248,8 +245,7 @@ const MarketplaceList = (props) => {
         )}
         {appListError && !loading && (
           <Grid
-            item
-            xs={12}
+            size={{xs:12}}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -265,8 +261,7 @@ const MarketplaceList = (props) => {
         )}
         {appListError && !loading && (
           <Grid
-            item
-            xs={12}
+            size={{xs:12}}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -284,8 +279,7 @@ const MarketplaceList = (props) => {
         )}
         {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
         <Grid
-          item
-          xs={12}
+          size={{xs:12}}
           sx={{
             display: 'flex',
             justifyContent: 'space-between',

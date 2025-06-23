@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react'
-import { LoadingButton } from '@mui/lab'
+import Button from '@mui/material/Button'
 import UploadIcon from '@mui/icons-material/Upload'
 import { downloadExport } from '../api/device/ExportAppsService'
 import ActionSnackbar from './ActionSnackbar'
@@ -68,9 +68,9 @@ export default function Export (props) {
   }
   return (
     <>
-    <LoadingButton {...buttonProps} loading={exporting} variant='outlined' startIcon={<UploadIcon/>} onClick={() => exportApps()}>
+    <Button {...buttonProps} loading={exporting} variant='outlined' startIcon={<UploadIcon/>} onClick={() => exportApps()}>
         Export
-    </LoadingButton>
+    </Button>
     <ActionSnackbar
         text={snackbarState.snackbarText}
         open={snackbarOpen}

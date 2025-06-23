@@ -84,7 +84,7 @@ export default function ServiceMesh() {
           alignItems='center'
           sx={{ pb: { sm: 2 } }}
         >
-          <Grid item>
+          <Grid>
             {serviceMeshInstalled && (
               <React.Fragment>
                 <Alert severity='info'>

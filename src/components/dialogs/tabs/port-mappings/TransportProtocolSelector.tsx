@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import { Select, MenuItem } from '@mui/material'
-import { TransportProtocol } from 'core-client/api'
+import { TransportProtocol } from '@flecs/core-client-ts'
 
 interface TransportProtocolSelectorProps {
   value: TransportProtocol

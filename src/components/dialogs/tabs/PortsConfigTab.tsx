@@ -26,7 +26,7 @@ import {
   InstancePortMappingRange,
   InstancePortMappingSingle,
   TransportProtocol
-} from 'core-client/api'
+} from '@flecs/core-client-ts'
 import { api } from '../../../api/flecs-core/api-client'
 import HelpButton from '../../buttons/help/HelpButton'
 import { instancedeviceconfig } from '../../../components/help/helplinks'

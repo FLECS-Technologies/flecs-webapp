@@ -24,9 +24,8 @@ import {
   InstancesApi,
   JobsApi,
   QuestsApi,
-  SystemApi
-} from 'core-client'
-import { Configuration } from 'core-client/configuration'
+  Configuration
+} from '@flecs/core-client-ts'
 
 export function createApi(config: Configuration) {
   return {

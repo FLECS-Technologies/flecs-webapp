@@ -90,7 +90,7 @@ describe('QuestState utility functions', () => {
     })
 
     it('maps unknown/default to "inherit"', () => {
-      expect(getQuestStateProgressColor(-1 as QuestState)).toBe('inherit')
+      expect(getQuestStateProgressColor(QuestState.Skipped)).toBe('inherit')
     })
   })
 

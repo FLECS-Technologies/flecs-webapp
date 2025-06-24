@@ -1,3 +1,0 @@
-[submodule "packages/core-client"]
-	path = packages/core-client
-	url = ../core-client-ts.git

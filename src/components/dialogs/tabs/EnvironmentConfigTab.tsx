@@ -26,7 +26,7 @@ import {
 } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { api } from '../../../api/flecs-core/api-client'
-import { InstanceEnvironmentVariable } from 'core-client/api'
+import { InstanceEnvironmentVariable } from '@flecs/core-client-ts'
 import ActionSnackbar from '../../ActionSnackbar'
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard'
 import HelpButton from '../../buttons/help/HelpButton'

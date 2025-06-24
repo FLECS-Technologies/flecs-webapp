@@ -25,7 +25,7 @@ import {
   NetworkAdapter,
   NetworkKind,
   NetworkType
-} from 'core-client/api'
+} from '@flecs/core-client-ts'
 import NetworkConfigCard from './networks/NetworkConfigCard'
 import HelpButton from '../../buttons/help/HelpButton'
 import { instancenicconfig } from '../../../components/help/helplinks'

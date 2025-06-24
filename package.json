@@ -12,6 +12,7 @@
     "@cocart/cocart-rest-api": "^1.1.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts",
     "@mui/icons-material": "^7.1.2",
     "@mui/lab": "^7.0.0-beta.14",
     "@mui/material": "^7.1.2",
@@ -20,7 +21,6 @@
     "axios": "^1.7.4",
     "base-64": "^1.0.0",
     "buffer": "^6.0.3",
-    "core-client": "file:./packages/core-client/dist",
     "draft-js": "^0.11.7",
     "emailjs-com": "^3.2.0",
     "js-yaml": "^4.1.0",
@@ -56,6 +56,7 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-react": "^7.37.5",
+    "generate-license-file": "^4.0.0",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jsdom": "^26.1.0",
@@ -76,12 +77,14 @@
     "preview": "vite preview",
     "test": "vitest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "generate-license-file": "./generate-license-file.sh"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "packageManager": "pnpm@10.12.3+sha512.467df2c586056165580ad6dfb54ceaad94c5a30f80893ebdec5a44c5aa73c205ae4a5bb9d5ed6bb84ea7c249ece786642bbb49d06a307df218d03da41c317417"
 }

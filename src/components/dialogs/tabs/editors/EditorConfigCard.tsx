@@ -25,26 +25,40 @@ import {
   IconButton
 } from '@mui/material'
 import { Delete, Save } from '@mui/icons-material'
-import { InstanceEditor } from 'core-client/api'
+import { InstanceEditor } from '@flecs/core-client-ts'
 import { api } from '../../../../api/flecs-core/api-client'
 import { EditorConfigSnackbar } from '../EditorConfigTab'
 import { createUrl } from '../../../../components/buttons/editors/EditorButton'
 
 interface EditorConfigCardProps {
-  editor: InstanceEditor,
-  instanceId: string,
+  editor: InstanceEditor
+  instanceId: string
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
   setSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>
   setSnackbarState: React.Dispatch<React.SetStateAction<EditorConfigSnackbar>>
 }
 
-const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId, setLoading, setSnackbarOpen, setSnackbarState}) => {
-  const [editor_path_prefix, setEditorPathPrefix] = useState<string>(editor.path_prefix || '')
-  const [current_editor_path_prefix, setCurrentEditorPathPrefix] = useState<string | undefined>(editor.path_prefix)
+const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
+  editor,
+  instanceId,
+  setLoading,
+  setSnackbarOpen,
+  setSnackbarState
+}) => {
+  const [editor_path_prefix, setEditorPathPrefix] = useState<string>(
+    editor.path_prefix || ''
+  )
+  const [current_editor_path_prefix, setCurrentEditorPathPrefix] = useState<
+    string | undefined
+  >(editor.path_prefix)
   const putEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
       await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut({
-        instanceId, port, instancesInstanceIdConfigEditorsPortPathPrefixPutRequest: {path_prefix: pathPrefix}
+        instanceId,
+        port,
+        instancesInstanceIdConfigEditorsPortPathPrefixPutRequest: {
+          path_prefix: pathPrefix
+        }
       })
       setCurrentEditorPathPrefix(pathPrefix)
       setSnackbarState({
@@ -69,7 +83,8 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId,
   const deleteEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
       await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete({
-        instanceId, port
+        instanceId,
+        port
       })
       setCurrentEditorPathPrefix(undefined)
       setEditorPathPrefix('')
@@ -97,37 +112,31 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId,
       key={editor.name || 'Editor at port' + editor.port}
       sx={{ width: '100%', p: 2, mb: 2 }}
     >
-      <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
+      <Box display='flex' flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
         {/* Left Section */}
         <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display="flex" gap={2}>
+          <Box display='flex' gap={2}>
             <Box flex={1}>
-              <ListItemText
-                primary={editor.name}
-                secondary="Name"
-              />
+              <ListItemText primary={editor.name} secondary='Name' />
             </Box>
             <Box flex={1}>
-              <ListItemText
-                primary={editor.port}
-                secondary="Port"
-              />
+              <ListItemText primary={editor.port} secondary='Port' />
             </Box>
           </Box>
           <Box>
             <ListItemText
               primary={createUrl(editor.url)}
-              secondary="Fixed URL"
+              secondary='Fixed URL'
             />
           </Box>
         </Stack>
 
         {/* Right Section */}
         <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display="flex" alignItems="center" gap={0}>
+          <Box display='flex' alignItems='center' gap={0}>
             <TextField
               value={editor_path_prefix}
-              label="Path Prefix"
+              label='Path Prefix'
               fullWidth
               onChange={(e) => setEditorPathPrefix(e.target.value)}
             />
@@ -145,7 +154,9 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId,
             <IconButton
               aria-label='delete-editor-prefix-button'
               disabled={current_editor_path_prefix === undefined}
-              onClick={() => deleteEditorPrefix(editor.port, editor_path_prefix)}
+              onClick={() =>
+                deleteEditorPrefix(editor.port, editor_path_prefix)
+              }
               sx={{ flexShrink: 0 }}
             >
               <Delete />
@@ -154,11 +165,9 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId,
           <Box>
             <ListItemText
               primary={
-                editor_path_prefix
-                  ? createUrl('/' + editor_path_prefix)
-                  : ''
+                editor_path_prefix ? createUrl('/' + editor_path_prefix) : ''
               }
-              secondary="Custom URL created from Path Prefix"
+              secondary='Custom URL created from Path Prefix'
             />
           </Box>
         </Stack>

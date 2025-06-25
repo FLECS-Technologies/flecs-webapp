@@ -19,15 +19,15 @@ import React from 'react'
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
 import { QuestIcon } from '../QuestIcon'
-import { QuestState } from 'core-client'
+import { QuestState } from '@flecs/core-client-ts'
 
 // Mock MUI icons
 vi.mock('@mui/icons-material', () => ({
   __esModule: true,
-  ErrorOutline: () => <div data-testid="error-icon" />,
-  CheckCircle: () => <div data-testid="success-icon" />,
-  HourglassEmpty: () => <div data-testid="pending-icon" />,
-  Block: () => <div data-testid="skipped-icon" />,
+  ErrorOutline: () => <div data-testid='error-icon' />,
+  CheckCircle: () => <div data-testid='success-icon' />,
+  HourglassEmpty: () => <div data-testid='pending-icon' />,
+  Block: () => <div data-testid='skipped-icon' />
 }))
 
 // Mock CircularProgress from MUI
@@ -35,7 +35,7 @@ vi.mock('@mui/material', async () => {
   const actual = await vi.importActual('@mui/material')
   return {
     ...actual,
-    CircularProgress: () => <div data-testid="default-spinner" />
+    CircularProgress: () => <div data-testid='default-spinner' />
   }
 })
 

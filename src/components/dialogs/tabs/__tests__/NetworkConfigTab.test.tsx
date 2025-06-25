@@ -20,7 +20,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import NetworkConfigTab from '../NetworkConfigTab'
 import { api } from '../../../../api/flecs-core/api-client'
-import { NetworkKind, NetworkType } from 'core-client/api'
+import { NetworkKind, NetworkType } from '@flecs/core-client-ts'
 
 // Mock the API client
 jest.mock('../../../../api/flecs-core/api-client', () => ({
@@ -49,7 +49,8 @@ describe('NetworkConfigTab', () => {
     api.deployments.deploymentsDeploymentIdNetworksGet = jest.fn()
     api.instances.instancesInstanceIdConfigNetworksGet = jest.fn()
     api.deployments.deploymentsDeploymentIdNetworksPost = jest.fn()
-    api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post = jest.fn()
+    api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post =
+      jest.fn()
     api.instances.instancesInstanceIdConfigNetworksPost = jest.fn()
     api.instances.instancesInstanceIdConfigNetworksNetworkIdDelete = jest.fn()
   })

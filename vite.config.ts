@@ -8,15 +8,10 @@ export default defineConfig({
   base: '/ui/',
   plugins: [react(), svgr()],
   server: {
-    open: true,
-  },
-  resolve: {
-    alias: {
-      'core-client': path.resolve(__dirname, 'packages/core-client/dist'),
-    },
+    open: true
   },
   define: {
-    global: 'globalThis'  // <–– fixes fbjs / draft-js issues
+    global: 'globalThis' // <–– fixes fbjs / draft-js issues
   },
   test: {
     environment: 'jsdom',

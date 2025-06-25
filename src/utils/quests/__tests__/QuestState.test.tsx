@@ -5,7 +5,9 @@ vi.mock('@mui/material', async () => {
   const actual = await vi.importActual<any>('@mui/material')
   return {
     ...actual,
-    alpha: vi.fn((color: string, opacity: number) => `alpha(${color},${opacity})`),
+    alpha: vi.fn(
+      (color: string, opacity: number) => `alpha(${color},${opacity})`
+    ),
     useTheme: () => ({
       palette: {
         error: { main: 'errorMain' },
@@ -22,7 +24,7 @@ import {
   getQuestStateProgressColor,
   questStateRunning
 } from '../QuestState'
-import { QuestState } from 'core-client/api'
+import { QuestState } from '@flecs/core-client-ts'
 
 describe('QuestState utility functions', () => {
   describe('questStateFinished', () => {
@@ -59,12 +61,18 @@ describe('QuestState utility functions', () => {
     })
 
     it('returns semi-transparent error color for Failed and Failing', () => {
-      expect(getQuestStateColor(QuestState.Failed)).toBe('alpha(errorMain,0.75)')
-      expect(getQuestStateColor(QuestState.Failing)).toBe('alpha(errorMain,0.75)')
+      expect(getQuestStateColor(QuestState.Failed)).toBe(
+        'alpha(errorMain,0.75)'
+      )
+      expect(getQuestStateColor(QuestState.Failing)).toBe(
+        'alpha(errorMain,0.75)'
+      )
     })
 
     it('returns semi-transparent success color for Success', () => {
-      expect(getQuestStateColor(QuestState.Success)).toBe('alpha(successMain,0.75)')
+      expect(getQuestStateColor(QuestState.Success)).toBe(
+        'alpha(successMain,0.75)'
+      )
     })
 
     it('returns transparent for other states', () => {

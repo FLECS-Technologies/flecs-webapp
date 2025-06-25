@@ -79,7 +79,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "coverage": "vitest run --coverage",
     "generate-license-file": "./generate-license-file.sh",
-    "pretest": "npm run generate-license-file"
+    "dependencies": "npm run generate-license-file"
   },
   "browserslist": [
     ">0.2%",

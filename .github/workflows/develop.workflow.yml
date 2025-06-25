@@ -7,7 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
       - name: build
         run: make dev-build
       - name: archive raw artifacts
@@ -28,11 +29,12 @@ jobs:
 
   docker:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     strategy:
       matrix:
-        arch: ["amd64", "armhf", "arm64"]
+        arch: ['amd64', 'armhf', 'arm64']
 
     env:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
@@ -62,7 +64,8 @@ jobs:
 
   container-registry:
     needs: docker
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     env:
       VERSION_SPECIAL: -dev
@@ -93,7 +96,8 @@ jobs:
 
   package:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
     environment: deploy-dl
 
     permissions:
@@ -105,7 +109,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: ["amd64", "armhf", "arm64"]
+        arch: ['amd64', 'armhf', 'arm64']
 
     steps:
       - uses: actions/checkout@v4

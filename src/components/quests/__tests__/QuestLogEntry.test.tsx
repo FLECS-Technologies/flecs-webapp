@@ -19,7 +19,7 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QuestLogEntry } from '../QuestLogEntry'
-import { QuestState, Quest } from 'core-client'
+import { QuestState, Quest } from '@flecs/core-client-ts'
 import * as StateUtils from '../../../utils/quests/QuestState'
 import * as ContextModule from '../QuestContext'
 
@@ -28,10 +28,13 @@ vi.mock('../QuestLogEntryBody', () => ({
   __esModule: true,
   QuestLogEntryBody: ({ quest }: { quest: Quest }) => (
     <div data-testid={`body-${quest.id}`}>{quest.description}</div>
-  ),
+  )
 }))
 // Mock ExpandMoreIcon
-vi.mock('@mui/icons-material/ExpandMore', () => ({ __esModule: true, default: () => <div data-testid="expand-icon" /> }))
+vi.mock('@mui/icons-material/ExpandMore', () => ({
+  __esModule: true,
+  default: () => <div data-testid='expand-icon' />
+}))
 
 describe('QuestLogEntry', () => {
   let useQuestContextSpy: any
@@ -48,14 +51,24 @@ describe('QuestLogEntry', () => {
   })
 
   it('returns null if quest not found', () => {
-    useQuestContextSpy.mockReturnValue({ quests: { current: new Map<number, Quest>() } } as any)
+    useQuestContextSpy.mockReturnValue({
+      quests: { current: new Map<number, Quest>() }
+    } as any)
     const { container } = render(<QuestLogEntry id={1} level={0} />)
     expect(container).toBeEmptyDOMElement()
   })
 
   it('renders Paper when no subquests', () => {
-    const quest: Quest = { id: 1, state: QuestState.Pending, description: 'Q1', detail: '', subquests: [] } as Quest
-    useQuestContextSpy.mockReturnValue({ quests: { current: new Map([[1, quest]]) } } as any)
+    const quest: Quest = {
+      id: 1,
+      state: QuestState.Pending,
+      description: 'Q1',
+      detail: '',
+      subquests: []
+    } as Quest
+    useQuestContextSpy.mockReturnValue({
+      quests: { current: new Map([[1, quest]]) }
+    } as any)
 
     render(<QuestLogEntry id={1} level={0} />)
 
@@ -66,9 +79,28 @@ describe('QuestLogEntry', () => {
   })
 
   it('renders Accordion with ExpandMoreIcon when has subquests and level <= MAX_DEPTH', () => {
-    const subquest: Quest = { id: 2, state: QuestState.Pending, description: 'Sub', detail: '', subquests: [] } as Quest
-    const quest: Quest = { id: 1, state: QuestState.Pending, description: 'Q1', detail: '', subquests: [subquest] } as Quest
-    useQuestContextSpy.mockReturnValue({ quests: { current: new Map([[1, quest], [2, subquest]]) } } as any)
+    const subquest: Quest = {
+      id: 2,
+      state: QuestState.Pending,
+      description: 'Sub',
+      detail: '',
+      subquests: []
+    } as Quest
+    const quest: Quest = {
+      id: 1,
+      state: QuestState.Pending,
+      description: 'Q1',
+      detail: '',
+      subquests: [subquest]
+    } as Quest
+    useQuestContextSpy.mockReturnValue({
+      quests: {
+        current: new Map([
+          [1, quest],
+          [2, subquest]
+        ])
+      }
+    } as any)
 
     render(<QuestLogEntry id={1} level={0} />)
 
@@ -81,9 +113,28 @@ describe('QuestLogEntry', () => {
   })
 
   it('renders Paper instead of Accordion when level > MAX_DEPTH', () => {
-    const subquest: Quest = { id: 2, state: QuestState.Pending, description: 'Sub', detail: '', subquests: [] } as Quest
-    const quest: Quest = { id: 1, state: QuestState.Pending, description: 'Q1', detail: '', subquests: [subquest] } as Quest
-    useQuestContextSpy.mockReturnValue({ quests: { current: new Map([[1, quest], [2, subquest]]) } } as any)
+    const subquest: Quest = {
+      id: 2,
+      state: QuestState.Pending,
+      description: 'Sub',
+      detail: '',
+      subquests: []
+    } as Quest
+    const quest: Quest = {
+      id: 1,
+      state: QuestState.Pending,
+      description: 'Q1',
+      detail: '',
+      subquests: [subquest]
+    } as Quest
+    useQuestContextSpy.mockReturnValue({
+      quests: {
+        current: new Map([
+          [1, quest],
+          [2, subquest]
+        ])
+      }
+    } as any)
 
     render(<QuestLogEntry id={1} level={101} />)
 
@@ -94,8 +145,16 @@ describe('QuestLogEntry', () => {
 
   it('calls getQuestStateColor with quest state', () => {
     const spyColor = vi.spyOn(StateUtils, 'getQuestStateColor')
-    const quest: Quest = { id: 3, state: QuestState.Success, description: 'Q3', detail: '', subquests: [] } as Quest
-    useQuestContextSpy.mockReturnValue({ quests: { current: new Map([[3, quest]]) } } as any)
+    const quest: Quest = {
+      id: 3,
+      state: QuestState.Success,
+      description: 'Q3',
+      detail: '',
+      subquests: []
+    } as Quest
+    useQuestContextSpy.mockReturnValue({
+      quests: { current: new Map([[3, quest]]) }
+    } as any)
 
     render(<QuestLogEntry id={3} level={0} />)
     expect(spyColor).toHaveBeenCalledWith(QuestState.Success)

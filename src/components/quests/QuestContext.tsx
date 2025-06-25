@@ -16,22 +16,24 @@
  * limitations under the License.
  */
 import React, { createContext, ReactNode } from 'react'
-import { Quest, QuestState } from 'core-client/api'
+import { Quest, QuestState } from '@flecs/core-client-ts'
 import { api } from '../../api/flecs-core/api-client'
 
 export interface QuestContextType {
-  quests: React.RefObject<Map<number, Quest>>,
-  mainQuestIds: number[],
-  fetchQuest: (id: number) => Promise<void>,
-  fetchQuests: () => Promise<void>,
-  setFetching: React.Dispatch<React.SetStateAction<boolean>>,
-  fetching: boolean,
-  clearQuests: () => Promise<void>,
+  quests: React.RefObject<Map<number, Quest>>
+  mainQuestIds: number[]
+  fetchQuest: (id: number) => Promise<void>
+  fetchQuests: () => Promise<void>
+  setFetching: React.Dispatch<React.SetStateAction<boolean>>
+  fetching: boolean
+  clearQuests: () => Promise<void>
 }
 
 const QuestContext = createContext<QuestContextType | undefined>(undefined)
 
-export const useQuestContext = (QuestContext: React.Context<QuestContextType | undefined>): QuestContextType => {
+export const useQuestContext = (
+  QuestContext: React.Context<QuestContextType | undefined>
+): QuestContextType => {
   const context = React.useContext(QuestContext)
   if (!context) {
     throw new Error('useQuestContext must be used within a QuestProvider')
@@ -44,14 +46,14 @@ const questFinished = (quest: Quest): boolean => {
     case QuestState.Failing:
     case QuestState.Ongoing:
     case QuestState.Pending:
-      return false;
+      return false
     default:
-      return true;
+      return true
   }
 }
 
 const QuestContextProvider = ({ children }: { children: ReactNode }) => {
-  const quests = React.useRef<Map<number, Quest>>(new Map<number, Quest>)
+  const quests = React.useRef<Map<number, Quest>>(new Map<number, Quest>())
   const [fetching, setFetching] = React.useState(false)
   const [mainQuestIds, setMainQuestIds] = React.useState<number[]>([])
 
@@ -71,42 +73,42 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
   }, [fetching])
 
   const addQuest = (quest: Quest) => {
-    quest.subquests?.forEach((subQuest) => addQuest(subQuest));
-    quests.current.set(quest.id, quest);
-    console.log(`Added quest ${quest.id}`);
-  };
+    quest.subquests?.forEach((subQuest) => addQuest(subQuest))
+    quests.current.set(quest.id, quest)
+    console.log(`Added quest ${quest.id}`)
+  }
 
   const fetchQuests = async () => {
     try {
-      const data = (await api.quests.questsGet()).data;
-      data.forEach((subQuest) => addQuest(subQuest));
-      setMainQuestIds(data.map(quest => quest.id));
+      const data = (await api.quests.questsGet()).data
+      data.forEach((subQuest) => addQuest(subQuest))
+      setMainQuestIds(data.map((quest) => quest.id))
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   const clearQuests = async () => {
-    const finishedQuests = [...quests.current.values()].filter(questFinished);
+    const finishedQuests = [...quests.current.values()].filter(questFinished)
     try {
       await Promise.all(
-        finishedQuests.filter((quest) => mainQuestIds.includes(quest.id)).map((quest) =>
-          api.quests.questsIdDelete({ id: quest.id })
-        )
-      );
+        finishedQuests
+          .filter((quest) => mainQuestIds.includes(quest.id))
+          .map((quest) => api.quests.questsIdDelete({ id: quest.id }))
+      )
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   const fetchQuest = async (id: number) => {
     try {
-      const data = (await api.quests.questsIdGet({id})).data;
-      addQuest(data);
+      const data = (await api.quests.questsIdGet({ id })).data
+      addQuest(data)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return (
     <QuestContext.Provider
@@ -117,13 +119,12 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
         setFetching,
         fetching,
         clearQuests,
-        mainQuestIds,
+        mainQuestIds
       }}
     >
       {children}
     </QuestContext.Provider>
   )
 }
-
 
 export { QuestContext, QuestContextProvider }

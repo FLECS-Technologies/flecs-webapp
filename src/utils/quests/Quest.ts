@@ -15,16 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Quest, QuestState } from "core-client";
-import { questStateFinished } from "./QuestState";
+import { Quest, QuestState } from '@flecs/core-client-ts'
+import { questStateFinished } from './QuestState'
 
 export const hasQuestFailedSubquest = (quest: Quest): boolean => {
-  if (!quest.subquests) return false;
+  if (!quest.subquests) return false
   return quest.subquests.some(
-    (sub) => sub.state === QuestState.Failed || sub.state === QuestState.Failing || hasQuestFailedSubquest(sub)
-  );
-};
+    (sub) =>
+      sub.state === QuestState.Failed ||
+      sub.state === QuestState.Failing ||
+      hasQuestFailedSubquest(sub)
+  )
+}
 
 export const questFinished = (quest: Quest): boolean => {
-  return questStateFinished(quest.state);
+  return questStateFinished(quest.state)
 }

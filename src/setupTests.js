@@ -25,7 +25,7 @@ Object.defineProperty(window, 'localStorage', {
 })
 
 // Mock the Configuration class
-jest.mock('core-client/configuration', () => ({
+jest.mock('@flecs/core-client-ts', () => ({
   Configuration: jest.fn(() => ({
     basePath: ''
   }))

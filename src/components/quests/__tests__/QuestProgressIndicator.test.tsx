@@ -19,7 +19,7 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QuestProgressIndicator } from '../QuestProgressIndicator'
-import { QuestState } from 'core-client'
+import { QuestState } from '@flecs/core-client-ts'
 import * as StateUtils from '../../../utils/quests/QuestState'
 
 describe('QuestProgressIndicator', () => {
@@ -33,10 +33,14 @@ describe('QuestProgressIndicator', () => {
 
   it('renders determinate progress correctly', () => {
     const mockColor = 'secondary'
-    vi.spyOn(StateUtils, 'getQuestStateProgressColor').mockReturnValue(mockColor)
+    vi.spyOn(StateUtils, 'getQuestStateProgressColor').mockReturnValue(
+      mockColor
+    )
 
     const progress = { current: 3, total: 6 }
-    render(<QuestProgressIndicator progress={progress} state={QuestState.Ongoing} />)
+    render(
+      <QuestProgressIndicator progress={progress} state={QuestState.Ongoing} />
+    )
 
     // Percentage text
     expect(screen.getByText('3 of 6')).toBeInTheDocument()
@@ -47,15 +51,23 @@ describe('QuestProgressIndicator', () => {
     expect(bar).toHaveAttribute('aria-valuenow', '50')
 
     // Color class applied
-    expect(bar).toHaveClass(`MuiLinearProgress-color${mockColor.charAt(0).toUpperCase() + mockColor.slice(1)}`)
+    expect(bar).toHaveClass(
+      `MuiLinearProgress-color${
+        mockColor.charAt(0).toUpperCase() + mockColor.slice(1)
+      }`
+    )
   })
 
   it('renders indeterminate progress when total is zero', () => {
     const mockColor = 'primary'
-    vi.spyOn(StateUtils, 'getQuestStateProgressColor').mockReturnValue(mockColor)
+    vi.spyOn(StateUtils, 'getQuestStateProgressColor').mockReturnValue(
+      mockColor
+    )
 
     const progress = { current: 4, total: undefined }
-    render(<QuestProgressIndicator progress={progress} state={QuestState.Pending} />)
+    render(
+      <QuestProgressIndicator progress={progress} state={QuestState.Pending} />
+    )
 
     // Text uses 'unknown' for total
     expect(screen.getByText('4 of unknown')).toBeInTheDocument()
@@ -68,6 +80,10 @@ describe('QuestProgressIndicator', () => {
     // Should have indeterminate class
     expect(bar).toHaveClass('MuiLinearProgress-indeterminate')
     // Color class still applied
-    expect(bar).toHaveClass(`MuiLinearProgress-color${mockColor.charAt(0).toUpperCase() + mockColor.slice(1)}`)
+    expect(bar).toHaveClass(
+      `MuiLinearProgress-color${
+        mockColor.charAt(0).toUpperCase() + mockColor.slice(1)
+      }`
+    )
   })
 })

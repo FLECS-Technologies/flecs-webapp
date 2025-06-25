@@ -17,7 +17,7 @@
  */
 import React from 'react'
 import { Box, Button, Tooltip } from '@mui/material'
-import { TransportProtocol } from 'core-client/api'
+import { TransportProtocol } from '@flecs/core-client-ts'
 import { RadioButtonChecked } from '@mui/icons-material'
 
 interface AddSinglePortMappingButtonProps {

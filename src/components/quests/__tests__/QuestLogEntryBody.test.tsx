@@ -19,34 +19,36 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QuestLogEntryBody } from '../QuestLogEntryBody'
-import { QuestState, QuestProgress, Quest } from 'core-client'
+import { QuestState, QuestProgress, Quest } from '@flecs/core-client-ts'
 import * as QuestStateUtils from '../../../utils/quests/QuestState'
 import * as QuestUtils from '../../../utils/quests/Quest'
 
 // Mock MUI WarningAmber icon via barrel import
 vi.mock('@mui/icons-material', () => ({
   __esModule: true,
-  WarningAmber: () => <div data-testid="warning-icon" />
+  WarningAmber: () => <div data-testid='warning-icon' />
 }))
 // Mock child components using correct relative paths
 vi.mock('../QuestIcon', () => ({
   __esModule: true,
-  QuestIcon: ({ state }: { state: QuestState }) => <div data-testid="quest-icon">{state}</div>
+  QuestIcon: ({ state }: { state: QuestState }) => (
+    <div data-testid='quest-icon'>{state}</div>
+  )
 }))
 vi.mock('../QuestProgressIndicator', () => ({
   __esModule: true,
-  QuestProgressIndicator: () => <div data-testid="progress-indicator" />
+  QuestProgressIndicator: () => <div data-testid='progress-indicator' />
 }))
 vi.mock('../SubQuestProgressIndicator', () => ({
   __esModule: true,
-  SubQuestProgressIndicator: () => <div data-testid="subquest-indicator" />
+  SubQuestProgressIndicator: () => <div data-testid='subquest-indicator' />
 }))
 
 describe('QuestLogEntryBody', () => {
   const baseQuest: Partial<Quest> = {
     id: 1,
     description: 'Test quest',
-    detail: 'Detailed info',
+    detail: 'Detailed info'
   }
 
   beforeEach(() => {
@@ -71,7 +73,11 @@ describe('QuestLogEntryBody', () => {
 
   it('renders warning icon when quest has failed subquest and state not Failed', () => {
     vi.spyOn(QuestUtils, 'hasQuestFailedSubquest').mockReturnValue(true)
-    const quest = { ...baseQuest, state: QuestState.Ongoing, subquests: [{ id: 2, state: QuestState.Pending } as Quest] } as Quest
+    const quest = {
+      ...baseQuest,
+      state: QuestState.Ongoing,
+      subquests: [{ id: 2, state: QuestState.Pending } as Quest]
+    } as Quest
     render(<QuestLogEntryBody quest={quest} level={1} />)
 
     expect(screen.getByTestId('warning-icon')).toBeInTheDocument()
@@ -79,7 +85,11 @@ describe('QuestLogEntryBody', () => {
 
   it('does not render warning icon when quest state is Failed', () => {
     vi.spyOn(QuestUtils, 'hasQuestFailedSubquest').mockReturnValue(true)
-    const quest = { ...baseQuest, state: QuestState.Failed, subquests: [{ id: 2, state: QuestState.Pending } as Quest] } as Quest
+    const quest = {
+      ...baseQuest,
+      state: QuestState.Failed,
+      subquests: [{ id: 2, state: QuestState.Pending } as Quest]
+    } as Quest
     render(<QuestLogEntryBody quest={quest} level={1} />)
 
     expect(screen.queryByTestId('warning-icon')).toBeNull()
@@ -89,7 +99,12 @@ describe('QuestLogEntryBody', () => {
     vi.spyOn(QuestStateUtils, 'questStateFinishedOk').mockReturnValue(false)
     const progress: QuestProgress = { current: 1, total: 2 }
     const subquests: Quest[] = [{ id: 3, state: QuestState.Pending } as Quest]
-    const quest = { ...baseQuest, state: QuestState.Ongoing, progress, subquests } as Quest
+    const quest = {
+      ...baseQuest,
+      state: QuestState.Ongoing,
+      progress,
+      subquests
+    } as Quest
 
     render(<QuestLogEntryBody quest={quest} level={2} />)
 
@@ -101,7 +116,12 @@ describe('QuestLogEntryBody', () => {
     vi.spyOn(QuestStateUtils, 'questStateFinishedOk').mockReturnValue(true)
     const progress: QuestProgress = { current: 5, total: 5 }
     const subquests: Quest[] = [{ id: 4, state: QuestState.Success } as Quest]
-    const quest = { ...baseQuest, state: QuestState.Success, progress, subquests } as Quest
+    const quest = {
+      ...baseQuest,
+      state: QuestState.Success,
+      progress,
+      subquests
+    } as Quest
 
     render(<QuestLogEntryBody quest={quest} level={3} />)
 

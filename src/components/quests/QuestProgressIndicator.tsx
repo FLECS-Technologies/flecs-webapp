@@ -15,37 +15,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Box, LinearProgress, Typography } from "@mui/material";
-import { QuestProgress, QuestState } from "core-client";
-import { getQuestStateProgressColor } from "../../utils/quests/QuestState";
+import { Box, LinearProgress, Typography } from '@mui/material'
+import { QuestProgress, QuestState } from '@flecs/core-client-ts'
+import { getQuestStateProgressColor } from '../../utils/quests/QuestState'
 
 interface QuestProgressIndicatorProps {
-  progress: QuestProgress,
-  state: QuestState,
+  progress: QuestProgress
+  state: QuestState
 }
 
 export const QuestProgressIndicator: React.FC<QuestProgressIndicatorProps> = ({
-  progress: {current, total}, state
+  progress: { current, total },
+  state
 }: QuestProgressIndicatorProps) => {
-  const percent = (100 * current) / (total || current);
-  const progressColor = getQuestStateProgressColor(state);
+  const percent = (100 * current) / (total || current)
+  const progressColor = getQuestStateProgressColor(state)
 
   return (
-    <Box sx={{ width: "100%", mt: 0.5 }}>
+    <Box sx={{ width: '100%', mt: 0.5 }}>
       <LinearProgress
-        variant={total ? "determinate" : "indeterminate"}
+        variant={total ? 'determinate' : 'indeterminate'}
         value={percent}
         color={progressColor}
         sx={{
           height: 8,
           borderRadius: 4,
-          opacity: 0.90,
+          opacity: 0.9
         }}
       />
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
-        <Typography variant="caption">{`${current} of ${total ?? 'unknown'}`}</Typography>
-        <Typography variant="caption">{`${Math.round(percent)}%`}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
+        <Typography variant='caption'>{`${current} of ${
+          total ?? 'unknown'
+        }`}</Typography>
+        <Typography variant='caption'>{`${Math.round(percent)}%`}</Typography>
       </Box>
     </Box>
-  );
+  )
 }

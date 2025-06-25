@@ -23,7 +23,7 @@ import {
   InstancePortMappingRange,
   InstancePortMappingSingle,
   TransportProtocol
-} from 'core-client/api'
+} from '@flecs/core-client-ts'
 
 interface SinglePortMappingProps {
   port: InstancePortMappingSingle

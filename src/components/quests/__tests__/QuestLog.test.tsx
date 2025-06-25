@@ -21,7 +21,7 @@ import { render, screen, cleanup } from '@testing-library/react'
 import { QuestLog } from '../QuestLog'
 import * as ContextModule from '../QuestContext'
 import { QuestContextType } from '../QuestContext'
-import { Quest, QuestState } from 'core-client'
+import { Quest, QuestState } from '@flecs/core-client-ts'
 
 // Mock QuestLogEntry
 vi.mock('../QuestLogEntry', () => ({
@@ -39,7 +39,7 @@ describe('QuestLog', () => {
     mockContext = {
       setFetching,
       mainQuestIds: [10, 20],
-      quests: { current: new Map<number, Quest>() },
+      quests: { current: new Map<number, Quest>() }
     }
     useQuestContextSpy = vi.spyOn(ContextModule, 'useQuestContext')
     useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
@@ -64,7 +64,7 @@ describe('QuestLog', () => {
     useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
 
     render(<QuestLog />)
-    ids.forEach(id => {
+    ids.forEach((id) => {
       expect(screen.getByTestId(`entry-${id}`)).toBeInTheDocument()
     })
   })

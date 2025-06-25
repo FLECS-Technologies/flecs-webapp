@@ -15,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { alpha, LinearProgressProps, useTheme } from '@mui/material';
-import { QuestState } from 'core-client/api'
+import { alpha, LinearProgressProps, useTheme } from '@mui/material'
+import { QuestState } from '@flecs/core-client-ts'
 
 export const questStateFinished = (state: QuestState): boolean => {
   switch (state) {
     case QuestState.Failing:
     case QuestState.Ongoing:
     case QuestState.Pending:
-      return false;
+      return false
     default:
-      return true;
+      return true
   }
 }
 
@@ -33,47 +33,49 @@ export const questStateFinishedOk = (state: QuestState): boolean => {
   switch (state) {
     case QuestState.Skipped:
     case QuestState.Success:
-      return true;
+      return true
     default:
-      return false;
+      return false
   }
 }
 
 export const getQuestStateColor = (state: QuestState) => {
-  const theme = useTheme();
+  const theme = useTheme()
   switch (state) {
     case QuestState.Failed:
     case QuestState.Failing:
-      return alpha(theme.palette.error.main, 0.75);
+      return alpha(theme.palette.error.main, 0.75)
     case QuestState.Success:
-      return alpha(theme.palette.success.main, 0.75);
+      return alpha(theme.palette.success.main, 0.75)
     default:
-      return "transparent";
+      return 'transparent'
   }
-};
+}
 
-export const getQuestStateProgressColor = (state: QuestState): LinearProgressProps['color'] => {
+export const getQuestStateProgressColor = (
+  state: QuestState
+): LinearProgressProps['color'] => {
   switch (state) {
     case QuestState.Failed:
     case QuestState.Failing:
-      return 'error';
+      return 'error'
     case QuestState.Success:
-      return 'success';
+      return 'success'
     case QuestState.Ongoing:
-      return 'secondary';
+      return 'secondary'
     case QuestState.Pending:
-      return 'info';
+      return 'info'
     default:
-      return 'inherit';
+      return 'inherit'
   }
-};
+}
 
 export const questStateRunning = (state: QuestState): boolean => {
   switch (state) {
     case QuestState.Failing:
     case QuestState.Ongoing:
-      return true;
+      return true
     default:
-      return false;
+      return false
   }
 }

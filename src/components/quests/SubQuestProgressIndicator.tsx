@@ -15,51 +15,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Box, LinearProgress, Typography } from "@mui/material";
-import { QuestState, Quest } from "core-client";
-import { questFinished } from "../../utils/quests/Quest";
-import { getQuestStateProgressColor, questStateRunning } from "../../utils/quests/QuestState";
+import { Box, LinearProgress, Typography } from '@mui/material'
+import { QuestState, Quest } from '@flecs/core-client-ts'
+import { questFinished } from '../../utils/quests/Quest'
+import {
+  getQuestStateProgressColor,
+  questStateRunning
+} from '../../utils/quests/QuestState'
 
 interface SubQuestProgressIndicatorProps {
-  state: QuestState,
-  subquests: Quest[],
+  state: QuestState
+  subquests: Quest[]
 }
 
-export const SubQuestProgressIndicator: React.FC<SubQuestProgressIndicatorProps> = ({
-  state, subquests
-}: SubQuestProgressIndicatorProps) => {
-  const totalSubquests = subquests.length;
-  if (totalSubquests <= 0) return null;
-  const progressColor = getQuestStateProgressColor(state);
+export const SubQuestProgressIndicator: React.FC<
+  SubQuestProgressIndicatorProps
+> = ({ state, subquests }: SubQuestProgressIndicatorProps) => {
+  const totalSubquests = subquests.length
+  if (totalSubquests <= 0) return null
+  const progressColor = getQuestStateProgressColor(state)
 
-  const finishedSubquests = subquests.filter(questFinished).length;
-  const runningSubquests = subquests.filter((quest) => questStateRunning(quest.state)).length;
+  const finishedSubquests = subquests.filter(questFinished).length
+  const runningSubquests = subquests.filter((quest) =>
+    questStateRunning(quest.state)
+  ).length
 
-  const finishedPercent = (finishedSubquests / totalSubquests) * 100;
-  const runningPercent = (runningSubquests / totalSubquests) * 100;
+  const finishedPercent = (finishedSubquests / totalSubquests) * 100
+  const runningPercent = (runningSubquests / totalSubquests) * 100
 
   return (
-    <Box sx={{ width: "100%", mt: 0.5 }}>
+    <Box sx={{ width: '100%', mt: 0.5 }}>
       <Box sx={{ mt: 1 }}>
         <LinearProgress
-          variant="buffer"
+          variant='buffer'
           value={finishedPercent}
           valueBuffer={finishedPercent + runningPercent}
           color={progressColor}
           sx={{
             height: 8,
             borderRadius: 4,
-            opacity: 0.90,
+            opacity: 0.9
           }}
         />
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
-          <Typography variant="caption">{`${finishedSubquests} finished`}</Typography>
-          <Typography variant="caption">{`${runningSubquests} running`}</Typography>
-          <Typography variant="caption">{`${totalSubquests - runningSubquests - finishedSubquests} pending`}</Typography>
-          <Typography variant="caption">{`${totalSubquests} total`}</Typography>
-          <Typography variant="caption">{`${Math.round(finishedPercent)}%`}</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
+          <Typography variant='caption'>{`${finishedSubquests} finished`}</Typography>
+          <Typography variant='caption'>{`${runningSubquests} running`}</Typography>
+          <Typography variant='caption'>{`${
+            totalSubquests - runningSubquests - finishedSubquests
+          } pending`}</Typography>
+          <Typography variant='caption'>{`${totalSubquests} total`}</Typography>
+          <Typography variant='caption'>{`${Math.round(
+            finishedPercent
+          )}%`}</Typography>
         </Box>
       </Box>
     </Box>
-  );
+  )
 }

@@ -7,7 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
       - name: build
         run: make build
       - name: archive raw artifacts
@@ -28,11 +29,12 @@ jobs:
 
   docker:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     strategy:
       matrix:
-        arch: ["amd64", "armhf", "arm64"]
+        arch: ['amd64', 'armhf', 'arm64']
 
     env:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
@@ -61,7 +63,8 @@ jobs:
 
   container-registry:
     needs: docker
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +92,8 @@ jobs:
 
   package:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
     environment: deploy-dl
 
     permissions:
@@ -98,7 +102,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: ["amd64", "armhf", "arm64"]
+        arch: ['amd64', 'armhf', 'arm64']
 
     steps:
       - uses: actions/checkout@v4
@@ -135,11 +139,12 @@ jobs:
             done
 
   special-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     strategy:
       matrix:
-        special: ["wm"]
+        special: ['wm']
 
     env:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
@@ -161,7 +166,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
       - name: build
         run: |
           make VERSION_SPECIAL=-${{ matrix.special }} special_${{ matrix.special }}
@@ -175,12 +180,13 @@ jobs:
 
   special-docker:
     needs: special-build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     strategy:
       matrix:
-        arch: ["amd64", "armhf", "arm64"]
-        special: ["wm"]
+        arch: ['amd64', 'armhf', 'arm64']
+        special: ['wm']
 
     env:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
@@ -211,11 +217,12 @@ jobs:
 
   special-container-registry:
     needs: special-docker
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container: node:22
 
     strategy:
       matrix:
-        special: ["wm"]
+        special: ['wm']
 
     env:
       VERSION_SPECIAL: -${{ matrix.special }}

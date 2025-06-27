@@ -15,16 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import { render, screen, waitFor } from '@testing-library/react'
 import OpenSource from '../OpenSource'
+import { describe, it, expect } from 'vitest'
 
-describe('System', () => {
-  test('renders System page', () => {
+describe('OpenSource', () => {
+  it('renders OpenSource page', async () => {
     render(<OpenSource />)
 
-    expect(screen.getByLabelText('licenses')).toBeVisible()
+    await waitFor(() => {
+      const licensesElement = screen.getByLabelText('licenses')
+      expect(licensesElement).toBeVisible()
+    })
   })
 })

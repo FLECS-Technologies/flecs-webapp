@@ -30,7 +30,6 @@ jobs:
   docker:
     needs: build
     runs-on: ubuntu-24.04
-    container: node:22
 
     strategy:
       matrix:
@@ -64,7 +63,6 @@ jobs:
   container-registry:
     needs: docker
     runs-on: ubuntu-24.04
-    container: node:22
 
     steps:
       - uses: actions/checkout@v4
@@ -93,7 +91,6 @@ jobs:
   package:
     needs: build
     runs-on: ubuntu-24.04
-    container: node:22
     environment: deploy-dl
 
     permissions:
@@ -140,7 +137,6 @@ jobs:
 
   special-build:
     runs-on: ubuntu-24.04
-    container: node:22
 
     strategy:
       matrix:
@@ -181,7 +177,6 @@ jobs:
   special-docker:
     needs: special-build
     runs-on: ubuntu-24.04
-    container: node:22
 
     strategy:
       matrix:
@@ -218,7 +213,6 @@ jobs:
   special-container-registry:
     needs: special-docker
     runs-on: ubuntu-24.04
-    container: node:22
 
     strategy:
       matrix:

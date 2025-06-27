@@ -30,7 +30,6 @@ jobs:
   docker:
     needs: build
     runs-on: ubuntu-24.04
-    container: node:22
 
     strategy:
       matrix:
@@ -65,7 +64,6 @@ jobs:
   container-registry:
     needs: docker
     runs-on: ubuntu-24.04
-    container: node:22
 
     env:
       VERSION_SPECIAL: -dev
@@ -97,7 +95,6 @@ jobs:
   package:
     needs: build
     runs-on: ubuntu-24.04
-    container: node:22
     environment: deploy-dl
 
     permissions:

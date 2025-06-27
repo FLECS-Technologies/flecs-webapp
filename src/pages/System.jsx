@@ -6,7 +6,8 @@ import {
   Tabs,
   Tab,
   Toolbar,
-  Typography
+  Typography,
+  BottomNavigation
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Version from '../components/Version';
@@ -42,7 +43,6 @@ const System = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
         pb: '64px',
         boxSizing: 'border-box'
       }}
@@ -100,11 +100,13 @@ const System = () => {
         }}
         elevation={3}
       >
-        <Toolbar sx={{ p: { xs: 1, sm: 2 } }}>
-          <Link aria-label="open-source" to="/open-source">
-            Open-Source
-          </Link>
-        </Toolbar>
+        <BottomNavigation>
+          <Toolbar sx={{ p: { xs: 1, sm: 2 } }}>
+            <Link aria-label='open-source' to='/open-source'>
+              Open-Source
+            </Link>
+          </Toolbar>
+        </BottomNavigation>
       </Paper>
     </Box>
   );

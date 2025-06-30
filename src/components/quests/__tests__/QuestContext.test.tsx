@@ -159,7 +159,7 @@ describe('QuestContextProvider integration', () => {
 
     fireEvent.click(screen.getByText('Clear Quests'))
     await waitFor(() => expect(deleteSpy).toHaveBeenCalledTimes(1))
-    expect(deleteSpy).toHaveBeenCalledWith({ id: finishedQuest.id })
+    expect(deleteSpy).toHaveBeenCalledWith(finishedQuest.id)
   })
 
   it('useQuestContext throws if no provider', () => {

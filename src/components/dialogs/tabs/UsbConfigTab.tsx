@@ -53,9 +53,7 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
     try {
       const systemDevices = await api.system.systemDevicesUsbGet()
       const instanceDevices =
-        await api.instances.instancesInstanceIdConfigDevicesUsbGet({
-          instanceId
-        })
+        await api.instances.instancesInstanceIdConfigDevicesUsbGet(instanceId)
 
       const devices = systemDevices.data.map((device: any) => {
         const instanceDevice = instanceDevices.data.find(
@@ -110,15 +108,15 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
   const handleToggle = async (port: string, enabled: boolean) => {
     try {
       if (!enabled) {
-        await api.instances.instancesInstanceIdConfigDevicesUsbPortPut({
+        await api.instances.instancesInstanceIdConfigDevicesUsbPortPut(
           instanceId,
           port
-        })
+        )
       } else {
-        await api.instances.instancesInstanceIdConfigDevicesUsbPortDelete({
+        await api.instances.instancesInstanceIdConfigDevicesUsbPortDelete(
           instanceId,
           port
-        })
+        )
       }
       setUsbDevices((prev) =>
         prev.map((device) =>

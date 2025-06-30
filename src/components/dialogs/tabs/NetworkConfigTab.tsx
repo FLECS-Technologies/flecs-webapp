@@ -79,9 +79,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
 
       // Fetch deployment networks
       const deploymentNetworksResponse =
-        await api.deployments.deploymentsDeploymentIdNetworksGet({
-          deploymentId: 'default'
-        })
+        await api.deployments.deploymentsDeploymentIdNetworksGet('default')
       const deploymentNetworks = deploymentNetworksResponse.data.map(
         (network: DeploymentNetwork) => ({
           parent: network.parent || '',
@@ -91,9 +89,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
       )
       // Fetch instance-specific networks
       const instanceNetworksResponse =
-        await api.instances.instancesInstanceIdConfigNetworksGet({
-          instanceId
-        })
+        await api.instances.instancesInstanceIdConfigNetworksGet(instanceId)
       const instanceNetworks = instanceNetworksResponse.data.map(
         (network: InstanceConfigNetwork) => ({
           name: network.name || '',
@@ -172,41 +168,37 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({
           // Step 1: Check if deploymentNetworkName is set, if not create one
           if (!deploymentNetworkName) {
             const newDeploymentNetworkName = `flecs-ipvlan_l2-${name}`
-            await api.deployments.deploymentsDeploymentIdNetworksPost({
-              deploymentId: 'default',
-              postDeploymentNetwork: {
+            await api.deployments.deploymentsDeploymentIdNetworksPost('default', {
                 network_id: newDeploymentNetworkName,
                 network_kind: NetworkKind.Ipvlanl2,
                 parent_adapter: name
               }
-            })
+            )
             deploymentNetworkName = newDeploymentNetworkName
           }
 
           // Step 2: Reserve an IP address
           const ipReservationResponse =
             await api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post(
-              {
-                deploymentId: 'default',
-                networkId: deploymentNetworkName
-              }
+              'default',
+              deploymentNetworkName
             )
           const reservedIpAddress = ipReservationResponse.data.ipv4_address
 
           // Step 3: Connect the instance to the network
-          await api.instances.instancesInstanceIdConfigNetworksPost({
+          await api.instances.instancesInstanceIdConfigNetworksPost(
             instanceId,
-            instancesInstanceIdConfigNetworksPostRequest: {
+            {
               network_id: deploymentNetworkName,
               ipAddress: reservedIpAddress
             }
-          })
+          )
         } else {
           // Deactivate the network
-          await api.instances.instancesInstanceIdConfigNetworksNetworkIdDelete({
+          await api.instances.instancesInstanceIdConfigNetworksNetworkIdDelete(
             instanceId,
-            networkId: network.deploymentNetworkName
-          })
+            network.deploymentNetworkName
+          )
         }
 
         // Update the local state to reflect the change

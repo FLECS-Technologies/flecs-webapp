@@ -51,9 +51,7 @@ const EditorConfigTab: React.FC<EditorConfigTabProps> = ({
 
   const fetchEditors = async () => {
     try {
-      const editorsData = await api.instances.instancesInstanceIdConfigEditorsGet({
-        instanceId
-      })
+      const editorsData = await api.instances.instancesInstanceIdConfigEditorsGet(instanceId)
       if (editorsData) {
         setEditors(editorsData.data)
       }

@@ -75,7 +75,6 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
   const addQuest = (quest: Quest) => {
     quest.subquests?.forEach((subQuest) => addQuest(subQuest))
     quests.current.set(quest.id, quest)
-    console.log(`Added quest ${quest.id}`)
   }
 
   const fetchQuests = async () => {

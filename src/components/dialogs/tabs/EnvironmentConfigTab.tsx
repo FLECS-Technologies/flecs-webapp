@@ -55,9 +55,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
     setLoading(true)
     try {
       const environmentData = (
-        await api.instances.instancesInstanceIdConfigEnvironmentGet({
-          instanceId
-        })
+        await api.instances.instancesInstanceIdConfigEnvironmentGet(instanceId)
       ).data as InstanceEnvironmentVariable[]
 
       if (Array.isArray(environmentData)) {
@@ -86,10 +84,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
   const handleDelete = async (index: number) => {
     if (envVars[index].name) {
       api.instances
-        .instancesInstanceIdConfigEnvironmentVariableNameDelete({
-          instanceId,
-          variableName: envVars[index].name
-        })
+        .instancesInstanceIdConfigEnvironmentVariableNameDelete(instanceId, envVars[index].name)
         .then(() => {
           onChange(true)
           setEnvVars((prev) => prev.filter((_, i) => i !== index))
@@ -118,10 +113,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({
         .filter(({ name }) => name)
         .map(({ name, value }) => ({ name, value }))
 
-      await api.instances.instancesInstanceIdConfigEnvironmentPut({
-        instanceId,
-        instanceEnvironmentVariable: variables
-      })
+      await api.instances.instancesInstanceIdConfigEnvironmentPut(instanceId, variables)
       onChange(true)
       setSnackbarState({
         alertSeverity: 'success',

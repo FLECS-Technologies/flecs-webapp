@@ -58,9 +58,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
 
   const fetchPorts = async () => {
     try {
-      const portData = await api.instances.instancesInstanceIdConfigPortsGet({
-        instanceId
-      })
+      const portData = await api.instances.instancesInstanceIdConfigPortsGet(instanceId)
       if (portData) {
         const combinedPorts: PortWithProtocol[] = [
           ...portData.data.tcp.map(
@@ -162,19 +160,19 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
         .map((portWithProtocol) => portWithProtocol.port)
 
       if (tcpPorts.length > 0) {
-        await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut({
+        await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut(
           instanceId,
-          transportProtocol: TransportProtocol.Tcp,
-          instancePortMapping: tcpPorts
-        })
+          TransportProtocol.Tcp,
+          tcpPorts
+        )
       }
 
       if (udpPorts.length > 0) {
-        await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut({
+        await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut(
           instanceId,
-          transportProtocol: TransportProtocol.Udp,
-          instancePortMapping: udpPorts
-        })
+          TransportProtocol.Udp,
+          udpPorts
+        )
       }
 
       onChange(true)

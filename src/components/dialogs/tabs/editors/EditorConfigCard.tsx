@@ -53,13 +53,13 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
   >(editor.path_prefix)
   const putEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
-      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut({
+      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut(
         instanceId,
         port,
-        instancesInstanceIdConfigEditorsPortPathPrefixPutRequest: {
+        {
           path_prefix: pathPrefix
         }
-      })
+      )
       setCurrentEditorPathPrefix(pathPrefix)
       setSnackbarState({
         alertSeverity: 'success',
@@ -82,10 +82,10 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
 
   const deleteEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
-      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete({
+      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete(
         instanceId,
         port
-      })
+      )
       setCurrentEditorPathPrefix(undefined)
       setEditorPathPrefix('')
       setSnackbarState({

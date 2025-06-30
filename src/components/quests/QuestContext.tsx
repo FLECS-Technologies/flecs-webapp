@@ -94,7 +94,7 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
       await Promise.all(
         finishedQuests
           .filter((quest) => mainQuestIds.includes(quest.id))
-          .map((quest) => api.quests.questsIdDelete({ id: quest.id }))
+          .map((quest) => api.quests.questsIdDelete(quest.id))
       )
     } catch (error) {
       console.error(error)
@@ -103,7 +103,7 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchQuest = async (id: number) => {
     try {
-      const data = (await api.quests.questsIdGet({ id })).data
+      const data = (await api.quests.questsIdGet(id)).data
       addQuest(data)
     } catch (error) {
       console.error(error)

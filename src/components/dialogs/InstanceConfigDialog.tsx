@@ -59,12 +59,8 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   const handleSaveChanges = async () => {
     if (hasChanges) {
       try {
-        await api.instances.instancesInstanceIdStopPost({
-          instanceId
-        })
-        await api.instances.instancesInstanceIdStartPost({
-          instanceId
-        })
+        await api.instances.instancesInstanceIdStopPost(instanceId)
+        await api.instances.instancesInstanceIdStartPost(instanceId)
         setHasChanges(false)
       } catch (error) {
         console.error('Error while restarting the app instance:', error)

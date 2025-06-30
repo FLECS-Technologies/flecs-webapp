@@ -141,10 +141,10 @@ describe('UsbConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigDevicesUsbPortPut
-      ).toHaveBeenCalledWith({
-        instanceId: mockInstanceId,
-        port: '1'
-      })
+      ).toHaveBeenCalledWith(
+        mockInstanceId,
+        '1'
+      )
     )
   })
 })

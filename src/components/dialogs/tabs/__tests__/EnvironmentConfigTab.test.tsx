@@ -60,9 +60,7 @@ describe('EnvironmentConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEnvironmentGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
   })
 
@@ -173,12 +171,12 @@ describe('EnvironmentConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEnvironmentPut
-      ).toHaveBeenCalledWith({
+      ).toHaveBeenCalledWith(
         instanceId,
-        instanceEnvironmentVariable: [
+        [
           { name: 'UPDATED_KEY', value: 'TEST_VALUE' }
         ]
-      })
+      )
     )
   })
 

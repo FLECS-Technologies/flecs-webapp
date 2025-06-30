@@ -56,9 +56,7 @@ describe('PortsConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigPortsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
   })
 

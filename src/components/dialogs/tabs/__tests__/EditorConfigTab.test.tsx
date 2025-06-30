@@ -43,7 +43,7 @@ describe('EditorConfigTab', () => {
 
   afterAll(() => {
     jest.clearAllMocks()
-  })  
+  })
 
   it('renders loading spinner while fetching editors', async () => {
     ;(
@@ -60,9 +60,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
   })
 
@@ -99,9 +97,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
 
     await waitFor(() =>
@@ -129,9 +125,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
     await waitFor(() =>
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
@@ -154,9 +148,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
     await waitFor(() =>
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
@@ -182,9 +174,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
     await waitFor(() =>
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
@@ -194,9 +184,7 @@ describe('EditorConfigTab', () => {
 
     expect(
       api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete
-    ).toHaveBeenCalledWith({
-      instanceId, port: 200
-    })
+    ).toHaveBeenCalledWith(instanceId, 200)
 
     const pathPrefix = screen.getByLabelText('Path Prefix');
     await waitFor(() =>
@@ -218,9 +206,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
     await waitFor(() =>
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
@@ -250,9 +236,7 @@ describe('EditorConfigTab', () => {
     await waitFor(() =>
       expect(
         api.instances.instancesInstanceIdConfigEditorsGet
-      ).toHaveBeenCalledWith({
-        instanceId
-      })
+      ).toHaveBeenCalledWith(instanceId)
     )
     await waitFor(() =>
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
@@ -264,9 +248,9 @@ describe('EditorConfigTab', () => {
     fireEvent.click(saveButton)
     expect(
       api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut
-    ).toHaveBeenCalledWith({
-      instanceId, port: 200, instancesInstanceIdConfigEditorsPortPathPrefixPutRequest: {path_prefix: 'new_test_prefix'}
-    })
+    ).toHaveBeenCalledWith(
+      instanceId, 200, {path_prefix: 'new_test_prefix'}
+    )
     await waitFor(() =>
       expect(saveButton).toBeDisabled()
     )

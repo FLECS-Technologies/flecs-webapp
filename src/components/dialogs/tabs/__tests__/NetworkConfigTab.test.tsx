@@ -187,23 +187,23 @@ describe('NetworkConfigTab', () => {
     await waitFor(() =>
       expect(
         api.deployments.deploymentsDeploymentIdNetworksPost
-      ).toHaveBeenCalledWith({
-        deploymentId: 'default',
-        postDeploymentNetwork: {
+      ).toHaveBeenCalledWith(
+        'default',
+        {
           network_id: 'flecs-ipvlan_l2-Adapter1',
           network_kind: NetworkKind.Ipvlanl2,
           parent_adapter: 'Adapter1'
         }
-      })
+      )
     )
     expect(
       api.instances.instancesInstanceIdConfigNetworksPost
-    ).toHaveBeenCalledWith({
-      instanceId: mockInstanceId,
-      instancesInstanceIdConfigNetworksPostRequest: {
+    ).toHaveBeenCalledWith(
+      mockInstanceId,
+      {
         network_id: 'flecs-ipvlan_l2-Adapter1',
         ipAddress: '192.168.1.2'
       }
-    })
+    )
   })
 })

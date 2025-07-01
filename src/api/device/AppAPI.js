@@ -315,6 +315,9 @@ export default class AppAPI extends React.Component {
         // sideload app - this request takes the .yml file and tries to install the app
         const sideload = new PostSideloadAppAPI()
         await sideload.sideloadApp(appYaml)
+        if (!sideload.state.success) {
+          throw new Error(sideload.state.errorMessage)
+        }
         this.jobId = sideload.state.responseData.jobId
         await this.waitUntilJobIsComplete(
           this.jobId,
@@ -334,6 +337,7 @@ export default class AppAPI extends React.Component {
       }
     } catch (error) {
       console.error(error)
+      this.lastAPIError = error?.message
     }
   }
 

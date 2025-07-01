@@ -65,6 +65,12 @@ export default function SideloadApp (props) {
     if (appAPI.lastAPICallSuccessful) {
       // trigger a reload of all installed apps
       setUpdateAppList(true)
+    } else {
+      setError(true)
+      setSuccess(false)
+      setInstallationMessage(appAPI.lastAPIError || 'Error during sideload')
+      setRunning(false)
+      setInstalling(false)
     }
     setFetchingJobs(false)
   })

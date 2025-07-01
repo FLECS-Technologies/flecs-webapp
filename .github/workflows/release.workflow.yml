@@ -244,3 +244,29 @@ jobs:
         run: |
           docker manifest push flecspublic.azurecr.io/webapp:$(make version)
           docker manifest push flecspublic.azurecr.io/webapp:latest-${{ matrix.special }}
+
+  generate_token:
+    runs-on: ubuntu-latest
+    outputs:
+      app_token: ${{ steps.app-token.outputs.token }}
+    steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.FLECS_WORKFLOW_AUTOMATION_CLIENT_ID }}
+          private-key: ${{ secrets.FLECS_WORKFLOW_AUTOMATION_KEY  }}
+          owner: FLECS-Technologies
+          repositories: |
+            flecs-whitelabel
+
+  release_whitelabel:
+    runs-on: ubuntu-24.04
+    needs: generate_token
+    steps:
+      - name: Trigger Whitelabel build
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ needs.generate_token.outputs.app_token }}
+          repository: FLECS-Technologies/flecs-whitelabel
+          event-type: trigger-whitelabels

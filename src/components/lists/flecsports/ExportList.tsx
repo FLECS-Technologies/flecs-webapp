@@ -38,11 +38,13 @@ export default function ExportList() {
   const handleDownload = async (exportId: string) => {
     setDownloading(exportId)
     try {
-      const response = await api.export.exportsExportIdGet(exportId, { responseType: 'blob' })
+      const response = await api.export.exportsExportIdGet(exportId, {
+        responseType: 'blob'
+      })
       const url = window.URL.createObjectURL(response.data)
       const a = document.createElement('a')
       a.href = url
-      a.download = `export-${exportId}.tar.gz`
+      a.download = `flecs-export-${exportId}.tar`
       document.body.appendChild(a)
       a.click()
       a.remove()
@@ -57,7 +59,7 @@ export default function ExportList() {
     setDeleting(exportId)
     try {
       await api.export.exportsExportIdDelete(exportId)
-      setExports(exports.filter(e => e !== exportId))
+      setExports(exports.filter((e) => e !== exportId))
     } catch {
       setError('Delete failed')
     }
@@ -66,7 +68,12 @@ export default function ExportList() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+      <Box
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        minHeight={200}
+      >
         <CircularProgress />
       </Box>
     )
@@ -74,7 +81,7 @@ export default function ExportList() {
 
   if (error) {
     return (
-      <Typography color="error" align="center" sx={{ mt: 2 }}>
+      <Typography color='error' align='center' sx={{ mt: 2 }}>
         {error}
       </Typography>
     )
@@ -82,28 +89,28 @@ export default function ExportList() {
 
   if (!exports.length) {
     return (
-      <Typography align="center" sx={{ mt: 2 }}>
+      <Typography align='center' sx={{ mt: 2 }}>
         No exports found.
       </Typography>
     )
   }
 
   return (
-    <Table size="small" aria-label="exports-table">
+    <Table size='small' aria-label='exports-table'>
       <TableHead>
         <TableRow>
-            <TableCell colSpan={2}>
-                <Typography variant='h6'>Exports</Typography>
-            </TableCell>
+          <TableCell colSpan={2}>
+            <Typography variant='h6'>Exports</Typography>
+          </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {exports.map((exportId) => (
           <TableRow key={exportId} style={{ borderBottom: 'none' }}>
             <TableCell style={{ borderBottom: 'none' }}>{exportId}</TableCell>
-            <TableCell align="right" style={{ borderBottom: 'none' }}>
+            <TableCell align='right' style={{ borderBottom: 'none' }}>
               <IconButton
-                aria-label="download"
+                aria-label='download'
                 onClick={() => handleDownload(exportId)}
                 loading={downloading === exportId}
                 disabled={deleting === exportId}
@@ -111,7 +118,7 @@ export default function ExportList() {
                 <DownloadIcon />
               </IconButton>
               <IconButton
-                aria-label="delete"
+                aria-label='delete'
                 onClick={() => handleDelete(exportId)}
                 loading={deleting === exportId}
                 disabled={downloading === exportId}

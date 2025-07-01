@@ -1,6 +1,6 @@
 {
   "name": "flecs-webapp",
-  "version": "4.1.0",
+  "version": "4.1.0-snowhare",
   "description": "FLECS WebApp",
   "keywords": [
     "react",

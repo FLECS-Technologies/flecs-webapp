@@ -16,49 +16,49 @@
  * limitations under the License.
  */
 
-import React, { createContext, useReducer } from 'react'
-import PropTypes from 'prop-types'
-let SET_THEME
+import React, { createContext, useReducer } from 'react';
+import PropTypes from 'prop-types';
+let SET_THEME;
 
-export const darkModeContext = createContext()
+export const darkModeContext = createContext();
 
 export const darkModeReducer = (state, action) => {
   switch (action.type) {
     case SET_THEME:
       return {
         ...state,
-        darkMode: action.payload
-      }
+        darkMode: action.payload,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const DarkModeState = (props) => {
   const initialState = {
-    darkMode: 'false'
-  }
-  const [state, dispatch] = useReducer(darkModeReducer, initialState)
+    darkMode: 'false',
+  };
+  const [state, dispatch] = useReducer(darkModeReducer, initialState);
 
   const setDarkMode = async (bool) => {
     dispatch({
       type: SET_THEME,
-      payload: bool
-    })
-  }
+      payload: bool,
+    });
+  };
 
   return (
     <darkModeContext.Provider
       value={{
         darkMode: state.darkMode,
-        setDarkMode
+        setDarkMode,
       }}
     >
       {props.children}
     </darkModeContext.Provider>
-  )
-}
+  );
+};
 
 DarkModeState.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};

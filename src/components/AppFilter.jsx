@@ -15,39 +15,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Box, Button, Divider, Paper, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
-import React from 'react'
-import CancelIcon from '@mui/icons-material/Cancel'
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import { Box, Button, Divider, Paper, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
+import React from 'react';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
 const AppFilter = (props) => {
-  const { availableFilter, setAvailableFilter, setCategoryFilter, categories, hiddenCategories, search, isSearchEnabled, setIsSearchEnabled } = props
+  const {
+    availableFilter,
+    setAvailableFilter,
+    setCategoryFilter,
+    categories,
+    hiddenCategories,
+    search,
+    isSearchEnabled,
+    setIsSearchEnabled,
+  } = props;
 
   return (
     <Paper>
       <Box sx={{ margin: 1, padding: 1 }}>
         <Box sx={{ mb: 1 }}>
-          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h7'>Availability</Typography>
-          <Divider/>
-          <Button size='small' data-testid="available-filter" style={{ margin: '11px 3px 3px 3px' }} color={availableFilter ? 'primary' : 'inherit'} variant={availableFilter ? 'contained' : 'outlined'} onClick={() => setAvailableFilter()} endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}>Show available apps only</Button>
+          <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h7">
+            Availability
+          </Typography>
+          <Divider />
+          <Button
+            size="small"
+            data-testid="available-filter"
+            style={{ margin: '11px 3px 3px 3px' }}
+            color={availableFilter ? 'primary' : 'inherit'}
+            variant={availableFilter ? 'contained' : 'outlined'}
+            onClick={() => setAvailableFilter()}
+            endIcon={availableFilter ? <CancelIcon /> : <AddCircleOutlineOutlinedIcon />}
+          >
+            Show available apps only
+          </Button>
         </Box>
-        {search &&
+        {search && (
+          <Box sx={{ mt: 2, mb: 1 }}>
+            <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h7">
+              Search
+            </Typography>
+            <Divider sx={{ mb: 1 }} />
+            <Button
+              size="small"
+              data-testid="search-filter"
+              style={{ margin: '3px' }}
+              color={!isSearchEnabled ? 'inherit' : 'primary'}
+              variant={!isSearchEnabled ? 'outlined' : 'contained'}
+              endIcon={!isSearchEnabled ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />}
+              onClick={() => setIsSearchEnabled(!isSearchEnabled)}
+            >
+              {search}
+            </Button>
+          </Box>
+        )}
         <Box sx={{ mt: 2, mb: 1 }}>
-          <Typography sx={{ flex: '0.1 0.1 10%' }} variant='h7'>Search</Typography>
-          <Divider sx={{ mb: 1 }}/>
-          <Button size='small' data-testid="search-filter" style={{ margin: '3px' }} color={!isSearchEnabled ? 'inherit' : 'primary'} variant={!isSearchEnabled ? 'outlined' : 'contained'} endIcon={!isSearchEnabled ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} onClick={() => setIsSearchEnabled(!isSearchEnabled)}>{search}</Button>
-        </Box>
-        }
-        <Box sx={{ mt: 2, mb: 1 }}>
-          <Typography sx={{ flex: '0.1 0.1 10%', color: 'primary' }} variant='h7'>Category</Typography>
-          <Divider sx={{ mb: 1 }}/>
-          {categories?.map(c => <Button size='small' data-testid="category-filter" style={{ margin: '3px' }} color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'} variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'} endIcon={hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />} key={c.id} onClick={() => setCategoryFilter(c.id)}>{c.name} ({c.count})</Button>)}
+          <Typography sx={{ flex: '0.1 0.1 10%', color: 'primary' }} variant="h7">
+            Category
+          </Typography>
+          <Divider sx={{ mb: 1 }} />
+          {categories?.map((c) => (
+            <Button
+              size="small"
+              data-testid="category-filter"
+              style={{ margin: '3px' }}
+              color={hiddenCategories.includes(c.id) ? 'inherit' : 'primary'}
+              variant={hiddenCategories.includes(c.id) ? 'outlined' : 'contained'}
+              endIcon={
+                hiddenCategories.includes(c.id) ? <AddCircleOutlineOutlinedIcon /> : <CancelIcon />
+              }
+              key={c.id}
+              onClick={() => setCategoryFilter(c.id)}
+            >
+              {c.name} ({c.count})
+            </Button>
+          ))}
         </Box>
       </Box>
     </Paper>
-  )
-}
+  );
+};
 
 AppFilter.propTypes = {
   availableFilter: PropTypes.bool,
@@ -57,7 +107,7 @@ AppFilter.propTypes = {
   hiddenCategories: PropTypes.array,
   search: PropTypes.string,
   isSearchEnabled: PropTypes.bool,
-  setIsSearchEnabled: PropTypes.func
-}
+  setIsSearchEnabled: PropTypes.func,
+};
 
-export { AppFilter }
+export { AppFilter };

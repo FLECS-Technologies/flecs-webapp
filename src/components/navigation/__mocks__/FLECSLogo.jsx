@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
+import React from 'react';
 
 export default function FLECSLogo() {
-  return <div>FLECSLogo</div>
+  return <div>FLECSLogo</div>;
 }

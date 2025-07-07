@@ -15,21 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function authHeaderUseBearer () {
-  return { Authentication: 'Bearer ABCDEFG' }
+function authHeaderUseBearer() {
+  return { Authentication: 'Bearer ABCDEFG' };
 }
 
-function authorizationHeaderUseBearer () {
-  return { Authorization: 'Bearer ABCDEFG' }
+function authorizationHeaderUseBearer() {
+  return { Authorization: 'Bearer ABCDEFG' };
 }
 
-function authHeaderUseXAccess () {
+function authHeaderUseXAccess() {
   // for Node.js Express back-end
-  return 'x-access-tokenABCDEFG'
+  return 'x-access-tokenABCDEFG';
 }
 
-function jwt () {
-  return 'ABCDEFG'
+function jwt() {
+  return 'ABCDEFG';
 }
 
-export { authHeaderUseBearer, authorizationHeaderUseBearer, authHeaderUseXAccess, jwt }
+export { authHeaderUseBearer, authorizationHeaderUseBearer, authHeaderUseXAccess, jwt };

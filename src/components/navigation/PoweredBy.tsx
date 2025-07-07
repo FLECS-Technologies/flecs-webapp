@@ -16,38 +16,38 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import FLECSLogo from './FLECSLogo'
-import { Box, Typography } from '@mui/material'
-import { useSearchParams } from 'react-router-dom'
+import React from 'react';
+import FLECSLogo from './FLECSLogo';
+import { Box, Typography } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 
 const PoweredByFLECS: React.FC = () => {
-  const [visible, setIsVisible] = React.useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [visible, setIsVisible] = React.useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   React.useEffect(() => {
-    isVisible()
-  }, [searchParams])
+    isVisible();
+  }, [searchParams]);
 
   const isVisible = () => {
-    const hideAppBar = searchParams.get('hideappbar')
+    const hideAppBar = searchParams.get('hideappbar');
     if (hideAppBar?.toLowerCase() === 'true') {
-      setIsVisible(true)
+      setIsVisible(true);
     } else {
-      setIsVisible(false)
+      setIsVisible(false);
     }
-  }
+  };
 
   return (
     <div>
       {visible && (
         <Box
-          component='a'
-          aria-label='powered-by-link'
-          role='link' // Explicitly add the role for testing purposes
-          href='https://flecs.tech' // Link to FLECS
-          target='_blank'
-          rel='noopener noreferrer'
+          component="a"
+          aria-label="powered-by-link"
+          role="link" // Explicitly add the role for testing purposes
+          href="https://flecs.tech" // Link to FLECS
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
             display: 'inline-flex', // Inline with content width
             alignItems: 'center', // Vertically align items
@@ -61,9 +61,9 @@ const PoweredByFLECS: React.FC = () => {
             '&:hover': {
               backgroundColor: 'background.default', // Subtle change to background (slightly darker or lighter)
               '.MuiTypography-root': {
-                color: 'text.secondary' // Slightly change text to a secondary color
-              }
-            }
+                color: 'text.secondary', // Slightly change text to a secondary color
+              },
+            },
           }}
         >
           <FLECSLogo /> {/* Logo remains the primary color */}
@@ -72,7 +72,7 @@ const PoweredByFLECS: React.FC = () => {
               marginLeft: 1,
               fontSize: '0.875rem',
               color: 'text.primary', // Initial text color
-              transition: 'color 0.3s ease' // Smooth transition for text color
+              transition: 'color 0.3s ease', // Smooth transition for text color
             }}
           >
             powered by FLECS
@@ -80,7 +80,7 @@ const PoweredByFLECS: React.FC = () => {
         </Box>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PoweredByFLECS
+export default PoweredByFLECS;

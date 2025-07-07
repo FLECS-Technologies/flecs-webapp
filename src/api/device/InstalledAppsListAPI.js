@@ -16,19 +16,22 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class GetInstalledAppsListAPI extends BaseAPI {
-  async getAppList () {
+  async getAppList() {
     // GET request using fetch with error handling
     const requestOptions = {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    }
+      headers: { 'Content-Type': 'application/json' },
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL, requestOptions)
-    } catch (error) { }
+      await this.callAPI(
+        DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.GET_INSTALLED_APP_LIST_URL,
+        requestOptions,
+      );
+    } catch (error) {}
   }
 }

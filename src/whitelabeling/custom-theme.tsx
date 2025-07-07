@@ -15,19 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createTheme, ThemeOptions } from '@mui/material/styles'
-import './custom-fonts.css'
-import {
-  darkTheme as flecsDarkTheme,
-  lightTheme as flecsLightTheme
-} from '../styles/theme'
+import { createTheme, ThemeOptions } from '@mui/material/styles';
+import './custom-fonts.css';
+import { darkTheme as flecsDarkTheme, lightTheme as flecsLightTheme } from '../styles/theme';
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
-} as ThemeOptions)
+  ...flecsDarkTheme,
+} as ThemeOptions);
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
-} as ThemeOptions)
+  ...flecsLightTheme,
+} as ThemeOptions);
 
-export { darkTheme, lightTheme }
+export { darkTheme, lightTheme };

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -24,22 +24,22 @@ import {
   Tabs,
   Tab,
   Button,
-  Box
-} from '@mui/material'
-import EnvironmentConfigTab from './tabs/EnvironmentConfigTab'
-import UsbConfigTab from './tabs/UsbConfigTab'
-import NetworkConfigTab from './tabs/NetworkConfigTab'
-import PortsConfigTab from './tabs/PortsConfigTab'
-import { api } from '../../api/flecs-core/api-client'
-import EditorConfigTab from './tabs/EditorConfigTab'
+  Box,
+} from '@mui/material';
+import EnvironmentConfigTab from './tabs/EnvironmentConfigTab';
+import UsbConfigTab from './tabs/UsbConfigTab';
+import NetworkConfigTab from './tabs/NetworkConfigTab';
+import PortsConfigTab from './tabs/PortsConfigTab';
+import { api } from '../../api/flecs-core/api-client';
+import EditorConfigTab from './tabs/EditorConfigTab';
 
 interface InstanceConfigDialogProps {
-  open: boolean
-  onClose: () => void
-  instanceId: string
-  instanceName: string
-  activeTab: number
-  setActiveTab: React.Dispatch<React.SetStateAction<number>>
+  open: boolean;
+  onClose: () => void;
+  instanceId: string;
+  instanceName: string;
+  activeTab: number;
+  setActiveTab: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
@@ -48,84 +48,73 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   instanceId,
   instanceName,
 }) => {
-  const [activeTab, setActiveTab] = useState(0)
-  const [hasChanges, setHasChanges] = useState(false)
-  const [restarting, setRestarting] = useState(false)
+  const [activeTab, setActiveTab] = useState(0);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [restarting, setRestarting] = useState(false);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue)
-  }
+    setActiveTab(newValue);
+  };
 
   const handleSaveChanges = async () => {
     if (hasChanges) {
       try {
-        await api.instances.instancesInstanceIdStopPost(instanceId)
-        await api.instances.instancesInstanceIdStartPost(instanceId)
-        setHasChanges(false)
+        await api.instances.instancesInstanceIdStopPost(instanceId);
+        await api.instances.instancesInstanceIdStartPost(instanceId);
+        setHasChanges(false);
       } catch (error) {
-        console.error('Error while restarting the app instance:', error)
+        console.error('Error while restarting the app instance:', error);
       }
     }
-  }
+  };
 
   const handleClose = async () => {
     if (hasChanges) {
-      setRestarting(true)
-      await handleSaveChanges()
+      setRestarting(true);
+      await handleSaveChanges();
     }
-    setRestarting(false)
-    onClose()
-  }
+    setRestarting(false);
+    onClose();
+  };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='lg' PaperProps={{
-      style: {
-        alignSelf: 'flex-start'
-      }
-      }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="lg"
+      PaperProps={{
+        style: {
+          alignSelf: 'flex-start',
+        },
+      }}
+    >
       <DialogTitle>Configure {instanceName}</DialogTitle>
-      <Tabs value={activeTab} onChange={handleTabChange} variant='fullWidth'>
-        <Tab label='USB Devices'></Tab>
-        <Tab label='Network Interfaces' />
-        <Tab label='Ports' />
-        <Tab label='Environment Variables' />
-        <Tab label='Editors' />
+      <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
+        <Tab label="USB Devices"></Tab>
+        <Tab label="Network Interfaces" />
+        <Tab label="Ports" />
+        <Tab label="Environment Variables" />
+        <Tab label="Editors" />
       </Tabs>
       <DialogContent>
         <Box mt={2}>
-          {activeTab === 0 && (
-            <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />
-          )}
-          {activeTab === 1 && (
-            <NetworkConfigTab
-              instanceId={instanceId}
-              onChange={setHasChanges}
-            />
-          )}
-          {activeTab === 2 && (
-            <PortsConfigTab instanceId={instanceId} onChange={setHasChanges} />
-          )}
+          {activeTab === 0 && <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+          {activeTab === 1 && <NetworkConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+          {activeTab === 2 && <PortsConfigTab instanceId={instanceId} onChange={setHasChanges} />}
           {activeTab === 3 && (
-            <EnvironmentConfigTab
-              instanceId={instanceId}
-              onChange={setHasChanges}
-            />
+            <EnvironmentConfigTab instanceId={instanceId} onChange={setHasChanges} />
           )}
-          {activeTab === 4 && (
-            <EditorConfigTab
-              instanceId={instanceId}
-              onChange={setHasChanges}
-            />
-          )}
+          {activeTab === 4 && <EditorConfigTab instanceId={instanceId} onChange={setHasChanges} />}
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color='secondary' disabled={restarting}>
+        <Button onClick={handleClose} color="secondary" disabled={restarting}>
           {restarting ? 'Applying Changes' : 'Close'}
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default InstanceConfigDialog
+export default InstanceConfigDialog;

@@ -15,36 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography
-} from '@mui/material'
-import { CoreVersion, Distro, Kernel } from './VersionInterfaces'
+import React from 'react';
+import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { CoreVersion, Distro, Kernel } from './VersionInterfaces';
 
 interface VersionsTableProps {
-  coreVersion?: CoreVersion
-  webappVersion?: string
-  distro?: Distro
-  kernel?: Kernel
+  coreVersion?: CoreVersion;
+  webappVersion?: string;
+  distro?: Distro;
+  kernel?: Kernel;
 }
 interface VersionData {
-  component: string
-  version?: string
+  component: string;
+  version?: string;
 }
 
 const VersionsTable: React.FC<VersionsTableProps> = ({
   coreVersion = {},
   webappVersion = 'N/A',
   distro = { name: 'Distro', version: 'N/A' },
-  kernel = { version: 'N/A' }
+  kernel = { version: 'N/A' },
 }) => {
   function createData(component: string, version?: string): VersionData {
-    return { component, version }
+    return { component, version };
   }
 
   const versions = React.useMemo(
@@ -53,39 +46,30 @@ const VersionsTable: React.FC<VersionsTableProps> = ({
       createData('API', coreVersion?.api),
       createData('UI', webappVersion),
       createData(distro?.name || 'Distro', distro?.version),
-      createData('Kernel', kernel?.version)
+      createData('Kernel', kernel?.version),
     ],
-    [coreVersion, webappVersion, distro, kernel]
-  )
+    [coreVersion, webappVersion, distro, kernel],
+  );
 
   return (
-    <Table
-      data-testid='versions-table'
-      size='small'
-      aria-label='versions-table'
-    >
+    <Table data-testid="versions-table" size="small" aria-label="versions-table">
       <TableHead>
-        <TableRow key='versions-table-head'>
+        <TableRow key="versions-table-head">
           <TableCell colSpan={2}>
-            <Typography variant='h6'>Versions</Typography>
+            <Typography variant="h6">Versions</Typography>
           </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {versions.map(({ component, version }) => (
-          <TableRow
-            key={`${component}-${version}`}
-            style={{ borderBottom: 'none' }}
-          >
+          <TableRow key={`${component}-${version}`} style={{ borderBottom: 'none' }}>
             <TableCell style={{ borderBottom: 'none' }}>{component}</TableCell>
-            <TableCell style={{ borderBottom: 'none' }}>
-              {version || 'N/A'}
-            </TableCell>
+            <TableCell style={{ borderBottom: 'none' }}>{version || 'N/A'}</TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
-  )
-}
+  );
+};
 
-export default VersionsTable
+export default VersionsTable;

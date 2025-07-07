@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { LicenseInfoAPIResponse } from '../info'
+import { LicenseInfoAPIResponse } from '../info';
 
 export const mockLicenseInfoAPIResponse = {
   data: {
@@ -24,15 +24,15 @@ export const mockLicenseInfoAPIResponse = {
     type: 'user license',
     sessionId: {
       id: 'session-id',
-      timestamp: new Date(1718009140)
-    }
-  } as LicenseInfoAPIResponse
-}
+      timestamp: new Date(1718009140),
+    },
+  } as LicenseInfoAPIResponse,
+};
 
 function LicenseInfoAPI() {
   return new Promise((resolve, reject) => {
-    resolve(mockLicenseInfoAPIResponse.data)
-  })
+    resolve(mockLicenseInfoAPIResponse.data);
+  });
 }
 
-export { LicenseInfoAPI }
+export { LicenseInfoAPI };

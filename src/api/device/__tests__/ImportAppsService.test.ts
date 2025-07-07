@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { postImportApps } from '../ImportAppsService'
-import { DeviceAPIConfiguration } from '../../api-config'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { postImportApps } from '../ImportAppsService';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 describe('postImportApps', () => {
-  let originalXMLHttpRequest: typeof XMLHttpRequest
-  let mockXhr: any
-  let sendSpy: any
-  let openSpy: any
-  let setRequestHeaderSpy: any
+  let originalXMLHttpRequest: typeof XMLHttpRequest;
+  let mockXhr: any;
+  let sendSpy: any;
+  let openSpy: any;
+  let setRequestHeaderSpy: any;
 
   beforeEach(() => {
-    originalXMLHttpRequest = global.XMLHttpRequest
+    originalXMLHttpRequest = global.XMLHttpRequest;
 
-    sendSpy = vi.fn()
-    openSpy = vi.fn()
-    setRequestHeaderSpy = vi.fn()
+    sendSpy = vi.fn();
+    openSpy = vi.fn();
+    setRequestHeaderSpy = vi.fn();
 
     mockXhr = {
       open: openSpy,
@@ -40,44 +40,44 @@ describe('postImportApps', () => {
       readyState: 0,
       status: 0,
       responseText: 'success',
-      onreadystatechange: null
-    }
+      onreadystatechange: null,
+    };
 
-    global.XMLHttpRequest = vi.fn(() => mockXhr) as any
-  })
+    global.XMLHttpRequest = vi.fn(() => mockXhr) as any;
+  });
 
   afterEach(() => {
-    global.XMLHttpRequest = originalXMLHttpRequest
-  })
+    global.XMLHttpRequest = originalXMLHttpRequest;
+  });
 
   it('resolves when status is 202', async () => {
-    const promise = postImportApps(new Blob(['test']), 'testfile.txt')
+    const promise = postImportApps(new Blob(['test']), 'testfile.txt');
     // Simulate XHR readyState change
-    mockXhr.status = 202
-    mockXhr.readyState = 4
+    mockXhr.status = 202;
+    mockXhr.readyState = 4;
     setTimeout(() => {
-      mockXhr.onreadystatechange && mockXhr.onreadystatechange()
-    }, 0)
-    await expect(promise).resolves.toBe('success')
+      mockXhr.onreadystatechange && mockXhr.onreadystatechange();
+    }, 0);
+    await expect(promise).resolves.toBe('success');
     expect(openSpy).toHaveBeenCalledWith(
       'POST',
       DeviceAPIConfiguration.TARGET +
         DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
         DeviceAPIConfiguration.POST_IMPORT_URL,
-      true
-    )
-    expect(setRequestHeaderSpy).toHaveBeenCalledWith('Content-Disposition', 'testfile.txt')
-    expect(sendSpy).toHaveBeenCalled()
-  })
+      true,
+    );
+    expect(setRequestHeaderSpy).toHaveBeenCalledWith('Content-Disposition', 'testfile.txt');
+    expect(sendSpy).toHaveBeenCalled();
+  });
 
   it('rejects when status is not 202', async () => {
-    const promise = postImportApps(new Blob(['test']), 'testfile.txt')
-    mockXhr.status = 400
-    mockXhr.statusText = 'Bad Request'
-    mockXhr.readyState = 4
+    const promise = postImportApps(new Blob(['test']), 'testfile.txt');
+    mockXhr.status = 400;
+    mockXhr.statusText = 'Bad Request';
+    mockXhr.readyState = 4;
     setTimeout(() => {
-      mockXhr.onreadystatechange && mockXhr.onreadystatechange()
-    }, 0)
-    await expect(promise).rejects.toBe('Bad Request')
-  })
-})
+      mockXhr.onreadystatechange && mockXhr.onreadystatechange();
+    }, 0);
+    await expect(promise).rejects.toBe('Bad Request');
+  });
+});

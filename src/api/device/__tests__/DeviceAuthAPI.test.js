@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { act } from 'react-dom/test-utils'
-import { DeviceAPIConfiguration } from '../../api-config'
-import { postMPLogin, postMPLogout } from '../DeviceAuthAPI'
+import axios from 'axios';
+import { act } from 'react-dom/test-utils';
+import { DeviceAPIConfiguration } from '../../api-config';
+import { postMPLogin, postMPLogout } from '../DeviceAuthAPI';
 
-jest.mock('axios')
+jest.mock('axios');
 
 const testUser = {
   user: {
@@ -29,67 +29,65 @@ const testUser = {
     display_name: 'test-customer',
     user_url: '',
     user_email: 'test-customer@test.test',
-    user_registered: '2022-01-13 08:43:14'
+    user_registered: '2022-01-13 08:43:14',
   },
   redirect: null,
   jwt: {
     token: 'mytoken',
-    token_expires: 123
-  }
-}
+    token_expires: 123,
+  },
+};
 
 describe('DeviceAuthAPI', () => {
   beforeEach(() => {
-    axios.put = jest.fn()
-    axios.delete = jest.fn()
-  })
+    axios.put = jest.fn();
+    axios.delete = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('calls successful mp-login', async () => {
-    axios.put.mockResolvedValueOnce()
+    axios.put.mockResolvedValueOnce();
     await act(async () => {
-      postMPLogin(testUser)
-    })
+      postMPLogin(testUser);
+    });
 
     expect(axios.put).toHaveBeenCalledWith(
       DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
         DeviceAPIConfiguration.CONSOLE_ROUTE +
         DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL,
-      testUser
-    )
-  })
+      testUser,
+    );
+  });
 
   test('calls  mp-logout', async () => {
-    axios.delete.mockResolvedValueOnce()
+    axios.delete.mockResolvedValueOnce();
     await act(async () => {
-      postMPLogout()
-    })
+      postMPLogout();
+    });
 
     expect(axios.delete).toHaveBeenCalledWith(
       DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
         DeviceAPIConfiguration.CONSOLE_ROUTE +
-        DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
-    )
-  })
+        DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL,
+    );
+  });
 
   test('calls failed mp-login', async () => {
-    axios.put.mockReturnValue(
-      Promise.reject(new Error('Failed to login user at the device'))
-    )
+    axios.put.mockReturnValue(Promise.reject(new Error('Failed to login user at the device')));
     await act(async () => {
-      expect(postMPLogin(testUser)).rejects.toThrowError()
-    })
-  })
+      expect(postMPLogin(testUser)).rejects.toThrowError();
+    });
+  });
 
   test('calls successful mp-logout', async () => {
     axios.delete.mockReturnValue(
-      Promise.reject(new Error('Failed to log out user from the device'))
-    )
+      Promise.reject(new Error('Failed to log out user from the device')),
+    );
     await act(async () => {
-      expect(postMPLogout()).rejects.toThrowError()
-    })
-  })
-})
+      expect(postMPLogout()).rejects.toThrowError();
+    });
+  });
+});

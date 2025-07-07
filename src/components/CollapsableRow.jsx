@@ -16,43 +16,47 @@
  * limitations under the License.
  */
 
-import { Collapse, IconButton, TableCell, TableRow } from '@mui/material'
-import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import { Collapse, IconButton, TableCell, TableRow } from '@mui/material';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-export default function CollapsableRow (props) {
-  const { title, children } = props
-  const [open, setOpen] = React.useState(false)
+export default function CollapsableRow(props) {
+  const { title, children } = props;
+  const [open, setOpen] = React.useState(false);
   return (
-  <Fragment>
-        <TableRow>
-            <TableCell data-testid="expand-cell" style={{ borderBottom: 'none' }}>
-                <IconButton
-                    data-testid="expand-button"
-                    aria-label="expand row"
-                    size="small"
-                    sx={{ mr: 1 }}
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
-                {title}
-            </TableCell>
-        </TableRow>
-        <TableRow>
-            <TableCell data-testid="instances-cell" style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} >
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                    {children}
-                </Collapse>
-            </TableCell>
+    <Fragment>
+      <TableRow>
+        <TableCell data-testid="expand-cell" style={{ borderBottom: 'none' }}>
+          <IconButton
+            data-testid="expand-button"
+            aria-label="expand row"
+            size="small"
+            sx={{ mr: 1 }}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+          {title}
+        </TableCell>
       </TableRow>
-  </Fragment>
-  )
+      <TableRow>
+        <TableCell
+          data-testid="instances-cell"
+          style={{ paddingBottom: 0, paddingTop: 0 }}
+          colSpan={6}
+        >
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            {children}
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </Fragment>
+  );
 }
 
 CollapsableRow.propTypes = {
   title: PropTypes.string,
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};

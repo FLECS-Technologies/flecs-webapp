@@ -15,40 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Box, Button, Tooltip } from '@mui/material'
-import { TransportProtocol } from '@flecs/core-client-ts'
-import { SwapHoriz } from '@mui/icons-material'
+import React from 'react';
+import { Box, Button, Tooltip } from '@mui/material';
+import { TransportProtocol } from '@flecs/core-client-ts';
+import { SwapHoriz } from '@mui/icons-material';
 
 interface AddPortRangeMappingButtonProps {
-  onAdd: (protocol: TransportProtocol) => void
-  defaultProtocol: TransportProtocol
+  onAdd: (protocol: TransportProtocol) => void;
+  defaultProtocol: TransportProtocol;
 }
 
 const AddPortRangeMappingButton: React.FC<AddPortRangeMappingButtonProps> = ({
   onAdd,
-  defaultProtocol
+  defaultProtocol,
 }) => {
   const handleAdd = () => {
-    onAdd(defaultProtocol)
-  }
+    onAdd(defaultProtocol);
+  };
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Tooltip title='Add a range of ports (e.g., 8000–8010:8000-8010)'>
+      <Tooltip title="Add a range of ports (e.g., 8000–8010:8000-8010)">
         <span>
-          <Button
-            onClick={handleAdd}
-            variant='text'
-            color='secondary'
-            startIcon={<SwapHoriz />}
-          >
+          <Button onClick={handleAdd} variant="text" color="secondary" startIcon={<SwapHoriz />}>
             Add Port Range Mapping
           </Button>
         </span>
       </Tooltip>
     </Box>
-  )
-}
+  );
+};
 
-export default AddPortRangeMappingButton
+export default AddPortRangeMappingButton;

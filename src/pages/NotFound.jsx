@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Grid, Typography } from '@mui/material'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Grid, Typography } from '@mui/material';
 
-export default function NotFound () {
+export default function NotFound() {
   return (
     <Grid
       container
@@ -29,19 +29,22 @@ export default function NotFound () {
       justifyContent="center"
       style={{ minHeight: '95vh' }}
     >
-      <Grid size={{xs:3}}>
-        <Typography aria-label='404' variant='h1' color='primary.main'>404</Typography>
+      <Grid size={{ xs: 3 }}>
+        <Typography aria-label="404" variant="h1" color="primary.main">
+          404
+        </Typography>
       </Grid>
-      <Grid size={{xs:3}}>
-        <Typography aria-label='sorry' variant='body'>Sorry we couldn&apos;t find that page...</Typography>
+      <Grid size={{ xs: 3 }}>
+        <Typography aria-label="sorry" variant="body">
+          Sorry we couldn&apos;t find that page...
+        </Typography>
       </Grid>
-      <Grid size={{xs:3}}>
-        <Typography aria-label='take-me-back' variant='body'>
+      <Grid size={{ xs: 3 }}>
+        <Typography aria-label="take-me-back" variant="body">
           Take me back to&nbsp;
-          <Link to="/">my apps</Link>
-          .
+          <Link to="/">my apps</Link>.
         </Typography>
       </Grid>
     </Grid>
-  )
+  );
 }

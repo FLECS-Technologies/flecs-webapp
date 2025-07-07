@@ -15,29 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { TextField, IconButton, Tooltip, Card, Icon } from '@mui/material'
-import { Delete, Save, SwapHoriz } from '@mui/icons-material'
-import TransportProtocolSelector from './TransportProtocolSelector'
+import React from 'react';
+import { TextField, IconButton, Tooltip, Card, Icon } from '@mui/material';
+import { Delete, Save, SwapHoriz } from '@mui/icons-material';
+import TransportProtocolSelector from './TransportProtocolSelector';
 import {
   InstancePortMappingRange,
   InstancePortMappingSingle,
-  TransportProtocol
-} from '@flecs/core-client-ts'
+  TransportProtocol,
+} from '@flecs/core-client-ts';
 
 interface PortRangeMappingProps {
-  port: InstancePortMappingRange
-  protocol: TransportProtocol
-  index: number
+  port: InstancePortMappingRange;
+  protocol: TransportProtocol;
+  index: number;
   onChange: (
     index: number,
     field: keyof InstancePortMappingSingle | keyof InstancePortMappingRange,
-    value: number | { start?: number; end?: number }
-  ) => void
-  sx?: object
-  handleDeletePort: (index: number) => void
-  handleSavePort: (protocol: string, index: number) => void
-  handleProtocolChange: (index: number, protocol: TransportProtocol) => void
+    value: number | { start?: number; end?: number },
+  ) => void;
+  sx?: object;
+  handleDeletePort: (index: number) => void;
+  handleSavePort: (protocol: string, index: number) => void;
+  handleProtocolChange: (index: number, protocol: TransportProtocol) => void;
 }
 
 const PortRangeMapping: React.FC<PortRangeMappingProps> = ({
@@ -47,64 +47,64 @@ const PortRangeMapping: React.FC<PortRangeMappingProps> = ({
   onChange,
   handleDeletePort,
   handleSavePort,
-  handleProtocolChange
+  handleProtocolChange,
 }) => {
-  const [changes, setChanges] = React.useState(false)
+  const [changes, setChanges] = React.useState(false);
   const changeProtocol = (newProtocol: TransportProtocol) => {
-    handleProtocolChange(index, newProtocol)
-    setChanges(true)
-  }
+    handleProtocolChange(index, newProtocol);
+    setChanges(true);
+  };
   return (
     <Card sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }}>
       <Icon sx={{ mr: 2, alignSelf: 'center' }}>
         <SwapHoriz />
       </Icon>
       <TextField
-        label='Host Port Start'
-        variant='outlined'
-        size='small'
+        label="Host Port Start"
+        variant="outlined"
+        size="small"
         value={port.host_ports.start}
         onChange={(e) => {
-          setChanges(true)
+          setChanges(true);
           onChange(index, 'host_ports', {
-            start: parseInt(e.target.value, 10) || 0
-          })
+            start: parseInt(e.target.value, 10) || 0,
+          });
         }}
         sx={{ flex: 1, mr: 2 }}
       />
       <TextField
-        label='Host Port End'
-        variant='outlined'
-        size='small'
+        label="Host Port End"
+        variant="outlined"
+        size="small"
         value={port.host_ports.end}
         onChange={(e) => {
-          setChanges(true)
+          setChanges(true);
           onChange(index, 'host_ports', {
-            end: parseInt(e.target.value, 10) || 0
-          })
+            end: parseInt(e.target.value, 10) || 0,
+          });
         }}
         sx={{ flex: 1, mr: 2 }}
       />
       <TextField
-        label='Container Port Start'
-        variant='outlined'
-        size='small'
+        label="Container Port Start"
+        variant="outlined"
+        size="small"
         value={port.container_ports.start}
         onChange={(e) =>
           onChange(index, 'container_ports', {
-            start: parseInt(e.target.value, 10) || 0
+            start: parseInt(e.target.value, 10) || 0,
           })
         }
         sx={{ flex: 1, mr: 2 }}
       />
       <TextField
-        label='Container Port End'
-        variant='outlined'
-        size='small'
+        label="Container Port End"
+        variant="outlined"
+        size="small"
         value={port.container_ports.end}
         onChange={(e) =>
           onChange(index, 'container_ports', {
-            end: parseInt(e.target.value, 10) || 0
+            end: parseInt(e.target.value, 10) || 0,
           })
         }
         sx={{ flex: 1, mr: 2 }}
@@ -114,21 +114,18 @@ const PortRangeMapping: React.FC<PortRangeMappingProps> = ({
         onChange={changeProtocol}
         sx={{ flex: 1, mr: 2 }}
       />
-      <Tooltip title='Delete Port Mapping'>
-        <IconButton
-          sx={{ flexShrink: 0 }}
-          onClick={() => handleDeletePort(index)}
-        >
+      <Tooltip title="Delete Port Mapping">
+        <IconButton sx={{ flexShrink: 0 }} onClick={() => handleDeletePort(index)}>
           <Delete />
         </IconButton>
       </Tooltip>
-      <Tooltip title='Save Port Mapping'>
+      <Tooltip title="Save Port Mapping">
         <span>
           <IconButton
-            aria-label='Save Port Mapping'
+            aria-label="Save Port Mapping"
             onClick={() => {
-              handleSavePort(protocol as TransportProtocol, index)
-              setChanges(false)
+              handleSavePort(protocol as TransportProtocol, index);
+              setChanges(false);
             }}
             sx={{ flexShrink: 0 }}
             disabled={!changes}
@@ -138,7 +135,7 @@ const PortRangeMapping: React.FC<PortRangeMappingProps> = ({
         </span>
       </Tooltip>
     </Card>
-  )
-}
+  );
+};
 
-export default PortRangeMapping
+export default PortRangeMapping;

@@ -15,24 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { render } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 
-import App from '../App'
+import App from '../App';
 
-vi.mock('../api/device/SystemPingService')
-vi.mock('../api/device/ExportAppsService.js')
-vi.mock('axios')
+vi.mock('../api/device/SystemPingService');
+vi.mock('../api/device/ExportAppsService.js');
+vi.mock('axios');
 
 describe('App', () => {
   it('renders App component', async () => {
     render(
       <Router>
         <App />
-      </Router>
-    )
-    expect(true).toBe(true)
-  })
-})
+      </Router>,
+    );
+    expect(true).toBe(true);
+  });
+});

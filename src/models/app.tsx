@@ -1,11 +1,11 @@
 export interface appKey {
-    version : string,
-    name: string
+  version: string;
+  name: string;
 }
 
 export interface App {
-  app: string,
-  appKey: appKey,
-  title: string,
-  installedVersions: Array<string>,
+  app: string;
+  appKey: appKey;
+  title: string;
+  installedVersions: Array<string>;
 }

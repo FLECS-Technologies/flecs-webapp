@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import { React } from 'react'
-import { DarkModeState } from './components/ThemeHandler'
-import Frame from './components/Frame'
-import { ReferenceDataContextProvider } from './data/ReferenceDataContext'
-import { AppList } from './data/AppList'
-import { AuthProvider } from './components/AuthProvider'
-import { UIRoutes } from './pages/ui-routes'
-import { SystemContextProvider } from './data/SystemProvider'
-import { SystemData } from './data/SystemData'
-import { JobsContextProvider } from './data/JobsContext'
-import { FilterContextProvider } from './data/FilterContext'
-import { QuestContextProvider } from './components/quests/QuestContext'
+import { React } from 'react';
+import { DarkModeState } from './components/ThemeHandler';
+import Frame from './components/Frame';
+import { ReferenceDataContextProvider } from './data/ReferenceDataContext';
+import { AppList } from './data/AppList';
+import { AuthProvider } from './components/AuthProvider';
+import { UIRoutes } from './pages/ui-routes';
+import { SystemContextProvider } from './data/SystemProvider';
+import { SystemData } from './data/SystemData';
+import { JobsContextProvider } from './data/JobsContext';
+import { FilterContextProvider } from './data/FilterContext';
+import { QuestContextProvider } from './components/quests/QuestContext';
 
 export default function App() {
   return (
@@ -52,5 +52,5 @@ export default function App() {
         </JobsContextProvider>
       </AuthProvider>
     </DarkModeState>
-  )
+  );
 }

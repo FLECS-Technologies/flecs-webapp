@@ -15,37 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { render, screen, fireEvent, act } from '@testing-library/react'
-import InstanceLog from '../InstanceLog'
-import { vitest } from 'vitest'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import InstanceLog from '../InstanceLog';
+import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/InstanceLogService')
+vitest.mock('../../api/device/InstanceLogService');
 
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
   version: '1.0.0',
   status: 'running',
-  desired: 'stopped'
-}
+  desired: 'stopped',
+};
 describe('InstanceLog', () => {
   test('renders InstanceLog component', async () => {
-    
-      render(<InstanceLog instance={testInstance}></InstanceLog>)
-    
+    render(<InstanceLog instance={testInstance}></InstanceLog>);
 
-    expect(await screen.getByTestId('log-editor')).toBeVisible()
-  })
+    expect(await screen.getByTestId('log-editor')).toBeVisible();
+  });
 
   test('Click refresh', async () => {
-    
-    render(<InstanceLog instance={testInstance}></InstanceLog>)
-    
-    const refreshButton = await screen.getByTestId('refresh-button')
+    render(<InstanceLog instance={testInstance}></InstanceLog>);
 
-    act(async () => { fireEvent.click(refreshButton) })
-    expect(screen.getByTestId('log-editor')).toBeVisible()
-  })
-})
+    const refreshButton = await screen.getByTestId('refresh-button');
+
+    act(async () => {
+      fireEvent.click(refreshButton);
+    });
+    expect(screen.getByTestId('log-editor')).toBeVisible();
+  });
+});

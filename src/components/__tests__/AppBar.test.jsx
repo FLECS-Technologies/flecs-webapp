@@ -15,29 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import AppBar from '../AppBar'
-import { DarkModeState } from '../ThemeHandler'
-import { JobsContextProvider } from '../../data/JobsContext'
-import { vi } from 'vitest'
-import * as AuthProvider from '../AuthProvider'
-import { QuestContextProvider } from '../quests/QuestContext'
+import React from 'react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppBar from '../AppBar';
+import { DarkModeState } from '../ThemeHandler';
+import { JobsContextProvider } from '../../data/JobsContext';
+import { vi } from 'vitest';
+import * as AuthProvider from '../AuthProvider';
+import { QuestContextProvider } from '../quests/QuestContext';
 
 // mock react-router-dom navigate
-const mockedUsedNavigate = vi.fn()
+const mockedUsedNavigate = vi.fn();
 
 vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal()
+  const actual = await importOriginal();
   return {
     ...actual,
     useNavigate: () => mockedUsedNavigate,
-  }
-})
+  };
+});
 
 // mock API services
-vi.mock('../../api/device/ExportAppsService.js')
+vi.mock('../../api/device/ExportAppsService.js');
 
 // mock auth
 const currentUser = {
@@ -55,22 +55,20 @@ const currentUser = {
     },
   },
   setUser: vi.fn(),
-}
+};
 
 vi.mock('../AuthProvider', async () => {
-  const actual = await vi.importActual<typeof import('../AuthProvider')>(
-    '../AuthProvider'
-  )
+  const actual = (await vi.importActual) < typeof import('../AuthProvider') > '../AuthProvider';
   return {
     ...actual,
     useAuth: vi.fn(),
-  }
-})
+  };
+});
 
 describe('AppBar', () => {
   afterAll(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   test('renders AppBar component', () => {
     const { getByLabelText, getByText } = render(
@@ -80,12 +78,12 @@ describe('AppBar', () => {
             <AppBar />
           </JobsContextProvider>
         </QuestContextProvider>
-      </Router>
-    )
+      </Router>,
+    );
 
-    expect(getByLabelText('logo')).toBeVisible()
-    expect(getByText('FLECS')).toBeVisible()
-  })
+    expect(getByLabelText('logo')).toBeVisible();
+    expect(getByText('FLECS')).toBeVisible();
+  });
 
   test('Click on login', async () => {
     const { getByLabelText } = render(
@@ -95,17 +93,17 @@ describe('AppBar', () => {
             <AppBar />
           </JobsContextProvider>
         </QuestContextProvider>
-      </Router>
-    )
+      </Router>,
+    );
 
-    const loginButton = getByLabelText('login-button')
-    fireEvent.click(loginButton)
+    const loginButton = getByLabelText('login-button');
+    fireEvent.click(loginButton);
 
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Login')
-  })
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Login');
+  });
 
   test('Click on user menu', async () => {
-    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser)
+    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser);
 
     const { getByLabelText, getByText } = render(
       <Router>
@@ -114,23 +112,23 @@ describe('AppBar', () => {
             <AppBar />
           </JobsContextProvider>
         </QuestContextProvider>
-      </Router>
-    )
+      </Router>,
+    );
 
-    const userMenuButton = getByLabelText('user-menu-button')
-    fireEvent.click(userMenuButton)
+    const userMenuButton = getByLabelText('user-menu-button');
+    fireEvent.click(userMenuButton);
 
-    await waitFor(() => getByText('Profile'))
+    await waitFor(() => getByText('Profile'));
 
-    expect(getByText('Profile')).toBeVisible()
-    expect(getByText('Sign out')).toBeVisible()
+    expect(getByText('Profile')).toBeVisible();
+    expect(getByText('Sign out')).toBeVisible();
 
-    const menu = getByLabelText('user-menu')
-    fireEvent.keyDown(menu, { key: 'Escape' })
-  })
+    const menu = getByLabelText('user-menu');
+    fireEvent.keyDown(menu, { key: 'Escape' });
+  });
 
   test('Click on logout', async () => {
-    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser)
+    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser);
 
     const { getByLabelText, getByText } = render(
       <Router>
@@ -139,21 +137,21 @@ describe('AppBar', () => {
             <AppBar />
           </JobsContextProvider>
         </QuestContextProvider>
-      </Router>
-    )
+      </Router>,
+    );
 
-    const userMenuButton = getByLabelText('user-menu-button')
-    fireEvent.click(userMenuButton)
+    const userMenuButton = getByLabelText('user-menu-button');
+    fireEvent.click(userMenuButton);
 
-    await waitFor(() => getByText('Sign out'))
+    await waitFor(() => getByText('Sign out'));
 
-    const signOut = getByText('Sign out')
-    expect(signOut).toBeVisible()
+    const signOut = getByText('Sign out');
+    expect(signOut).toBeVisible();
 
-    fireEvent.click(signOut)
+    fireEvent.click(signOut);
 
-    expect(currentUser.setUser).toHaveBeenCalled()
-  })
+    expect(currentUser.setUser).toHaveBeenCalled();
+  });
 
   test('Change theme', async () => {
     const { getByLabelText } = render(
@@ -165,18 +163,18 @@ describe('AppBar', () => {
             </JobsContextProvider>
           </QuestContextProvider>
         </Router>
-      </DarkModeState>
-    )
+      </DarkModeState>,
+    );
 
-    const changeThemeButton = getByLabelText('change-theme-button')
-    fireEvent.click(changeThemeButton)
+    const changeThemeButton = getByLabelText('change-theme-button');
+    fireEvent.click(changeThemeButton);
 
-    const darkmodeIcon = getByLabelText('DarkModeIcon')
-    expect(darkmodeIcon).toBeVisible()
+    const darkmodeIcon = getByLabelText('DarkModeIcon');
+    expect(darkmodeIcon).toBeVisible();
 
-    fireEvent.click(changeThemeButton)
+    fireEvent.click(changeThemeButton);
 
-    const lightModeIcon = getByLabelText('LightModeIcon')
-    expect(lightModeIcon).toBeVisible()
-  })
-})
+    const lightModeIcon = getByLabelText('LightModeIcon');
+    expect(lightModeIcon).toBeVisible();
+  });
+});

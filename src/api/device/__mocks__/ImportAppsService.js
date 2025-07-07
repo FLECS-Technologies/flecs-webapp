@@ -18,8 +18,8 @@
 
 async function postImportApps(file, fileName) {
   return new Promise((resolve, reject) => {
-    resolve('{"jobId":2}')
-  })
+    resolve('{"jobId":2}');
+  });
 }
 
-export { postImportApps }
+export { postImportApps };

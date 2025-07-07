@@ -15,33 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Select, MenuItem } from '@mui/material'
-import { TransportProtocol } from '@flecs/core-client-ts'
+import React from 'react';
+import { Select, MenuItem } from '@mui/material';
+import { TransportProtocol } from '@flecs/core-client-ts';
 
 interface TransportProtocolSelectorProps {
-  value: TransportProtocol
-  onChange: (protocol: TransportProtocol) => void
-  label?: string
-  sx?: object
+  value: TransportProtocol;
+  onChange: (protocol: TransportProtocol) => void;
+  label?: string;
+  sx?: object;
 }
 
 const TransportProtocolSelector: React.FC<TransportProtocolSelectorProps> = ({
   value,
   onChange,
-  sx = {}
+  sx = {},
 }) => {
   return (
     <Select
-      aria-label='Transport Protocol'
+      aria-label="Transport Protocol"
       value={value}
       onChange={(e) => onChange(e.target.value as TransportProtocol)}
-      size='small'
+      size="small"
     >
       <MenuItem value={TransportProtocol.Tcp}>TCP</MenuItem>
       <MenuItem value={TransportProtocol.Udp}>UDP</MenuItem>
     </Select>
-  )
-}
+  );
+};
 
-export default TransportProtocolSelector
+export default TransportProtocolSelector;

@@ -15,53 +15,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { IconButton, Typography } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
-import WhiteLabelLogo, { useWhiteLabelLogo, showPoweredBy } from '../../whitelabeling/WhiteLabelLogo'
-import FLECSLogo from '../navigation/FLECSLogo'
-
+import React from 'react';
+import { IconButton, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import WhiteLabelLogo, {
+  useWhiteLabelLogo,
+  showPoweredBy,
+} from '../../whitelabeling/WhiteLabelLogo';
+import FLECSLogo from '../navigation/FLECSLogo';
 
 const Logo: React.FC = () => {
-  const theme = useTheme() // Access the Material-UI theme
+  const theme = useTheme(); // Access the Material-UI theme
   return (
     <React.Fragment>
       {!useWhiteLabelLogo && (
         <React.Fragment>
-          <IconButton aria-label='logo' disabled={true}>
-            <FLECSLogo logoColor='white' />
+          <IconButton aria-label="logo" disabled={true}>
+            <FLECSLogo logoColor="white" />
           </IconButton>
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             FLECS
           </Typography>
         </React.Fragment>
       )}
       {useWhiteLabelLogo && showPoweredBy && (
         <React.Fragment>
-          <IconButton aria-label='logo' disabled={true}>
-            <WhiteLabelLogo/>
+          <IconButton aria-label="logo" disabled={true}>
+            <WhiteLabelLogo />
           </IconButton>
           <Typography variant="caption" component="div" sx={{ flexGrow: 1 }}>
             powered by
-            <IconButton aria-label='FLECS-Logo' disabled={true}>
-              <FLECSLogo logoColor='white'/>
+            <IconButton aria-label="FLECS-Logo" disabled={true}>
+              <FLECSLogo logoColor="white" />
             </IconButton>
-            <Typography variant="caption">
-                FLECS
-            </Typography>
+            <Typography variant="caption">FLECS</Typography>
           </Typography>
         </React.Fragment>
       )}
       {useWhiteLabelLogo && !showPoweredBy && (
         <React.Fragment>
-          <IconButton aria-label='logo' disabled={true}>
-            <WhiteLabelLogo/>
+          <IconButton aria-label="logo" disabled={true}>
+            <WhiteLabelLogo />
           </IconButton>
-          <Typography variant="caption" component="div" sx={{ flexGrow: 1 }}/>
+          <Typography variant="caption" component="div" sx={{ flexGrow: 1 }} />
         </React.Fragment>
       )}
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default Logo
+export default Logo;

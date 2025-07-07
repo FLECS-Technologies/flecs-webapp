@@ -16,23 +16,21 @@
  * limitations under the License.
  */
 
-import BaseAPI from '../BaseAPI'
+import BaseAPI from '../BaseAPI';
 
 export default class JobsAPI extends BaseAPI {
-  async getJobs () {
-  }
+  async getJobs() {}
 
-  async getJob (jobId) {
+  async getJob(jobId) {
     return new Promise((resolve, reject) => {
       if (jobId) {
-        resolve()
-        this.state.responseData = { status: 'successful', result: { message: '01234567' } }
+        resolve();
+        this.state.responseData = { status: 'successful', result: { message: '01234567' } };
       } else {
-        reject(new Error('Mock: Failed to fetch job status.'))
+        reject(new Error('Mock: Failed to fetch job status.'));
       }
-    })
+    });
   }
 
-  async deleteJob (jobId) {
-  }
+  async deleteJob(jobId) {}
 }

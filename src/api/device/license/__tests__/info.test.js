@@ -15,34 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { LicenseInfoAPI } from '../info'
-import { mockLicenseInfoAPIResponse } from '../__mocks__/info'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { LicenseInfoAPI } from '../info';
+import { mockLicenseInfoAPIResponse } from '../__mocks__/info';
 
-jest.mock('axios')
+jest.mock('axios');
 
 describe('LicenseInfoAPI', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('calls successful LicenseInfoAPI', async () => {
-    axios.get.mockResolvedValueOnce(mockLicenseInfoAPIResponse)
-    const response = await waitFor(() => LicenseInfoAPI())
+    axios.get.mockResolvedValueOnce(mockLicenseInfoAPIResponse);
+    const response = await waitFor(() => LicenseInfoAPI());
 
-    expect(response.isValid).toBe(mockLicenseInfoAPIResponse.data.isValid)
-  })
+    expect(response.isValid).toBe(mockLicenseInfoAPIResponse.data.isValid);
+  });
 
   test('calls unsuccessful LicenseInfoAPI', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Fetching license info failed.'))
+    axios.get.mockRejectedValueOnce(new Error('Fetching license info failed.'));
     await act(async () => {
-      expect(LicenseInfoAPI()).rejects.toThrow()
-    })
-  })
-})
+      expect(LicenseInfoAPI()).rejects.toThrow();
+    });
+  });
+});

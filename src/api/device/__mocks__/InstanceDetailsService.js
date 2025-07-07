@@ -15,43 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function getInstanceDetails (instanceId) {
+function getInstanceDetails(instanceId) {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        additionalInfo: 'string',
-        app: 'tech.flecs.app',
-        conffiles: [
-          {
-            container: '/etc/conf.d/configuration.cfg',
-            host: '/var/lib/flecs/instances/0123abcd/conf/configuration.cfg'
-          }
-        ],
-        hostname: 'flecs-0123abcd',
-        instanceId: '87654fed',
-        ipAdddress: '172.21.0.2',
-        mounts: [
-          {
-            container: '/path/to/dir',
-            host: '/path/to/host/dir'
-          }
-        ],
-        ports: [
-          {
-            container: '8080',
-            host: '18080'
-          }
-        ],
-        version: 'v4.0.6',
-        volumes: [
-          {
-            name: 'var',
-            path: '/var/app'
-          }
-        ]
-      }
-    )
-  })
+    resolve({
+      additionalInfo: 'string',
+      app: 'tech.flecs.app',
+      conffiles: [
+        {
+          container: '/etc/conf.d/configuration.cfg',
+          host: '/var/lib/flecs/instances/0123abcd/conf/configuration.cfg',
+        },
+      ],
+      hostname: 'flecs-0123abcd',
+      instanceId: '87654fed',
+      ipAdddress: '172.21.0.2',
+      mounts: [
+        {
+          container: '/path/to/dir',
+          host: '/path/to/host/dir',
+        },
+      ],
+      ports: [
+        {
+          container: '8080',
+          host: '18080',
+        },
+      ],
+      version: 'v4.0.6',
+      volumes: [
+        {
+          name: 'var',
+          path: '/var/app',
+        },
+      ],
+    });
+  });
 }
 
-export { getInstanceDetails }
+export { getInstanceDetails };

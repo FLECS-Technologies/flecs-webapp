@@ -25,8 +25,8 @@ import {
   JobsApi,
   QuestsApi,
   Configuration,
-  SystemApi
-} from '@flecs/core-client-ts'
+  SystemApi,
+} from '@flecs/core-client-ts';
 
 export function createApi(config: Configuration) {
   return {
@@ -38,20 +38,20 @@ export function createApi(config: Configuration) {
     instances: new InstancesApi(config),
     jobs: new JobsApi(config),
     system: new SystemApi(config),
-    quests: new QuestsApi(config)
-  }
+    quests: new QuestsApi(config),
+  };
 }
 
 function getBaseURL(): string {
-  return host() + baseURL()
+  return host() + baseURL();
 }
 
 function host() {
-  let target = ''
+  let target = '';
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-    target = import.meta.env.VITE_APP_DEV_CORE_URL || ''
+    target = import.meta.env.VITE_APP_DEV_CORE_URL || '';
   }
-  return target
+  return target;
 }
 
 function baseURL() {
@@ -59,11 +59,11 @@ function baseURL() {
     import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
     import.meta.env.VITE_APP_ENVIRONMENT === 'development'
   ) {
-    return '/api/v2'
+    return '/api/v2';
   }
-  return '../api/v2'
+  return '../api/v2';
 }
 
-const config = new Configuration({ basePath: getBaseURL() })
+const config = new Configuration({ basePath: getBaseURL() });
 
-export const api = createApi(config)
+export const api = createApi(config);

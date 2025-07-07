@@ -15,64 +15,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { MarketplaceAPIConfiguration } from '../api-config'
-import { postMPLogout } from '../device/DeviceAuthAPI'
+import axios from 'axios';
+import { MarketplaceAPIConfiguration } from '../api-config';
+import { postMPLogout } from '../device/DeviceAuthAPI';
 
 class AuthService {
-  login (username, password) {
-    const issueJWT = true
-    const url = MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL
+  login(username, password) {
+    const issueJWT = true;
+    const url =
+      MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL;
     return axios
       .post(url, {
         username,
         password,
-        issueJWT
+        issueJWT,
       })
-      .then(response => {
+      .then((response) => {
         if (response.data.statusCode === 200 && response.data.data?.jwt?.token) {
-          localStorage.setItem('user', JSON.stringify(response.data.data))
+          localStorage.setItem('user', JSON.stringify(response.data.data));
         }
 
-        return response.data.data
+        return response.data.data;
       })
-      .catch(error => {
-        return Promise.reject(error)
-      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   }
 
-  validate (token) {
-    const jwt = { token }
-    const url = MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL
+  validate(token) {
+    const jwt = { token };
+    const url =
+      MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL;
     return axios
       .post(url, {
-        jwt
+        jwt,
       })
-      .then(response => {
+      .then((response) => {
         if (response.data.statusCode === 200 && response.data.data.isValid) {
-          return response.data.data
+          return response.data.data;
         }
       })
-      .catch(error => {
-        this.logout()
-        return Promise.reject(error)
-      })
+      .catch((error) => {
+        this.logout();
+        return Promise.reject(error);
+      });
   }
 
-  logout () {
+  logout() {
     postMPLogout()
       .then(
-        () => { /* successfully logged out from the device */ },
-        error => { console.log(error.message) }
+        () => {
+          /* successfully logged out from the device */
+        },
+        (error) => {
+          console.log(error.message);
+        },
       )
       .finally(() => {
-        localStorage.removeItem('user')
-      })
+        localStorage.removeItem('user');
+      });
   }
 
-  getCurrentUser () {
-    return JSON.parse(localStorage.getItem('user'))
+  getCurrentUser() {
+    return JSON.parse(localStorage.getItem('user'));
   }
 }
 
-export default new AuthService()
+export default new AuthService();

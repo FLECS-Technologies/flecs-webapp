@@ -15,34 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  ErrorOutline,
-  CheckCircle,
-  HourglassEmpty,
-  Block
-} from '@mui/icons-material'
-import { CircularProgress } from '@mui/material'
-import { QuestState } from '@flecs/core-client-ts'
-import React from 'react'
+import { ErrorOutline, CheckCircle, HourglassEmpty, Block } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
+import { QuestState } from '@flecs/core-client-ts';
+import React from 'react';
 
 type QuestIconProps = {
-  state: QuestState
-}
+  state: QuestState;
+};
 
-export const QuestIcon = React.memo(function QuestIcon({
-  state
-}: QuestIconProps) {
+export const QuestIcon = React.memo(function QuestIcon({ state }: QuestIconProps) {
   switch (state) {
     case QuestState.Failed:
     case QuestState.Failing:
-      return <ErrorOutline color='error' />
+      return <ErrorOutline color="error" />;
     case QuestState.Success:
-      return <CheckCircle color='success' />
+      return <CheckCircle color="success" />;
     case QuestState.Pending:
-      return <HourglassEmpty color='action' />
+      return <HourglassEmpty color="action" />;
     case QuestState.Skipped:
-      return <Block color='action' />
+      return <Block color="action" />;
     default:
-      return <CircularProgress size={24} sx={{ color: 'info' }} />
+      return <CircularProgress size={24} sx={{ color: 'info' }} />;
   }
-})
+});

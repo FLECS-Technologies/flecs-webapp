@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import AppRating from '../AppRating'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import AppRating from '../AppRating';
 
-jest.mock('../../api/marketplace/AppRatingService')
-jest.mock('../../api/auth-header')
+jest.mock('../../api/marketplace/AppRatingService');
+jest.mock('../../api/auth-header');
 
 const mockApp = {
   id: 37,
@@ -53,8 +53,7 @@ const mockApp = {
   total_sales: 0,
   virtual: true,
   downloadable: false,
-  downloads: [
-  ],
+  downloads: [],
   download_limit: 0,
   download_expiry: 0,
   external_url: '',
@@ -72,23 +71,19 @@ const mockApp = {
   reviews_allowed: true,
   average_rating: '0.00',
   rating_count: 0,
-  upsell_ids: [
-  ],
-  cross_sell_ids: [
-  ],
+  upsell_ids: [],
+  cross_sell_ids: [],
   parent_id: 0,
   purchase_note: '',
   categories: [
     {
       id: 15,
       name: 'Unkategorisiert',
-      slug: 'unkategorisiert'
-    }
+      slug: 'unkategorisiert',
+    },
   ],
-  tags: [
-  ],
-  images: [
-  ],
+  tags: [],
+  images: [],
   attributes: [
     {
       id: 0,
@@ -96,9 +91,7 @@ const mockApp = {
       position: 0,
       visible: false,
       variation: false,
-      options: [
-        'org.openjsf.node-red'
-      ]
+      options: ['org.openjsf.node-red'],
     },
     {
       id: 0,
@@ -106,61 +99,51 @@ const mockApp = {
       position: 1,
       visible: false,
       variation: false,
-      options: [
-        ':1880'
-      ]
-    }
+      options: [':1880'],
+    },
   ],
-  default_attributes: [
-  ],
-  variations: [
-  ],
-  grouped_products: [
-  ],
+  default_attributes: [],
+  variations: [],
+  grouped_products: [],
   menu_order: 0,
-  price_html: '<span class="woocommerce-Price-amount amount"><bdi>1,00&nbsp;<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span>',
-  related_ids: [
-    36,
-    38,
-    40,
-    35,
-    39
-  ],
+  price_html:
+    '<span class="woocommerce-Price-amount amount"><bdi>1,00&nbsp;<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span>',
+  related_ids: [36, 38, 40, 35, 39],
   meta_data: [
     {
       id: 712,
       key: 'port-author-name',
-      value: 'OpenJS Foundation'
+      value: 'OpenJS Foundation',
     },
     {
       id: 713,
       key: 'port-release',
-      value: ''
+      value: '',
     },
     {
       id: 714,
       key: 'port-version',
-      value: '2.1.4'
+      value: '2.1.4',
     },
     {
       id: 715,
       key: 'product-contpadding',
-      value: 'on'
+      value: 'on',
     },
     {
       id: 716,
       key: 'disable-woo',
-      value: 'off'
+      value: 'off',
     },
     {
       id: 717,
       key: 'fetch_data_itunes',
-      value: 'on'
+      value: 'on',
     },
     {
       id: 718,
       key: 'app-icon',
-      value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png'
+      value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png',
     },
     {
       id: 719,
@@ -170,67 +153,67 @@ const mockApp = {
           title: 'Create First Flow',
           icon: '',
           download_text: ' ',
-          url: 'https://nodered.org/docs/tutorials/first-flow'
+          url: 'https://nodered.org/docs/tutorials/first-flow',
         },
         {
           title: 'User Guide',
           icon: '',
           download_text: ' ',
-          url: 'https://nodered.org/docs/user-guide/'
-        }
-      ]
+          url: 'https://nodered.org/docs/user-guide/',
+        },
+      ],
     },
     {
       id: 720,
       key: 'port-requirement',
-      value: 'amd64'
+      value: 'amd64',
     },
     {
       id: 721,
       key: 'custom-screenshot',
-      value: ''
+      value: '',
     },
     {
       id: 1670,
       key: 'app-custom-meta',
-      value: ''
-    }
-  ]
-}
+      value: '',
+    },
+  ],
+};
 
 describe('AppRating', () => {
   test('renders AppRating component', async () => {
     await act(async () => {
-      render(<AppRating ></AppRating>)
-    })
-  })
+      render(<AppRating></AppRating>);
+    });
+  });
 
   test('Create a rating', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     await act(async () => {
-      render(<AppRating app={mockApp}></AppRating>)
-    })
+      render(<AppRating app={mockApp}></AppRating>);
+    });
 
-    const rating = screen.getAllByRole('radio')
+    const rating = screen.getAllByRole('radio');
 
-    await user.click(rating[0])
+    await user.click(rating[0]);
 
-    const saveButton = screen.getAllByRole('button')
+    const saveButton = screen.getAllByRole('button');
 
-    await user.click(saveButton[0])
-  })
+    await user.click(saveButton[0]);
+  });
 
   test('Cancel a rating', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     await act(async () => {
-      render(<AppRating ></AppRating>)
-    })
-    const rating = screen.getAllByRole('radio')
+      render(<AppRating></AppRating>);
+    });
+    const rating = screen.getAllByRole('radio');
 
-    await user.click(rating[0])
+    await user.click(rating[0]);
 
-    const cancelButton = screen.getAllByRole('button')
+    const cancelButton = screen.getAllByRole('button');
 
-    await user.click(cancelButton[1])
-  })
-})
+    await user.click(cancelButton[1]);
+  });
+});

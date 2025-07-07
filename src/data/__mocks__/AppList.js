@@ -2,7 +2,7 @@ export const mockInstalledApps = [
   {
     appKey: {
       name: 'com.vendor.app',
-      version: '4.2.0'
+      version: '4.2.0',
     },
     title: 'App',
     author: 'Vendor GmbH',
@@ -10,12 +10,12 @@ export const mockInstalledApps = [
     availability: 'available',
     status: 'installed',
     multiInstance: true,
-    instances: []
+    instances: [],
   },
   {
     appKey: {
       name: 'com.vendor.app2',
-      version: '4.1.0'
+      version: '4.1.0',
     },
     title: 'App 2',
     author: 'Vendor GmbH',
@@ -23,12 +23,12 @@ export const mockInstalledApps = [
     availability: 'available',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
+    instances: [],
   },
   {
     appKey: {
       name: 'org.mosquitto.broker',
-      version: '2.0.14-openssl'
+      version: '2.0.14-openssl',
     },
     title: 'Mosquitto MQTT',
     author: 'Eclipse Foundation',
@@ -36,6 +36,6 @@ export const mockInstalledApps = [
     availability: 'available',
     status: 'uninstalled',
     multiInstance: false,
-    instances: []
-  }
-]
+    instances: [],
+  },
+];

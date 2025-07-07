@@ -15,104 +15,102 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react'
-import PropTypes from 'prop-types'
-import AuthService from '../api/marketplace/AuthService'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { postMPLogin } from '../api/device/DeviceAuthAPI'
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import AuthService from '../api/marketplace/AuthService';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { postMPLogin } from '../api/device/DeviceAuthAPI';
 
-let SET_USER
+let SET_USER;
 
-const AuthContext = React.createContext()
+const AuthContext = React.createContext();
 
 const userReducer = (state, action) => {
   switch (action.type) {
     case SET_USER:
       return {
         ...state,
-        user: action.payload
-      }
+        user: action.payload,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
-function AuthProvider (props) {
+function AuthProvider(props) {
   React.useEffect(() => {
-    validateUser()
-  })
+    validateUser();
+  });
 
   const validateUser = async () => {
-    const currentUser = AuthService.getCurrentUser()
+    const currentUser = AuthService.getCurrentUser();
     if (currentUser) {
       AuthService.validate(currentUser?.jwt?.token).then(
         () => {
           postMPLogin(currentUser).then(
             () => {
-              return true
+              return true;
             },
-            error => {
-              console.log(error)
-              value.user = undefined
-            }
-          )
+            (error) => {
+              console.log(error);
+              value.user = undefined;
+            },
+          );
         },
-        error => {
+        (error) => {
           const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.reason) ||
-          error.message ||
-          error.toString()
-          console.log(resMessage)
-          value.user = undefined
-        }
-      )
+            (error.response && error.response.data && error.response.data.reason) ||
+            error.message ||
+            error.toString();
+          console.log(resMessage);
+          value.user = undefined;
+        },
+      );
     }
-  }
+  };
   const initialState = {
-    user: AuthService.getCurrentUser()
-  }
+    user: AuthService.getCurrentUser(),
+  };
 
-  const [state, dispatch] = React.useReducer(userReducer, initialState)
+  const [state, dispatch] = React.useReducer(userReducer, initialState);
 
   const setUser = async (user) => {
     dispatch({
       type: SET_USER,
-      payload: user
-    })
-  }
+      payload: user,
+    });
+  };
 
-  const value = { user: state.user, setUser }
+  const value = { user: state.user, setUser };
 
-  return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>;
 }
 
-function useAuth () {
-  return React.useContext(AuthContext)
+function useAuth() {
+  return React.useContext(AuthContext);
 }
 
-function RequireAuth (props) {
-  const auth = useAuth()
-  const location = useLocation()
+function RequireAuth(props) {
+  const auth = useAuth();
+  const location = useLocation();
 
   if (!auth.user) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
     // than dropping them off on the home page.
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <Outlet />
+  return <Outlet />;
 }
 
-export { AuthContext, AuthProvider, useAuth, RequireAuth }
+export { AuthContext, AuthProvider, useAuth, RequireAuth };
 
 AuthProvider.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};
 
 RequireAuth.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};

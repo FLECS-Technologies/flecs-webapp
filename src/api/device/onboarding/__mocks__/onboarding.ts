@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OnboardingDeviceAPIResponse } from '../onboarding'
+import { OnboardingDeviceAPIResponse } from '../onboarding';
 
 export const mockActivateDeviceAPIResponse = {
-  jobId: 2
-} as OnboardingDeviceAPIResponse
+  jobId: 2,
+} as OnboardingDeviceAPIResponse;
 
 function OnboardingDeviceAPI(file?: File) {
   return new Promise((resolve, reject) => {
     if (!file) {
-      reject(new Error('File is undefined'))
+      reject(new Error('File is undefined'));
     } else {
-      resolve(mockActivateDeviceAPIResponse)
+      resolve(mockActivateDeviceAPIResponse);
     }
-  })
+  });
 }
 
-export { OnboardingDeviceAPI }
+export { OnboardingDeviceAPI };

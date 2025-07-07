@@ -15,39 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { SystemPing } from '../SystemPingService'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { SystemPing } from '../SystemPingService';
 
-jest.mock('axios')
+jest.mock('axios');
 
 const mockPing = {
   data: {
-    additionalInfo: 'Ok'
-  }
-}
+    additionalInfo: 'Ok',
+  },
+};
 
 describe('SystemPing', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('calls successful SystemPing', async () => {
-    axios.get.mockResolvedValueOnce(mockPing)
-    const response = await waitFor(() => SystemPing())
+    axios.get.mockResolvedValueOnce(mockPing);
+    const response = await waitFor(() => SystemPing());
 
-    expect(response.additionalInfo).toBe(mockPing.data.additionalInfo)
-  })
+    expect(response.additionalInfo).toBe(mockPing.data.additionalInfo);
+  });
 
   test('calls unsuccessful SystemPing', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to ping'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to ping'));
     await act(async () => {
-      expect(SystemPing()).rejects.toThrowError()
-    })
-  })
-})
+      expect(SystemPing()).rejects.toThrowError();
+    });
+  });
+});

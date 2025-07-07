@@ -16,33 +16,29 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Toolbar from '@mui/material/Toolbar'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import Tooltip from '@mui/material/Tooltip'
-import DownloadIcon from '@mui/icons-material/Download'
-import DeleteIcon from '@mui/icons-material/Delete'
-import ClearIcon from '@mui/icons-material/Clear'
-import LoadIconButton from './LoadIconButton'
-import InfoIcon from './InfoIcon'
-import { Grid } from '@mui/material'
-import {
-  downloadPastExport,
-  deleteExport
-} from '../api/device/ExportAppsService'
-import { JobsContext } from '../data/JobsContext'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
+import LoadIconButton from './LoadIconButton';
+import InfoIcon from './InfoIcon';
+import { Grid } from '@mui/material';
+import { downloadPastExport, deleteExport } from '../api/device/ExportAppsService';
+import { JobsContext } from '../data/JobsContext';
 
 export default function BasicTable(props) {
-  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonIsDisabled } =
-    props
+  const { jobs, deleteJobs, clearAllFinishedJobs, clearAllButtonIsDisabled } = props;
   const rows = jobs
     ?.sort((a, b) => b.id - a.id)
     .map((j) => ({
@@ -51,34 +47,33 @@ export default function BasicTable(props) {
       status: j.status,
       message: j.result.message,
       numSteps: j.numSteps,
-      currentStep: j.currentStep
-    }))
-  const { exports, fetchExports, setFetchingJobs } =
-    React.useContext(JobsContext)
+      currentStep: j.currentStep,
+    }));
+  const { exports, fetchExports, setFetchingJobs } = React.useContext(JobsContext);
 
   React.useEffect(() => {
-    setFetchingJobs(true)
-    return () => setFetchingJobs(false) // stop fetching on component unmount
-  }, [])
+    setFetchingJobs(true);
+    return () => setFetchingJobs(false); // stop fetching on component unmount
+  }, []);
 
   const handleDownloadPastExport = async (exportId) => {
     if (exports.includes(exportId)) {
-      await downloadPastExport(exportId)
+      await downloadPastExport(exportId);
     }
-  }
+  };
 
   const handleDeleteExport = async (exportId) => {
     if (exports.includes(exportId)) {
-      const answer = await deleteExport(exportId)
+      const answer = await deleteExport(exportId);
       if (answer.status === 200) {
-        await fetchExports()
+        await fetchExports();
       }
     }
-  }
+  };
 
   const checkExport = (exportId) => {
-    return exports.includes(exportId)
-  }
+    return exports.includes(exportId);
+  };
 
   return (
     <React.Fragment>
@@ -86,23 +81,19 @@ export default function BasicTable(props) {
         sx={{
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
-        <Typography variant='h12' id='tableTitle' component='div'>
+        <Typography variant="h12" id="tableTitle" component="div">
           Installation Log
         </Typography>
-        <Tooltip
-          title={
-            'Clear the log (this does not uninstall or remove any apps or instances)'
-          }
-        >
+        <Tooltip title={'Clear the log (this does not uninstall or remove any apps or instances)'}>
           <div>
             <Button
-              variant='outlined'
+              variant="outlined"
               sx={{ mr: 1 }}
               disabled={clearAllButtonIsDisabled}
-              data-testid='clear-all-button'
+              data-testid="clear-all-button"
               onClick={() => clearAllFinishedJobs()}
             >
               Clear All
@@ -111,40 +102,32 @@ export default function BasicTable(props) {
         </Tooltip>
       </Toolbar>
       <TableContainer>
-        <Table size='small' aria-label='simple table'>
+        <Table size="small" aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+              <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                 Description
               </TableCell>
-              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+              <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                 Status
               </TableCell>
-              <TableCell align='left' sx={{ fontWeight: 'bold' }}>
+              <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows?.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell align='left'>
-                  {row.description +
-                    ' (' +
-                    row.currentStep.num +
-                    '/' +
-                    row.numSteps +
-                    ' Steps)'}
+              <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell align="left">
+                  {row.description + ' (' + row.currentStep.num + '/' + row.numSteps + ' Steps)'}
                 </TableCell>
-                <TableCell align='left'>
+                <TableCell align="left">
                   {row.status === 'failed' ? (
                     <div
                       style={{
                         display: 'flex',
-                        alignItems: 'center'
+                        alignItems: 'center',
                       }}
                     >
                       {row.status}
@@ -154,27 +137,21 @@ export default function BasicTable(props) {
                     row.status
                   )}
                 </TableCell>
-                <TableCell align='left'>
-                  <Grid
-                    container
-                    direction='row'
-                    justify='flex-start'
-                    alignItems='flex-start'
-                  >
+                <TableCell align="left">
+                  <Grid container direction="row" justify="flex-start" alignItems="flex-start">
                     <LoadIconButton
                       disabled={row.status === 'running'}
                       onClick={() => deleteJobs(row.id)}
                       icon={
                         <Tooltip title={'Clear this entry from the log'}>
                           <ClearIcon
-                            aria-label='clear-button'
+                            aria-label="clear-button"
                             sx={{ width: '60%', cursor: 'pointer' }}
                           />
                         </Tooltip>
                       }
                     />
-                    {row.description === 'Creating export' &&
-                    row.status === 'successful' ? (
+                    {row.description === 'Creating export' && row.status === 'successful' ? (
                       <>
                         <LoadIconButton
                           title={'Download this export'}
@@ -183,7 +160,7 @@ export default function BasicTable(props) {
                           icon={
                             <Tooltip title={'Download this export'}>
                               <DownloadIcon
-                                aria-label='download-button'
+                                aria-label="download-button"
                                 sx={{ cursor: 'pointer' }}
                               />
                             </Tooltip>
@@ -194,10 +171,7 @@ export default function BasicTable(props) {
                           onClick={() => handleDeleteExport(row.message)}
                           icon={
                             <Tooltip title={'Delete this export'}>
-                              <DeleteIcon
-                                aria-label='delete-button'
-                                sx={{ cursor: 'pointer' }}
-                              />
+                              <DeleteIcon aria-label="delete-button" sx={{ cursor: 'pointer' }} />
                             </Tooltip>
                           }
                         />
@@ -211,12 +185,12 @@ export default function BasicTable(props) {
         </Table>
       </TableContainer>
     </React.Fragment>
-  )
+  );
 }
 
 BasicTable.propTypes = {
   jobs: PropTypes.array,
   deleteJobs: PropTypes.func,
   clearAllFinishedJobs: PropTypes.func,
-  clearAllButtonIsDisabled: PropTypes.bool
-}
+  clearAllButtonIsDisabled: PropTypes.bool,
+};

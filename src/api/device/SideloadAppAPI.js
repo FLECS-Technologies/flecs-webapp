@@ -16,21 +16,24 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class PostSideloadAppAPI extends BaseAPI {
-  async sideloadApp (yml) {
+  async sideloadApp(yml) {
     // POST request using fetch with error handling
-    const manifest = JSON.stringify(yml)
+    const manifest = JSON.stringify(yml);
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ manifest })
-    }
+      body: JSON.stringify({ manifest }),
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP, requestOptions)
-    } catch (error) { }
+      await this.callAPI(
+        DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP,
+        requestOptions,
+      );
+    } catch (error) {}
   }
 }

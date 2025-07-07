@@ -15,106 +15,120 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
-import BaseAPI from './BaseAPI'
-import JobsAPI from './JobsAPI'
-import { sleep } from '../../utils/sleep'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../api-config';
+import BaseAPI from './BaseAPI';
+import JobsAPI from './JobsAPI';
+import { sleep } from '../../utils/sleep';
 
 export class ExportApps extends BaseAPI {
-  async postExportApps (apps, instances) {
+  async postExportApps(apps, instances) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apps, instances })
-    }
+      body: JSON.stringify({ apps, instances }),
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_EXPORT_URL, requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.POST_EXPORT_URL, requestOptions);
+    } catch (error) {}
   }
 }
 
-async function downloadExport (apps, instances) {
+async function downloadExport(apps, instances) {
   try {
     if (apps?.length > 0) {
       // 1. export apps & instances
-      const exportAPI = new ExportApps()
-      await exportAPI.postExportApps(apps, instances)
-      const jobId = exportAPI.state.responseData.jobId
-      const { jobStatus, exportId } = await waitUntilJobIsComplete(jobId)
+      const exportAPI = new ExportApps();
+      await exportAPI.postExportApps(apps, instances);
+      const jobId = exportAPI.state.responseData.jobId;
+      const { jobStatus, exportId } = await waitUntilJobIsComplete(jobId);
 
       // 2. get export file
-      if (jobStatus === 'successful') { // export has been created in the server
-        return await getDownloadExport(exportId)
+      if (jobStatus === 'successful') {
+        // export has been created in the server
+        return await getDownloadExport(exportId);
       } else if (jobStatus === 'failed') {
-        return Promise.reject(new Error('There was a problem creating the export file'))
+        return Promise.reject(new Error('There was a problem creating the export file'));
       }
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 
-async function downloadPastExport (exportId) {
-  const file = await getDownloadExport(exportId)
-  const link = document.createElement('a')
-  link.download = `flecs-export-${exportId}.tar`
-  link.href = URL.createObjectURL(file.blob)
-  link.click()
+async function downloadPastExport(exportId) {
+  const file = await getDownloadExport(exportId);
+  const link = document.createElement('a');
+  link.download = `flecs-export-${exportId}.tar`;
+  link.href = URL.createObjectURL(file.blob);
+  link.click();
 
   // clean up
-  URL.revokeObjectURL(link.href)
+  URL.revokeObjectURL(link.href);
 }
 
-async function deleteExport (exportId) {
+async function deleteExport(exportId) {
   return axios
-    .delete(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.DELETE_EXPORT_URL(exportId))
-    .then(response => {
-      return response
+    .delete(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.DELETE_EXPORT_URL(exportId),
+    )
+    .then((response) => {
+      return response;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-async function getExports () {
+async function getExports() {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.EXPORTS_ROUTE)
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.EXPORTS_ROUTE,
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-async function getDownloadExport (exportId) {
+async function getDownloadExport(exportId) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_EXPORT_URL(exportId), { responseType: 'blob' })
-    .then(response => {
-      return { blob: response.data, exportId }
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_EXPORT_URL(exportId),
+      { responseType: 'blob' },
+    )
+    .then((response) => {
+      return { blob: response.data, exportId };
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
 const waitUntilJobIsComplete = async (jobId) => {
-  const jobsAPI = new JobsAPI()
-  await jobsAPI.getJob(jobId)
-  let jobStatus = jobsAPI.state.responseData.status
+  const jobsAPI = new JobsAPI();
+  await jobsAPI.getJob(jobId);
+  let jobStatus = jobsAPI.state.responseData.status;
 
   while (jobStatus !== 'successful' && jobStatus !== 'failed' && jobStatus !== 'cancelled') {
-    await jobsAPI.getJob(jobId)
-    jobStatus = jobsAPI.state.responseData.status
-    await sleep(500)
+    await jobsAPI.getJob(jobId);
+    jobStatus = jobsAPI.state.responseData.status;
+    await sleep(500);
   }
 
-  const exportId = jobsAPI.state.responseData.result.message
+  const exportId = jobsAPI.state.responseData.result.message;
 
-  return { jobStatus, exportId }
-}
+  return { jobStatus, exportId };
+};
 
-export { getExports, getDownloadExport, downloadExport, downloadPastExport, deleteExport }
+export { getExports, getDownloadExport, downloadExport, downloadPastExport, deleteExport };

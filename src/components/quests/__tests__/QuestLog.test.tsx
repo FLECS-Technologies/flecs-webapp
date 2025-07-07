@@ -15,79 +15,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, cleanup } from '@testing-library/react'
-import { QuestLog } from '../QuestLog'
-import * as ContextModule from '../QuestContext'
-import { QuestContextType } from '../QuestContext'
-import { Quest, QuestState } from '@flecs/core-client-ts'
+import React from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { QuestLog } from '../QuestLog';
+import * as ContextModule from '../QuestContext';
+import { QuestContextType } from '../QuestContext';
+import { Quest, QuestState } from '@flecs/core-client-ts';
 
 // Mock QuestLogEntry
 vi.mock('../QuestLogEntry', () => ({
   __esModule: true,
-  QuestLogEntry: ({ id }: { id: number }) => <div data-testid={`entry-${id}`} />
-}))
+  QuestLogEntry: ({ id }: { id: number }) => <div data-testid={`entry-${id}`} />,
+}));
 
 describe('QuestLog', () => {
-  let setFetching: ReturnType<typeof vi.fn>
-  let mockContext: Partial<QuestContextType>
-  let useQuestContextSpy: any
+  let setFetching: ReturnType<typeof vi.fn>;
+  let mockContext: Partial<QuestContextType>;
+  let useQuestContextSpy: any;
 
   beforeEach(() => {
-    setFetching = vi.fn()
+    setFetching = vi.fn();
     mockContext = {
       setFetching,
       mainQuestIds: [10, 20],
-      quests: { current: new Map<number, Quest>() }
-    }
-    useQuestContextSpy = vi.spyOn(ContextModule, 'useQuestContext')
-    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
-  })
+      quests: { current: new Map<number, Quest>() },
+    };
+    useQuestContextSpy = vi.spyOn(ContextModule, 'useQuestContext');
+    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType);
+  });
 
   afterEach(() => {
-    vi.restoreAllMocks()
-    cleanup()
-  })
+    vi.restoreAllMocks();
+    cleanup();
+  });
 
   it('sets fetching true on mount and false on unmount', () => {
-    const { unmount } = render(<QuestLog />)
-    expect(setFetching).toHaveBeenCalledWith(true)
+    const { unmount } = render(<QuestLog />);
+    expect(setFetching).toHaveBeenCalledWith(true);
 
-    unmount()
-    expect(setFetching).toHaveBeenCalledWith(false)
-  })
+    unmount();
+    expect(setFetching).toHaveBeenCalledWith(false);
+  });
 
   it('renders QuestLogEntry for each mainQuestIds', () => {
-    const ids = [1, 2, 3]
-    mockContext.mainQuestIds = ids
-    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
+    const ids = [1, 2, 3];
+    mockContext.mainQuestIds = ids;
+    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType);
 
-    render(<QuestLog />)
+    render(<QuestLog />);
     ids.forEach((id) => {
-      expect(screen.getByTestId(`entry-${id}`)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByTestId(`entry-${id}`)).toBeInTheDocument();
+    });
+  });
 
   it('shows no quests message when no quests present', () => {
     // quests.current.size === 0 triggers message
-    mockContext.quests!.current.clear()
-    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
+    mockContext.quests!.current.clear();
+    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType);
 
-    render(<QuestLog />)
-    expect(screen.getByText('No quests present')).toBeInTheDocument()
-  })
+    render(<QuestLog />);
+    expect(screen.getByText('No quests present')).toBeInTheDocument();
+  });
 
   it('does not show no quests message when quests exist', () => {
-    mockContext.quests!.current.clear()
+    mockContext.quests!.current.clear();
     mockContext.quests!.current.set(1, {
       id: 1,
       description: '',
-      state: QuestState.Failed
-    } as Quest)
-    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType)
+      state: QuestState.Failed,
+    } as Quest);
+    useQuestContextSpy.mockReturnValue(mockContext as QuestContextType);
 
-    render(<QuestLog />)
-    expect(screen.queryByText('No quests present')).toBeNull()
-  })
-})
+    render(<QuestLog />);
+    expect(screen.queryByText('No quests present')).toBeNull();
+  });
+});

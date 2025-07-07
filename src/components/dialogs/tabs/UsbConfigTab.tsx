@@ -15,153 +15,136 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useEffect, useState } from 'react'
-import { Box, List, CircularProgress, Typography, Stack } from '@mui/material'
-import { api } from '../../../api/flecs-core/api-client'
-import HelpButton from '../../buttons/help/HelpButton'
-import { instancedeviceconfig } from '../../../components/help/helplinks'
-import UsbConfigCard from './usb-devices/UsbConfigCard'
-import ActionSnackbar from '../../../components/ActionSnackbar'
+import React, { useEffect, useState } from 'react';
+import { Box, List, CircularProgress, Typography, Stack } from '@mui/material';
+import { api } from '../../../api/flecs-core/api-client';
+import HelpButton from '../../buttons/help/HelpButton';
+import { instancedeviceconfig } from '../../../components/help/helplinks';
+import UsbConfigCard from './usb-devices/UsbConfigCard';
+import ActionSnackbar from '../../../components/ActionSnackbar';
 
 export interface UsbDevice {
-  port: string
-  name: string
-  vendor: string
-  device_connected: boolean
-  enabled: boolean
+  port: string;
+  name: string;
+  vendor: string;
+  device_connected: boolean;
+  enabled: boolean;
 }
 
 interface UsbConfigTabProps {
-  instanceId: string
-  onChange: (hasChanges: boolean) => void
+  instanceId: string;
+  onChange: (hasChanges: boolean) => void;
 }
 
-const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
-  instanceId,
-  onChange
-}) => {
-  const executedRef = React.useRef(false)
-  const [usbDevices, setUsbDevices] = useState<UsbDevice[]>([])
-  const [loading, setLoading] = useState(true)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
+const UsbConfigTab: React.FC<UsbConfigTabProps> = ({ instanceId, onChange }) => {
+  const executedRef = React.useRef(false);
+  const [usbDevices, setUsbDevices] = useState<UsbDevice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
     alertSeverity: 'success',
-    clipBoardContent: ''
-  })
+    clipBoardContent: '',
+  });
   const fetchUsbDevices = async () => {
     try {
-      const systemDevices = await api.system.systemDevicesUsbGet()
+      const systemDevices = await api.system.systemDevicesUsbGet();
       const instanceDevices =
-        await api.instances.instancesInstanceIdConfigDevicesUsbGet(instanceId)
+        await api.instances.instancesInstanceIdConfigDevicesUsbGet(instanceId);
 
       const devices = systemDevices.data.map((device: any) => {
         const instanceDevice = instanceDevices.data.find(
-          (instanceDevice: any) => instanceDevice.port === device.port
-        )
+          (instanceDevice: any) => instanceDevice.port === device.port,
+        );
         return {
           port: device.port,
           name: device.name ?? 'Unknown',
           vendor: device.vendor ?? 'Unknown',
           device_connected: instanceDevice?.device_connected ?? true,
-          enabled: !!instanceDevice
-        }
-      })
+          enabled: !!instanceDevice,
+        };
+      });
 
       instanceDevices.data.forEach((instanceDevice: any) => {
         const existsInSystemDevices = systemDevices.data.some(
-          (systemDevice: any) => systemDevice.port === instanceDevice.port
-        )
+          (systemDevice: any) => systemDevice.port === instanceDevice.port,
+        );
         if (!existsInSystemDevices) {
           devices.push({
             port: instanceDevice.port,
             name: instanceDevice.name ?? 'Unknown',
             vendor: instanceDevice.vendor ?? 'Unknown',
             device_connected: false,
-            enabled: true
-          })
+            enabled: true,
+          });
         }
-      })
+      });
 
-      devices.sort((a, b) => a.port.localeCompare(b.port))
-      setUsbDevices(devices)
+      devices.sort((a, b) => a.port.localeCompare(b.port));
+      setUsbDevices(devices);
     } catch (error) {
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: 'Failed to load USB config!',
-        clipBoardContent: ''
-      })
-      setSnackbarOpen(true)
+        clipBoardContent: '',
+      });
+      setSnackbarOpen(true);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
   useEffect(() => {
     if (executedRef.current) {
-      return
+      return;
     }
 
-    fetchUsbDevices()
-    executedRef.current = true
-  }, [])
+    fetchUsbDevices();
+    executedRef.current = true;
+  }, []);
 
   const handleToggle = async (port: string, enabled: boolean) => {
     try {
       if (!enabled) {
-        await api.instances.instancesInstanceIdConfigDevicesUsbPortPut(
-          instanceId,
-          port
-        )
+        await api.instances.instancesInstanceIdConfigDevicesUsbPortPut(instanceId, port);
       } else {
-        await api.instances.instancesInstanceIdConfigDevicesUsbPortDelete(
-          instanceId,
-          port
-        )
+        await api.instances.instancesInstanceIdConfigDevicesUsbPortDelete(instanceId, port);
       }
       setUsbDevices((prev) =>
         prev.map((device) =>
-          device.port === port
-            ? { ...device, enabled: !device.enabled }
-            : device
-        )
-      )
-      onChange(true)
+          device.port === port ? { ...device, enabled: !device.enabled } : device,
+        ),
+      );
+      onChange(true);
       setSnackbarState({
         alertSeverity: 'success',
         snackbarText: 'USB config saved successfully!',
-        clipBoardContent: ''
-      })
+        clipBoardContent: '',
+      });
     } catch (error) {
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: 'Failed to save USB config!',
-        clipBoardContent: ''
-      })
+        clipBoardContent: '',
+      });
     } finally {
-      setSnackbarOpen(true)
+      setSnackbarOpen(true);
     }
-  }
+  };
 
   if (loading) {
-    return <CircularProgress />
+    return <CircularProgress />;
   }
 
   return (
     <Box>
-      <Stack direction='row' spacing={2} alignItems='center' sx={{ mb: 2 }}>
-        <Typography variant='h6'>USB Devices</Typography>
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">USB Devices</Typography>
         <HelpButton url={instancedeviceconfig}></HelpButton>
       </Stack>
       <List>
-        {usbDevices.length === 0 && (
-          <Typography>No USB devices available.</Typography>
-        )}
+        {usbDevices.length === 0 && <Typography>No USB devices available.</Typography>}
         {usbDevices.map((device) => (
-          <UsbConfigCard
-            key={device.port}
-            device={device}
-            onEnable={handleToggle}
-          ></UsbConfigCard>
+          <UsbConfigCard key={device.port} device={device} onEnable={handleToggle}></UsbConfigCard>
         ))}
       </List>
       <ActionSnackbar
@@ -171,7 +154,7 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({
         alertSeverity={snackbarState.alertSeverity}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default UsbConfigTab
+export default UsbConfigTab;

@@ -15,24 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import InstallationStepper from '../InstallationStepper'
-import { DeviceActivationContext } from '../../../providers/DeviceActivationContext'
-import { mockApp } from '../../../../models/__mocks__/app'
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../../../data/JobsContext'
-import { vitest } from 'vitest'
+import { render, act, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import InstallationStepper from '../InstallationStepper';
+import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
+import { mockApp } from '../../../../models/__mocks__/app';
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
+import { JobsContextProvider } from '../../../../data/JobsContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/AppAPI')
-vitest.mock('../../../../api/device/DeviceAuthAPI')
-vitest.mock('../../../../api/device/license/status')
-vitest.mock('../../../../api/device/license/activation')
+vitest.mock('../../../../api/device/AppAPI');
+vitest.mock('../../../../api/device/DeviceAuthAPI');
+vitest.mock('../../../../api/device/license/status');
+vitest.mock('../../../../api/device/license/activation');
 
 describe('InstallationStepper Component', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   it('App installation', () => {
     act(() => {
@@ -45,7 +45,7 @@ describe('InstallationStepper Component', () => {
                 activating: false,
                 activate: async () => {},
                 validating: false,
-                validate: async () => {}
+                validate: async () => {},
               }}
             >
               <InstallationStepper
@@ -56,13 +56,13 @@ describe('InstallationStepper Component', () => {
               />
             </DeviceActivationContext.Provider>
           </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    const infoText = screen.getByTestId('install-app-step')
-    expect(infoText).toBeInTheDocument()
-  })
+    const infoText = screen.getByTestId('install-app-step');
+    expect(infoText).toBeInTheDocument();
+  });
 
   it('App update', () => {
     act(() => {
@@ -75,7 +75,7 @@ describe('InstallationStepper Component', () => {
                 activating: false,
                 activate: async () => {},
                 validating: false,
-                validate: async () => {}
+                validate: async () => {},
               }}
             >
               <InstallationStepper
@@ -86,13 +86,13 @@ describe('InstallationStepper Component', () => {
               />
             </DeviceActivationContext.Provider>
           </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    const infoText = screen.getByTestId('update-app-step')
-    expect(infoText).toBeInTheDocument()
-  })
+    const infoText = screen.getByTestId('update-app-step');
+    expect(infoText).toBeInTheDocument();
+  });
 
   it('App sideload', () => {
     act(() => {
@@ -105,7 +105,7 @@ describe('InstallationStepper Component', () => {
                 activating: false,
                 activate: async () => {},
                 validating: false,
-                validate: async () => {}
+                validate: async () => {},
               }}
             >
               <InstallationStepper
@@ -116,13 +116,13 @@ describe('InstallationStepper Component', () => {
               />
             </DeviceActivationContext.Provider>
           </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    const infoText = screen.getByTestId('sideload-app-step')
-    expect(infoText).toBeInTheDocument()
-  })
+    const infoText = screen.getByTestId('sideload-app-step');
+    expect(infoText).toBeInTheDocument();
+  });
 
   it('Missing activation', () => {
     act(() => {
@@ -135,7 +135,7 @@ describe('InstallationStepper Component', () => {
                 activating: false,
                 activate: async () => {},
                 validating: false,
-                validate: async () => {}
+                validate: async () => {},
               }}
             >
               <InstallationStepper
@@ -146,11 +146,11 @@ describe('InstallationStepper Component', () => {
               />
             </DeviceActivationContext.Provider>
           </ReferenceDataContextProvider>
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    const infoText = screen.getByTestId('device-activation-step')
-    expect(infoText).toBeInTheDocument()
-  })
-})
+    const infoText = screen.getByTestId('device-activation-step');
+    expect(infoText).toBeInTheDocument();
+  });
+});

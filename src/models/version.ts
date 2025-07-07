@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 interface Version {
-  version: string
-  release_notes?: string | null
-  breaking_changes?: string | null
-  installed?: boolean
+  version: string;
+  release_notes?: string | null;
+  breaking_changes?: string | null;
+  installed?: boolean;
 }
 
-export type { Version }
+export type { Version };

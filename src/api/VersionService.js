@@ -15,42 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from './api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from './api-config';
 
-async function getVersion () {
+async function getVersion() {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_VERSION_URL)
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_VERSION_URL,
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-async function getLatestVersion () {
+async function getLatestVersion() {
   return axios
-    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_LATEST_VERSION_URL)
-    .then(response => {
-      return response.data
+    .get(
+      MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_LATEST_VERSION_URL,
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-function isLaterThan (version1, version2) {
+function isLaterThan(version1, version2) {
   if (version1 && version2) {
-    const v1 = version1.split('-')
-    const v2 = version2.split('-')
+    const v1 = version1.split('-');
+    const v2 = version2.split('-');
     if (v1[0] > v2[0]) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   } else {
-    return false
+    return false;
   }
 }
-export { getVersion, getLatestVersion, isLaterThan }
+export { getVersion, getLatestVersion, isLaterThan };

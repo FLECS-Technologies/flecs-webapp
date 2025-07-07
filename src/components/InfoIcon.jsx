@@ -16,22 +16,22 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import Tooltip from '@mui/material/Tooltip'
-import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Tooltip from '@mui/material/Tooltip';
+import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined';
 
 const InfoIcon = (props) => {
-  const { message } = props
+  const { message } = props;
   return (
     <Tooltip title={message} style={{ width: '35px', height: '24px' }}>
-      <ReportOutlinedIcon aria-label='info-button' outlined='true' sx={{ color: '#959595' }}/>
+      <ReportOutlinedIcon aria-label="info-button" outlined="true" sx={{ color: '#959595' }} />
     </Tooltip>
-  )
-}
+  );
+};
 
 InfoIcon.propTypes = {
-  message: PropTypes.string
-}
+  message: PropTypes.string,
+};
 
-export default InfoIcon
+export default InfoIcon;

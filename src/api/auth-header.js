@@ -15,45 +15,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function authHeaderUseBearer () {
-  const user = JSON.parse(localStorage.getItem('user'))
+function authHeaderUseBearer() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
   if (user && user.jwt && user.jwt.token) {
-    return { Authentication: 'Bearer ' + user.jwt.token }
+    return { Authentication: 'Bearer ' + user.jwt.token };
   } else {
-    return {}
+    return {};
   }
 }
 
-function authorizationHeaderUseBearer () {
-  const user = JSON.parse(localStorage.getItem('user'))
+function authorizationHeaderUseBearer() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
   if (user && user.jwt && user.jwt.token) {
-    return { Authorization: 'Bearer ' + user.jwt.token }
+    return { Authorization: 'Bearer ' + user.jwt.token };
   } else {
-    return {}
+    return {};
   }
 }
 
-function authHeaderUseXAccess () {
-  const user = JSON.parse(localStorage.getItem('user'))
+function authHeaderUseXAccess() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
   if (user && user.jwt && user.jwt.token) {
     // for Node.js Express back-end
-    return { 'x-access-token': user.jwt.token }
+    return { 'x-access-token': user.jwt.token };
   } else {
-    return {}
+    return {};
   }
 }
 
-function jwt () {
-  const user = JSON.parse(localStorage.getItem('user'))
+function jwt() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
   if (user && user.jwt && user.jwt.token) {
-    return user.jwt.token
+    return user.jwt.token;
   } else {
-    return {}
+    return {};
   }
 }
 
-export { authHeaderUseBearer, authorizationHeaderUseBearer, authHeaderUseXAccess, jwt }
+export { authHeaderUseBearer, authorizationHeaderUseBearer, authHeaderUseXAccess, jwt };

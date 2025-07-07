@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Container, Typography } from '@mui/material'
+import React from 'react';
+import { Container, Typography } from '@mui/material';
 import { QuestContext, useQuestContext } from './QuestContext';
 import { QuestLogEntry } from './QuestLogEntry';
 
@@ -25,7 +25,7 @@ export const QuestLog: React.FC = () => {
 
   // Initial fetch and interval updater
   React.useEffect(() => {
-    context.setFetching(true)
+    context.setFetching(true);
 
     return () => context.setFetching(false); // Cleanup on unmount
   }, []);
@@ -35,9 +35,7 @@ export const QuestLog: React.FC = () => {
       {[...context.mainQuestIds].map((id, index) => (
         <QuestLogEntry key={index} id={id} level={0} />
       ))}
-      {context.quests.current.size === 0 && (
-        <Typography gutterBottom>No quests present</Typography>
-      )}
+      {context.quests.current.size === 0 && <Typography gutterBottom>No quests present</Typography>}
     </Container>
   );
 };

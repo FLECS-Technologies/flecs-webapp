@@ -15,27 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
-import InstanceDetails from '../InstanceDetails'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react';
+import InstanceDetails from '../InstanceDetails';
 
-jest.mock('../../api/device/InstanceDetailsService')
+jest.mock('../../api/device/InstanceDetailsService');
 
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
   version: '1.0.0',
   status: 'running',
-  desired: 'stopped'
-}
+  desired: 'stopped',
+};
 
 describe('InstanceDetails', () => {
   test('renders InstanceDetails component', () => {
     act(() => {
-      render(<InstanceDetails instance={testInstance}></InstanceDetails>)
-    })
-    expect(screen.getByText('Storage')).toBeVisible()
-  })
-})
+      render(<InstanceDetails instance={testInstance}></InstanceDetails>);
+    });
+    expect(screen.getByText('Storage')).toBeVisible();
+  });
+});

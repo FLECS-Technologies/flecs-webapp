@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 export interface LicenseInfoAPIResponse {
-  license: string
-  type: string
+  license: string;
+  type: string;
   sessionId: {
-    id: string
-    timestamp: Date
-  }
+    id: string;
+    timestamp: Date;
+  };
 }
 
 export async function LicenseInfoAPI() {
@@ -32,15 +32,14 @@ export async function LicenseInfoAPI() {
     .get(
       DeviceAPIConfiguration.TARGET +
         DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.GET_LICENSE_INFO_URL
+        DeviceAPIConfiguration.GET_LICENSE_INFO_URL,
     )
     .then((response) => {
-      const value = response.data as LicenseInfoAPIResponse
-      if (value.sessionId)
-        value.sessionId.timestamp = new Date(value.sessionId.timestamp)
-      return value
+      const value = response.data as LicenseInfoAPIResponse;
+      if (value.sessionId) value.sessionId.timestamp = new Date(value.sessionId.timestamp);
+      return value;
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }

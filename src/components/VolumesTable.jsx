@@ -15,36 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
-export default function VolumesTable (props) {
-  const { volumes } = props
+export default function VolumesTable(props) {
+  const { volumes } = props;
   return (
-        <Table data-testid="details-table" size="small" aria-label="instances-details">
-            <TableHead>
-                <TableRow>
-                    <TableCell data-testid="table-header-name">Name</TableCell>
-                    <TableCell data-testid="table-header-path">Path</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {volumes && volumes?.map((volume) => (
-                    <TableRow key={volume.name} style={{ borderBottom: 'none' }}>
-                        <TableCell style={{ borderBottom: 'none' }}>
-                            {volume.name}
-                        </TableCell>
-                        <TableCell style={{ borderBottom: 'none' }}>
-                            {volume.path}
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-  )
+    <Table data-testid="details-table" size="small" aria-label="instances-details">
+      <TableHead>
+        <TableRow>
+          <TableCell data-testid="table-header-name">Name</TableCell>
+          <TableCell data-testid="table-header-path">Path</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {volumes &&
+          volumes?.map((volume) => (
+            <TableRow key={volume.name} style={{ borderBottom: 'none' }}>
+              <TableCell style={{ borderBottom: 'none' }}>{volume.name}</TableCell>
+              <TableCell style={{ borderBottom: 'none' }}>{volume.path}</TableCell>
+            </TableRow>
+          ))}
+      </TableBody>
+    </Table>
+  );
 }
 
 VolumesTable.propTypes = {
-  volumes: PropTypes.array
-}
+  volumes: PropTypes.array,
+};

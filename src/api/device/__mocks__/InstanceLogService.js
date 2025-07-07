@@ -15,15 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function getInstanceLog (instanceId) {
+function getInstanceLog(instanceId) {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        additionalInfo: '',
-        log: 'This is my log...'
-      }
-    )
-  })
+    resolve({
+      additionalInfo: '',
+      log: 'This is my log...',
+    });
+  });
 }
 
-export { getInstanceLog }
+export { getInstanceLog };

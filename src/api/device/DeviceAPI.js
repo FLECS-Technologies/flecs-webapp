@@ -16,57 +16,57 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import GetInstalledAppsListAPI from './InstalledAppsListAPI'
-import GetInstancesAPI from './InstancesAPI'
+import React from 'react';
+import PropTypes from 'prop-types';
+import GetInstalledAppsListAPI from './InstalledAppsListAPI';
+import GetInstancesAPI from './InstancesAPI';
 
 export default class DeviceAPI extends React.Component {
   constructor(props) {
-    super(props)
-    this.appList = null
-    this.lastAPICallSuccessful = false
-    this.lastAPIError = null
-    this.instances = null
+    super(props);
+    this.appList = null;
+    this.lastAPICallSuccessful = false;
+    this.lastAPIError = null;
+    this.instances = null;
   }
 
   async getInstances() {
     try {
-      const getInstances = new GetInstancesAPI()
-      await getInstances.getInstances()
-      this.lastAPICallSuccessful = getInstances.state.success
+      const getInstances = new GetInstancesAPI();
+      await getInstances.getInstances();
+      this.lastAPICallSuccessful = getInstances.state.success;
       if (this.lastAPICallSuccessful) {
-        this.instances = getInstances.state.responseData
+        this.instances = getInstances.state.responseData;
       } else {
         if (getInstances.state.errorMessage !== null) {
-          this.lastAPIError = getInstances.state.errorMessage
+          this.lastAPIError = getInstances.state.errorMessage;
         }
       }
     } catch (error) {
-      this.lastAPICallSuccessful = false
-      this.lastAPIError = error
+      this.lastAPICallSuccessful = false;
+      this.lastAPIError = error;
     }
   }
 
   async getInstalledApps() {
     try {
-      const getAppListAPI = new GetInstalledAppsListAPI()
-      await getAppListAPI.getAppList()
-      this.lastAPICallSuccessful = getAppListAPI.state.success
+      const getAppListAPI = new GetInstalledAppsListAPI();
+      await getAppListAPI.getAppList();
+      this.lastAPICallSuccessful = getAppListAPI.state.success;
       if (this.lastAPICallSuccessful) {
-        this.appList = await getAppListAPI.state.responseData
+        this.appList = await getAppListAPI.state.responseData;
       } else {
         if (getAppListAPI.state.errorMessage !== null) {
-          this.lastAPIError = getAppListAPI.state.errorMessage
+          this.lastAPIError = getAppListAPI.state.errorMessage;
         }
       }
     } catch (error) {
-      this.lastAPICallSuccessful = false
-      this.lastAPIError = error
+      this.lastAPICallSuccessful = false;
+      this.lastAPIError = error;
     }
   }
 }
 
 DeviceAPI.propTypes = {
-  appList: PropTypes.array
-}
+  appList: PropTypes.array,
+};

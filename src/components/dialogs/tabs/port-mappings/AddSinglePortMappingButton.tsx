@@ -15,32 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Box, Button, Tooltip } from '@mui/material'
-import { TransportProtocol } from '@flecs/core-client-ts'
-import { RadioButtonChecked } from '@mui/icons-material'
+import React from 'react';
+import { Box, Button, Tooltip } from '@mui/material';
+import { TransportProtocol } from '@flecs/core-client-ts';
+import { RadioButtonChecked } from '@mui/icons-material';
 
 interface AddSinglePortMappingButtonProps {
-  onAdd: (protocol: TransportProtocol) => void
-  defaultProtocol: TransportProtocol
+  onAdd: (protocol: TransportProtocol) => void;
+  defaultProtocol: TransportProtocol;
 }
 
 const AddSinglePortMappingButton: React.FC<AddSinglePortMappingButtonProps> = ({
   onAdd,
-  defaultProtocol
+  defaultProtocol,
 }) => {
   const handleAdd = () => {
-    onAdd(defaultProtocol)
-  }
+    onAdd(defaultProtocol);
+  };
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Tooltip title='Add a one-to-one port mapping'>
+      <Tooltip title="Add a one-to-one port mapping">
         <span>
           <Button
             onClick={handleAdd}
-            variant='text'
-            color='secondary'
+            variant="text"
+            color="secondary"
             startIcon={<RadioButtonChecked />}
           >
             Add Port Mapping
@@ -48,7 +48,7 @@ const AddSinglePortMappingButton: React.FC<AddSinglePortMappingButtonProps> = ({
         </span>
       </Tooltip>
     </Box>
-  )
-}
+  );
+};
 
-export default AddSinglePortMappingButton
+export default AddSinglePortMappingButton;

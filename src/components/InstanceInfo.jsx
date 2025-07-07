@@ -15,19 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Box, Divider, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import { TabContext, TabList, TabPanel } from '@mui/lab'
-import InstanceDetails from './InstanceDetails'
-import InstanceLog from './InstanceLog'
+import React from 'react';
+import PropTypes from 'prop-types';
+import {
+  Box,
+  Divider,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import InstanceDetails from './InstanceDetails';
+import InstanceLog from './InstanceLog';
 
-export default function InstanceInfo (props) {
-  const { instance } = props
-  const [tab, setTab] = React.useState('1')
+export default function InstanceInfo(props) {
+  const { instance } = props;
+  const [tab, setTab] = React.useState('1');
 
-  function createData (name, info) {
-    return { name, info }
+  function createData(name, info) {
+    return { name, info };
   }
 
   const infoRows = [
@@ -35,12 +46,12 @@ export default function InstanceInfo (props) {
     createData('Version', instance?.appKey.version),
     createData('Instance ID', instance?.instanceId),
     createData('Status', instance?.status),
-    createData('Desired status', instance?.desired)
-  ]
+    createData('Desired status', instance?.desired),
+  ];
 
   const handleChange = (event, newValue) => {
-    setTab(newValue)
-  }
+    setTab(newValue);
+  };
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -55,13 +66,11 @@ export default function InstanceInfo (props) {
           <TableContainer>
             <Table sx={{ minWidth: 650 }} aria-label="general info table">
               <TableHead>
-                  <TableRow>
-                      <TableCell colSpan={2}>
-                          <Typography variant='h6'>
-                              General information
-                          </Typography>
-                      </TableCell>
-                  </TableRow>
+                <TableRow>
+                  <TableCell colSpan={2}>
+                    <Typography variant="h6">General information</Typography>
+                  </TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {infoRows.map((row) => (
@@ -86,9 +95,9 @@ export default function InstanceInfo (props) {
         </TabPanel>
       </TabContext>
     </Box>
-  )
+  );
 }
 
 InstanceInfo.propTypes = {
-  instance: PropTypes.object
-}
+  instance: PropTypes.object,
+};

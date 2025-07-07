@@ -15,42 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import PostSideloadAppAPI from '../SideloadAppAPI'
-import { DeviceAPIConfiguration } from '../../api-config'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import PostSideloadAppAPI from '../SideloadAppAPI';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 // Mock BaseAPI with a callAPI method
 vi.mock('../BaseAPI', () => {
   return {
     default: class {
-      callAPI = vi.fn()
-    }
-  }
-})
+      callAPI = vi.fn();
+    },
+  };
+});
 
 describe('PostSideloadAppAPI', () => {
-  let api: PostSideloadAppAPI
+  let api: PostSideloadAppAPI;
 
   beforeEach(() => {
-    api = new PostSideloadAppAPI()
-    ;(api as any).callAPI.mockReset()
-  })
+    api = new PostSideloadAppAPI();
+    (api as any).callAPI.mockReset();
+  });
 
   it('calls callAPI with correct arguments', async () => {
-    const yml = { foo: 'bar' }
-    await api.sideloadApp(yml)
+    const yml = { foo: 'bar' };
+    await api.sideloadApp(yml);
     expect((api as any).callAPI).toHaveBeenCalledWith(
       DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.POST_SIDELOAD_APP,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ manifest: JSON.stringify(yml) })
-      }
-    )
-  })
+        body: JSON.stringify({ manifest: JSON.stringify(yml) }),
+      },
+    );
+  });
 
   it('handles errors gracefully', async () => {
-    (api as any).callAPI.mockRejectedValueOnce(new Error('fail'))
-    await expect(api.sideloadApp({ foo: 'bar' })).resolves.toBeUndefined()
-  })
-})
+    (api as any).callAPI.mockRejectedValueOnce(new Error('fail'));
+    await expect(api.sideloadApp({ foo: 'bar' })).resolves.toBeUndefined();
+  });
+});

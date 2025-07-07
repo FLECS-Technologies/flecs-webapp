@@ -16,55 +16,55 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Box } from '@mui/material'
-import Layout from './Layout'
-import AppBar from './AppBar'
-import Drawer from './Drawer'
-import styled from 'styled-components'
-import { useSearchParams } from 'react-router-dom'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Box } from '@mui/material';
+import Layout from './Layout';
+import AppBar from './AppBar';
+import Drawer from './Drawer';
+import styled from 'styled-components';
+import { useSearchParams } from 'react-router-dom';
 
 const Header = styled.div`
   display: 'flex';
   alignitems: 'center';
   justifycontent: 'flex-end';
   padding: 32px 32px;
-`
+`;
 
 const Frame = ({ children }) => {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [appBarIsVisible, setAppBarIsVisible] = React.useState(true)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [appBarIsVisible, setAppBarIsVisible] = React.useState(true);
 
   React.useEffect(() => {
-    isAppBarVisible()
-  }, [])
+    isAppBarVisible();
+  }, []);
 
   const isAppBarVisible = () => {
-    const hideAppBar = searchParams.get('hideappbar')
+    const hideAppBar = searchParams.get('hideappbar');
     if (hideAppBar?.toLowerCase() === 'true') {
-      setAppBarIsVisible(false) // Hide when hideAppBar is explicitly 'true'
+      setAppBarIsVisible(false); // Hide when hideAppBar is explicitly 'true'
     } else {
-      setAppBarIsVisible(true) // Show otherwise (including when hideAppBar is null or undefined)
+      setAppBarIsVisible(true); // Show otherwise (including when hideAppBar is null or undefined)
     }
-  }
+  };
 
   return (
     <Layout>
       <Box sx={{ display: 'flex' }}>
         <AppBar />
         <Drawer />
-        <Box component='main' sx={{ flexGrow: 1, p: 1 }}>
-          {appBarIsVisible && <Header aria-label='Header-Placeholder' />}
+        <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+          {appBarIsVisible && <Header aria-label="Header-Placeholder" />}
           {children}
         </Box>
       </Box>
     </Layout>
-  )
-}
+  );
+};
 
 Frame.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};
 
-export default Frame
+export default Frame;

@@ -15,32 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { createContext } from 'react'
-import PropTypes from 'prop-types'
-import DeviceActivationProvider from '../components/providers/DeviceActivationProvider'
+import React, { createContext } from 'react';
+import PropTypes from 'prop-types';
+import DeviceActivationProvider from '../components/providers/DeviceActivationProvider';
 
-const SystemContext = createContext([])
+const SystemContext = createContext([]);
 
 const SystemContextProvider = ({ children }) => {
   // ping === TRUE: Deamon is available. ping === FALSE: Deamon is currently not available
-  const [ping, setPing] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
-  const [systemInfo, setSystemInfo] = React.useState()
+  const [ping, setPing] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [systemInfo, setSystemInfo] = React.useState();
   return (
-    <SystemContext.Provider value={{ ping, setPing, loading, setLoading, systemInfo, setSystemInfo }}>
-      <DeviceActivationProvider>
-        {children}
-      </DeviceActivationProvider>
+    <SystemContext.Provider
+      value={{ ping, setPing, loading, setLoading, systemInfo, setSystemInfo }}
+    >
+      <DeviceActivationProvider>{children}</DeviceActivationProvider>
     </SystemContext.Provider>
-  )
+  );
+};
+
+function useSystemContext() {
+  return React.useContext(SystemContext);
 }
 
-function useSystemContext () {
-  return React.useContext(SystemContext)
-}
-
-export { SystemContext, SystemContextProvider, useSystemContext }
+export { SystemContext, SystemContextProvider, useSystemContext };
 
 SystemContextProvider.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};

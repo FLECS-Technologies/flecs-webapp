@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-function createAppRating (product_id, reviewer, reviewer_email, rating, jwt) {
+function createAppRating(product_id, reviewer, reviewer_email, rating, jwt) {
   return new Promise((resolve, reject) => {
-    resolve(
-      { }
-    )
-  })
+    resolve({});
+  });
 }
 
-export { createAppRating }
+export { createAppRating };

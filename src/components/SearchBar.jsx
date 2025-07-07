@@ -16,52 +16,67 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Paper, Button, Autocomplete, TextField } from '@mui/material'
-import { FilterList, Search } from '@mui/icons-material'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Paper, Button, Autocomplete, TextField } from '@mui/material';
+import { FilterList, Search } from '@mui/icons-material';
 
 const SearchBar = (props) => {
-  const { defaultSearchValue, searchTitle, setToggleFilter, search } = props
+  const { defaultSearchValue, searchTitle, setToggleFilter, search } = props;
 
   return (
-    <Paper data-testid='search-bar' component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-        {setToggleFilter && <Button color="inherit" onClick={setToggleFilter} sx={{ p: '10px', pt: '7px' }} aria-label="filter" startIcon={<FilterList />}>Filter
-        </Button>}
-        <Search aria-label='search-icon' sx={{ ml: 1, width: 20 }} />
-        <Autocomplete
-            sx={{ ml: 1, flex: 1 }}
-            freeSolo
-            clearOnEscape
-            aria-label="autocomplete"
-            onInputChange={search}
-            options={[]}
-            value={defaultSearchValue || null}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    sx={{ p: '0px' }}
-                    aria-label='search-field'
-                    data-testid='search-field'
-                    autoFocus={true}
-                    variant='standard'
-                    placeholder={searchTitle}
-                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault() }}
-                    InputProps={{
-                      ...params.InputProps,
-                      disableUnderline: true
-                    }}
-                />
-            )}
-        />
+    <Paper
+      data-testid="search-bar"
+      component="form"
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
+    >
+      {setToggleFilter && (
+        <Button
+          color="inherit"
+          onClick={setToggleFilter}
+          sx={{ p: '10px', pt: '7px' }}
+          aria-label="filter"
+          startIcon={<FilterList />}
+        >
+          Filter
+        </Button>
+      )}
+      <Search aria-label="search-icon" sx={{ ml: 1, width: 20 }} />
+      <Autocomplete
+        sx={{ ml: 1, flex: 1 }}
+        freeSolo
+        clearOnEscape
+        aria-label="autocomplete"
+        onInputChange={search}
+        options={[]}
+        value={defaultSearchValue || null}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            sx={{ p: '0px' }}
+            aria-label="search-field"
+            data-testid="search-field"
+            autoFocus={true}
+            variant="standard"
+            placeholder={searchTitle}
+            onKeyPress={(e) => {
+              e.key === 'Enter' && e.preventDefault();
+            }}
+            InputProps={{
+              ...params.InputProps,
+              disableUnderline: true,
+            }}
+          />
+        )}
+      />
     </Paper>
-  )
-}
+  );
+};
 
 SearchBar.propTypes = {
   defaultSearchValue: PropTypes.string,
   setToggleFilter: PropTypes.func,
   searchTitle: PropTypes.string,
-  search: PropTypes.func
-}
-export default SearchBar
+  search: PropTypes.func,
+};
+export default SearchBar;

@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 export interface ValidateDeviceAPIResponse {
-  isValid: boolean
+  isValid: boolean;
 }
 
 export async function ValidateDeviceAPI() {
@@ -27,12 +27,12 @@ export async function ValidateDeviceAPI() {
     .get(
       DeviceAPIConfiguration.TARGET +
         DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.GET_VALIDATE_URL
+        DeviceAPIConfiguration.GET_VALIDATE_URL,
     )
     .then((response) => {
-      return response.data as ValidateDeviceAPIResponse
+      return response.data as ValidateDeviceAPIResponse;
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }

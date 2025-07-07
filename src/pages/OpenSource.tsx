@@ -16,28 +16,28 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
-import openSourceTxt from '../assets/third-party-licenses.txt'
+import { useEffect, useState } from 'react';
+import { Typography } from '@mui/material';
+import openSourceTxt from '../assets/third-party-licenses.txt';
 
 export default function OpenSource() {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   useEffect(() => {
     fetch(openSourceTxt)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to load open source licenses.");
+          throw new Error('Failed to load open source licenses.');
         }
         return response.text();
       })
       .then(setContent)
-      .catch(() => setContent("Could not load open source licenses."));
+      .catch(() => setContent('Could not load open source licenses.'));
   }, []);
 
   return (
     <>
       <Typography variant="h4">Open Source</Typography>
-      <Typography aria-label="licenses" sx={{ whiteSpace: "pre-wrap", textAlign: "left", p: 4 }}>
+      <Typography aria-label="licenses" sx={{ whiteSpace: 'pre-wrap', textAlign: 'left', p: 4 }}>
         {content}
       </Typography>
     </>

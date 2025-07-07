@@ -15,193 +15,178 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useEffect, useState } from 'react'
-import { Box, Typography, List, CircularProgress, Stack } from '@mui/material'
-import SinglePortMapping from './port-mappings/SinglePortMapping'
-import PortRangeMapping from './port-mappings/PortRangeMapping'
-import AddSinglePortMappingButton from './port-mappings/AddSinglePortMappingButton'
-import AddPortRangeMappingButton from './port-mappings/AddPortRangeMappingButton'
-import ActionSnackbar from '../../ActionSnackbar'
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, List, CircularProgress, Stack } from '@mui/material';
+import SinglePortMapping from './port-mappings/SinglePortMapping';
+import PortRangeMapping from './port-mappings/PortRangeMapping';
+import AddSinglePortMappingButton from './port-mappings/AddSinglePortMappingButton';
+import AddPortRangeMappingButton from './port-mappings/AddPortRangeMappingButton';
+import ActionSnackbar from '../../ActionSnackbar';
 import {
   InstancePortMappingRange,
   InstancePortMappingSingle,
-  TransportProtocol
-} from '@flecs/core-client-ts'
-import { api } from '../../../api/flecs-core/api-client'
-import HelpButton from '../../buttons/help/HelpButton'
-import { instancedeviceconfig } from '../../../components/help/helplinks'
+  TransportProtocol,
+} from '@flecs/core-client-ts';
+import { api } from '../../../api/flecs-core/api-client';
+import HelpButton from '../../buttons/help/HelpButton';
+import { instancedeviceconfig } from '../../../components/help/helplinks';
 
 interface PortsConfigTabProps {
-  instanceId: string
-  onChange: (hasChanges: boolean) => void
+  instanceId: string;
+  onChange: (hasChanges: boolean) => void;
 }
 
 interface PortWithProtocol {
-  protocol: TransportProtocol
-  port: InstancePortMappingSingle | InstancePortMappingRange
+  protocol: TransportProtocol;
+  port: InstancePortMappingSingle | InstancePortMappingRange;
 }
 
-const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
-  instanceId,
-  onChange
-}) => {
-  const executedRef = React.useRef(false)
-  const [ports, setPorts] = useState<PortWithProtocol[]>([])
-  const [loading, setLoading] = useState(true)
-  const [save, setSave] = useState(false)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
+const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange }) => {
+  const executedRef = React.useRef(false);
+  const [ports, setPorts] = useState<PortWithProtocol[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [save, setSave] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
     alertSeverity: 'success',
-    clipBoardContent: ''
-  })
+    clipBoardContent: '',
+  });
 
   const fetchPorts = async () => {
     try {
-      const portData = await api.instances.instancesInstanceIdConfigPortsGet(instanceId)
+      const portData = await api.instances.instancesInstanceIdConfigPortsGet(instanceId);
       if (portData) {
         const combinedPorts: PortWithProtocol[] = [
           ...portData.data.tcp.map(
-            (
-              port: InstancePortMappingSingle | InstancePortMappingRange
-            ): PortWithProtocol => ({
+            (port: InstancePortMappingSingle | InstancePortMappingRange): PortWithProtocol => ({
               protocol: TransportProtocol.Tcp,
-              port
-            })
+              port,
+            }),
           ),
           ...portData.data.udp.map(
-            (
-              port: InstancePortMappingSingle | InstancePortMappingRange
-            ): PortWithProtocol => ({
+            (port: InstancePortMappingSingle | InstancePortMappingRange): PortWithProtocol => ({
               protocol: TransportProtocol.Udp,
-              port
-            })
-          )
-        ]
-        setPorts(combinedPorts)
+              port,
+            }),
+          ),
+        ];
+        setPorts(combinedPorts);
       }
     } catch (error) {
-      console.error('Failed to fetch ports:', error)
+      console.error('Failed to fetch ports:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (executedRef.current) {
-      return
+      return;
     }
 
-    fetchPorts()
-    executedRef.current = true
-  }, [])
+    fetchPorts();
+    executedRef.current = true;
+  }, []);
 
   useEffect(() => {
     if (save) {
-      handleSave()
-      setSave(false)
+      handleSave();
+      setSave(false);
     }
-  }, [save])
+  }, [save]);
 
   const handlePortChange = (
     index: number,
     field: keyof InstancePortMappingSingle | keyof InstancePortMappingRange,
-    value: number | { start?: number; end?: number }
+    value: number | { start?: number; end?: number },
   ) => {
     setPorts((prev) => {
-      const updatedPorts = [...prev]
-      const portWithProtocol = updatedPorts[index]
+      const updatedPorts = [...prev];
+      const portWithProtocol = updatedPorts[index];
 
       if ('host_port' in portWithProtocol.port) {
         portWithProtocol.port = {
           ...portWithProtocol.port,
-          [field]: value as number
-        } as InstancePortMappingSingle
+          [field]: value as number,
+        } as InstancePortMappingSingle;
       } else if ('host_ports' in portWithProtocol.port) {
         portWithProtocol.port = {
           ...portWithProtocol.port,
           [field]: {
             ...(field in portWithProtocol.port
-              ? (portWithProtocol.port[
-                  field as keyof InstancePortMappingRange
-                ] as object)
+              ? (portWithProtocol.port[field as keyof InstancePortMappingRange] as object)
               : {}),
-            ...(value as object)
-          }
-        } as InstancePortMappingRange
+            ...(value as object),
+          },
+        } as InstancePortMappingRange;
       }
 
-      return updatedPorts
-    })
-  }
+      return updatedPorts;
+    });
+  };
 
   const handleProtocolChange = (index: number, protocol: TransportProtocol) => {
     setPorts((prev) => {
-      const updatedPorts = [...prev]
-      updatedPorts[index].protocol = protocol
-      return updatedPorts
-    })
-  }
+      const updatedPorts = [...prev];
+      updatedPorts[index].protocol = protocol;
+      return updatedPorts;
+    });
+  };
 
   const handleSave = async () => {
     try {
       const tcpPorts = ports
-        .filter(
-          (portWithProtocol) =>
-            portWithProtocol.protocol === TransportProtocol.Tcp
-        )
-        .map((portWithProtocol) => portWithProtocol.port)
+        .filter((portWithProtocol) => portWithProtocol.protocol === TransportProtocol.Tcp)
+        .map((portWithProtocol) => portWithProtocol.port);
 
       const udpPorts = ports
-        .filter(
-          (portWithProtocol) =>
-            portWithProtocol.protocol === TransportProtocol.Udp
-        )
-        .map((portWithProtocol) => portWithProtocol.port)
+        .filter((portWithProtocol) => portWithProtocol.protocol === TransportProtocol.Udp)
+        .map((portWithProtocol) => portWithProtocol.port);
 
       if (tcpPorts.length > 0) {
         await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut(
           instanceId,
           TransportProtocol.Tcp,
-          tcpPorts
-        )
+          tcpPorts,
+        );
       }
 
       if (udpPorts.length > 0) {
         await api.instances.instancesInstanceIdConfigPortsTransportProtocolPut(
           instanceId,
           TransportProtocol.Udp,
-          udpPorts
-        )
+          udpPorts,
+        );
       }
 
-      onChange(true)
+      onChange(true);
       setSnackbarState({
         alertSeverity: 'success',
         snackbarText: 'Port mappings saved successfully!',
-        clipBoardContent: ''
-      })
+        clipBoardContent: '',
+      });
     } catch (error) {
-      console.error('Failed to save ports:', error)
+      console.error('Failed to save ports:', error);
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: (error as Error).message || 'An unknown error occurred',
-        clipBoardContent: ''
-      })
+        clipBoardContent: '',
+      });
     } finally {
-      setSnackbarOpen(true)
+      setSnackbarOpen(true);
     }
-  }
+  };
 
   const handleDeletePort = (index: number): void => {
     setPorts((prev) => {
-      const updatedPorts = [...prev]
-      updatedPorts.splice(index, 1)
-      return updatedPorts
-    })
+      const updatedPorts = [...prev];
+      updatedPorts.splice(index, 1);
+      return updatedPorts;
+    });
 
-    setSave(true)
-  }
+    setSave(true);
+  };
 
   const handleAddSinglePortMapping = (): void => {
     setPorts((prev) => [
@@ -210,11 +195,11 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
         protocol: TransportProtocol.Tcp,
         port: {
           host_port: 0,
-          container_port: 0
-        } as InstancePortMappingSingle
-      }
-    ])
-  }
+          container_port: 0,
+        } as InstancePortMappingSingle,
+      },
+    ]);
+  };
 
   const handleAddPortRangeMapping = (): void => {
     setPorts((prev) => [
@@ -223,23 +208,23 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
         protocol: TransportProtocol.Tcp,
         port: {
           host_ports: { start: 0, end: 0 },
-          container_ports: { start: 0, end: 0 }
-        } as InstancePortMappingRange
-      }
-    ])
-  }
+          container_ports: { start: 0, end: 0 },
+        } as InstancePortMappingRange,
+      },
+    ]);
+  };
 
   if (loading) {
-    return <CircularProgress />
+    return <CircularProgress />;
   }
 
   return (
     <Box>
-      <Stack direction='row' spacing={2} alignItems='center' sx={{ mb: 2 }}>
-        <Typography variant='h6'>Port Mappings</Typography>
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">Port Mappings</Typography>
         <HelpButton url={instancedeviceconfig}></HelpButton>
       </Stack>
-      <Stack spacing={2} direction='row' sx={{ mb: 2 }}>
+      <Stack spacing={2} direction="row" sx={{ mb: 2 }}>
         <AddSinglePortMappingButton
           onAdd={handleAddSinglePortMapping}
           defaultProtocol={TransportProtocol.Tcp}
@@ -251,7 +236,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
       </Stack>
       <List>
         {ports.length === 0 && (
-          <Typography variant='body2' color='text.secondary'>
+          <Typography variant="body2" color="text.secondary">
             No ports configured.
           </Typography>
         )}
@@ -278,7 +263,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
               handleSavePort={handleSave}
               handleProtocolChange={handleProtocolChange}
             />
-          )
+          ),
         )}
       </List>
       <ActionSnackbar
@@ -288,7 +273,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({
         alertSeverity={snackbarState.alertSeverity}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default PortsConfigTab
+export default PortsConfigTab;

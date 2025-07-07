@@ -15,24 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { BoxProps, Box, CircularProgress } from "@mui/material";
+import React from 'react';
+import { BoxProps, Box, CircularProgress } from '@mui/material';
 
 interface LoadingProps extends BoxProps {
-  loading: boolean,
-  children?: React.ReactNode
+  loading: boolean;
+  children?: React.ReactNode;
 }
 
-export const Loading: React.FC<LoadingProps> = ({loading, children, ...boxProps}: LoadingProps) => {
-    return <Box {...boxProps} sx={{ position: 'relative' }}>
+export const Loading: React.FC<LoadingProps> = ({
+  loading,
+  children,
+  ...boxProps
+}: LoadingProps) => {
+  return (
+    <Box {...boxProps} sx={{ position: 'relative' }}>
       {children}
-      {loading && (<CircularProgress data-testid="circularprogress" size={16} sx={{
-        color: 'info',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        marginTop: '-7px',
-        marginLeft: '-7px'
-      }}/>)}
-    </Box>;
-}
+      {loading && (
+        <CircularProgress
+          data-testid="circularprogress"
+          size={16}
+          sx={{
+            color: 'info',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginTop: '-7px',
+            marginLeft: '-7px',
+          }}
+        />
+      )}
+    </Box>
+  );
+};

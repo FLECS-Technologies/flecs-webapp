@@ -15,39 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { SystemInfo } from '../SystemInfoService'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { SystemInfo } from '../SystemInfoService';
 
-jest.mock('axios')
+jest.mock('axios');
 
 const mockSystemInfo = {
   data: {
-    platform: 'Weidmüller'
-  }
-}
+    platform: 'Weidmüller',
+  },
+};
 
 describe('SystemInfo', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('calls successful SystemInfo', async () => {
-    axios.get.mockResolvedValueOnce(mockSystemInfo)
-    const response = await waitFor(() => SystemInfo())
+    axios.get.mockResolvedValueOnce(mockSystemInfo);
+    const response = await waitFor(() => SystemInfo());
 
-    expect(response.platform).toBe(mockSystemInfo.data.platform)
-  })
+    expect(response.platform).toBe(mockSystemInfo.data.platform);
+  });
 
   test('calls unsuccessful SystemInfo', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to get system info'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to get system info'));
     await act(async () => {
-      expect(SystemInfo()).rejects.toThrowError()
-    })
-  })
-})
+      expect(SystemInfo()).rejects.toThrowError();
+    });
+  });
+});

@@ -15,11 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const helpdomain = 'https://docs.flecs.tech/'
+export const helpdomain = 'https://docs.flecs.tech/';
 export const instancedeviceconfig =
   helpdomain +
-  'product-docs/flecs-core/app-management/using-your-app-with-flecs-core#settings-for-network-or-device-access-and-environments'
-export const instancenicconfig = instancedeviceconfig
-export const instanceenvconfig = instancedeviceconfig
-export const servicemesh =
-  helpdomain + '/product-docs/flecs-core/exchanging-data-between-apps'
+  'product-docs/flecs-core/app-management/using-your-app-with-flecs-core#settings-for-network-or-device-access-and-environments';
+export const instancenicconfig = instancedeviceconfig;
+export const instanceenvconfig = instancedeviceconfig;
+export const servicemesh = helpdomain + '/product-docs/flecs-core/exchanging-data-between-apps';

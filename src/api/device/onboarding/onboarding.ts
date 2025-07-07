@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 export interface OnboardingDeviceAPIResponse {
-  jobId: number
+  jobId: number;
 }
 
 export async function OnboardingDeviceAPI(file: File) {
-  const fileContent = await file.text()
-  const jsonData = JSON.parse(fileContent)
+  const fileContent = await file.text();
+  const jsonData = JSON.parse(fileContent);
   return axios
     .post(
       DeviceAPIConfiguration.TARGET +
@@ -33,14 +33,14 @@ export async function OnboardingDeviceAPI(file: File) {
       jsonData,
       {
         headers: {
-          'Content-Type': 'application/json'
-        }
-      }
+          'Content-Type': 'application/json',
+        },
+      },
     )
     .then((response) => {
-      return response.data as OnboardingDeviceAPIResponse
+      return response.data as OnboardingDeviceAPIResponse;
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }

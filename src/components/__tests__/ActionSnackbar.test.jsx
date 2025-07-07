@@ -16,136 +16,134 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, fireEvent, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import ActionSnackbar from '../ActionSnackbar'
-import { act } from 'react-dom/test-utils'
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import ActionSnackbar from '../ActionSnackbar';
+import { act } from 'react-dom/test-utils';
 
 describe('ActionSnackbar', () => {
-  const originalClipboard = { ...global.navigator.clipboard }
+  const originalClipboard = { ...global.navigator.clipboard };
 
   beforeEach(() => {
     const mockClipboard = {
-      writeText: jest.fn()
-    }
-    global.navigator.clipboard = mockClipboard
-  })
+      writeText: jest.fn(),
+    };
+    global.navigator.clipboard = mockClipboard;
+  });
 
   afterEach(() => {
-    jest.clearAllMocks()
-    global.navigator.clipboard = originalClipboard
+    jest.clearAllMocks();
+    global.navigator.clipboard = originalClipboard;
 
-    jest.useRealTimers()
-  })
+    jest.useRealTimers();
+  });
 
   test('renders ActionSnackbar component', () => {
-    render(<ActionSnackbar />)
+    render(<ActionSnackbar />);
     // screen.debug()
-  })
+  });
 
   test('Snackbar success', async () => {
     function setOpen() {}
     const { getByTestId } = render(
       <ActionSnackbar
-        text='Successful operation'
-        errorText=''
+        text="Successful operation"
+        errorText=""
         open={true}
         setOpen={setOpen}
-        alertSeverity='success'
-      />
-    )
-    const snackbar = getByTestId('snackbar')
-    const alert = getByTestId('alert')
-    const closeButton = getByTestId('close-button')
-    const copyButton = getByTestId('copy-button')
+        alertSeverity="success"
+      />,
+    );
+    const snackbar = getByTestId('snackbar');
+    const alert = getByTestId('alert');
+    const closeButton = getByTestId('close-button');
+    const copyButton = getByTestId('copy-button');
 
-    fireEvent.click(document.body)
-    fireEvent.click(closeButton)
+    fireEvent.click(document.body);
+    fireEvent.click(closeButton);
 
-    expect(snackbar).toBeInTheDocument()
-    expect(alert).toHaveTextContent('Successful operation')
-    expect(closeButton).toBeInTheDocument()
-    expect(copyButton).not.toBeVisible()
+    expect(snackbar).toBeInTheDocument();
+    expect(alert).toHaveTextContent('Successful operation');
+    expect(closeButton).toBeInTheDocument();
+    expect(copyButton).not.toBeVisible();
 
     // screen.debug()
-  })
+  });
 
   test('Snackbar error', async () => {
     const { getByTestId } = render(
       <ActionSnackbar
-        text='Operation failed'
-        errorText='This operation really failed.'
+        text="Operation failed"
+        errorText="This operation really failed."
         open={true}
         setOpen={null}
-        alertSeverity='error'
-      />
-    )
-    const snackbar = getByTestId('snackbar')
-    const alert = getByTestId('alert')
-    const closeButton = getByTestId('close-button')
-    const copyButton = getByTestId('copy-button')
+        alertSeverity="error"
+      />,
+    );
+    const snackbar = getByTestId('snackbar');
+    const alert = getByTestId('alert');
+    const closeButton = getByTestId('close-button');
+    const copyButton = getByTestId('copy-button');
 
-    fireEvent.click(copyButton)
+    fireEvent.click(copyButton);
 
-    expect(navigator.clipboard.writeText).toBeCalledTimes(1)
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      'This operation really failed.'
-    )
+    expect(navigator.clipboard.writeText).toBeCalledTimes(1);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('This operation really failed.');
 
-    expect(snackbar).toBeInTheDocument()
-    expect(alert).toHaveTextContent('Operation failed')
-    expect(closeButton).toBeInTheDocument()
-    expect(copyButton).toBeVisible()
+    expect(snackbar).toBeInTheDocument();
+    expect(alert).toHaveTextContent('Operation failed');
+    expect(closeButton).toBeInTheDocument();
+    expect(copyButton).toBeVisible();
 
     // screen.debug()
-  })
+  });
 
   test('Snackbar error without errorText', async () => {
     const { getByTestId } = render(
       <ActionSnackbar
-        text='Operation failed'
+        text="Operation failed"
         errorText={null}
         open={true}
         setOpen={null}
-        alertSeverity='error'
-      />
-    )
-    const snackbar = getByTestId('snackbar')
-    const alert = getByTestId('alert')
-    const closeButton = getByTestId('close-button')
-    const copyButton = getByTestId('copy-button')
+        alertSeverity="error"
+      />,
+    );
+    const snackbar = getByTestId('snackbar');
+    const alert = getByTestId('alert');
+    const closeButton = getByTestId('close-button');
+    const copyButton = getByTestId('copy-button');
 
-    fireEvent.click(copyButton)
+    fireEvent.click(copyButton);
 
-    expect(navigator.clipboard.writeText).toBeCalledTimes(1)
+    expect(navigator.clipboard.writeText).toBeCalledTimes(1);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      "No further error information available. Please check your browser's console for further information"
-    )
+      "No further error information available. Please check your browser's console for further information",
+    );
 
-    expect(snackbar).toBeInTheDocument()
-    expect(alert).toHaveTextContent('Operation failed')
-    expect(closeButton).toBeInTheDocument()
-    expect(copyButton).toBeVisible()
+    expect(snackbar).toBeInTheDocument();
+    expect(alert).toHaveTextContent('Operation failed');
+    expect(closeButton).toBeInTheDocument();
+    expect(copyButton).toBeVisible();
 
     // screen.debug()
-  })
+  });
 
   test('Snackbar close', async () => {
-    const setOpen = jest.fn()
+    const setOpen = jest.fn();
     // const user = userEvent.setup()
 
     await act(async () => {
       render(
         <ActionSnackbar
-          text='Successful operation'
-          errorText=''
+          text="Successful operation"
+          errorText=""
           open={true}
           setOpen={setOpen}
-          alertSeverity='success'
-        />
-      )
-    })
+          alertSeverity="success"
+        />,
+      );
+    });
 
     /*
       Challenge: find out how to test the "if (reason === 'clickaway')" path of handleSnackbarClose
@@ -153,29 +151,29 @@ describe('ActionSnackbar', () => {
     expect(setOpen).not.toHaveBeenCalled()
     */
 
-    expect(screen.getByText('Successful operation')).toBeVisible()
+    expect(screen.getByText('Successful operation')).toBeVisible();
     // const closeButton = screen.getByTestId('close-button')
 
     // await user.click(closeButton)
 
     // expect(setOpen).toHaveBeenCalled()
-  })
+  });
 
   test('Snackbar auto-hide', async () => {
-    const setOpen = jest.fn()
+    const setOpen = jest.fn();
 
     await act(async () => {
       render(
         <ActionSnackbar
-          text='Successful operation'
-          errorText=''
+          text="Successful operation"
+          errorText=""
           open={true}
           setOpen={setOpen}
-          alertSeverity='success'
-        />
-      )
-    })
+          alertSeverity="success"
+        />,
+      );
+    });
 
-    expect(screen.getByTestId('snackbar')).toBeVisible()
-  })
-})
+    expect(screen.getByTestId('snackbar')).toBeVisible();
+  });
+});

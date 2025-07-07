@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import '@testing-library/jest-dom'
-import { SystemData } from '../SystemData'
-import { useSystemContext } from '../SystemProvider'
-import { vitest } from 'vitest'
+import { render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom';
+import { SystemData } from '../SystemData';
+import { useSystemContext } from '../SystemProvider';
+import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/SystemPingService')
-vitest.mock('../../api/device/SystemInfoService')
-vitest.mock('../SystemProvider', () => ({ useSystemContext: vitest.fn() }))
+vitest.mock('../../api/device/SystemPingService');
+vitest.mock('../../api/device/SystemInfoService');
+vitest.mock('../SystemProvider', () => ({ useSystemContext: vitest.fn() }));
 
 const mockSystem = {
   ping: true,
@@ -32,25 +32,25 @@ const mockSystem = {
   loading: false,
   setLoading: jest.fn(),
   systemInfo: undefined,
-  setSystemInfo: jest.fn()
-}
+  setSystemInfo: jest.fn(),
+};
 
 vitest.mock('react', async () => {
-  const ActualReact = await vitest.importActual('react')
+  const ActualReact = await vitest.importActual('react');
   return {
     ...ActualReact,
-    useContext: () => mockSystem // Return mockSystem directly
-  }
-})
+    useContext: () => mockSystem, // Return mockSystem directly
+  };
+});
 
 describe('SystemData', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
   test('renders SystemData component', () => {
-    useSystemContext.mockReturnValue(mockSystem)
+    useSystemContext.mockReturnValue(mockSystem);
     act(() => {
-      render(<SystemData></SystemData>)
-    })
-  })
-})
+      render(<SystemData></SystemData>);
+    });
+  });
+});

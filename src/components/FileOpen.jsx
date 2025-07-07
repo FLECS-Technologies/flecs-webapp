@@ -16,37 +16,46 @@
  * limitations under the License.
  */
 
-import React, { useRef } from 'react'
-import PropTypes from 'prop-types'
-import LoadButton from './LoadButton'
+import React, { useRef } from 'react';
+import PropTypes from 'prop-types';
+import LoadButton from './LoadButton';
 
 const FileOpen = (props) => {
-  const { buttonText, buttonIcon, accept, loading, /* setFile , */ onConfirm, disabled, wholeFile, ...buttonProps } = props
-  const inputFile = useRef(null)
+  const {
+    buttonText,
+    buttonIcon,
+    accept,
+    loading,
+    /* setFile , */ onConfirm,
+    disabled,
+    wholeFile,
+    ...buttonProps
+  } = props;
+  const inputFile = useRef(null);
 
-  const handleFileOpen = e => {
-    const { files } = e.target
+  const handleFileOpen = (e) => {
+    const { files } = e.target;
     if (files && files.length && !wholeFile) {
-      e.preventDefault()
-      const reader = new FileReader()
+      e.preventDefault();
+      const reader = new FileReader();
       reader.onload = async (e) => {
-        onConfirm(e.target.result)
-      }
-      reader.readAsText(files[0])
+        onConfirm(e.target.result);
+      };
+      reader.readAsText(files[0]);
     } else if (files && files.length) {
-      onConfirm(files[0])
+      onConfirm(files[0]);
     }
-  }
+  };
 
   const onButtonClick = () => {
-    inputFile.current.click()
-  }
+    inputFile.current.click();
+  };
 
-  const onClick = e => {
+  const onClick = (e) => {
     if (e.target.value) {
-      e.target.value = null
+      e.target.value = null;
     }
-  }
+  };
 
   return (
     <div>
@@ -57,23 +66,25 @@ const FileOpen = (props) => {
         ref={inputFile}
         onChange={(e) => handleFileOpen(e)}
         // the onClick event is necessary to null the current file. Otherwise there will be no onChange event if the user selects the same file again.
-        onClick={(event) => { onClick(event) }}
+        onClick={(event) => {
+          onClick(event);
+        }}
         type="file"
       />
       <LoadButton
-      {...buttonProps}
+        {...buttonProps}
         startIcon={buttonIcon}
         text={buttonText}
-        variant='outlined'
+        variant="outlined"
         onClick={onButtonClick}
         loading={loading || undefined}
         disabled={disabled}
-        >
+      >
         {buttonText}
       </LoadButton>
     </div>
-  )
-}
+  );
+};
 
 FileOpen.propTypes = {
   buttonText: PropTypes.string,
@@ -83,7 +94,7 @@ FileOpen.propTypes = {
   loading: PropTypes.bool,
   onConfirm: PropTypes.func,
   disabled: PropTypes.bool,
-  wholeFile: PropTypes.bool
-}
+  wholeFile: PropTypes.bool,
+};
 
-export default FileOpen
+export default FileOpen;

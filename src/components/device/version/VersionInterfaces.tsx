@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 export interface CoreVersion {
-  core?: string
-  api?: string
+  core?: string;
+  api?: string;
 }
 
 export interface Distro {
-  name?: string
-  version?: string
+  name?: string;
+  version?: string;
 }
 
 export interface Kernel {
-  version?: string
+  version?: string;
 }

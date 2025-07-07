@@ -16,43 +16,37 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import LoadButton from '../LoadButton'
+import React from 'react';
+import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import LoadButton from '../LoadButton';
 
 describe('LoadButton', () => {
   test('renders LoadButton component', () => {
-    render(<LoadButton />)
+    render(<LoadButton />);
     // screen.debug()
-  })
+  });
 
   test('LoadButton loading', async () => {
-    const { getByTestId } = render(<LoadButton
-        loading = {true}
-        text='Do something'
-        />)
-    const button = getByTestId('button')
-    const circularprogress = getByTestId('circularprogress')
+    const { getByTestId } = render(<LoadButton loading={true} text="Do something" />);
+    const button = getByTestId('button');
+    const circularprogress = getByTestId('circularprogress');
 
-    expect(button).toBeInTheDocument()
-    expect(button).toHaveTextContent('Do something')
-    expect(circularprogress).toBeInTheDocument()
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('Do something');
+    expect(circularprogress).toBeInTheDocument();
 
     // screen.debug()
-  })
+  });
 
   test('LoadButton not loading', async () => {
-    const { getByTestId } = render(<LoadButton
-        loading = {false}
-        text='Do something'
-        />)
-    const button = getByTestId('button')
+    const { getByTestId } = render(<LoadButton loading={false} text="Do something" />);
+    const button = getByTestId('button');
 
-    expect(button).toBeInTheDocument()
-    expect(button).toHaveTextContent('Do something')
-    expect(() => getByTestId('circularprogress')).toThrow()
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('Do something');
+    expect(() => getByTestId('circularprogress')).toThrow();
 
     // screen.debug()
-  })
-})
+  });
+});

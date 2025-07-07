@@ -15,28 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import Logo from '../assets/images/logo.svg?react' // Vite-compatible SVG import using vite-plugin-svgr
-import { useTheme } from '@mui/material/styles'
-import PropTypes from 'prop-types'
+import React from 'react';
+import Logo from '../assets/images/logo.svg?react'; // Vite-compatible SVG import using vite-plugin-svgr
+import { useTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
 
 // Set to true if the whitelabel logo should be used
-export const useWhiteLabelLogo = false
+export const useWhiteLabelLogo = false;
 // Set to false if 'powered by flecs' should not be shown
-export const showPoweredBy = true
+export const showPoweredBy = true;
 
 export default function WhiteLabelLogo({ logoColor }) {
-  const theme = useTheme() // Access the Material-UI theme
+  const theme = useTheme(); // Access the Material-UI theme
   // Customize the whitelabel logo here
   return (
     <Logo
-      width='128'
-      height='48'
+      width="128"
+      height="48"
       style={{ color: logoColor || theme.palette.primary.main }} // Set the "color" property for currentColor
     />
-  )
+  );
 }
 
 WhiteLabelLogo.propTypes = {
-  logoColor: PropTypes.string
-}
+  logoColor: PropTypes.string,
+};

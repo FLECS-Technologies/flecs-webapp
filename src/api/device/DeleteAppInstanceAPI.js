@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class DeleteAppInstanceAPI extends BaseAPI {
-  async deleteAppInstance (instanceId) {
+  async deleteAppInstance(instanceId) {
     // DELETE request using fetch with error handling
     const requestOptions = {
-      method: 'DELETE'
-    }
+      method: 'DELETE',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.DELETE_INSTANCE_URL(instanceId), requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.DELETE_INSTANCE_URL(instanceId), requestOptions);
+    } catch (error) {}
   }
 }

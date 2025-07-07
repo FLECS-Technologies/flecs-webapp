@@ -15,54 +15,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import JobsAPI from '../JobsAPI'
-import { DeviceAPIConfiguration } from '../../api-config'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import JobsAPI from '../JobsAPI';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 // Define the mock class INSIDE the factory function
 vi.mock('../BaseAPI', () => {
   class MockBaseAPI {
-    callAPI = vi.fn()
+    callAPI = vi.fn();
   }
-  return { default: MockBaseAPI }
-})
+  return { default: MockBaseAPI };
+});
 
 describe('JobsAPI', () => {
-  let jobsAPI: JobsAPI
+  let jobsAPI: JobsAPI;
 
   beforeEach(() => {
-    jobsAPI = new JobsAPI()
-    ;(jobsAPI as any).callAPI.mockReset()
-  })
+    jobsAPI = new JobsAPI();
+    (jobsAPI as any).callAPI.mockReset();
+  });
 
   it('calls callAPI with correct args for getJobs', async () => {
-    await jobsAPI.getJobs()
-    expect((jobsAPI as any).callAPI).toHaveBeenCalledWith(
-      DeviceAPIConfiguration.JOBS_ROUTE,
-      { method: 'GET' }
-    )
-  })
+    await jobsAPI.getJobs();
+    expect((jobsAPI as any).callAPI).toHaveBeenCalledWith(DeviceAPIConfiguration.JOBS_ROUTE, {
+      method: 'GET',
+    });
+  });
 
   it('calls callAPI with correct args for getJob', async () => {
-    await jobsAPI.getJob(42)
-    expect((jobsAPI as any).callAPI).toHaveBeenCalledWith(
-      DeviceAPIConfiguration.GET_JOB_URL(42),
-      { method: 'GET' }
-    )
-  })
+    await jobsAPI.getJob(42);
+    expect((jobsAPI as any).callAPI).toHaveBeenCalledWith(DeviceAPIConfiguration.GET_JOB_URL(42), {
+      method: 'GET',
+    });
+  });
 
   it('calls callAPI with correct args for deleteJob', async () => {
-    await jobsAPI.deleteJob(99)
+    await jobsAPI.deleteJob(99);
     expect((jobsAPI as any).callAPI).toHaveBeenCalledWith(
       DeviceAPIConfiguration.DELETE_JOB_URL(99),
-      { method: 'DELETE' }
-    )
-  })
+      { method: 'DELETE' },
+    );
+  });
 
   it('handles errors gracefully', async () => {
-    (jobsAPI as any).callAPI.mockRejectedValueOnce(new Error('fail'))
-    await expect(jobsAPI.getJobs()).resolves.toBeUndefined()
-    await expect(jobsAPI.getJob(1)).resolves.toBeUndefined()
-    await expect(jobsAPI.deleteJob(1)).resolves.toBeUndefined()
-  })
-})
+    (jobsAPI as any).callAPI.mockRejectedValueOnce(new Error('fail'));
+    await expect(jobsAPI.getJobs()).resolves.toBeUndefined();
+    await expect(jobsAPI.getJob(1)).resolves.toBeUndefined();
+    await expect(jobsAPI.deleteJob(1)).resolves.toBeUndefined();
+  });
+});

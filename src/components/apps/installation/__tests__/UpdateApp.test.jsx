@@ -16,35 +16,35 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
-import UpdateApp from '../UpdateApp'
-import { ReferenceDataContext } from '../../../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../../../data/JobsContext'
-import { mockInstalledApps } from '../../../../data/__mocks__/AppList'
-import { mockApp } from '../../../../models/__mocks__/app'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import UpdateApp from '../UpdateApp';
+import { ReferenceDataContext } from '../../../../data/ReferenceDataContext';
+import { JobsContextProvider } from '../../../../data/JobsContext';
+import { mockInstalledApps } from '../../../../data/__mocks__/AppList';
+import { mockApp } from '../../../../models/__mocks__/app';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/apps/install')
-vitest.mock('../../../../api/device/instances/instance')
-vitest.mock('../../../../api/device/AppAPI')
-vitest.mock('../../../../api/device/ExportAppsService')
-vitest.mock('../../../../api/device/DeviceAuthAPI')
-vitest.mock('../../../../api/device/JobsAPI')
-vitest.mock('../../../../utils/sleep')
+vitest.mock('../../../../api/device/apps/install');
+vitest.mock('../../../../api/device/instances/instance');
+vitest.mock('../../../../api/device/AppAPI');
+vitest.mock('../../../../api/device/ExportAppsService');
+vitest.mock('../../../../api/device/DeviceAuthAPI');
+vitest.mock('../../../../api/device/JobsAPI');
+vitest.mock('../../../../utils/sleep');
 
-const app = mockInstalledApps[0]
+const app = mockInstalledApps[0];
 
-const handleActiveStep = vitest.fn()
+const handleActiveStep = vitest.fn();
 
 describe('Test Update App', () => {
-  beforeAll(() => {})
+  beforeAll(() => {});
 
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   test('Successfully update app', async () => {
     render(
@@ -55,12 +55,12 @@ describe('Test Update App', () => {
           <UpdateApp
             app={app}
             from={app.appKey.version}
-            to='4.3.0'
+            to="4.3.0"
             handleActiveStep={handleActiveStep}
           />
         </ReferenceDataContext.Provider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
     await waitFor(() => {
       // 1. check success text
@@ -70,18 +70,18 @@ describe('Test Update App', () => {
           ' was successfully updated from version ' +
           app.appKey.version +
           ' to version ' +
-          '4.3.0!'
-      )
-      expect(text).toBeInTheDocument()
+          '4.3.0!',
+      );
+      expect(text).toBeInTheDocument();
 
       // 2. check success icon
-      const icon = screen.getByTestId('success-icon')
-      expect(icon).toBeVisible()
-    })
-  })
+      const icon = screen.getByTestId('success-icon');
+      expect(icon).toBeVisible();
+    });
+  });
 
   test('Failed to update app', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
     render(
       <JobsContextProvider>
@@ -91,22 +91,22 @@ describe('Test Update App', () => {
           <UpdateApp
             app={mockApp}
             from={mockApp.appKey.version}
-            to='4.3.0'
+            to="4.3.0"
             handleActiveStep={handleActiveStep}
           />
         </ReferenceDataContext.Provider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
     await waitFor(() => {
       // 1. check error icon
-      const icon = screen.getByTestId('error-icon')
-      expect(icon).toBeVisible()
+      const icon = screen.getByTestId('error-icon');
+      expect(icon).toBeVisible();
 
       // 2. click on retry
-      const retryButton = screen.getByRole('button', { name: 'Retry' })
+      const retryButton = screen.getByRole('button', { name: 'Retry' });
 
-      user.click(retryButton)
-    })
-  })
-})
+      user.click(retryButton);
+    });
+  });
+});

@@ -15,19 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import {
-  getHostname,
-  getInstanceDetails,
-  getIPAddress,
-  getPorts
-} from '../InstanceDetailsService'
-import { vitest } from 'vitest'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { getHostname, getInstanceDetails, getIPAddress, getPorts } from '../InstanceDetailsService';
+import { vitest } from 'vitest';
 
-vitest.mock('axios')
+vitest.mock('axios');
 
 const mockDetails = {
   data: {
@@ -36,8 +31,8 @@ const mockDetails = {
     conffiles: [
       {
         container: '/etc/conf.d/configuration.cfg',
-        host: '/var/lib/flecs/instances/0123abcd/conf/configuration.cfg'
-      }
+        host: '/var/lib/flecs/instances/0123abcd/conf/configuration.cfg',
+      },
     ],
     hostname: 'flecs-0123abcd',
     instanceId: '87654fed',
@@ -45,65 +40,59 @@ const mockDetails = {
     mounts: [
       {
         container: '/path/to/dir',
-        host: '/path/to/host/dir'
-      }
+        host: '/path/to/host/dir',
+      },
     ],
     ports: [
       {
         container: '8080',
-        host: '18080'
-      }
+        host: '18080',
+      },
     ],
     version: 'v4.0.6',
     volumes: [
       {
         name: 'var',
-        path: '/var/app'
-      }
-    ]
-  }
-}
+        path: '/var/app',
+      },
+    ],
+  },
+};
 
 describe('InstanceDetailsService', () => {
   beforeAll(() => {
-    axios.post = vitest.fn()
-  })
+    axios.post = vitest.fn();
+  });
 
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
   test('calls successful getInstanceDetails', async () => {
-    axios.get.mockResolvedValueOnce(mockDetails)
-    const details = await waitFor(() =>
-      getInstanceDetails(mockDetails.data.instanceId)
-    )
+    axios.get.mockResolvedValueOnce(mockDetails);
+    const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId));
 
-    expect(details.app).toBe(mockDetails.data.app)
-  })
+    expect(details.app).toBe(mockDetails.data.app);
+  });
 
   test('calls unsuccessful getCurrentUserLicenses', async () => {
-    axios.get.mockRejectedValueOnce(
-      new Error('Failed to load instance details')
-    )
+    axios.get.mockRejectedValueOnce(new Error('Failed to load instance details'));
     await act(async () => {
-      expect(
-        getInstanceDetails(mockDetails.data.instanceId)
-      ).rejects.toThrowError()
-    })
-  })
+      expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError();
+    });
+  });
 
   test('Get IP Address from Details', () => {
-    const ip = getIPAddress(mockDetails.data)
-    expect(ip).toBe(mockDetails.data.ipAddress)
-  })
+    const ip = getIPAddress(mockDetails.data);
+    expect(ip).toBe(mockDetails.data.ipAddress);
+  });
 
   test('Get host from Details', () => {
-    const host = getHostname(mockDetails.data)
-    expect(host).toBe(mockDetails.data.hostname)
-  })
+    const host = getHostname(mockDetails.data);
+    expect(host).toBe(mockDetails.data.hostname);
+  });
 
   test('Get ports from Details', () => {
-    const ports = getPorts(mockDetails.data)
-    expect(ports).toHaveLength(1)
-  })
-})
+    const ports = getPorts(mockDetails.data);
+    expect(ports).toHaveLength(1);
+  });
+});

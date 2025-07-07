@@ -15,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import '@testing-library/jest-dom'
-import { AppList } from '../AppList'
-import { useReferenceDataContext } from '../ReferenceDataContext'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom';
+import { AppList } from '../AppList';
+import { useReferenceDataContext } from '../ReferenceDataContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../api/marketplace/ProductService')
-vitest.mock('../../api/device/DeviceAPI')
-vitest.mock('../ReferenceDataContext', () => ({ useReferenceDataContext: vitest.fn() }))
+vitest.mock('../../api/marketplace/ProductService');
+vitest.mock('../../api/device/DeviceAPI');
+vitest.mock('../ReferenceDataContext', () => ({ useReferenceDataContext: vitest.fn() }));
 
 const mockReferenceDataContext = {
   setAppList: vitest.fn(),
@@ -34,17 +34,17 @@ const mockReferenceDataContext = {
   setUpdateAppList: vitest.fn(),
   setLoadedProducts: vitest.fn(),
   updateAppList: false,
-  appListLoading: false
-}
+  appListLoading: false,
+};
 
 describe('AppList', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
   test('renders AppList component', async () => {
-    useReferenceDataContext.mockReturnValue(mockReferenceDataContext)
+    useReferenceDataContext.mockReturnValue(mockReferenceDataContext);
     await act(async () => {
-      render(<AppList></AppList>)
-    })
-  })
-})
+      render(<AppList></AppList>);
+    });
+  });
+});

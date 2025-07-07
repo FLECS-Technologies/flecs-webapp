@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { BrowserRouter as Router } from 'react-router-dom'
-import DeviceAppsList from '../InstalledAppsList'
-import { JobsContextProvider } from '../../data/JobsContext'
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import DeviceAppsList from '../InstalledAppsList';
+import { JobsContextProvider } from '../../data/JobsContext';
 
 describe('Test Installed Apps List', () => {
   test('renders installed apps list component', () => {
@@ -30,14 +30,14 @@ describe('Test Installed Apps List', () => {
         <Router>
           <DeviceAppsList />
         </Router>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    const sideloadButton = getByTestId('DeveloperModeIcon')
+    const sideloadButton = getByTestId('DeveloperModeIcon');
 
-    fireEvent.click(sideloadButton)
+    fireEvent.click(sideloadButton);
 
-    expect(sideloadButton).toBeVisible()
+    expect(sideloadButton).toBeVisible();
     // screen.debug()
-  })
-})
+  });
+});

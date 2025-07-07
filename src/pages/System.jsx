@@ -7,7 +7,7 @@ import {
   Tab,
   Toolbar,
   Typography,
-  BottomNavigation
+  BottomNavigation,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Version from '../components/Version';
@@ -19,16 +19,8 @@ function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: { xs: 1, sm: 2 } }}>
-          {children}
-        </Box>
-      )}
+    <div role="tabpanel" hidden={value !== index} {...other}>
+      {value === index && <Box sx={{ p: { xs: 1, sm: 2 } }}>{children}</Box>}
     </div>
   );
 }
@@ -44,14 +36,14 @@ const System = () => {
     <Box
       sx={{
         pb: '64px',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
       <Paper aria-label="system-page" className="box">
         <Toolbar
           sx={{
             pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 }
+            pr: { xs: 1, sm: 1 },
           }}
         >
           <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h6">
@@ -96,13 +88,13 @@ const System = () => {
           bottom: 0,
           left: 0,
           right: 0,
-          zIndex: (theme) => theme.zIndex.appBar
+          zIndex: (theme) => theme.zIndex.appBar,
         }}
         elevation={3}
       >
         <BottomNavigation>
           <Toolbar sx={{ p: { xs: 1, sm: 2 } }}>
-            <Link aria-label='open-source' to='/open-source'>
+            <Link aria-label="open-source" to="/open-source">
               Open-Source
             </Link>
           </Toolbar>

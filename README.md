@@ -1,7 +1,7 @@
 # FLECS-WebApp
 
-
 ## Set up Visual Studio Code environment
+
 This is a short description on how to set up Visual Studio Code for the FLECS WebApp.
 
 ### First steps
@@ -11,6 +11,7 @@ This is a short description on how to set up Visual Studio Code for the FLECS We
 3. After successful installation and start of npm, hitting F5 should open a new Chrome Windows loading the WebApp
 
 ### Static analysis with ESLint
+
 We use ESLint for static analysis of our code. This tutorial shows how to setup ESLint in Visual Studio Code: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
 During the configuration of ESLint several prompts are to answer. Please use the following answers:
 

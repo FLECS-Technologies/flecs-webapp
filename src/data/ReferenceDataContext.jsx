@@ -16,28 +16,41 @@
  * limitations under the License.
  */
 
-import React, { createContext, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { createContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
-export const ReferenceDataContext = createContext([])
+export const ReferenceDataContext = createContext([]);
 
 export const ReferenceDataContextProvider = ({ children }) => {
-  const [appList, setAppList] = useState(undefined)
-  const [updateAppList, setUpdateAppList] = useState(false)
-  const [appListLoading, setAppListLoading] = useState(false)
-  const [appListError, setAppListError] = useState(false)
-  const [loadedProducts, setLoadedProducts] = useState(undefined)
+  const [appList, setAppList] = useState(undefined);
+  const [updateAppList, setUpdateAppList] = useState(false);
+  const [appListLoading, setAppListLoading] = useState(false);
+  const [appListError, setAppListError] = useState(false);
+  const [loadedProducts, setLoadedProducts] = useState(undefined);
   return (
-    <ReferenceDataContext.Provider value={{ appList, setAppList, updateAppList, setUpdateAppList, appListLoading, setAppListLoading, appListError, setAppListError, loadedProducts, setLoadedProducts }}>
+    <ReferenceDataContext.Provider
+      value={{
+        appList,
+        setAppList,
+        updateAppList,
+        setUpdateAppList,
+        appListLoading,
+        setAppListLoading,
+        appListError,
+        setAppListError,
+        loadedProducts,
+        setLoadedProducts,
+      }}
+    >
       {children}
     </ReferenceDataContext.Provider>
-  )
-}
+  );
+};
 
-export function useReferenceDataContext () {
-  return React.useContext(ReferenceDataContext)
+export function useReferenceDataContext() {
+  return React.useContext(ReferenceDataContext);
 }
 
 ReferenceDataContextProvider.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};

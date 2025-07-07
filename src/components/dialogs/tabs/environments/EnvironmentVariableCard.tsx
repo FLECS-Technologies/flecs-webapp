@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Card, TextField, IconButton, Tooltip } from '@mui/material'
-import { Delete, Save } from '@mui/icons-material'
+import React from 'react';
+import { Card, TextField, IconButton, Tooltip } from '@mui/material';
+import { Delete, Save } from '@mui/icons-material';
 
 interface EnvironmentVariableCardProps {
-  env: { name: string; value: string }
-  index: number
-  onChange: (index: number, key: string, value: string) => void
-  onDelete: (index: number) => void
-  onSave: () => void
+  env: { name: string; value: string };
+  index: number;
+  onChange: (index: number, key: string, value: string) => void;
+  onDelete: (index: number) => void;
+  onSave: () => void;
 }
 
 const EnvironmentVariableCard: React.FC<EnvironmentVariableCardProps> = ({
@@ -32,47 +32,47 @@ const EnvironmentVariableCard: React.FC<EnvironmentVariableCardProps> = ({
   index,
   onChange,
   onDelete,
-  onSave
+  onSave,
 }) => {
-  const [changes, setChanges] = React.useState(false)
+  const [changes, setChanges] = React.useState(false);
   return (
     <Card sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }}>
       <TextField
-        label='Key'
-        variant='outlined'
-        size='small'
+        label="Key"
+        variant="outlined"
+        size="small"
         value={env.name}
         onChange={(e) => {
-          onChange(index, 'name', e.target.value)
-          setChanges(true)
+          onChange(index, 'name', e.target.value);
+          setChanges(true);
         }}
         sx={{ flex: 1, mr: 2 }}
       />
       <TextField
-        label='Value'
-        variant='outlined'
-        size='small'
+        label="Value"
+        variant="outlined"
+        size="small"
         value={env.value}
         onChange={(e) => {
-          onChange(index, 'value', e.target.value)
-          setChanges(true)
+          onChange(index, 'value', e.target.value);
+          setChanges(true);
         }}
         sx={{ flex: 1, mr: 2 }}
       />
       <IconButton
         onClick={() => onDelete(index)}
         sx={{ flexShrink: 0 }}
-        aria-label='Delete Environment Variable'
+        aria-label="Delete Environment Variable"
       >
         <Delete />
       </IconButton>
-      <Tooltip title='Save Environment Variable'>
+      <Tooltip title="Save Environment Variable">
         <span>
           <IconButton
-            aria-label='Save Environment Variable'
+            aria-label="Save Environment Variable"
             onClick={(e) => {
-              onSave()
-              setChanges(false)
+              onSave();
+              setChanges(false);
             }}
             sx={{ flexShrink: 0 }}
             disabled={!changes}
@@ -82,7 +82,7 @@ const EnvironmentVariableCard: React.FC<EnvironmentVariableCardProps> = ({
         </span>
       </Tooltip>
     </Card>
-  )
-}
+  );
+};
 
-export default EnvironmentVariableCard
+export default EnvironmentVariableCard;

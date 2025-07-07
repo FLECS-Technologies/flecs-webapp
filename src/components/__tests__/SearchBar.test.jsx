@@ -15,49 +15,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import userEvent from '@testing-library/user-event'
-import { render, within } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import SearchBar from '../SearchBar'
+import React from 'react';
+import userEvent from '@testing-library/user-event';
+import { render, within } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import SearchBar from '../SearchBar';
 
 describe('SearchBar', () => {
-  const searchFunc = jest.fn()
+  const searchFunc = jest.fn();
 
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('renders SearchBar', () => {
-    const { getByLabelText } = render(
-      <SearchBar searchTitle='Test Search' search={searchFunc} />
-    )
+    const { getByLabelText } = render(<SearchBar searchTitle="Test Search" search={searchFunc} />);
 
-    const autocomplete = getByLabelText('autocomplete')
-    const searchField = getByLabelText('search-field')
-    const searchIcon = getByLabelText('search-icon')
-    const input = within(autocomplete).getByRole('combobox')
+    const autocomplete = getByLabelText('autocomplete');
+    const searchField = getByLabelText('search-field');
+    const searchIcon = getByLabelText('search-icon');
+    const input = within(autocomplete).getByRole('combobox');
 
-    expect(() => getByLabelText('filter')).toThrow()
-    expect(searchIcon).toBeVisible()
-    expect(searchField).toBeVisible()
-    expect(searchField).toBeEnabled()
-    expect(input).toHaveFocus()
-  })
+    expect(() => getByLabelText('filter')).toThrow();
+    expect(searchIcon).toBeVisible();
+    expect(searchField).toBeVisible();
+    expect(searchField).toBeEnabled();
+    expect(input).toHaveFocus();
+  });
 
   test('Search', async () => {
-    const user = userEvent.setup()
-    const { getByLabelText } = render(
-      <SearchBar searchTitle='Test Search' search={searchFunc} />
-    )
+    const user = userEvent.setup();
+    const { getByLabelText } = render(<SearchBar searchTitle="Test Search" search={searchFunc} />);
 
-    const autocomplete = getByLabelText('autocomplete')
+    const autocomplete = getByLabelText('autocomplete');
 
-    await user.keyboard('Flanders')
+    await user.keyboard('Flanders');
 
-    const input = within(autocomplete).getByRole('combobox')
+    const input = within(autocomplete).getByRole('combobox');
 
-    expect(input.value).toEqual('Flanders')
-    expect(searchFunc).toBeCalledTimes(8) // Flanders has 8 letters
-  })
-})
+    expect(input.value).toEqual('Flanders');
+    expect(searchFunc).toBeCalledTimes(8); // Flanders has 8 letters
+  });
+});

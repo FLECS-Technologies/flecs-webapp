@@ -23,8 +23,7 @@ async function getProducts() {
         id: 35,
         name: 'FLECS Service Mesh',
         status: 'publish',
-        short_description:
-          '<p>Communication and data exchange between all FLECS apps.</p>\n',
+        short_description: '<p>Communication and data exchange between all FLECS apps.</p>\n',
         sku: '',
         price: '',
         permalink: 'https://google.com',
@@ -36,47 +35,47 @@ async function getProducts() {
             position: 3,
             visible: true,
             variation: true,
-            options: ['amd64']
-          }
+            options: ['amd64'],
+          },
         ],
         categories: [
           {
             id: 27,
             name: 'App',
-            slug: 'app'
+            slug: 'app',
           },
           {
             id: 28,
             name: 'Communication',
-            slug: 'communication'
-          }
+            slug: 'communication',
+          },
         ],
         meta_data: [
           {
             id: 664,
             key: 'port-author-name',
-            value: 'FLECS Technologies GmbH'
+            value: 'FLECS Technologies GmbH',
           },
           {
             id: 665,
             key: 'port-release',
-            value: ''
+            value: '',
           },
           {
             id: 666,
             key: 'port-version',
-            value: '2.0.2-dormouse'
+            value: '2.0.2-dormouse',
           },
           {
             id: 670,
             key: 'app-icon',
             value:
-              'https://staging.flecs-technologies.com/wp-content/uploads/2021/07/FLECS-cyan.png'
+              'https://staging.flecs-technologies.com/wp-content/uploads/2021/07/FLECS-cyan.png',
           },
           {
             id: 672,
             key: 'port-requirement',
-            value: ''
+            value: '',
           },
           {
             id: 1669,
@@ -85,104 +84,104 @@ async function getProducts() {
               {
                 title: 'reverse-domain-name',
                 icon: '',
-                value: 'tech.flecs.service-mesh'
-              }
-            ]
-          }
-        ]
-      }
-    ])
-  })
+                value: 'tech.flecs.service-mesh',
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+  });
 }
 
 function getReverseDomainName(app) {
   return new Promise((resolve, reject) => {
     app
       ? resolve('org.openjsf.node-red')
-      : reject(new Error('Mock: Failed to get reverse domain name'))
-  })
+      : reject(new Error('Mock: Failed to get reverse domain name'));
+  });
 }
 
 function getEditorAddress(app) {
-  return ''
+  return '';
 }
 
 function getAppIcon(app) {
-  return ''
+  return '';
 }
 
 function getAuthor(app) {
-  return ''
+  return '';
 }
 
 function getVersion(app) {
-  return ''
+  return '';
 }
 
 function getVersions(app) {
-  return []
+  return [];
 }
 
 function getBlacklist(app) {
-  return []
+  return [];
 }
 
 function isBlacklisted(systemInfo, blacklist) {
-  return false
+  return false;
 }
 
 function getShortDescription(app) {
-  return ''
+  return '';
 }
 
 function getCustomLinks(app) {
-  return []
+  return [];
 }
 
 function getMultiInstance(app) {
-  return false
+  return false;
 }
 
 function getRequirement(app) {
-  return []
+  return [];
 }
 
 function getId(app) {
-  return 1
+  return 1;
 }
 
 function getCategories(app) {
-  return []
+  return [];
 }
 
 function getCategoryID() {
-  return 27
+  return 27;
 }
 
 function getAverageRating(app) {
-  return '5'
+  return '5';
 }
 
 function getRatingCount(app) {
-  return 1
+  return 1;
 }
 
 function getPrice(app) {
-  return '10'
+  return '10';
 }
 
 function getPermalink(app) {
-  return 'https://google.com'
+  return 'https://google.com';
 }
 
 function getPurchasable(app) {
-  if (app) return true
-  else return false
+  if (app) return true;
+  else return false;
 }
 
 function getDocumentationUrl(app) {
-  if (app) return 'https://google.com'
-  else return undefined
+  if (app) return 'https://google.com';
+  else return undefined;
 }
 
 export {
@@ -207,5 +206,5 @@ export {
   getRequirement,
   getPrice,
   getPermalink,
-  getPurchasable
-}
+  getPurchasable,
+};

@@ -1,4 +1,4 @@
-import { Job } from '../job'
+import { Job } from '../job';
 
 export const mockJob: Job = {
   id: 1,
@@ -11,13 +11,13 @@ export const mockJob: Job = {
     unit: 'unit',
     unitsTotal: 4,
     unitsDone: 4,
-    rate: 0
+    rate: 0,
   },
   result: {
     code: 0,
-    message: 'Ok.'
-  }
-}
+    message: 'Ok.',
+  },
+};
 
 export const mockSuccessJob: Job = {
   id: 2,
@@ -30,13 +30,13 @@ export const mockSuccessJob: Job = {
     unit: 'unit',
     unitsTotal: 4,
     unitsDone: 4,
-    rate: 0
+    rate: 0,
   },
   result: {
     code: 0,
-    message: 'Ok.'
-  }
-}
+    message: 'Ok.',
+  },
+};
 
 export const mockQueuedJob: Job = {
   id: 3,
@@ -49,10 +49,10 @@ export const mockQueuedJob: Job = {
     unit: 'unit',
     unitsTotal: 4,
     unitsDone: 4,
-    rate: 0
+    rate: 0,
   },
   result: {
     code: 0,
-    message: 'Ok.'
-  }
-}
+    message: 'Ok.',
+  },
+};

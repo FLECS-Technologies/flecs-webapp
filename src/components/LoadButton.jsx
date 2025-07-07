@@ -1,10 +1,21 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Button from '@mui/material/Button'
-import { Loading } from './Loading'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import { Loading } from './Loading';
 
 const LoadButton = (props) => {
-  const { startIcon, text, variant, color, disabled, displaystate, loading, label, width, ...buttonProps } = props
+  const {
+    startIcon,
+    text,
+    variant,
+    color,
+    disabled,
+    displaystate,
+    loading,
+    label,
+    width,
+    ...buttonProps
+  } = props;
 
   return (
     <Loading loading={loading}>
@@ -21,8 +32,8 @@ const LoadButton = (props) => {
         {text}
       </Button>
     </Loading>
-  )
-}
+  );
+};
 
 LoadButton.propTypes = {
   startIcon: PropTypes.any,
@@ -33,7 +44,7 @@ LoadButton.propTypes = {
   displaystate: PropTypes.string,
   loading: PropTypes.bool,
   label: PropTypes.string,
-  width: PropTypes.string
-}
+  width: PropTypes.string,
+};
 
-export default LoadButton
+export default LoadButton;

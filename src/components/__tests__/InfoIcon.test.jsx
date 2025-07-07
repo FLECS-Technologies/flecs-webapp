@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
-import InfoIcon from '../InfoIcon'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
+import InfoIcon from '../InfoIcon';
 
 describe('InfoIcon', () => {
   test('render InfoIcon component', () => {
-    render(<InfoIcon message='test message'/>)
-  })
+    render(<InfoIcon message="test message" />);
+  });
 
   test('hover info icon', async () => {
     await act(async () => {
-      render(<InfoIcon message='test message'/>)
-    })
+      render(<InfoIcon message="test message" />);
+    });
 
-    const infoIcon = screen.getByTestId('ReportOutlinedIcon')
-    expect(infoIcon).toBeInTheDocument()
+    const infoIcon = screen.getByTestId('ReportOutlinedIcon');
+    expect(infoIcon).toBeInTheDocument();
 
-    await userEvent.hover(infoIcon)
-    const infoElement = await screen.findByText('test message')
-    const infoMessage = infoElement.innerHTML
-    expect(infoMessage).toBe('test message')
-  })
-})
+    await userEvent.hover(infoIcon);
+    const infoElement = await screen.findByText('test message');
+    const infoMessage = infoElement.innerHTML;
+    expect(infoMessage).toBe('test message');
+  });
+});

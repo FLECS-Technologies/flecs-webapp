@@ -15,31 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
-import HostContainerTable from '../HostContainerTable'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react';
+import HostContainerTable from '../HostContainerTable';
 
 const testData = [
   {
     host: 'host',
-    container: 'container'
+    container: 'container',
   },
   {
     host: 'host2',
-    container: 'container2'
-  }
-]
+    container: 'container2',
+  },
+];
 describe('HostContainerTable', () => {
   test('renders HostContainerTable component', async () => {
     await act(async () => {
-      render(<HostContainerTable data={testData}></HostContainerTable>)
-    })
+      render(<HostContainerTable data={testData}></HostContainerTable>);
+    });
 
-    expect(screen.getByText('host')).toBeVisible()
-    expect(screen.getByText('host2')).toBeVisible()
-    expect(screen.getByText('container')).toBeVisible()
-    expect(screen.getByText('container2')).toBeVisible()
-  })
-})
+    expect(screen.getByText('host')).toBeVisible();
+    expect(screen.getByText('host2')).toBeVisible();
+    expect(screen.getByText('container')).toBeVisible();
+    expect(screen.getByText('container2')).toBeVisible();
+  });
+});

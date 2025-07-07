@@ -15,34 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { ValidateDeviceAPI } from '../status'
-import { mockValidateDeviceAPIResponse } from '../__mocks__/status'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { ValidateDeviceAPI } from '../status';
+import { mockValidateDeviceAPIResponse } from '../__mocks__/status';
 
-jest.mock('axios')
+jest.mock('axios');
 
 describe('ValidateDeviceAPI', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('calls successful ValidateDeviceAPI', async () => {
-    axios.get.mockResolvedValueOnce(mockValidateDeviceAPIResponse)
-    const response = await waitFor(() => ValidateDeviceAPI())
+    axios.get.mockResolvedValueOnce(mockValidateDeviceAPIResponse);
+    const response = await waitFor(() => ValidateDeviceAPI());
 
-    expect(response.isValid).toBe(mockValidateDeviceAPIResponse.data.isValid)
-  })
+    expect(response.isValid).toBe(mockValidateDeviceAPIResponse.data.isValid);
+  });
 
   test('calls unsuccessful ValidateDeviceAPI', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Activation failed'))
+    axios.get.mockRejectedValueOnce(new Error('Activation failed'));
     await act(async () => {
-      expect(ValidateDeviceAPI()).rejects.toThrowError()
-    })
-  })
-})
+      expect(ValidateDeviceAPI()).rejects.toThrowError();
+    });
+  });
+});

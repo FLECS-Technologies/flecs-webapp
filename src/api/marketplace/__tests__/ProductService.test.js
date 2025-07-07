@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { waitFor } from '@testing-library/dom'
-import axios from 'axios'
+import { waitFor } from '@testing-library/dom';
+import axios from 'axios';
 import {
   getAppIcon,
   getAuthor,
@@ -32,11 +32,11 @@ import {
   getRequirement,
   getReverseDomainName,
   getShortDescription,
-  getVersion
-} from '../ProductService'
-import { vitest } from 'vitest'
+  getVersion,
+} from '../ProductService';
+import { vitest } from 'vitest';
 
-vitest.mock('axios')
+vitest.mock('axios');
 
 const mockProducts = {
   data: {
@@ -96,13 +96,13 @@ const mockProducts = {
             {
               id: 27,
               name: 'App',
-              slug: 'app'
+              slug: 'app',
             },
             {
               id: 15,
               name: 'Unkategorisiert',
-              slug: 'unkategorisiert'
-            }
+              slug: 'unkategorisiert',
+            },
           ],
           tags: [],
           images: [],
@@ -113,7 +113,7 @@ const mockProducts = {
               position: 0,
               visible: false,
               variation: false,
-              options: ['org.openjsf.node-red']
+              options: ['org.openjsf.node-red'],
             },
             {
               id: 0,
@@ -121,7 +121,7 @@ const mockProducts = {
               position: 1,
               visible: false,
               variation: false,
-              options: [':1880']
+              options: [':1880'],
             },
             {
               id: 0,
@@ -129,8 +129,8 @@ const mockProducts = {
               position: 3,
               visible: true,
               variation: true,
-              options: ['amd64']
-            }
+              options: ['amd64'],
+            },
           ],
           default_attributes: [],
           variations: [],
@@ -143,38 +143,37 @@ const mockProducts = {
             {
               id: 712,
               key: 'port-author-name',
-              value: 'OpenJS Foundation'
+              value: 'OpenJS Foundation',
             },
             {
               id: 713,
               key: 'port-release',
-              value: ''
+              value: '',
             },
             {
               id: 714,
               key: 'port-version',
-              value: '2.1.4'
+              value: '2.1.4',
             },
             {
               id: 715,
               key: 'product-contpadding',
-              value: 'on'
+              value: 'on',
             },
             {
               id: 716,
               key: 'disable-woo',
-              value: 'off'
+              value: 'off',
             },
             {
               id: 717,
               key: 'fetch_data_itunes',
-              value: 'on'
+              value: 'on',
             },
             {
               id: 718,
               key: 'app-icon',
-              value:
-                'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png'
+              value: 'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png',
             },
             {
               id: 719,
@@ -184,95 +183,95 @@ const mockProducts = {
                   title: 'Create First Flow',
                   icon: '',
                   download_text: ' ',
-                  url: 'https://nodered.org/docs/tutorials/first-flow'
+                  url: 'https://nodered.org/docs/tutorials/first-flow',
                 },
                 {
                   title: 'User Guide',
                   icon: '',
                   download_text: ' ',
-                  url: 'https://nodered.org/docs/user-guide/'
-                }
-              ]
+                  url: 'https://nodered.org/docs/user-guide/',
+                },
+              ],
             },
             {
               id: 720,
               key: 'port-requirement',
-              value: 'amd64'
+              value: 'amd64',
             },
             {
               id: 721,
               key: 'custom-screenshot',
-              value: ''
+              value: '',
             },
             {
               id: 1670,
               key: 'app-custom-meta',
-              value: ''
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
+              value: '',
+            },
+          ],
+        },
+      ],
+    },
+  },
+};
 
 describe('ProductService', () => {
   beforeEach(() => {
-    mockProducts.data.statusCode = 200
-  })
+    mockProducts.data.statusCode = 200;
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('calls successful getProducts', async () => {
-    axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts())
+    axios.get.mockResolvedValueOnce(mockProducts);
+    const products = await waitFor(() => getProducts());
 
-    expect(products).toHaveLength(1)
-  })
+    expect(products).toHaveLength(1);
+  });
 
   test('calls unsuccessful getProducts', async () => {
-    mockProducts.data.statusCode = 400
-    axios.get.mockResolvedValueOnce(mockProducts)
-    const data = await waitFor(() => getProducts())
+    mockProducts.data.statusCode = 400;
+    axios.get.mockResolvedValueOnce(mockProducts);
+    const data = await waitFor(() => getProducts());
 
-    expect(data).toBeUndefined()
-  })
+    expect(data).toBeUndefined();
+  });
 
   test('test property helpers', async () => {
-    axios.get.mockResolvedValueOnce(mockProducts)
-    const products = await waitFor(() => getProducts())
+    axios.get.mockResolvedValueOnce(mockProducts);
+    const products = await waitFor(() => getProducts());
 
-    expect(products).toHaveLength(1)
+    expect(products).toHaveLength(1);
 
-    expect(getReverseDomainName(products[0])).toBe('org.openjsf.node-red')
-    expect(getEditorAddress(products[0])).toBe(':1880')
+    expect(getReverseDomainName(products[0])).toBe('org.openjsf.node-red');
+    expect(getEditorAddress(products[0])).toBe(':1880');
     expect(getAppIcon(products[0])).toBe(
-      'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png'
-    )
-    expect(getAuthor(products[0])).toBe('OpenJS Foundation')
-    expect(getVersion(products[0])).toBe('2.1.4')
-    expect(getShortDescription(products[0])).toBe('Low code programming\n')
-    expect(getCustomLinks(products[0])).toHaveLength(2)
-    expect(getMultiInstance(products[0])).toBeFalsy()
-    expect(getRequirement(products[0])).toStrictEqual(['amd64'])
-    expect(getId(products[0])).toBe(37)
-    expect(getAverageRating(products[0])).toBe('0.00')
-    expect(getRatingCount(products[0])).toBe(0)
+      'http://mp-dev.flecs.tech/wp-content/uploads/2022/01/node-red-logo.png',
+    );
+    expect(getAuthor(products[0])).toBe('OpenJS Foundation');
+    expect(getVersion(products[0])).toBe('2.1.4');
+    expect(getShortDescription(products[0])).toBe('Low code programming\n');
+    expect(getCustomLinks(products[0])).toHaveLength(2);
+    expect(getMultiInstance(products[0])).toBeFalsy();
+    expect(getRequirement(products[0])).toStrictEqual(['amd64']);
+    expect(getId(products[0])).toBe(37);
+    expect(getAverageRating(products[0])).toBe('0.00');
+    expect(getRatingCount(products[0])).toBe(0);
     expect(getCategories(products[0])).toStrictEqual([
       {
         id: 27,
         name: 'App',
-        slug: 'app'
+        slug: 'app',
       },
       {
         id: 15,
         name: 'Unkategorisiert',
-        slug: 'unkategorisiert'
-      }
-    ])
-    expect(getCategories(products[1])).toBeUndefined() // product doesn't exist
-    expect(getBlacklist(products[0])).toBeUndefined()
-  })
-})
+        slug: 'unkategorisiert',
+      },
+    ]);
+    expect(getCategories(products[1])).toBeUndefined(); // product doesn't exist
+    expect(getBlacklist(products[0])).toBeUndefined();
+  });
+});

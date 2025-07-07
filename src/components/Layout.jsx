@@ -15,47 +15,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PropTypes from 'prop-types'
-import React, { useContext } from 'react'
-import CssBaseline from '@mui/material/CssBaseline'
-import { ThemeProvider } from '@mui/material/styles'
-import { darkTheme, lightTheme } from '../whitelabeling/custom-theme'
-import { darkModeContext } from './ThemeHandler'
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import { darkTheme, lightTheme } from '../whitelabeling/custom-theme';
+import { darkModeContext } from './ThemeHandler';
 
 const Layout = ({ children }) => {
-  const DarkModeContext = useContext(darkModeContext)
-  const { darkMode, setDarkMode } = DarkModeContext
+  const DarkModeContext = useContext(darkModeContext);
+  const { darkMode, setDarkMode } = DarkModeContext;
 
   React.useEffect(() => {
-    const preferredTheme = localStorage.getItem('preferred-theme') || 'system'
+    const preferredTheme = localStorage.getItem('preferred-theme') || 'system';
     if (preferredTheme === 'dark') {
-      setDarkMode(true)
+      setDarkMode(true);
     } else if (preferredTheme === 'light') {
-      setDarkMode(false)
+      setDarkMode(false);
     } else {
-      localStorage.setItem('preferred-theme', 'system')
-      if (
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      ) {
-        setDarkMode(true)
+      localStorage.setItem('preferred-theme', 'system');
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setDarkMode(true);
       } else {
-        setDarkMode(false)
+        setDarkMode(false);
       }
     }
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>
-  )
-}
+  );
+};
 
 Layout.propTypes = {
-  children: PropTypes.node.isRequired
-}
+  children: PropTypes.node.isRequired,
+};
 
-export default Layout
+export default Layout;

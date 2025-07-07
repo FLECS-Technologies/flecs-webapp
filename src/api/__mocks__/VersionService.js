@@ -16,30 +16,26 @@
  * limitations under the License.
  */
 
-async function getVersion () {
+async function getVersion() {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        core: '1.1.0-porpoise-475591c'
-      }
-    )
-  })
+    resolve({
+      core: '1.1.0-porpoise-475591c',
+    });
+  });
 }
 
-async function getLatestVersion () {
+async function getLatestVersion() {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        success: true,
-        version: '1.1.0-porpoise-475591c',
-        release_notes: 'www.release-notes.com'
-      }
-    )
-  })
+    resolve({
+      success: true,
+      version: '1.1.0-porpoise-475591c',
+      release_notes: 'www.release-notes.com',
+    });
+  });
 }
 
-function isLaterThan (version1, version2) {
-  return true
+function isLaterThan(version1, version2) {
+  return true;
 }
 
-export { getVersion, getLatestVersion, isLaterThan }
+export { getVersion, getLatestVersion, isLaterThan };

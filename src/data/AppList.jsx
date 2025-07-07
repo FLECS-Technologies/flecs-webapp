@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useReferenceDataContext } from './ReferenceDataContext'
-import DeviceAPI from '../api/device/DeviceAPI'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useReferenceDataContext } from './ReferenceDataContext';
+import DeviceAPI from '../api/device/DeviceAPI';
 import {
   getAppIcon,
   getAuthor,
@@ -29,8 +29,8 @@ import {
   getPrice,
   getProducts,
   getPurchasable,
-  getReverseDomainName
-} from '../api/marketplace/ProductService'
+  getReverseDomainName,
+} from '../api/marketplace/ProductService';
 
 function AppList(props) {
   const {
@@ -41,150 +41,145 @@ function AppList(props) {
     appListLoading,
     setUpdateAppList,
     loadedProducts,
-    setLoadedProducts
-  } = useReferenceDataContext()
+    setLoadedProducts,
+  } = useReferenceDataContext();
 
   React.useEffect(() => {
     if (!appListLoading) {
       if (!loadedProducts) {
-        loadProducts()
+        loadProducts();
       } else {
-        loadAppList()
-        setUpdateAppList(false)
+        loadAppList();
+        setUpdateAppList(false);
       }
     }
-  }, [updateAppList, loadedProducts])
+  }, [updateAppList, loadedProducts]);
 
   const loadProducts = async () => {
-    setAppListLoading(true)
+    setAppListLoading(true);
     try {
-      let products = await getProducts()
-      products = removeDuplicates(products)
+      let products = await getProducts();
+      products = removeDuplicates(products);
       products.sort((a, b) =>
         a.name.toLowerCase() > b.name.toLowerCase()
           ? 1
           : b.name.toLowerCase() > a.name.toLowerCase()
-          ? -1
-          : 0
-      )
-      setLoadedProducts(products)
+            ? -1
+            : 0,
+      );
+      setLoadedProducts(products);
     } catch (error) {
-      console.log(error)
-      setLoadedProducts([])
-      setAppListError(true)
+      console.log(error);
+      setLoadedProducts([]);
+      setAppListError(true);
     } finally {
-      setAppListLoading(false)
+      setAppListLoading(false);
     }
-  }
+  };
 
   const loadAppList = async (props) => {
     const collator = new Intl.Collator('en', {
       numeric: true,
-      sensitivity: 'base'
-    })
-    setAppListLoading(true)
+      sensitivity: 'base',
+    });
+    setAppListLoading(true);
 
     // call api from the device to get all installed apps
-    const deviceAPI = new DeviceAPI()
-    await deviceAPI.getInstances()
-    await deviceAPI.getInstalledApps()
+    const deviceAPI = new DeviceAPI();
+    await deviceAPI.getInstances();
+    await deviceAPI.getInstalledApps();
     if (deviceAPI.lastAPICallSuccessful) {
-      const mergedList = deviceAPI.appList
+      const mergedList = deviceAPI.appList;
 
       mergedList.forEach((app) => {
-        const mpApp = findApp(app.appKey, loadedProducts)
+        const mpApp = findApp(app.appKey, loadedProducts);
         if (mpApp) {
-          app.avatar = getAppIcon(mpApp)
-          app.title = mpApp?.name
-          app.author = getAuthor(mpApp)
-          app.relatedLinks = getCustomLinks(mpApp)
-          app.price = getPrice(mpApp)
-          app.permalink = getPermalink(mpApp)
-          app.purchasable = getPurchasable(mpApp)
-          app.documentationUrl = getDocumentationUrl(mpApp)
+          app.avatar = getAppIcon(mpApp);
+          app.title = mpApp?.name;
+          app.author = getAuthor(mpApp);
+          app.relatedLinks = getCustomLinks(mpApp);
+          app.price = getPrice(mpApp);
+          app.permalink = getPermalink(mpApp);
+          app.purchasable = getPurchasable(mpApp);
+          app.documentationUrl = getDocumentationUrl(mpApp);
         }
         if (typeof app === 'object' && app !== null) {
-          app.installedVersions = getInstalledVersions(
-            mergedList,
-            app.appKey.name
-          )
-          app.installedVersions.sort((a, b) => collator.compare(a, b))
-          app.installedVersions.reverse()
-          app.instances = getAppInstances(app, deviceAPI.instances)
+          app.installedVersions = getInstalledVersions(mergedList, app.appKey.name);
+          app.installedVersions.sort((a, b) => collator.compare(a, b));
+          app.installedVersions.reverse();
+          app.instances = getAppInstances(app, deviceAPI.instances);
         }
-      })
+      });
 
-      setAppList((appList) => [...mergedList])
-      setAppListLoading(false)
-      setAppListError(false)
+      setAppList((appList) => [...mergedList]);
+      setAppListLoading(false);
+      setAppListError(false);
     } else {
-      setAppList((appList) => [...loadedProducts])
-      setAppListLoading(false)
-      setAppListError(true)
+      setAppList((appList) => [...loadedProducts]);
+      setAppListLoading(false);
+      setAppListError(true);
       console.error(
         'Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' +
-          deviceAPI.lastAPIError
-      )
+          deviceAPI.lastAPIError,
+      );
     }
-  }
+  };
 
-  return <>{props.children}</>
+  return <>{props.children}</>;
 }
 AppList.propTypes = {
-  children: PropTypes.any
-}
+  children: PropTypes.any,
+};
 
 function findApp(app, list) {
-  let result
+  let result;
   list.forEach((product) => {
     if (app.name === getReverseDomainName(product)) {
-      result = product
+      result = product;
     }
-  })
+  });
 
-  return result
+  return result;
 }
 
 function getInstalledVersions(apps, app) {
-  let result
+  let result;
   if (apps && app !== undefined && app !== null) {
-    const installedApps = apps.filter((obj) => obj.appKey.name === app)
+    const installedApps = apps.filter((obj) => obj.appKey.name === app);
     if (installedApps) {
-      result = installedApps.map((obj) => obj.appKey.version)
+      result = installedApps.map((obj) => obj.appKey.version);
     }
   }
-  return result
+  return result;
 }
 
 function getAppInstances(app, instances) {
   if (app && instances) {
     return instances.filter(
-      (i) =>
-        i.appKey.name === app.appKey.name &&
-        i.appKey.version === app.appKey.version
-    )
+      (i) => i.appKey.name === app.appKey.name && i.appKey.version === app.appKey.version,
+    );
   }
 }
 
 function removeDuplicates(products) {
   // Create a Set to keep track of unique reverse domain names
-  const seenDomainNames = new Set()
+  const seenDomainNames = new Set();
 
   // Filter the products array to remove duplicates
   const uniqueProducts = products.filter((product) => {
-    const reverseDomainName = getReverseDomainName(product)
+    const reverseDomainName = getReverseDomainName(product);
 
     // If the domain is already seen, we skip it (i.e., it's a duplicate)
     if (seenDomainNames.has(reverseDomainName)) {
-      return false
+      return false;
     }
 
     // Otherwise, add the domain to the set and keep the product
-    seenDomainNames.add(reverseDomainName)
-    return true
-  })
+    seenDomainNames.add(reverseDomainName);
+    return true;
+  });
 
-  return uniqueProducts
+  return uniqueProducts;
 }
 
-export { AppList, getInstalledVersions, getAppInstances }
+export { AppList, getInstalledVersions, getAppInstances };

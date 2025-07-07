@@ -16,65 +16,59 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import InstallApp from '../InstallApp'
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../../../data/JobsContext'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import InstallApp from '../InstallApp';
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
+import { JobsContextProvider } from '../../../../data/JobsContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/AppAPI')
-vitest.mock('../../../../api/device/DeviceAuthAPI')
+vitest.mock('../../../../api/device/AppAPI');
+vitest.mock('../../../../api/device/DeviceAuthAPI');
 
 const app = {
   appKey: {
     name: 'com.codesys.codesyscontrol',
-    version: '4.2.0'
+    version: '4.2.0',
   },
   title: 'test app',
   status: 'installed',
-  instances: []
-}
+  instances: [],
+};
 
-const handleActiveStep = vitest.fn()
+const handleActiveStep = vitest.fn();
 
 describe('Test Install App', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   test('renders InstallApp component', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp
-            app={app}
-            handleActiveStep={handleActiveStep}
-          ></InstallApp>
+          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
-  })
+      </JobsContextProvider>,
+    );
+  });
 
   test('Successfully install app', async () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <InstallApp
-            app={app}
-            handleActiveStep={handleActiveStep}
-          ></InstallApp>
+          <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    await screen.findByText('Installing ' + app.title + '.')
-    await screen.findByText(app.title + ' successfully installed.')
+    await screen.findByText('Installing ' + app.title + '.');
+    await screen.findByText(app.title + ' successfully installed.');
 
-    const icon = getByTestId('success-icon')
-    expect(icon).toBeVisible()
-  })
+    const icon = getByTestId('success-icon');
+    expect(icon).toBeVisible();
+  });
 
   test('Failed to install app', async () => {
     // will fail because no app is passed to InstallApp
@@ -83,17 +77,17 @@ describe('Test Install App', () => {
         <ReferenceDataContextProvider>
           <InstallApp handleActiveStep={handleActiveStep}></InstallApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    await screen.findByText('Error during the installation of undefined.')
+    await screen.findByText('Error during the installation of undefined.');
 
-    const icon = getByTestId('error-icon')
-    expect(icon).toBeVisible()
+    const icon = getByTestId('error-icon');
+    expect(icon).toBeVisible();
 
-    const retry = screen.getByRole('button', { name: 'Retry' })
-    fireEvent.click(retry)
+    const retry = screen.getByRole('button', { name: 'Retry' });
+    fireEvent.click(retry);
 
-    await screen.findByText('Error during the installation of undefined.')
-  })
-})
+    await screen.findByText('Error during the installation of undefined.');
+  });
+});

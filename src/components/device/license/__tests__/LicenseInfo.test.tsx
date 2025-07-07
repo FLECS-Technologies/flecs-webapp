@@ -15,39 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import LicenseInfo from '../LicenseInfo'
-import { mockLicenseInfoAPIResponse } from '../../../../api/device/license/__mocks__/info'
-import { vitest } from 'vitest'
+import { render, act, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import LicenseInfo from '../LicenseInfo';
+import { mockLicenseInfoAPIResponse } from '../../../../api/device/license/__mocks__/info';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/license/info')
+vitest.mock('../../../../api/device/license/info');
 
 describe('LicenseInfo Component', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   it('Show license info', async () => {
-    render(<LicenseInfo />)
+    render(<LicenseInfo />);
     await waitFor(() => {
-      const licenseText = screen.getByText(
-        mockLicenseInfoAPIResponse.data.license
-      )
-      expect(licenseText).toBeInTheDocument()
+      const licenseText = screen.getByText(mockLicenseInfoAPIResponse.data.license);
+      expect(licenseText).toBeInTheDocument();
 
-      const typeText = screen.getByText(mockLicenseInfoAPIResponse.data.type)
-      expect(typeText).toBeInTheDocument()
+      const typeText = screen.getByText(mockLicenseInfoAPIResponse.data.type);
+      expect(typeText).toBeInTheDocument();
 
-      const sessionIdText = screen.getByText(
-        mockLicenseInfoAPIResponse.data.sessionId.id
-      )
-      expect(sessionIdText).toBeInTheDocument()
+      const sessionIdText = screen.getByText(mockLicenseInfoAPIResponse.data.sessionId.id);
+      expect(sessionIdText).toBeInTheDocument();
 
       const timestamp = screen.getByText(
-        String(mockLicenseInfoAPIResponse.data.sessionId.timestamp)
-      )
-      expect(timestamp).toBeInTheDocument()
-    })
-  })
-})
+        String(mockLicenseInfoAPIResponse.data.sessionId.timestamp),
+      );
+      expect(timestamp).toBeInTheDocument();
+    });
+  });
+});

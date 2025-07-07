@@ -16,63 +16,57 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import SideloadApp from '../SideloadApp'
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext'
-import { JobsContextProvider } from '../../../../data/JobsContext'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import SideloadApp from '../SideloadApp';
+import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
+import { JobsContextProvider } from '../../../../data/JobsContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/AppAPI')
+vitest.mock('../../../../api/device/AppAPI');
 
 const yaml = {
   appKey: {
     name: 'com.codesys.codesyscontrol',
-    version: '4.2.0'
+    version: '4.2.0',
   },
   title: 'test app',
   status: 'installed',
-  instances: []
-}
+  instances: [],
+};
 
-const handleActiveStep = vitest.fn()
+const handleActiveStep = vitest.fn();
 
 describe('Test Sideload App', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
   test('renders SideloadApp component', () => {
     render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp
-            yaml={yaml}
-            handleActiveStep={handleActiveStep}
-          ></SideloadApp>
+          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
-  })
+      </JobsContextProvider>,
+    );
+  });
 
   test('Successfully sideload app', async () => {
     const { getByTestId } = render(
       <JobsContextProvider>
         <ReferenceDataContextProvider>
-          <SideloadApp
-            yaml={yaml}
-            handleActiveStep={handleActiveStep}
-          ></SideloadApp>
+          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    await screen.findByText('Installing ' + yaml.title + '.')
-    await screen.findByText(yaml.title + ' successfully installed.')
+    await screen.findByText('Installing ' + yaml.title + '.');
+    await screen.findByText(yaml.title + ' successfully installed.');
 
-    const icon = getByTestId('success-icon')
-    expect(icon).toBeVisible()
-  })
+    const icon = getByTestId('success-icon');
+    expect(icon).toBeVisible();
+  });
 
   test('Failed to sideload app', async () => {
     // will fail because no yaml is passed to SideloadApp
@@ -81,17 +75,17 @@ describe('Test Sideload App', () => {
         <ReferenceDataContextProvider>
           <SideloadApp handleActiveStep={handleActiveStep}></SideloadApp>
         </ReferenceDataContextProvider>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    await screen.findByText('Error during the installation of undefined.')
+    await screen.findByText('Error during the installation of undefined.');
 
-    const icon = getByTestId('error-icon')
-    expect(icon).toBeVisible()
+    const icon = getByTestId('error-icon');
+    expect(icon).toBeVisible();
 
-    const retry = screen.getByRole('button', { name: 'Retry' })
-    fireEvent.click(retry)
+    const retry = screen.getByRole('button', { name: 'Retry' });
+    fireEvent.click(retry);
 
-    await screen.findByText('Error during the installation of undefined.')
-  })
-})
+    await screen.findByText('Error during the installation of undefined.');
+  });
+});

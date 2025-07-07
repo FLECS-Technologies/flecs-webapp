@@ -16,34 +16,32 @@
  * limitations under the License.
  */
 
-async function postExportApps (apps, instances) {
+async function postExportApps(apps, instances) {
   return new Promise((resolve, reject) => {
-    (apps && instances)
-
+    apps && instances
       ? resolve('successfully exported all apps and instances. You may download them now.')
-      : reject(new Error('apps and instances are missing'))
-  })
+      : reject(new Error('apps and instances are missing'));
+  });
 }
 
-async function getExports () {
-  return new Promise((resolve, reject) => { resolve(['latestExport', 'midExport', 'oldestExport']) })
-}
-
-async function getDownloadExport (exportId) {
-  const blob = new Blob()
+async function getExports() {
   return new Promise((resolve, reject) => {
-    (exportId)
-
-      ? resolve(blob)
-      : reject(new Error('exportId is missing'))
-  })
+    resolve(['latestExport', 'midExport', 'oldestExport']);
+  });
 }
 
-async function downloadExport (apps, instances) {
-  const blob = new Blob()
+async function getDownloadExport(exportId) {
+  const blob = new Blob();
   return new Promise((resolve, reject) => {
-    resolve(blob)
-  })
+    exportId ? resolve(blob) : reject(new Error('exportId is missing'));
+  });
 }
 
-export { postExportApps, getExports, getDownloadExport, downloadExport }
+async function downloadExport(apps, instances) {
+  const blob = new Blob();
+  return new Promise((resolve, reject) => {
+    resolve(blob);
+  });
+}
+
+export { postExportApps, getExports, getDownloadExport, downloadExport };

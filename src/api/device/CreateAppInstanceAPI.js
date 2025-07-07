@@ -16,27 +16,26 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class CreateAppInstanceAPI extends BaseAPI {
-  async createAppInstance (app, version, instanceName) {
+  async createAppInstance(app, version, instanceName) {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        {
-          appKey: {
-            name: app,
-            version: String(version)
-          },
-          instanceName
-        })
-    }
+      body: JSON.stringify({
+        appKey: {
+          name: app,
+          version: String(version),
+        },
+        instanceName,
+      }),
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL, requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.POST_CREATE_INSTANCE_URL, requestOptions);
+    } catch (error) {}
   }
 }

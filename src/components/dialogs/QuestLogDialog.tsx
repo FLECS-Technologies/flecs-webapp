@@ -15,49 +15,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from '@mui/material'
+import React from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
-import { Delete } from '@mui/icons-material'
-import { QuestLog } from '../../components/quests/QuestLog'
-import { useQuestContext, QuestContext } from '../../components/quests/QuestContext'
+import { Delete } from '@mui/icons-material';
+import { QuestLog } from '../../components/quests/QuestLog';
+import { useQuestContext, QuestContext } from '../../components/quests/QuestContext';
 
 interface QuestLogProps {
-  open: boolean,
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
-const QuestLogDialog: React.FC<QuestLogProps> = ({
-  open, onClose
-}) => {
+const QuestLogDialog: React.FC<QuestLogProps> = ({ open, onClose }) => {
   const context = useQuestContext(QuestContext);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth='lg' PaperProps={{
-      style: {
-        alignSelf: 'flex-start'
-      }
-      }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="lg"
+      PaperProps={{
+        style: {
+          alignSelf: 'flex-start',
+        },
+      }}
+    >
       <DialogTitle>Quest Log</DialogTitle>
       <DialogContent>
-        <QuestLog/>
+        <QuestLog />
       </DialogContent>
       <DialogActions>
         {context.quests.current.size > 0 && (
-          <Button onClick={() => context.clearQuests()}><Delete/>REMOVE FINISHED QUESTS</Button>
+          <Button onClick={() => context.clearQuests()}>
+            <Delete />
+            REMOVE FINISHED QUESTS
+          </Button>
         )}
-        <Button onClick={onClose} color='secondary'>
+        <Button onClick={onClose} color="secondary">
           Close
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default QuestLogDialog
+export default QuestLogDialog;

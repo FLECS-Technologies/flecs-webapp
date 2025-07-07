@@ -1,41 +1,41 @@
-import { mockApi, mockGetBaseURL, mockTransportProtocol } from './__mocks__/api'
+import { mockApi, mockGetBaseURL, mockTransportProtocol } from './__mocks__/api';
 
 const localStorageMock = (function () {
-  let store = {}
+  let store = {};
 
   return {
     getItem: function (key) {
-      return store[key] || null
+      return store[key] || null;
     },
     setItem: function (key, value) {
-      store[key] = value.toString()
+      store[key] = value.toString();
     },
     clear: function () {
-      store = {}
+      store = {};
     },
     removeItem: function (key) {
-      delete store[key]
-    }
-  }
-})()
+      delete store[key];
+    },
+  };
+})();
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
-  writable: true
-})
+  writable: true,
+});
 
 // Mock the Configuration class
 jest.mock('@flecs/core-client-ts', () => ({
   Configuration: jest.fn(() => ({
-    basePath: ''
-  }))
-}))
+    basePath: '',
+  })),
+}));
 
 jest.mock('./api/flecs-core/api-client', () => ({
   api: {
     instances: {
       instancesInstanceIdConfigPortsGet: jest.fn(),
-      instancesInstanceIdConfigPortsTransportProtocolPut: jest.fn()
-    }
-  }
-}))
+      instancesInstanceIdConfigPortsTransportProtocolPut: jest.fn(),
+    },
+  },
+}));

@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import '@testing-library/jest-dom'
-import System from '../System'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import '@testing-library/jest-dom';
+import System from '../System';
 
-import { LicenseInfoAPI } from '../../api/device/license/info'
-import { vitest } from 'vitest'
+import { LicenseInfoAPI } from '../../api/device/license/info';
+import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/license/info')
-vitest.mock('../../api/device/license/status')
+vitest.mock('../../api/device/license/info');
+vitest.mock('../../api/device/license/status');
 
 describe('System', () => {
   test('renders System page', () => {
     render(
       <Router>
         <System />
-      </Router>
-    )
+      </Router>,
+    );
 
-    expect(screen.getByLabelText('system-page')).toBeVisible()
+    expect(screen.getByLabelText('system-page')).toBeVisible();
 
-    expect(screen.getByLabelText('open-source')).toBeVisible()
+    expect(screen.getByLabelText('open-source')).toBeVisible();
     // screen.debug()
-  })
-})
+  });
+});

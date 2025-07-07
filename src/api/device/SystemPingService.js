@@ -15,18 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../api-config';
 
-async function SystemPing () {
+async function SystemPing() {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_PING_URL)
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_PING_URL,
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-export { SystemPing }
+export { SystemPing };

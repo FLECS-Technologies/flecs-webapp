@@ -15,22 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import DeviceActivationStep from '../DeviceActivationStep'
-import { DeviceActivationContext } from '../../../providers/DeviceActivationContext'
-import { vitest } from 'vitest'
+import { render, act, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import DeviceActivationStep from '../DeviceActivationStep';
+import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/license/status')
-vitest.mock('../../../../api/device/license/activation')
+vitest.mock('../../../../api/device/license/status');
+vitest.mock('../../../../api/device/license/activation');
 
 describe('DeviceActivationStep Component', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   it('renders the DeviceActivationStep component', () => {
-    const handleNext = jest.fn()
+    const handleNext = jest.fn();
     act(() => {
       render(
         <DeviceActivationContext.Provider
@@ -39,14 +39,14 @@ describe('DeviceActivationStep Component', () => {
             activating: false,
             activate: async () => {},
             validating: false,
-            validate: async () => {}
+            validate: async () => {},
           }}
         >
           <DeviceActivationStep handleNext={handleNext} />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    expect(handleNext).toBeCalled()
-  })
-})
+    expect(handleNext).toBeCalled();
+  });
+});

@@ -15,50 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { EditorButton } from '../EditorButton'
-import { AppInstance } from '../../../../api/device/instances/instance'
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { EditorButton } from '../EditorButton';
+import { AppInstance } from '../../../../api/device/instances/instance';
 
 const testInstance: AppInstance = {
-  editors: [{ name: 'Editor 1', url: '/editor', supportsReverseProxy: false , port: 80}],
+  editors: [{ name: 'Editor 1', url: '/editor', supportsReverseProxy: false, port: 80 }],
   appKey: { name: 'com.test.app', version: '1.1.0' },
   desired: 'running',
   status: 'running',
   instanceId: '1234',
-  instanceName: 'testInstance'
-}
+  instanceName: 'testInstance',
+};
 
 describe('OpenEditorButton', () => {
-  const originalEnv = import.meta.env
+  const originalEnv = import.meta.env;
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.resetModules()
-    import.meta.env = { ...originalEnv }
-    window.open = jest.fn()
-  })
+    jest.clearAllMocks();
+    jest.resetModules();
+    import.meta.env = { ...originalEnv };
+    window.open = jest.fn();
+  });
 
   afterEach(() => {
-    import.meta.env = originalEnv
-  })
+    import.meta.env = originalEnv;
+  });
 
   it('opens editor URL in new window on button click in development environment', () => {
-    import.meta.env.VITE_APP_ENVIRONMENT = 'development'
-    import.meta.env.VITE_APP_DEV_CORE_URL = 'http://localhost:3000'
-    render(<EditorButton editor={testInstance.editors[0]} index={0} />)
-    fireEvent.click(screen.getByLabelText('open-editor-button-0'))
-    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor')
-  })
+    import.meta.env.VITE_APP_ENVIRONMENT = 'development';
+    import.meta.env.VITE_APP_DEV_CORE_URL = 'http://localhost:3000';
+    render(<EditorButton editor={testInstance.editors[0]} index={0} />);
+    fireEvent.click(screen.getByLabelText('open-editor-button-0'));
+    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor');
+  });
 
   it('opens editor URL in new window on button click in production environment', () => {
-    import.meta.env.VITE_APP_ENVIRONMENT = 'production'
-    delete import.meta.env.VITE_APP_DEV_CORE_URL
-    render(<EditorButton editor={testInstance.editors[0]} index={0} />)
-    fireEvent.click(screen.getByLabelText('open-editor-button-0'))
-    expect(window.open).toHaveBeenCalledWith(
-      `http://${window.location.hostname}:3000/api/editor`
-    )
-  })
-})
+    import.meta.env.VITE_APP_ENVIRONMENT = 'production';
+    delete import.meta.env.VITE_APP_DEV_CORE_URL;
+    render(<EditorButton editor={testInstance.editors[0]} index={0} />);
+    fireEvent.click(screen.getByLabelText('open-editor-button-0'));
+    expect(window.open).toHaveBeenCalledWith(`http://${window.location.hostname}:3000/api/editor`);
+  });
+});

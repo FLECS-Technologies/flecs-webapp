@@ -15,61 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Version } from '../models/version'
+import { Version } from '../models/version';
 
 function createVersion(
   version: string,
   release_notes?: string | null,
   breaking_changes?: string | null,
-  installed?: boolean
+  installed?: boolean,
 ): Version {
-  return { version, release_notes, breaking_changes, installed }
+  return { version, release_notes, breaking_changes, installed };
 }
 
-function createVersions(
-  versions: string[],
-  installedVersions: string[]
-): Version[] {
-  const versionsArray: Version[] = []
+function createVersions(versions: string[], installedVersions: string[]): Version[] {
+  const versionsArray: Version[] = [];
 
   if (versions) {
     versions.forEach((version) => {
       versionsArray.push(
-        createVersion(
-          version,
-          undefined,
-          undefined,
-          installedVersions?.includes(version)
-        )
-      )
-    })
+        createVersion(version, undefined, undefined, installedVersions?.includes(version)),
+      );
+    });
   } else if (installedVersions) {
     installedVersions.forEach((version) => {
-      versionsArray.push(createVersion(version, null, null, true))
-    })
+      versionsArray.push(createVersion(version, null, null, true));
+    });
   }
-  return versionsArray
+  return versionsArray;
 }
 
 function getLatestVersion(versions: Version[]): Version | undefined {
   if (versions) {
-    return versions[0]
+    return versions[0];
   }
 }
 
-function findVersionByProperty(
-  versions: Version[],
-  versionProperty: string
-): Version {
-  return (
-    versions.find((version) => version.version === versionProperty) ||
-    createVersion('')
-  )
+function findVersionByProperty(versions: Version[], versionProperty: string): Version {
+  return versions.find((version) => version.version === versionProperty) || createVersion('');
 }
 
-export {
-  createVersion,
-  createVersions,
-  findVersionByProperty,
-  getLatestVersion
-}
+export { createVersion, createVersions, findVersionByProperty, getLatestVersion };

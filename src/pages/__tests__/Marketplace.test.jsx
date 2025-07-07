@@ -16,30 +16,30 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Marketplace from '../Marketplace'
-import { FilterContextProvider } from '../../data/FilterContext'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Marketplace from '../Marketplace';
+import { FilterContextProvider } from '../../data/FilterContext';
+import { vitest } from 'vitest';
 
-vitest.mock('../../components/navigation/PoweredBy')
+vitest.mock('../../components/navigation/PoweredBy');
 vitest.mock('../../api/marketplace/ProductService', () => ({
-  getProducts: vitest.fn().mockReturnValue(Promise.resolve())
-}))
+  getProducts: vitest.fn().mockReturnValue(Promise.resolve()),
+}));
 
 describe('Marketplace', () => {
   afterAll(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   test('renders Marketplace page', () => {
     render(
       <FilterContextProvider>
         <Marketplace />
-      </FilterContextProvider>
-    )
+      </FilterContextProvider>,
+    );
 
-    expect(screen.getByLabelText('marketplace-apps-list')).toBeVisible()
-  })
-})
+    expect(screen.getByLabelText('marketplace-apps-list')).toBeVisible();
+  });
+});

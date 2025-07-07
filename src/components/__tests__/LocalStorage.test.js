@@ -15,42 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/jest-dom'
-import React from 'react'
-import useStateWithLocalStorage from '../LocalStorage'
+import '@testing-library/jest-dom';
+import React from 'react';
+import useStateWithLocalStorage from '../LocalStorage';
 
 describe('LocalStorage', () => {
   // Cache original functionality
   // const realUseState = React.useState
-  const setState = jest.fn()
+  const setState = jest.fn();
   // Stub the initial state
   // const stubInitialState = ['stub data']
 
   // runs after each test has finished
   afterEach(() => {
-    React.useState.mockClear()
-    React.useEffect.mockClear()
-  })
+    React.useState.mockClear();
+    React.useEffect.mockClear();
+  });
 
   test('Writes something into local storage and reads back the value', () => {
-    jest.spyOn(localStorage, 'getItem')
-    const useStateSpy = jest.spyOn(React, 'useState')
-    useStateSpy.mockImplementation((init) => [init, setState])
-    const useEffectSpy = jest.spyOn(React, 'useEffect')
-    useEffectSpy.mockImplementation((f) => f())
+    jest.spyOn(localStorage, 'getItem');
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementation((init) => [init, setState]);
+    const useEffectSpy = jest.spyOn(React, 'useEffect');
+    useEffectSpy.mockImplementation((f) => f());
     const localStorageMock = {
       getItem: jest.fn(),
       setItem: jest.fn(),
       removeItem: jest.fn(),
-      clear: jest.fn()
-    }
+      clear: jest.fn(),
+    };
 
-    global.localStorage = localStorageMock
+    global.localStorage = localStorageMock;
 
-    const [test, setTest] = useStateWithLocalStorage('test.key', 'true')
+    const [test, setTest] = useStateWithLocalStorage('test.key', 'true');
 
-    setTest(test)
-    expect(useStateSpy.mock.calls.length).toBe(1)
-    expect(useEffectSpy.mock.calls.length).toBe(1)
-  })
-})
+    setTest(test);
+    expect(useStateSpy.mock.calls.length).toBe(1);
+    expect(useEffectSpy.mock.calls.length).toBe(1);
+  });
+});

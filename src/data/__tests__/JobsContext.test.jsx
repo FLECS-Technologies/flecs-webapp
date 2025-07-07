@@ -16,47 +16,47 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { JobsContextProvider } from '../JobsContext'
+import React from 'react';
+import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { JobsContextProvider } from '../JobsContext';
 
 const mockJobs = [
   {
     id: 1,
     description: 'Went fishing',
-    status: 'successful'
+    status: 'successful',
   },
   {
     id: 2,
     description: 'Do the laundry',
-    status: 'failed'
+    status: 'failed',
   },
   {
     id: 3,
     description: 'Repair sink',
-    status: 'pending'
+    status: 'pending',
   },
   {
     id: 4,
     description: 'Drive home',
-    status: 'running'
-  }
-]
+    status: 'running',
+  },
+];
 
 jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react')
+  const ActualReact = jest.requireActual('react');
   return {
     ...ActualReact,
-    useContext: () => ({ mockJobs }) // what you want to return when useContext get fired goes here
-  }
-})
+    useContext: () => ({ mockJobs }), // what you want to return when useContext get fired goes here
+  };
+});
 
 describe('JobsContextProvider', () => {
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('renders JobsContextProvider component', () => {
-    render(<JobsContextProvider />)
-  })
-})
+    render(<JobsContextProvider />);
+  });
+});

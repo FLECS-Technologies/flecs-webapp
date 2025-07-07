@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import MarketplaceList from '../MarketplaceList'
-import { FilterContext } from '../../data/FilterContext'
-import { ReferenceDataContext } from '../../data/ReferenceDataContext'
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import MarketplaceList from '../MarketplaceList';
+import { FilterContext } from '../../data/FilterContext';
+import { ReferenceDataContext } from '../../data/ReferenceDataContext';
 
 // Mock AppList context provider and hook
 vi.mock('../../data/AppList', () => ({
   AppList: ({ children }) => <>{children}</>,
-  getInstalledVersions: () => []
-}))
+  getInstalledVersions: () => [],
+}));
 
 // Mock child components
 vi.mock('../Card', () => ({
-  default: ({ title }) => <div data-testid="app-card">{title}</div>
-}))
+  default: ({ title }) => <div data-testid="app-card">{title}</div>,
+}));
 vi.mock('../SearchBar', () => ({
   default: (props) => (
     <div data-testid="search-bar">
@@ -42,14 +42,14 @@ vi.mock('../SearchBar', () => ({
       />
       <button onClick={() => props.setToggleFilter(true)}>Filter</button>
     </div>
-  )
-}))
+  ),
+}));
 vi.mock('../AppFilter', () => ({
-  AppFilter: () => <div data-testid="filter-panel" />
-}))
+  AppFilter: () => <div data-testid="filter-panel" />,
+}));
 vi.mock('../navigation/PoweredBy', () => ({
-  default: () => <div data-testid="powered-by" />
-}))
+  default: () => <div data-testid="powered-by" />,
+}));
 
 const mockProduct = {
   id: 123,
@@ -70,34 +70,31 @@ const mockProduct = {
     { key: 'documentation-url', value: 'https://example.com/docs' },
     {
       key: 'custom-links',
-      value: JSON.stringify([
-        { label: 'GitHub', url: 'https://github.com/flecs-tech/mock-app' }
-      ])
-    }
+      value: JSON.stringify([{ label: 'GitHub', url: 'https://github.com/flecs-tech/mock-app' }]),
+    },
   ],
   attributes: [
     {
       name: 'categories',
-      options: ['Utilities', 'Networking']
+      options: ['Utilities', 'Networking'],
     },
     {
       name: 'versions',
-      options: ['1.0.0', '1.1.0']
+      options: ['1.0.0', '1.1.0'],
     },
     {
       name: 'archs',
-      options: ['amd64', 'arm64']
-    }
-  ]
-}
-
+      options: ['amd64', 'arm64'],
+    },
+  ],
+};
 
 const createFilterContext = (overrides = {}) => ({
   categories: [],
   filterParams: {
     search: '',
     available: false,
-    hiddenCategories: []
+    hiddenCategories: [],
   },
   setFilterParams: vi.fn(),
   getFilteredProducts: vi.fn(),
@@ -109,84 +106,82 @@ const createFilterContext = (overrides = {}) => ({
   isSearchEnabled: true,
   setIsSearchEnabled: vi.fn(),
   finalProducts: [mockProduct],
-  ...overrides
-})
+  ...overrides,
+});
 
 const createReferenceContext = (overrides = {}) => ({
   appList: [],
   loadedProducts: [mockProduct],
   appListError: false,
-  ...overrides
-})
+  ...overrides,
+});
 
 const renderMarketplaceList = ({
   filterContextOverrides = {},
-  referenceContextOverrides = {}
+  referenceContextOverrides = {},
 } = {}) => {
-  const filterContext = createFilterContext(filterContextOverrides)
-  const referenceContext = createReferenceContext(referenceContextOverrides)
+  const filterContext = createFilterContext(filterContextOverrides);
+  const referenceContext = createReferenceContext(referenceContextOverrides);
 
   render(
     <FilterContext.Provider value={filterContext}>
       <ReferenceDataContext.Provider value={referenceContext}>
         <MarketplaceList />
       </ReferenceDataContext.Provider>
-    </FilterContext.Provider>
-  )
+    </FilterContext.Provider>,
+  );
 
-  return { filterContext, referenceContext }
-}
+  return { filterContext, referenceContext };
+};
 
 describe('MarketplaceList', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   test('renders loading spinner initially', async () => {
     renderMarketplaceList({
-      referenceContextOverrides: { loadedProducts: [] }
-    })
+      referenceContextOverrides: { loadedProducts: [] },
+    });
 
-    expect(await screen.findByRole('progressbar')).toBeInTheDocument()
-  })
+    expect(await screen.findByRole('progressbar')).toBeInTheDocument();
+  });
 
   test('renders marketplace list with products', async () => {
-    renderMarketplaceList()
+    renderMarketplaceList();
 
-    const searchBar = await screen.findByTestId('search-bar')
-    const cards = await screen.findAllByTestId('app-card')
+    const searchBar = await screen.findByTestId('search-bar');
+    const cards = await screen.findAllByTestId('app-card');
 
-    expect(searchBar).toBeInTheDocument()
-    expect(cards).toHaveLength(1)
-    expect(cards[0]).toHaveTextContent('Mock App')
-  })
+    expect(searchBar).toBeInTheDocument();
+    expect(cards).toHaveLength(1);
+    expect(cards[0]).toHaveTextContent('Mock App');
+  });
 
   test('renders error message if appListError is true', async () => {
     renderMarketplaceList({
-      referenceContextOverrides: { appListError: true }
-    })
+      referenceContextOverrides: { appListError: true },
+    });
 
-    expect(
-      await screen.findByText(/Sorry, we failed to load apps/i)
-    ).toBeInTheDocument()
-  })
+    expect(await screen.findByText(/Sorry, we failed to load apps/i)).toBeInTheDocument();
+  });
 
   test('updates filter on search input change', async () => {
-    const { filterContext } = renderMarketplaceList()
+    const { filterContext } = renderMarketplaceList();
 
-    const input = screen.getByTestId('search-input')
-    fireEvent.change(input, { target: { value: 'mesh' } })
+    const input = screen.getByTestId('search-input');
+    fireEvent.change(input, { target: { value: 'mesh' } });
 
     await waitFor(() => {
-      expect(filterContext.setSearchFilter).toHaveBeenCalledWith('mesh')
-    })
-  })
+      expect(filterContext.setSearchFilter).toHaveBeenCalledWith('mesh');
+    });
+  });
 
   test('shows pagination controls', async () => {
-    renderMarketplaceList()
+    renderMarketplaceList();
 
-    const paginator = await screen.findByTestId('app-paginator')
-    expect(paginator).toBeInTheDocument()
-    expect(screen.getByTestId('powered-by')).toBeInTheDocument()
-  })
-})
+    const paginator = await screen.findByTestId('app-paginator');
+    expect(paginator).toBeInTheDocument();
+    expect(screen.getByTestId('powered-by')).toBeInTheDocument();
+  });
+});

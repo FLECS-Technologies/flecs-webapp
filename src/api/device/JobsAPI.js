@@ -16,40 +16,40 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class JobsAPI extends BaseAPI {
-  async getJobs () {
+  async getJobs() {
     // GET request using fetch with error handling
     const requestOptions = {
-      method: 'GET'
-    }
+      method: 'GET',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.JOBS_ROUTE, requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.JOBS_ROUTE, requestOptions);
+    } catch (error) {}
   }
 
-  async getJob (jobId) {
+  async getJob(jobId) {
     // GET request using fetch with error handling
     const requestOptions = {
-      method: 'GET'
-    }
+      method: 'GET',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.GET_JOB_URL(jobId), requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.GET_JOB_URL(jobId), requestOptions);
+    } catch (error) {}
   }
 
-  async deleteJob (jobId) {
+  async deleteJob(jobId) {
     // DELETE request using fetch with error handling
     const requestOptions = {
-      method: 'DELETE'
-    }
+      method: 'DELETE',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.DELETE_JOB_URL(jobId), requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.DELETE_JOB_URL(jobId), requestOptions);
+    } catch (error) {}
   }
 }

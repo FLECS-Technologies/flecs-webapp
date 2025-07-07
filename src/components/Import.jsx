@@ -15,136 +15,135 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import DownloadIcon from '@mui/icons-material/Download'
-import { postImportApps } from '../api/device/ImportAppsService'
-import ActionSnackbar from './ActionSnackbar'
-import FileOpen from './FileOpen'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import { JobsContext } from '../data/JobsContext'
-import { OnboardingDeviceAPI } from '../api/device/onboarding/onboarding'
+import React from 'react';
+import PropTypes from 'prop-types';
+import DownloadIcon from '@mui/icons-material/Download';
+import { postImportApps } from '../api/device/ImportAppsService';
+import ActionSnackbar from './ActionSnackbar';
+import FileOpen from './FileOpen';
+import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { JobsContext } from '../data/JobsContext';
+import { OnboardingDeviceAPI } from '../api/device/onboarding/onboarding';
 
 export default function Import(props) {
-  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
-  const { ...buttonProps } = props
-  const [importing, setImporting] = React.useState(false)
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const { setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const { ...buttonProps } = props;
+  const [importing, setImporting] = React.useState(false);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarState, setSnackbarState] = React.useState({
     snackbarText: 'Info',
-    alertSeverity: 'success'
-  })
-  const { jobs, fetchJobs, fetchJobById } = React.useContext(JobsContext)
-  const [jobId, setJobId] = React.useState(null)
+    alertSeverity: 'success',
+  });
+  const { jobs, fetchJobs, fetchJobById } = React.useContext(JobsContext);
+  const [jobId, setJobId] = React.useState(null);
 
   React.useEffect(() => {
-    let interval
+    let interval;
     if (jobId) {
-      const job = jobs.find((job) => job.id === jobId)
+      const job = jobs.find((job) => job.id === jobId);
       if (job && (job.status === 'running' || job.status === 'queued')) {
         // Start polling
         interval = setInterval(async () => {
-          await fetchJobById(jobId)
-        }, 2000) // Poll every 2 seconds
+          await fetchJobById(jobId);
+        }, 2000); // Poll every 2 seconds
       } else if (job && job.status === 'successful') {
-        setUpdateAppList(true)
-        clearInterval(interval) // Clear interval when job is finished
+        setUpdateAppList(true);
+        clearInterval(interval); // Clear interval when job is finished
         setSnackbarState({
           alertSeverity: 'success',
-          snackbarText: 'Importing finished successfully'
-        })
-        setSnackbarOpen(true)
-        setImporting(false)
-        setJobId(null)
+          snackbarText: 'Importing finished successfully',
+        });
+        setSnackbarOpen(true);
+        setImporting(false);
+        setJobId(null);
       } else if (job && job.status === 'failed') {
         setSnackbarState({
           alertSeverity: 'error',
-          snackbarText: 'Importing failed'
-        })
-        setSnackbarOpen(true)
-        setImporting(false)
-        setJobId(null)
-        clearInterval(interval) // Clear interval when job is finished
+          snackbarText: 'Importing failed',
+        });
+        setSnackbarOpen(true);
+        setImporting(false);
+        setJobId(null);
+        clearInterval(interval); // Clear interval when job is finished
       } else {
-        clearInterval(interval) // Clear interval when job is finished
+        clearInterval(interval); // Clear interval when job is finished
       }
     }
-    return () => clearInterval(interval) // Cleanup interval on component unmount
-  }, [jobId, jobs])
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [jobId, jobs]);
 
   const handleFileUpload = (file) => {
     if (file) {
-      const fileName = file.name.toLowerCase()
+      const fileName = file.name.toLowerCase();
       if (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar')) {
-        handleTarFile(file)
+        handleTarFile(file);
       } else if (fileName.endsWith('.json')) {
-        handleJsonFile(file)
+        handleJsonFile(file);
       } else {
         setSnackbarState({
           alertSeverity: 'error',
-          snackbarText:
-            'Unsupported file type. Please upload a .tar, .tar.gz or .json file.'
-        })
-        setSnackbarOpen(true)
+          snackbarText: 'Unsupported file type. Please upload a .tar, .tar.gz or .json file.',
+        });
+        setSnackbarOpen(true);
       }
     }
-  }
+  };
 
   const handleJsonFile = async (file) => {
-    setImporting(true)
+    setImporting(true);
     OnboardingDeviceAPI(file)
       .then(async (response) => {
         if (response.jobId) {
-          await fetchJobs()
-          setJobId(response.jobId)
+          await fetchJobs();
+          setJobId(response.jobId);
         }
       })
       .catch((error) => {
-        setImporting(false)
+        setImporting(false);
         setSnackbarState({
           alertSeverity: 'error',
           snackbarText: error?.response?.data?.message
             ? error?.response?.data?.message
-            : error?.message
-        })
-        setSnackbarOpen(true)
-      })
-  }
+            : error?.message,
+        });
+        setSnackbarOpen(true);
+      });
+  };
 
   const handleTarFile = async (props) => {
-    setImporting(true)
+    setImporting(true);
 
-    const file = props
-    const fileName = props.name
+    const file = props;
+    const fileName = props.name;
 
     postImportApps(file, fileName)
       .then(async (response) => {
-        const jobId = JSON.parse(response).jobId
+        const jobId = JSON.parse(response).jobId;
         if (jobId) {
-          await fetchJobs()
-          setJobId(jobId)
+          await fetchJobs();
+          setJobId(jobId);
         }
       })
       .catch((error) => {
-        setImporting(false)
+        setImporting(false);
         setSnackbarState({
           alertSeverity: 'error',
           snackbarText: error?.response?.data?.message
             ? error?.response?.data?.message
-            : error?.message
-        })
-        setSnackbarOpen(true)
-      })
-  }
+            : error?.message,
+        });
+        setSnackbarOpen(true);
+      });
+  };
 
   return (
     <>
       <FileOpen
         {...buttonProps}
-        data-testid='import-apps-button'
-        buttonText='Import'
+        data-testid="import-apps-button"
+        buttonText="Import"
         buttonIcon={<DownloadIcon />}
-        accept='.tar.gz, .tar, .json'
+        accept=".tar.gz, .tar, .json"
         onConfirm={handleFileUpload}
         loading={importing}
         wholeFile={true}
@@ -157,10 +156,10 @@ export default function Import(props) {
         alertSeverity={snackbarState.alertSeverity}
       />
     </>
-  )
+  );
 }
 
 Import.propTypes = {
   apps: PropTypes.array,
-  name: PropTypes.string
-}
+  name: PropTypes.string,
+};

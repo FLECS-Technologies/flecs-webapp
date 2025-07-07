@@ -15,93 +15,93 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { createContext, ReactNode } from 'react'
-import PropTypes from 'prop-types'
-import JobsAPI from '../api/device/JobsAPI'
-import { getExports } from '../api/device/ExportAppsService'
-import { Job } from '../models/job'
+import React, { createContext, ReactNode } from 'react';
+import PropTypes from 'prop-types';
+import JobsAPI from '../api/device/JobsAPI';
+import { getExports } from '../api/device/ExportAppsService';
+import { Job } from '../models/job';
 
 interface JobsContextType {
-  jobs: Job[]
-  setJobs: React.Dispatch<React.SetStateAction<Job[]>>
-  fetchJobs: () => Promise<void>
-  setFetchingJobs: React.Dispatch<React.SetStateAction<boolean>>
-  fetchingJobs: boolean
-  deleteJobs: (id: number) => Promise<void>
-  exports: string[]
-  fetchExports: () => Promise<void>
-  fetchJobById: (id: number) => Promise<void>
+  jobs: Job[];
+  setJobs: React.Dispatch<React.SetStateAction<Job[]>>;
+  fetchJobs: () => Promise<void>;
+  setFetchingJobs: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchingJobs: boolean;
+  deleteJobs: (id: number) => Promise<void>;
+  exports: string[];
+  fetchExports: () => Promise<void>;
+  fetchJobById: (id: number) => Promise<void>;
 }
 
-const JobsContext = createContext<JobsContextType | undefined>(undefined)
+const JobsContext = createContext<JobsContextType | undefined>(undefined);
 
 export const useJobContext = (): JobsContextType => {
-  const context = React.useContext(JobsContext)
+  const context = React.useContext(JobsContext);
   if (!context) {
-    throw new Error('useJobContext must be used within a JobProvider')
+    throw new Error('useJobContext must be used within a JobProvider');
   }
-  return context
-}
+  return context;
+};
 
 const JobsContextProvider = ({ children }: { children: ReactNode }) => {
-  const [jobs, setJobs] = React.useState<Job[]>([])
-  const [fetchingJobs, setFetchingJobs] = React.useState(false)
-  const [exports, setExports] = React.useState([])
+  const [jobs, setJobs] = React.useState<Job[]>([]);
+  const [fetchingJobs, setFetchingJobs] = React.useState(false);
+  const [exports, setExports] = React.useState([]);
 
   React.useEffect(() => {
     if (jobs?.length === 0) {
-      fetchJobs()
+      fetchJobs();
     }
-  }, [])
+  }, []);
 
   React.useEffect(() => {
     if (fetchingJobs) {
-      const timer = setInterval(() => fetchJobs(), 500)
+      const timer = setInterval(() => fetchJobs(), 500);
       return () => {
-        clearInterval(timer)
-      }
+        clearInterval(timer);
+      };
     }
-  }, [fetchingJobs])
+  }, [fetchingJobs]);
 
   const fetchJobs = async () => {
-    const jobsAPI = new JobsAPI()
-    await jobsAPI.getJobs()
-    setJobs(jobsAPI.state.responseData || [])
-  }
+    const jobsAPI = new JobsAPI();
+    await jobsAPI.getJobs();
+    setJobs(jobsAPI.state.responseData || []);
+  };
 
   const deleteJobs = async (id: number) => {
-    const jobsAPI = new JobsAPI()
-    await jobsAPI.deleteJob(id)
-    fetchJobs()
-  }
+    const jobsAPI = new JobsAPI();
+    await jobsAPI.deleteJob(id);
+    fetchJobs();
+  };
 
   const fetchExports = async () => {
     await getExports()
       .then((exports) => setExports(exports))
-      .catch(() => {})
-  }
+      .catch(() => {});
+  };
 
   const fetchJobById = async (id: number) => {
     try {
-      const jobsAPI = new JobsAPI()
-      await jobsAPI.getJob(id)
-      const response = jobsAPI.state.responseData as unknown as Job
+      const jobsAPI = new JobsAPI();
+      await jobsAPI.getJob(id);
+      const response = jobsAPI.state.responseData as unknown as Job;
       if (response) {
         setJobs((prevJobs) => {
-          const jobIndex = prevJobs.findIndex((job) => job.id === id)
+          const jobIndex = prevJobs.findIndex((job) => job.id === id);
           if (jobIndex !== -1) {
-            const updatedJobs = [...prevJobs]
-            updatedJobs[jobIndex] = response
-            return updatedJobs
+            const updatedJobs = [...prevJobs];
+            updatedJobs[jobIndex] = response;
+            return updatedJobs;
           } else {
-            return [...prevJobs, response]
+            return [...prevJobs, response];
           }
-        })
+        });
       }
     } catch (error) {
-      console.error('Failed to fetch job', error)
+      console.error('Failed to fetch job', error);
     }
-  }
+  };
 
   return (
     <JobsContext.Provider
@@ -114,22 +114,22 @@ const JobsContextProvider = ({ children }: { children: ReactNode }) => {
         deleteJobs,
         exports,
         fetchExports,
-        fetchJobById
+        fetchJobById,
       }}
     >
       {children}
     </JobsContext.Provider>
-  )
-}
+  );
+};
 
 function useJobsContext(): JobsContextType {
-  const context = React.useContext(JobsContext)
+  const context = React.useContext(JobsContext);
 
   if (context === undefined) {
-    throw new Error('useJobsContext must be used within a JobsProvider')
+    throw new Error('useJobsContext must be used within a JobsProvider');
   }
 
-  return context
+  return context;
 }
 
-export { JobsContext, JobsContextProvider, useJobsContext }
+export { JobsContext, JobsContextProvider, useJobsContext };

@@ -15,69 +15,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useContext } from 'react'
-import { DeviceActivationContext } from './DeviceActivationContext'
-import { ValidateDeviceAPI } from '../../api/device/license/status'
-import { ActivateDeviceAPI } from '../../api/device/license/activation'
+import React, { useContext } from 'react';
+import { DeviceActivationContext } from './DeviceActivationContext';
+import { ValidateDeviceAPI } from '../../api/device/license/status';
+import { ActivateDeviceAPI } from '../../api/device/license/activation';
 
-const DeviceActivationProvider = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
-  const [validated, setValidated] = React.useState(false)
-  const [validating, setValidating] = React.useState(false)
-  const [activated, setActivated] = React.useState(false)
-  const [activating, setActivating] = React.useState(false)
-  const [error, setError] = React.useState(false)
-  const [statusText, setStatusText] = React.useState('')
+const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) => {
+  const [validated, setValidated] = React.useState(false);
+  const [validating, setValidating] = React.useState(false);
+  const [activated, setActivated] = React.useState(false);
+  const [activating, setActivating] = React.useState(false);
+  const [error, setError] = React.useState(false);
+  const [statusText, setStatusText] = React.useState('');
 
   const validate = async () => {
-    setValidating(true)
-    setStatusText('Checking the device activation status...')
+    setValidating(true);
+    setStatusText('Checking the device activation status...');
     await ValidateDeviceAPI()
       .then((response) => {
-        setValidated(response.isValid)
-        setActivated(response.isValid)
+        setValidated(response.isValid);
+        setActivated(response.isValid);
         if (response.isValid) {
-          setStatusText('Device is activated!')
+          setStatusText('Device is activated!');
         } else {
-          setStatusText('Device is not activated!')
+          setStatusText('Device is not activated!');
         }
-        setError(false)
+        setError(false);
       })
       .catch(() => {
-        setError(true)
+        setError(true);
         setStatusText(
-          'Failed to check activation status! Please login with your account and try again.'
-        )
-        setActivated(false)
-        setValidated(false)
-      })
-    setValidating(false)
-  }
+          'Failed to check activation status! Please login with your account and try again.',
+        );
+        setActivated(false);
+        setValidated(false);
+      });
+    setValidating(false);
+  };
 
   const activate = async () => {
-    setActivating(true)
-    setStatusText('Activating the device...')
+    setActivating(true);
+    setStatusText('Activating the device...');
     await ActivateDeviceAPI()
       .then((response) => {
-        setActivated(true)
-        setValidated(true)
-        setError(false)
-        setStatusText('Device is activated!')
+        setActivated(true);
+        setValidated(true);
+        setError(false);
+        setStatusText('Device is activated!');
       })
       .catch((error) => {
-        setActivated(false)
-        setValidated(false)
-        setError(true)
+        setActivated(false);
+        setValidated(false);
+        setError(true);
         setStatusText(
           'Failed to activate the device! Please make sure that you are logged in and that your account has device licences: ' +
-            error.response.data.additionalInfo
-        )
-      })
-    setActivating(false)
-  }
+            error.response.data.additionalInfo,
+        );
+      });
+    setActivating(false);
+  };
 
   const value = {
     validated,
@@ -87,20 +83,18 @@ const DeviceActivationProvider = ({
     activate,
     activating,
     error,
-    statusText
-  }
+    statusText,
+  };
 
   React.useEffect(() => {
-    validate()
-  }, [])
+    validate();
+  }, []);
 
   return (
-    <DeviceActivationContext.Provider value={value}>
-      {children}
-    </DeviceActivationContext.Provider>
-  )
-}
+    <DeviceActivationContext.Provider value={value}>{children}</DeviceActivationContext.Provider>
+  );
+};
 
-export const useICaaSContext = () => useContext(DeviceActivationContext)
+export const useICaaSContext = () => useContext(DeviceActivationContext);
 
-export default DeviceActivationProvider
+export default DeviceActivationProvider;

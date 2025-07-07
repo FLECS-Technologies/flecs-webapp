@@ -15,36 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
-export default function HostContainerTable (props) {
-  const { data } = props
+export default function HostContainerTable(props) {
+  const { data } = props;
   return (
-        <Table data-testid="details-table" size="small" aria-label="instances-details">
-            <TableHead>
-                <TableRow>
-                    <TableCell data-testid="table-header-host">Exposed to the host</TableCell>
-                    <TableCell data-testid="table-header-container">Inside the container</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {data && data?.map((mapping) => (
-                    <TableRow key={mapping.host} style={{ borderBottom: 'none' }}>
-                        <TableCell style={{ borderBottom: 'none' }}>
-                            {mapping.host}
-                        </TableCell>
-                        <TableCell style={{ borderBottom: 'none' }}>
-                            {mapping.container}
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-  )
+    <Table data-testid="details-table" size="small" aria-label="instances-details">
+      <TableHead>
+        <TableRow>
+          <TableCell data-testid="table-header-host">Exposed to the host</TableCell>
+          <TableCell data-testid="table-header-container">Inside the container</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {data &&
+          data?.map((mapping) => (
+            <TableRow key={mapping.host} style={{ borderBottom: 'none' }}>
+              <TableCell style={{ borderBottom: 'none' }}>{mapping.host}</TableCell>
+              <TableCell style={{ borderBottom: 'none' }}>{mapping.container}</TableCell>
+            </TableRow>
+          ))}
+      </TableBody>
+    </Table>
+  );
 }
 
 HostContainerTable.propTypes = {
-  data: PropTypes.array
-}
+  data: PropTypes.array,
+};

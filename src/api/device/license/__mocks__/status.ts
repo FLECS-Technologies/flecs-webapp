@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-import { ValidateDeviceAPIResponse } from '../status'
+import { ValidateDeviceAPIResponse } from '../status';
 
 export const mockValidateDeviceAPIResponse = {
   data: {
-    isValid: true
-  } as ValidateDeviceAPIResponse
-}
+    isValid: true,
+  } as ValidateDeviceAPIResponse,
+};
 
 function ValidateDeviceAPI() {
   return new Promise((resolve, reject) => {
     resolve({
-      isValid: true
-    } as ValidateDeviceAPIResponse)
-  })
+      isValid: true,
+    } as ValidateDeviceAPIResponse);
+  });
 }
 
-export { ValidateDeviceAPI }
+export { ValidateDeviceAPI };

@@ -16,46 +16,46 @@
  * limitations under the License.
  */
 
-import * as React from 'react'
-import PropTypes from 'prop-types'
-import { styled } from '@mui/material/styles'
-import MuiDrawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import IconButton from '@mui/material/IconButton'
-import ListItemButton from '@mui/material/ListItemButton'
-import WidgetIcon from '@mui/icons-material/Widgets'
-import MarketplaceIcon from '@mui/icons-material/Store'
-import SettingsIcon from '@mui/icons-material/Settings'
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import BarChartIcon from '@mui/icons-material/BarChart'
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import ListItemButton from '@mui/material/ListItemButton';
+import WidgetIcon from '@mui/icons-material/Widgets';
+import MarketplaceIcon from '@mui/icons-material/Store';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
-const drawerWidth = 240
+const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen
+    duration: theme.transitions.duration.enteringScreen,
   }),
-  overflowX: 'hidden'
-})
+  overflowX: 'hidden',
+});
 
 const closedMixin = (theme) => ({
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen
+    duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(7)} + 1px)`
-  }
-})
+    width: `calc(${theme.spacing(7)} + 1px)`,
+  },
+});
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -65,11 +65,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   minHeight: '48', // if minHeight is not set to 48 (or any other value), a minHeight of 64px is used, which makes the menu move down.
   // padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
-  ...theme.mixins.toolbar
-}))
+  ...theme.mixins.toolbar,
+}));
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open'
+  shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
@@ -77,103 +77,103 @@ const Drawer = styled(MuiDrawer, {
   boxSizing: 'border-box',
   ...(open && {
     ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme)
+    '& .MuiDrawer-paper': openedMixin(theme),
   }),
   ...(!open && {
     ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme)
-  })
-}))
+    '& .MuiDrawer-paper': closedMixin(theme),
+  }),
+}));
 
 const MiniDrawer = (props) => {
-  const [visible, setIsVisible] = React.useState(true)
-  const [open, setOpen] = React.useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [visible, setIsVisible] = React.useState(true);
+  const [open, setOpen] = React.useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleDrawerMove = () => {
-    setOpen(!open)
-  }
+    setOpen(!open);
+  };
 
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
 
   React.useEffect(() => {
-    isVisible()
-  }, [])
+    isVisible();
+  }, []);
 
   const isVisible = () => {
-    const hideDrawer = searchParams.get('hidedrawer')
+    const hideDrawer = searchParams.get('hidedrawer');
     if (hideDrawer?.toLowerCase() === 'true') {
-      setIsVisible(false) // Hide when hideDrawer is explicitly 'true'
+      setIsVisible(false); // Hide when hideDrawer is explicitly 'true'
     } else {
-      setIsVisible(true) // Show otherwise (including when hideDrawer is null or undefined)
+      setIsVisible(true); // Show otherwise (including when hideDrawer is null or undefined)
     }
-  }
+  };
 
   const handleListItemClick = (event, index) => {
     // setSelectedIndex(index)
     switch (index) {
       case 0:
-        navigate('/')
-        break
+        navigate('/');
+        break;
       case 1:
-        navigate('/marketplace')
-        break
+        navigate('/marketplace');
+        break;
       case 2:
-        navigate('/service-mesh')
-        break
+        navigate('/service-mesh');
+        break;
       case 3:
-        navigate('/system')
-        break
+        navigate('/system');
+        break;
       default:
-        navigate('/')
-        break
+        navigate('/');
+        break;
     }
-  }
+  };
 
   return (
     <React.Fragment>
       {visible && (
-        <Drawer aria-label='FLECS-Drawer' variant='permanent' open={open}>
-          <DrawerHeader aria-label='FLECS-Drawer-Header' />
-          <List component='nav' aria-label='Drawer-List-FLECS' align='right'>
-            <IconButton onClick={handleDrawerMove} aria-label='Minimize-Drawer'>
+        <Drawer aria-label="FLECS-Drawer" variant="permanent" open={open}>
+          <DrawerHeader aria-label="FLECS-Drawer-Header" />
+          <List component="nav" aria-label="Drawer-List-FLECS" align="right">
+            <IconButton onClick={handleDrawerMove} aria-label="Minimize-Drawer">
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
             <Divider />
             <ListItemButton
               selected={location.pathname === '/'}
               onClick={(event) => handleListItemClick(event, 0)}
-              aria-label='Apps'
+              aria-label="Apps"
             >
               <ListItemIcon>
                 <WidgetIcon />
               </ListItemIcon>
-              <ListItemText primary='Apps' />
+              <ListItemText primary="Apps" />
             </ListItemButton>
             <ListItemButton
               selected={location.pathname === '/marketplace'}
               onClick={(event) => handleListItemClick(event, 1)}
-              aria-label='/marketplace'
+              aria-label="/marketplace"
             >
               <ListItemIcon>
                 <MarketplaceIcon />
               </ListItemIcon>
-              <ListItemText primary='Marketplace' />
+              <ListItemText primary="Marketplace" />
             </ListItemButton>
             <ListItemButton
               selected={location.pathname === '/service-mesh'}
               onClick={(event) => handleListItemClick(event, 2)}
-              aria-label='/service-mesh'
+              aria-label="/service-mesh"
             >
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
-              <ListItemText primary='Service Mesh' />
+              <ListItemText primary="Service Mesh" />
             </ListItemButton>
           </List>
           <Divider />
-          <List component='nav' aria-label='Drawer-List-System'>
+          <List component="nav" aria-label="Drawer-List-System">
             <ListItemButton
               selected={location.pathname === '/system'}
               onClick={(event) => handleListItemClick(event, 3)}
@@ -181,17 +181,17 @@ const MiniDrawer = (props) => {
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText primary='System' />
+              <ListItemText primary="System" />
             </ListItemButton>
           </List>
         </Drawer>
       )}
     </React.Fragment>
-  )
-}
+  );
+};
 
 MiniDrawer.propTypes = {
-  history: PropTypes.any
-}
+  history: PropTypes.any,
+};
 
-export default MiniDrawer
+export default MiniDrawer;

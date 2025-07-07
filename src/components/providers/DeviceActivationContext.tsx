@@ -18,25 +18,24 @@
 
 /* tslint:disable:no-empty */
 
-import React from 'react'
+import React from 'react';
 
 export interface DeviceActivationContextProps {
-  readonly validate: () => Promise<void>
-  readonly validating: boolean
-  readonly activated: boolean
-  readonly activate: () => Promise<void>
-  readonly activating: boolean
-  readonly error: boolean
-  readonly statusText: string
+  readonly validate: () => Promise<void>;
+  readonly validating: boolean;
+  readonly activated: boolean;
+  readonly activate: () => Promise<void>;
+  readonly activating: boolean;
+  readonly error: boolean;
+  readonly statusText: string;
 }
 
-export const DeviceActivationContext =
-  React.createContext<DeviceActivationContextProps>({
-    validate: async () => {},
-    validating: false,
-    activated: false,
-    activate: async () => {},
-    activating: false,
-    error: false,
-    statusText: ''
-  })
+export const DeviceActivationContext = React.createContext<DeviceActivationContextProps>({
+  validate: async () => {},
+  validating: false,
+  activated: false,
+  activate: async () => {},
+  activating: false,
+  error: false,
+  statusText: '',
+});

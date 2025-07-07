@@ -15,59 +15,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useSystemContext } from './SystemProvider'
-import { SystemPing } from '../api/device/SystemPingService'
-import { SystemInfo } from '../api/device/SystemInfoService'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useSystemContext } from './SystemProvider';
+import { SystemPing } from '../api/device/SystemPingService';
+import { SystemInfo } from '../api/device/SystemInfoService';
 
-function SystemData (props) {
-  const { setPing, loading, setLoading, setSystemInfo } = useSystemContext()
-  const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false)
+function SystemData(props) {
+  const { setPing, loading, setLoading, setSystemInfo } = useSystemContext();
+  const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false);
 
   React.useEffect(() => {
     if (!loading) {
-      fetchPing()
+      fetchPing();
     }
-  }, [])
+  }, []);
 
   React.useEffect(() => {
     if (!loadingSystemInfo) {
-      fetchSystemInfo()
+      fetchSystemInfo();
     }
-  }, [])
+  }, []);
 
   const fetchPing = async (props) => {
-    setLoading(true)
+    setLoading(true);
     SystemPing()
       .then(() => {
-        setPing(true)
+        setPing(true);
       })
       .catch(() => {
-        setPing(false)
+        setPing(false);
       })
       .finally(() => {
-        setLoading(false)
-      })
-  }
+        setLoading(false);
+      });
+  };
 
   const fetchSystemInfo = async (props) => {
-    setLoadingSystemInfo(true)
+    setLoadingSystemInfo(true);
     SystemInfo()
       .then((response) => {
-        setSystemInfo(response)
+        setSystemInfo(response);
       })
       .catch(() => {
-        setSystemInfo(undefined)
+        setSystemInfo(undefined);
       })
       .finally(() => {
-        setLoadingSystemInfo(false)
-      })
-  }
+        setLoadingSystemInfo(false);
+      });
+  };
 
-  return (<>{props.children}</>)
+  return <>{props.children}</>;
 }
 SystemData.propTypes = {
-  children: PropTypes.any
-}
-export { SystemData }
+  children: PropTypes.any,
+};
+export { SystemData };

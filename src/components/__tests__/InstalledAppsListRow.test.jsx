@@ -1,16 +1,16 @@
-import React from 'react'
-import '@testing-library/jest-dom'
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
-import Row from '../InstalledAppsListRow'
-import { JobsContextProvider } from '../../data/JobsContext'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import Row from '../InstalledAppsListRow';
+import { JobsContextProvider } from '../../data/JobsContext';
 
-jest.mock('../../api/device/AppAPI')
+jest.mock('../../api/device/AppAPI');
 
 describe('Test Installed Apps List row', () => {
   const app = {
     appKey: {
       name: 'com.codesys.codesyscontrol',
-      version: '4.2.0'
+      version: '4.2.0',
     },
     status: 'installed',
     editor: ':8080',
@@ -21,25 +21,25 @@ describe('Test Installed Apps List row', () => {
         instanceName: 'Smarthome',
         status: 'running',
         appKey: {
-          version: '4.2.0'
+          version: '4.2.0',
         },
-        editors: [{ name: 'editor', url: '/editor-0', port: 200 }]
+        editors: [{ name: 'editor', url: '/editor-0', port: 200 }],
       },
       {
         instanceId: 'com.codesys.codesyscontrol.12345678',
         instanceName: 'Energymanager',
         status: 'stopped',
         appKey: {
-          version: '4.2.0'
+          version: '4.2.0',
         },
-        editors: [{ name: 'editor', url: '/editor-1', port: 201 }]
-      }
-    ]
-  }
+        editors: [{ name: 'editor', url: '/editor-1', port: 201 }],
+      },
+    ],
+  };
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('renders installed apps list row component', async () => {
     render(
@@ -49,17 +49,17 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
     const crtInstnButton = await waitFor(() =>
-      screen.getByTestId('start-new-instance-icon-button-icon')
-    )
-    const deleteButton = screen.getByTestId('DeleteIcon')
+      screen.getByTestId('start-new-instance-icon-button-icon'),
+    );
+    const deleteButton = screen.getByTestId('DeleteIcon');
 
-    expect(crtInstnButton).toBeVisible()
-    expect(deleteButton).toBeVisible()
-  })
+    expect(crtInstnButton).toBeVisible();
+    expect(deleteButton).toBeVisible();
+  });
 
   test('create new instance', async () => {
     render(
@@ -69,21 +69,21 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
     const crtInstnButton = await waitFor(() =>
-      screen.getByTestId('start-new-instance-icon-button-icon')
-    )
-    const deleteButton = screen.getByTestId('DeleteIcon')
+      screen.getByTestId('start-new-instance-icon-button-icon'),
+    );
+    const deleteButton = screen.getByTestId('DeleteIcon');
 
-    fireEvent.click(crtInstnButton)
+    fireEvent.click(crtInstnButton);
 
     await waitFor(() => {
-      expect(crtInstnButton).toBeVisible()
-      expect(deleteButton).toBeVisible()
-    })
-  })
+      expect(crtInstnButton).toBeVisible();
+      expect(deleteButton).toBeVisible();
+    });
+  });
 
   test('test delete app', async () => {
     render(
@@ -93,26 +93,24 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    const deleteButton = await waitFor(() => screen.getByTestId('DeleteIcon'))
-    fireEvent.click(deleteButton)
+    const deleteButton = await waitFor(() => screen.getByTestId('DeleteIcon'));
+    fireEvent.click(deleteButton);
 
-    const yesButton = await waitFor(() => screen.getByText('Yes'))
-    fireEvent.click(yesButton)
+    const yesButton = await waitFor(() => screen.getByText('Yes'));
+    fireEvent.click(yesButton);
 
     await waitFor(() => {
-      const createInstanceButton = screen.getByTestId(
-        'start-new-instance-icon-button-icon'
-      )
-      expect(createInstanceButton).toBeVisible()
-      expect(deleteButton).toBeVisible()
-    })
-  })
+      const createInstanceButton = screen.getByTestId('start-new-instance-icon-button-icon');
+      expect(createInstanceButton).toBeVisible();
+      expect(deleteButton).toBeVisible();
+    });
+  });
 
   test('test app with documentation url', async () => {
-    app.documentationUrl = 'https://google.com'
+    app.documentationUrl = 'https://google.com';
 
     render(
       <JobsContextProvider>
@@ -121,18 +119,16 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    const documentationButton = await waitFor(() =>
-      screen.getByTestId('HelpCenterIcon')
-    )
+    const documentationButton = await waitFor(() => screen.getByTestId('HelpCenterIcon'));
 
-    expect(documentationButton).toBeVisible()
-  })
+    expect(documentationButton).toBeVisible();
+  });
 
   test('test app without documentation url', async () => {
-    app.documentationUrl = undefined
+    app.documentationUrl = undefined;
 
     render(
       <JobsContextProvider>
@@ -141,17 +137,17 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
     await waitFor(() => {
-      expect(() => screen.getByTestId('HelpCenterIcon')).toThrow()
-    })
-  })
+      expect(() => screen.getByTestId('HelpCenterIcon')).toThrow();
+    });
+  });
 
   test('renders an app with an editor', async () => {
-    const closeSpy = jest.fn()
-    window.open = jest.fn().mockReturnValue({ close: closeSpy })
+    const closeSpy = jest.fn();
+    window.open = jest.fn().mockReturnValue({ close: closeSpy });
 
     render(
       <JobsContextProvider>
@@ -160,29 +156,25 @@ describe('Test Installed Apps List row', () => {
             <Row key={app.appKey.name} row={app} />
           </tbody>
         </table>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    const expandButton = await waitFor(() =>
-      screen.getByLabelText('expand row')
-    )
-    fireEvent.click(expandButton)
+    const expandButton = await waitFor(() => screen.getByLabelText('expand row'));
+    fireEvent.click(expandButton);
 
-    const editorButtons = await waitFor(() =>
-      screen.getAllByLabelText('open-editor-button-0')
-    )
-    expect(editorButtons.length).toBe(2)
-    const editorButton1 = editorButtons[1]
-    fireEvent.click(editorButton1)
+    const editorButtons = await waitFor(() => screen.getAllByLabelText('open-editor-button-0'));
+    expect(editorButtons.length).toBe(2);
+    const editorButton1 = editorButtons[1];
+    fireEvent.click(editorButton1);
 
-    expect(editorButton1).toBeEnabled()
-    expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor-1')
-    const editorButton0 = editorButtons[0]
-    fireEvent.click(editorButton0)
+    expect(editorButton1).toBeEnabled();
+    expect(window.open).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor-1');
+    const editorButton0 = editorButtons[0];
+    fireEvent.click(editorButton0);
 
-    expect(editorButton0).toBeEnabled()
-    expect(window.open).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor-0')
-  })
-})
+    expect(editorButton0).toBeEnabled();
+    expect(window.open).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalledWith('http://localhost:3000/api/editor-0');
+  });
+});

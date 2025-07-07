@@ -15,41 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { createAppRating } from '../AppRatingService'
-import { vitest } from 'vitest'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { createAppRating } from '../AppRatingService';
+import { vitest } from 'vitest';
 
-vitest.mock('axios')
+vitest.mock('axios');
 
 const mockRating = {
   data: {
-    rating: 5
-  }
-}
+    rating: 5,
+  },
+};
 
 describe('AppRatingService', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('calls successful createAppRating', async () => {
-    axios.post.mockResolvedValueOnce(mockRating)
-    await waitFor(() => createAppRating(37))
+    axios.post.mockResolvedValueOnce(mockRating);
+    await waitFor(() => createAppRating(37));
 
     // expect(rating).toBe(mockRating.data.rating)
-  })
+  });
 
   test('calls unsuccessful createAppRating', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to create app rating'))
+    axios.post.mockRejectedValueOnce(new Error('Failed to create app rating'));
     await act(async () => {
-      expect(createAppRating(37)).rejects.toThrowError()
-    })
-  })
-})
+      expect(createAppRating(37)).rejects.toThrowError();
+    });
+  });
+});

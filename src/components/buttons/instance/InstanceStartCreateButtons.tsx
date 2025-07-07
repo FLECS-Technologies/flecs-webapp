@@ -15,23 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, Tooltip } from '@mui/material';
+import React from 'react';
+import {
+  Button,
+  ButtonGroup,
+  ClickAwayListener,
+  Grow,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Tooltip,
+} from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import AddTaskIcon from '@mui/icons-material/AddTask'
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import { Loading } from '../../../components/Loading';
 
 interface App {
-  multiInstance: boolean,
-  instances: any[]
+  multiInstance: boolean;
+  instances: any[];
 }
 
 interface InstanceStartCreateButtonsProps {
-  app: App,
-  startNewInstanceCallback: () => void,
-  createNewInstanceCallback: () => void,
-  loading: boolean,
-  uninstalling: boolean
+  app: App;
+  startNewInstanceCallback: () => void;
+  createNewInstanceCallback: () => void;
+  loading: boolean;
+  uninstalling: boolean;
 }
 
 enum Action {
@@ -41,7 +51,13 @@ enum Action {
 
 const action_names = ['Create', 'Create & start'];
 
-export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProps> = ({ app, startNewInstanceCallback, createNewInstanceCallback, loading, uninstalling }: InstanceStartCreateButtonsProps) => {
+export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProps> = ({
+  app,
+  startNewInstanceCallback,
+  createNewInstanceCallback,
+  loading,
+  uninstalling,
+}: InstanceStartCreateButtonsProps) => {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const [selectedAction, setSelectedAction] = React.useState(Action.StartAndCreate);
@@ -56,9 +72,9 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
 
   const executeAction = (action: Action) => {
     if (action === Action.StartAndCreate) {
-      startNewInstanceCallback()
+      startNewInstanceCallback();
     } else if (action === Action.Create) {
-      createNewInstanceCallback()
+      createNewInstanceCallback();
     }
   };
 
@@ -67,17 +83,14 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
   };
 
   const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
 
     setOpen(false);
   };
 
-  const disabled = app.instances.length > 0 && !app.multiInstance || uninstalling || loading;
+  const disabled = (app.instances.length > 0 && !app.multiInstance) || uninstalling || loading;
   let action_tooltip = `${action_names[selectedAction] || ''} a new instance`;
   if (disabled) {
     if (uninstalling || loading) {
@@ -89,11 +102,7 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
 
   return (
     <React.Fragment>
-      <ButtonGroup
-        variant="contained"
-        ref={anchorRef}
-        aria-label={`new-instance-button`}
-      >
+      <ButtonGroup variant="contained" ref={anchorRef} aria-label={`new-instance-button`}>
         <Loading loading={loading}>
           <Tooltip title={action_tooltip} disableInteractive>
             <span>
@@ -103,7 +112,7 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
                 aria-label="execute-action"
                 disabled={disabled}
               >
-                  {`${action_names[selectedAction]} new instance` || 'error'}
+                {`${action_names[selectedAction]} new instance` || 'error'}
               </Button>
             </span>
           </Tooltip>
@@ -118,8 +127,8 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
             onClick={handleToggle}
             sx={{
               ...(disabled && {
-                backgroundColor: theme => theme.palette.action.disabledBackground,
-                color: theme => theme.palette.action.disabled,
+                backgroundColor: (theme) => theme.palette.action.disabledBackground,
+                color: (theme) => theme.palette.action.disabled,
                 pointerEvents: 'auto', // allow clicks
               }),
             }}
@@ -140,21 +149,21 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem aria-label="select-action-menu">
-                  {[Action.StartAndCreate, Action.Create].map((action) =>
-                  <MenuItem
-                    key={action}
-                    selected={selectedAction === action}
-                    onClick={(event) => handleMenuItemClick(event, action)}
-                  >
-                    {action_names[action] || 'Error'}
-                  </MenuItem>)}
+                  {[Action.StartAndCreate, Action.Create].map((action) => (
+                    <MenuItem
+                      key={action}
+                      selected={selectedAction === action}
+                      onClick={(event) => handleMenuItemClick(event, action)}
+                    >
+                      {action_names[action] || 'Error'}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </ClickAwayListener>
             </Paper>
@@ -163,4 +172,4 @@ export const InstanceStartCreateButtons: React.FC<InstanceStartCreateButtonsProp
       </Popper>
     </React.Fragment>
   );
-}
+};

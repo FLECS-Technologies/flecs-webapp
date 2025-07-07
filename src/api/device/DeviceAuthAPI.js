@@ -15,48 +15,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DeviceAPIConfiguration } from '../api-config'
-import axios from 'axios'
+import { DeviceAPIConfiguration } from '../api-config';
+import axios from 'axios';
 
-async function postMPLogin (currentUser) {
+async function postMPLogin(currentUser) {
   try {
-    let url = ''
+    let url = '';
 
     if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-      url = import.meta.env.VITE_APP_DEV_CORE_URL
+      url = import.meta.env.VITE_APP_DEV_CORE_URL;
     }
-    url = url + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL
+    url =
+      url +
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+      DeviceAPIConfiguration.CONSOLE_ROUTE +
+      DeviceAPIConfiguration.PUT_CONSOLE_AUTH_URL;
     return axios
       .put(url, currentUser)
-      .then(response => {
-        return response
+      .then((response) => {
+        return response;
       })
-      .catch(error => {
-        return Promise.reject(error)
-      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 }
-async function postMPLogout () {
+async function postMPLogout() {
   try {
-    let url = ''
+    let url = '';
 
     if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-      url = import.meta.env.VITE_APP_DEV_CORE_URL
+      url = import.meta.env.VITE_APP_DEV_CORE_URL;
     }
-    url = url + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.CONSOLE_ROUTE + DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL
+    url =
+      url +
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+      DeviceAPIConfiguration.CONSOLE_ROUTE +
+      DeviceAPIConfiguration.DELETE_CONSOLE_AUTH_URL;
     return axios
       .delete(url)
-      .then(response => {
-        return response
+      .then((response) => {
+        return response;
       })
-      .catch(error => {
-        return Promise.reject(error)
-      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 }
 
-export { postMPLogin, postMPLogout }
+export { postMPLogin, postMPLogout };

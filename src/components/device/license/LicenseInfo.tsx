@@ -15,11 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import {
-  LicenseInfoAPI,
-  LicenseInfoAPIResponse
-} from '../../../api/device/license/info'
+import React from 'react';
+import { LicenseInfoAPI, LicenseInfoAPIResponse } from '../../../api/device/license/info';
 import {
   Skeleton,
   Table,
@@ -27,39 +24,39 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography
-} from '@mui/material'
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext'
+  Typography,
+} from '@mui/material';
+import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
 
 function LicenseInfo() {
-  const [info, setInfo] = React.useState<LicenseInfoAPIResponse>()
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState(false)
-  const { activated } = React.useContext(DeviceActivationContext)
+  const [info, setInfo] = React.useState<LicenseInfoAPIResponse>();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
+  const { activated } = React.useContext(DeviceActivationContext);
 
   const fetchLicenseInfo = async () => {
-    setLoading(true)
+    setLoading(true);
     await LicenseInfoAPI()
       .then((response) => {
-        setInfo(response)
-        setError(false)
+        setInfo(response);
+        setError(false);
       })
       .catch(() => {
-        setError(true)
-      })
-    setLoading(false)
-  }
+        setError(true);
+      });
+    setLoading(false);
+  };
   React.useEffect(() => {
-    if (!loading) fetchLicenseInfo()
-  }, [activated])
+    if (!loading) fetchLicenseInfo();
+  }, [activated]);
 
   return (
     <React.Fragment>
-      <Table size='small' aria-label='license-info-table'>
+      <Table size="small" aria-label="license-info-table">
         <TableHead>
           <TableRow>
             <TableCell colSpan={2}>
-              <Typography variant='h6'>License information</Typography>
+              <Typography variant="h6">License information</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -89,38 +86,22 @@ function LicenseInfo() {
             {info.license && (
               <TableRow key={info.license} style={{ borderBottom: 'none' }}>
                 <TableCell style={{ borderBottom: 'none' }}>License</TableCell>
-                <TableCell style={{ borderBottom: 'none' }}>
-                  {info.license}
-                </TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>{info.license}</TableCell>
               </TableRow>
             )}
             <TableRow key={String(info.type)} style={{ borderBottom: 'none' }}>
               <TableCell style={{ borderBottom: 'none' }}>Type</TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>
-                {String(info.type)}
-              </TableCell>
+              <TableCell style={{ borderBottom: 'none' }}>{String(info.type)}</TableCell>
             </TableRow>
             {info.sessionId && info.sessionId.id && (
-              <TableRow
-                key={info.sessionId.id}
-                style={{ borderBottom: 'none' }}
-              >
-                <TableCell style={{ borderBottom: 'none' }}>
-                  Session ID
-                </TableCell>
-                <TableCell style={{ borderBottom: 'none' }}>
-                  {info.sessionId.id}
-                </TableCell>
+              <TableRow key={info.sessionId.id} style={{ borderBottom: 'none' }}>
+                <TableCell style={{ borderBottom: 'none' }}>Session ID</TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>{info.sessionId.id}</TableCell>
               </TableRow>
             )}
             {info.sessionId && info.sessionId.timestamp && (
-              <TableRow
-                key={String(info.sessionId.timestamp)}
-                style={{ borderBottom: 'none' }}
-              >
-                <TableCell style={{ borderBottom: 'none' }}>
-                  Last session renewal
-                </TableCell>
+              <TableRow key={String(info.sessionId.timestamp)} style={{ borderBottom: 'none' }}>
+                <TableCell style={{ borderBottom: 'none' }}>Last session renewal</TableCell>
                 <TableCell style={{ borderBottom: 'none' }}>
                   {String(info.sessionId.timestamp)}
                 </TableCell>
@@ -130,7 +111,7 @@ function LicenseInfo() {
         )}
       </Table>
     </React.Fragment>
-  )
+  );
 }
 
-export default LicenseInfo
+export default LicenseInfo;

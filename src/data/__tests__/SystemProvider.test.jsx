@@ -16,31 +16,31 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { SystemContextProvider } from '../SystemProvider'
+import React from 'react';
+import { render /*, screen */ } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { SystemContextProvider } from '../SystemProvider';
 
 const mockSystem = {
   ping: true,
   setPing: jest.fn(),
   loading: false,
-  setLoading: jest.fn()
-}
+  setLoading: jest.fn(),
+};
 
 jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react')
+  const ActualReact = jest.requireActual('react');
   return {
     ...ActualReact,
-    useContext: () => ({ mockSystem }) // what you want to return when useContext get fired goes here
-  }
-})
+    useContext: () => ({ mockSystem }), // what you want to return when useContext get fired goes here
+  };
+});
 
 describe('SystemContextProvider', () => {
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('renders SystemContextProvider component', () => {
-    render(<SystemContextProvider />)
-  })
-})
+    render(<SystemContextProvider />);
+  });
+});

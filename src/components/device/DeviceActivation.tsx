@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
+import React from 'react';
 import {
   Button,
   Card,
@@ -24,92 +24,80 @@ import {
   CardMedia,
   CircularProgress,
   Grid,
-  Typography
-} from '@mui/material'
-import { DeviceActivationContext } from '../providers/DeviceActivationContext'
-import { CheckCircle, Error } from '@mui/icons-material'
-import PropTypes, { InferProps } from 'prop-types'
+  Typography,
+} from '@mui/material';
+import { DeviceActivationContext } from '../providers/DeviceActivationContext';
+import { CheckCircle, Error } from '@mui/icons-material';
+import PropTypes, { InferProps } from 'prop-types';
 
-function DeviceActivation(
-  props: InferProps<typeof DeviceActivation.propTypes>
-) {
-  const { variant } = props
-  const {
-    validate,
-    validating,
-    activated,
-    activate,
-    activating,
-    error,
-    statusText
-  } = React.useContext(DeviceActivationContext)
-  const [infoText, setInfoText] = React.useState('')
+function DeviceActivation(props: InferProps<typeof DeviceActivation.propTypes>) {
+  const { variant } = props;
+  const { validate, validating, activated, activate, activating, error, statusText } =
+    React.useContext(DeviceActivationContext);
+  const [infoText, setInfoText] = React.useState('');
 
   React.useEffect(() => {
     if (validating) {
-      setInfoText('Checking the device activation status...')
+      setInfoText('Checking the device activation status...');
     } else if (activating) {
-      setInfoText('Activating the device...')
+      setInfoText('Activating the device...');
     } else if (activated) {
-      setInfoText('Device is activated!')
+      setInfoText('Device is activated!');
     } else if (!activated && !error) {
-      setInfoText('Device is not activated!')
+      setInfoText('Device is not activated!');
     } else if (error) {
       setInfoText(
         statusText ||
-          'Failed to check activation status! Please login with your account and try again.'
-      )
+          'Failed to check activation status! Please login with your account and try again.',
+      );
     }
-  }, [activated, validating, activating])
+  }, [activated, validating, activating]);
 
   const renderIcon = () => {
-    let minHeight = 100
-    let minWidth = 100
+    let minHeight = 100;
+    let minWidth = 100;
     if (variant === 'line') {
-      minHeight = 24
-      minWidth = 24
+      minHeight = 24;
+      minWidth = 24;
     }
     if (validating || activating) {
       return (
         <CircularProgress
           sx={{ minHeight: { minHeight }, minWidth: { minWidth } }}
         ></CircularProgress>
-      )
+      );
     }
     if (activated) {
       return (
         <CheckCircle
-          color='success'
+          color="success"
           sx={{ minHeight: { minHeight }, minWidth: { minWidth } }}
         ></CheckCircle>
-      )
+      );
     } else {
       return (
-        <Error
-          color='warning'
-          sx={{ minHeight: { minHeight }, minWidth: { minWidth } }}
-        ></Error>
-      )
+        <Error color="warning" sx={{ minHeight: { minHeight }, minWidth: { minWidth } }}></Error>
+      );
     }
-  }
+  };
 
   const renderButton = () => {
     return (
       <Button
-        variant='contained'
+        variant="contained"
         onClick={activate}
         disabled={validating || activating || activated || error}
       >
         Activate Device
       </Button>
-    )
-  }
+    );
+  };
 
   return (
     <React.Fragment>
       {(!variant || variant === 'card') && (
         <Card
-          data-testid='device-activation-card'
+          data-testid="device-activation-card"
           sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -117,12 +105,12 @@ function DeviceActivation(
             flexDirection: 'column',
             minWidth: 300,
             maxWidth: 300,
-            minHeight: 260
+            minHeight: 260,
           }}
         >
           <CardMedia>{renderIcon()}</CardMedia>
           <CardContent>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant="body2" color="text.secondary">
               {infoText}
             </Typography>
           </CardContent>
@@ -130,10 +118,10 @@ function DeviceActivation(
         </Card>
       )}
       {variant === 'line' && (
-        <Grid container direction='row' spacing={5} alignItems='center'>
+        <Grid container direction="row" spacing={5} alignItems="center">
           <Grid>{renderIcon()}</Grid>
           <Grid>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant="body2" color="text.secondary">
               {infoText}
             </Typography>
           </Grid>
@@ -141,11 +129,11 @@ function DeviceActivation(
         </Grid>
       )}
     </React.Fragment>
-  )
+  );
 }
 
 DeviceActivation.propTypes = {
-  variant: PropTypes.string
-}
+  variant: PropTypes.string,
+};
 
-export default DeviceActivation
+export default DeviceActivation;

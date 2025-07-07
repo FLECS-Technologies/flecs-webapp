@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../../api-config';
 
 export interface ActivateDeviceAPIResponse {
-  additionalInfo: string
+  additionalInfo: string;
 }
 
 export async function ActivateDeviceAPI() {
@@ -27,12 +27,12 @@ export async function ActivateDeviceAPI() {
     .post(
       DeviceAPIConfiguration.TARGET +
         DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.POST_ACTIVATE_URL
+        DeviceAPIConfiguration.POST_ACTIVATE_URL,
     )
     .then((response) => {
-      return response.data as ActivateDeviceAPIResponse
+      return response.data as ActivateDeviceAPIResponse;
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }

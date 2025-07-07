@@ -18,6 +18,6 @@
 
 export async function InstallAppAPI(app: string, version: string) {
   return new Promise((resolve, reject) => {
-    app ? resolve(1) : reject(new Error('Mock: Failed to install app.'))
-  })
+    app ? resolve(1) : reject(new Error('Mock: Failed to install app.'));
+  });
 }

@@ -15,26 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
-async function getInstanceDetails (instanceId) {
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../api-config';
+async function getInstanceDetails(instanceId) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_INSTANCE_DETAILS_URL(instanceId))
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_INSTANCE_DETAILS_URL(instanceId),
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
-function getHostname (instance) {
-  return instance?.hostname
+function getHostname(instance) {
+  return instance?.hostname;
 }
-function getIPAddress (instance) {
-  return instance?.ipAddress
+function getIPAddress(instance) {
+  return instance?.ipAddress;
 }
-function getPorts (instance) {
-  return instance?.ports
+function getPorts(instance) {
+  return instance?.ports;
 }
 
-export { getInstanceDetails, getHostname, getIPAddress, getPorts }
+export { getInstanceDetails, getHostname, getIPAddress, getPorts };

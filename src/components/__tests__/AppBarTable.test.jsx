@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import '@testing-library/jest-dom'
-import userEvent from '@testing-library/user-event'
-import { act } from 'react-dom/test-utils'
-import { render, screen } from '@testing-library/react'
-import BasicTable from '../AppBarTable'
-import { JobsContextProvider } from '../../data/JobsContext'
-import { mockJob, mockSuccessJob } from '../../models/__mocks__/job'
+import React from 'react';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react';
+import BasicTable from '../AppBarTable';
+import { JobsContextProvider } from '../../data/JobsContext';
+import { mockJob, mockSuccessJob } from '../../models/__mocks__/job';
 
-const jobs = [mockJob, mockSuccessJob]
+const jobs = [mockJob, mockSuccessJob];
 
 describe('AppBarTable', () => {
   test('renders AppBarTable component', async () => {
@@ -33,17 +33,17 @@ describe('AppBarTable', () => {
       render(
         <JobsContextProvider>
           <BasicTable jobs={[]}></BasicTable>
-        </JobsContextProvider>
-      )
-    })
-    expect(screen.getByText('Installation Log')).toBeVisible()
-    expect(screen.getByText('Clear All')).toBeVisible()
-  })
+        </JobsContextProvider>,
+      );
+    });
+    expect(screen.getByText('Installation Log')).toBeVisible();
+    expect(screen.getByText('Clear All')).toBeVisible();
+  });
 
   test('click on Clear All button', async () => {
-    const clearAllFinishedJobs = jest.fn()
-    const deleteJobs = jest.fn()
-    const user = userEvent.setup()
+    const clearAllFinishedJobs = jest.fn();
+    const deleteJobs = jest.fn();
+    const user = userEvent.setup();
     await act(async () => {
       render(
         <JobsContextProvider>
@@ -53,32 +53,32 @@ describe('AppBarTable', () => {
             clearAllFinishedJobs={clearAllFinishedJobs}
             clearAllButtonIsDisabled={false}
           />
-        </JobsContextProvider>
-      )
-    })
-    expect(screen.getByText('Clear All')).toBeVisible()
-    const clearAllButton = screen.getByText('Clear All')
-    await user.click(clearAllButton)
-    expect(clearAllFinishedJobs).toHaveBeenCalled()
-  })
+        </JobsContextProvider>,
+      );
+    });
+    expect(screen.getByText('Clear All')).toBeVisible();
+    const clearAllButton = screen.getByText('Clear All');
+    await user.click(clearAllButton);
+    expect(clearAllFinishedJobs).toHaveBeenCalled();
+  });
 
   test('render with jobs', async () => {
     await act(async () => {
       render(
         <JobsContextProvider>
           <BasicTable jobs={jobs} />
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    expect(screen.getByText(jobs[0].status)).toBeVisible()
-    expect(screen.getByText(jobs[1].status)).toBeVisible()
-  })
+    expect(screen.getByText(jobs[0].status)).toBeVisible();
+    expect(screen.getByText(jobs[1].status)).toBeVisible();
+  });
 
   test('render with jobs and click on Clear', async () => {
-    const deleteJobs = jest.fn()
-    const clearAllFinishedJobs = jest.fn()
-    const user = userEvent.setup()
+    const deleteJobs = jest.fn();
+    const clearAllFinishedJobs = jest.fn();
+    const user = userEvent.setup();
     await act(async () => {
       render(
         <JobsContextProvider>
@@ -88,12 +88,12 @@ describe('AppBarTable', () => {
             clearAllFinishedJobs={clearAllFinishedJobs}
             clearAllButtonIsDisabled={true}
           />
-        </JobsContextProvider>
-      )
-    })
+        </JobsContextProvider>,
+      );
+    });
 
-    const clearButton = screen.getAllByTestId('icon-button')
-    await user.click(clearButton[0]) // [0] is somehow the last button created and that job has status 'successful', so it can be clicked
-    expect(deleteJobs).toHaveBeenCalled()
-  })
-})
+    const clearButton = screen.getAllByTestId('icon-button');
+    await user.click(clearButton[0]); // [0] is somehow the last button created and that job has status 'successful', so it can be clicked
+    expect(deleteJobs).toHaveBeenCalled();
+  });
+});

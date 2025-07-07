@@ -16,25 +16,19 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import RequestAppDialog from '../RequestAppDialog'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import RequestAppDialog from '../RequestAppDialog';
 
 describe('RequestAppDialog', () => {
   test('renders RequestAppDialog component', () => {
-    render(
-        <RequestAppDialog
-            open={true}
-            appName = 'Testapp'
-            appauthor = 'Test-author'
-        />
-    )
-    expect(screen.getByText('Cancel')).toBeVisible()
-    expect(screen.getByText('Send Request')).toBeVisible()
-    expect(screen.getByText('Name')).toBeVisible()
-    expect(screen.getByText('E-Mail')).toBeVisible()
+    render(<RequestAppDialog open={true} appName="Testapp" appauthor="Test-author" />);
+    expect(screen.getByText('Cancel')).toBeVisible();
+    expect(screen.getByText('Send Request')).toBeVisible();
+    expect(screen.getByText('Name')).toBeVisible();
+    expect(screen.getByText('E-Mail')).toBeVisible();
 
     // screen.debug()
-  })
-})
+  });
+});

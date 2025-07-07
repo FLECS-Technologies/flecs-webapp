@@ -15,27 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState } from 'react'
-import {
-  Card,
-  ListItemText,
-  Box,
-  TextField,
-  Stack,
-  IconButton
-} from '@mui/material'
-import { Delete, Save } from '@mui/icons-material'
-import { InstanceEditor } from '@flecs/core-client-ts'
-import { api } from '../../../../api/flecs-core/api-client'
-import { EditorConfigSnackbar } from '../EditorConfigTab'
-import { createUrl } from '../../../../components/buttons/editors/EditorButton'
+import React, { useState } from 'react';
+import { Card, ListItemText, Box, TextField, Stack, IconButton } from '@mui/material';
+import { Delete, Save } from '@mui/icons-material';
+import { InstanceEditor } from '@flecs/core-client-ts';
+import { api } from '../../../../api/flecs-core/api-client';
+import { EditorConfigSnackbar } from '../EditorConfigTab';
+import { createUrl } from '../../../../components/buttons/editors/EditorButton';
 
 interface EditorConfigCardProps {
-  editor: InstanceEditor
-  instanceId: string
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
-  setSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  setSnackbarState: React.Dispatch<React.SetStateAction<EditorConfigSnackbar>>
+  editor: InstanceEditor;
+  instanceId: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setSnackbarState: React.Dispatch<React.SetStateAction<EditorConfigSnackbar>>;
 }
 
 const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
@@ -43,120 +36,100 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
   instanceId,
   setLoading,
   setSnackbarOpen,
-  setSnackbarState
+  setSnackbarState,
 }) => {
-  const [editor_path_prefix, setEditorPathPrefix] = useState<string>(
-    editor.path_prefix || ''
-  )
-  const [current_editor_path_prefix, setCurrentEditorPathPrefix] = useState<
-    string | undefined
-  >(editor.path_prefix)
+  const [editor_path_prefix, setEditorPathPrefix] = useState<string>(editor.path_prefix || '');
+  const [current_editor_path_prefix, setCurrentEditorPathPrefix] = useState<string | undefined>(
+    editor.path_prefix,
+  );
   const putEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
-      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut(
-        instanceId,
-        port,
-        {
-          path_prefix: pathPrefix
-        }
-      )
-      setCurrentEditorPathPrefix(pathPrefix)
+      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut(instanceId, port, {
+        path_prefix: pathPrefix,
+      });
+      setCurrentEditorPathPrefix(pathPrefix);
       setSnackbarState({
         alertSeverity: 'success',
         snackbarText: 'Editor prefix was saved!',
-        clipBoardContent: ''
-      })
-      setSnackbarOpen(true)
+        clipBoardContent: '',
+      });
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error('Failed to put editor prefix:', error)
+      console.error('Failed to put editor prefix:', error);
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: 'Failed to save editor prefix!',
-        clipBoardContent: '' + error
-      })
-      setSnackbarOpen(true)
+        clipBoardContent: '' + error,
+      });
+      setSnackbarOpen(true);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const deleteEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
-      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete(
-        instanceId,
-        port
-      )
-      setCurrentEditorPathPrefix(undefined)
-      setEditorPathPrefix('')
+      await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete(instanceId, port);
+      setCurrentEditorPathPrefix(undefined);
+      setEditorPathPrefix('');
       setSnackbarState({
         alertSeverity: 'success',
         snackbarText: 'Editor prefix was deleted!',
-        clipBoardContent: ''
-      })
-      setSnackbarOpen(true)
+        clipBoardContent: '',
+      });
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error('Failed to delete editor prefix:', error)
+      console.error('Failed to delete editor prefix:', error);
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: 'Failed to delete editor prefix!',
-        clipBoardContent: '' + error
-      })
-      setSnackbarOpen(true)
+        clipBoardContent: '' + error,
+      });
+      setSnackbarOpen(true);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <Card
-      key={editor.name || 'Editor at port' + editor.port}
-      sx={{ width: '100%', p: 2, mb: 2 }}
-    >
-      <Box display='flex' flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
+    <Card key={editor.name || 'Editor at port' + editor.port} sx={{ width: '100%', p: 2, mb: 2 }}>
+      <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
         {/* Left Section */}
         <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display='flex' gap={2}>
+          <Box display="flex" gap={2}>
             <Box flex={1}>
-              <ListItemText primary={editor.name} secondary='Name' />
+              <ListItemText primary={editor.name} secondary="Name" />
             </Box>
             <Box flex={1}>
-              <ListItemText primary={editor.port} secondary='Port' />
+              <ListItemText primary={editor.port} secondary="Port" />
             </Box>
           </Box>
           <Box>
-            <ListItemText
-              primary={createUrl(editor.url)}
-              secondary='Fixed URL'
-            />
+            <ListItemText primary={createUrl(editor.url)} secondary="Fixed URL" />
           </Box>
         </Stack>
 
         {/* Right Section */}
         <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display='flex' alignItems='center' gap={0}>
+          <Box display="flex" alignItems="center" gap={0}>
             <TextField
               value={editor_path_prefix}
-              label='Path Prefix'
+              label="Path Prefix"
               fullWidth
               onChange={(e) => setEditorPathPrefix(e.target.value)}
             />
             <IconButton
-              aria-label='put-editor-prefix-button'
-              disabled={
-                !editor_path_prefix ||
-                editor_path_prefix === current_editor_path_prefix
-              }
+              aria-label="put-editor-prefix-button"
+              disabled={!editor_path_prefix || editor_path_prefix === current_editor_path_prefix}
               onClick={() => putEditorPrefix(editor.port, editor_path_prefix)}
               sx={{ flexShrink: 0 }}
             >
               <Save />
             </IconButton>
             <IconButton
-              aria-label='delete-editor-prefix-button'
+              aria-label="delete-editor-prefix-button"
               disabled={current_editor_path_prefix === undefined}
-              onClick={() =>
-                deleteEditorPrefix(editor.port, editor_path_prefix)
-              }
+              onClick={() => deleteEditorPrefix(editor.port, editor_path_prefix)}
               sx={{ flexShrink: 0 }}
             >
               <Delete />
@@ -164,16 +137,14 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
           </Box>
           <Box>
             <ListItemText
-              primary={
-                editor_path_prefix ? createUrl('/' + editor_path_prefix) : ''
-              }
-              secondary='Custom URL created from Path Prefix'
+              primary={editor_path_prefix ? createUrl('/' + editor_path_prefix) : ''}
+              secondary="Custom URL created from Path Prefix"
             />
           </Box>
         </Stack>
       </Box>
     </Card>
-  )
-}
+  );
+};
 
-export default EditorConfigCard
+export default EditorConfigCard;

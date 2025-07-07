@@ -16,30 +16,24 @@
  * limitations under the License.
  */
 export interface Job {
-  id: number
-  status:
-    | 'running'
-    | 'queued'
-    | 'successful'
-    | 'failed'
-    | 'pending'
-    | 'cancelled'
-  description: string
-  numSteps: number
+  id: number;
+  status: 'running' | 'queued' | 'successful' | 'failed' | 'pending' | 'cancelled';
+  description: string;
+  numSteps: number;
   currentStep: {
-    description: string
-    num: number
-    unit: string
-    unitsTotal: number
-    unitsDone: number
-    rate: number
-  }
+    description: string;
+    num: number;
+    unit: string;
+    unitsTotal: number;
+    unitsDone: number;
+    rate: number;
+  };
   result: {
-    code: number
-    message: string
-  }
+    code: number;
+    message: string;
+  };
 }
 
 export interface job_meta {
-  jobId: number
+  jobId: number;
 }

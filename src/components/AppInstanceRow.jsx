@@ -15,201 +15,195 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { Fragment } from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes, { bool } from 'prop-types'
-import TableRow from '@mui/material/TableRow'
-import TableCell from '@mui/material/TableCell'
-import Tooltip from '@mui/material/Tooltip'
-import Grid from '@mui/material/Grid'
-import PlayCircleIcon from '@mui/icons-material/PlayCircle'
-import StopCircleIcon from '@mui/icons-material/StopCircle'
-import CircleIcon from '@mui/icons-material/Circle'
-import ErrorIcon from '@mui/icons-material/Error'
-import DeleteIcon from '@mui/icons-material/Delete'
-import InfoIcon from '@mui/icons-material/Info'
-import SettingsIcon from '@mui/icons-material/Settings'
+import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes, { bool } from 'prop-types';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Tooltip from '@mui/material/Tooltip';
+import Grid from '@mui/material/Grid';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import CircleIcon from '@mui/icons-material/Circle';
+import ErrorIcon from '@mui/icons-material/Error';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-import LoadIconButton from './LoadIconButton'
-import AppAPI from '../api/device/AppAPI'
-import ActionSnackbar from './ActionSnackbar'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
-import ContentDialog from './ContentDialog'
-import InstanceInfo from './InstanceInfo'
-import { JobsContext } from '../data/JobsContext'
-import ConfirmDialog from './ConfirmDialog'
-import InstanceConfigDialog from './dialogs/InstanceConfigDialog'
-import { EditorButtons } from './buttons/editors/EditorButtons'
+import LoadIconButton from './LoadIconButton';
+import AppAPI from '../api/device/AppAPI';
+import ActionSnackbar from './ActionSnackbar';
+import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import ContentDialog from './ContentDialog';
+import InstanceInfo from './InstanceInfo';
+import { JobsContext } from '../data/JobsContext';
+import ConfirmDialog from './ConfirmDialog';
+import InstanceConfigDialog from './dialogs/InstanceConfigDialog';
+import { EditorButtons } from './buttons/editors/EditorButtons';
 
 export default function AppInstanceRow(props) {
-  const { app, appInstance, loadAppReferenceData, showEditors } = props
-  const { setUpdateAppList } = React.useContext(ReferenceDataContext)
-  const [instanceStarting, setInstanceStarting] = React.useState(false)
-  const [instanceStopping, setInstanceStopping] = React.useState(false)
-  const [instanceDeleting, setInstanceDeleting] = React.useState(false)
-  const [confirmOpen, setConfirmOpen] = React.useState(false)
+  const { app, appInstance, loadAppReferenceData, showEditors } = props;
+  const { setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const [instanceStarting, setInstanceStarting] = React.useState(false);
+  const [instanceStopping, setInstanceStopping] = React.useState(false);
+  const [instanceDeleting, setInstanceDeleting] = React.useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [instanceNotReady] = React.useState(
-    props.appInstance.status !== 'running' &&
-      props.appInstance.status !== 'stopped'
-  )
-  const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false)
-  const [instanceSettingsOpen, setInstanceSettingsOpen] = React.useState(false)
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+    props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped',
+  );
+  const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false);
+  const [instanceSettingsOpen, setInstanceSettingsOpen] = React.useState(false);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarState, setSnackbarState] = React.useState({
     snackbarText: 'Info',
     snackbarErrorText: '',
-    alertSeverity: 'success'
-  })
-  const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState
-  const { setFetchingJobs } = React.useContext(JobsContext)
+    alertSeverity: 'success',
+  });
+  const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState;
+  const { setFetchingJobs } = React.useContext(JobsContext);
 
   const stopInstance = async (instanceId) => {
-    setInstanceStopping(true)
-    setFetchingJobs(true)
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.stopInstance(instanceId)
+    setInstanceStopping(true);
+    setFetchingJobs(true);
+    let snackbarText;
+    let alertSeverity;
+    const appAPI = new AppAPI(app);
+    appAPI.setAppData(loadAppReferenceData(app));
+    await appAPI.stopInstance(instanceId);
 
     if (appAPI.lastAPICallSuccessful) {
-      setUpdateAppList(true)
+      setUpdateAppList(true);
       snackbarText =
         'Successully stopped ' +
         appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
+          return obj.instanceId === instanceId;
         }).instanceName +
-        '.'
+        '.';
     } else {
       // error snackbar
       snackbarText =
         'Failed to stop ' +
         appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
+          return obj.instanceId === instanceId;
         }).instanceName +
-        '.'
-      alertSeverity = 'success'
+        '.';
+      alertSeverity = 'success';
       setSnackbarState({
         alertSeverity,
         snackbarText,
-        snackbarErrorText: appAPI.lastAPIError
-      })
-      setSnackbarOpen(true)
+        snackbarErrorText: appAPI.lastAPIError,
+      });
+      setSnackbarOpen(true);
     }
-    setInstanceStopping(false)
-    setFetchingJobs(false)
-  }
+    setInstanceStopping(false);
+    setFetchingJobs(false);
+  };
 
   const startInstance = async (instanceId) => {
-    setInstanceStarting(true)
-    setFetchingJobs(true)
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
+    setInstanceStarting(true);
+    setFetchingJobs(true);
+    let snackbarText;
+    let alertSeverity;
+    const appAPI = new AppAPI(app);
 
     try {
-      appAPI.setAppData(loadAppReferenceData(app))
-      await appAPI.startInstance(instanceId)
+      appAPI.setAppData(loadAppReferenceData(app));
+      await appAPI.startInstance(instanceId);
 
       if (appAPI.lastAPICallSuccessful) {
-        setUpdateAppList(true)
+        setUpdateAppList(true);
         snackbarText =
           'Successully started ' +
           appAPI.app.instances.find((obj) => {
-            return obj.instanceId === instanceId
+            return obj.instanceId === instanceId;
           }).instanceName +
-          '.'
+          '.';
       }
     } catch {
       // error snackbar
       snackbarText =
         'Failed to start ' +
         appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
+          return obj.instanceId === instanceId;
         }).instanceName +
-        '.'
-      alertSeverity = 'error'
+        '.';
+      alertSeverity = 'error';
       setSnackbarState({
         alertSeverity,
         snackbarText,
-        snackbarErrorText: appAPI.lastAPIError
-      })
-      setSnackbarOpen(true)
+        snackbarErrorText: appAPI.lastAPIError,
+      });
+      setSnackbarOpen(true);
     } finally {
-      setInstanceStarting(false)
-      setFetchingJobs(false)
+      setInstanceStarting(false);
+      setFetchingJobs(false);
     }
-  }
+  };
 
   const deleteInstance = async (instanceId) => {
-    setInstanceDeleting(true)
-    setFetchingJobs(true)
-    let snackbarText
-    let alertSeverity
-    const appAPI = new AppAPI(app)
-    appAPI.setAppData(loadAppReferenceData(app))
-    await appAPI.deleteInstance(instanceId)
+    setInstanceDeleting(true);
+    setFetchingJobs(true);
+    let snackbarText;
+    let alertSeverity;
+    const appAPI = new AppAPI(app);
+    appAPI.setAppData(loadAppReferenceData(app));
+    await appAPI.deleteInstance(instanceId);
 
     if (appAPI.lastAPICallSuccessful) {
-      setUpdateAppList(true)
-      snackbarText = appAPI.app.title + ' instance successully deleted.'
-      alertSeverity = 'success'
+      setUpdateAppList(true);
+      snackbarText = appAPI.app.title + ' instance successully deleted.';
+      alertSeverity = 'success';
     } else {
       // error snackbar
       snackbarText =
         'Failed to delete ' +
         appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId
+          return obj.instanceId === instanceId;
         }).instanceName +
-        '.'
-      alertSeverity = 'error'
+        '.';
+      alertSeverity = 'error';
     }
     setSnackbarState({
       alertSeverity,
       snackbarText,
-      snackbarErrorText: appAPI.lastAPIError
-    })
-    setSnackbarOpen(true)
-    setInstanceDeleting(false)
-    setFetchingJobs(false)
-  }
+      snackbarErrorText: appAPI.lastAPIError,
+    });
+    setSnackbarOpen(true);
+    setInstanceDeleting(false);
+    setFetchingJobs(false);
+  };
 
   return (
     <Fragment>
       <TableRow>
-        <TableCell component='th' scope='row'>
+        <TableCell component="th" scope="row">
           <Tooltip title={'App ' + appInstance.status}>
             {appInstance.status === 'running' ? (
-              <CircleIcon color='success' />
+              <CircleIcon color="success" />
             ) : (
-              <ErrorIcon color='warning' />
+              <ErrorIcon color="warning" />
             )}
           </Tooltip>
         </TableCell>
         <TableCell>{appInstance.instanceName}</TableCell>
         <TableCell>{appInstance.appKey.version}</TableCell>
         <TableCell>
-          <Grid
-            container
-            direction='row'
-            justify='flex-start'
-            alignItems='flex-start'
-          >
-            <Tooltip title='Info to this instance'>
+          <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+            <Tooltip title="Info to this instance">
               <span>
                 <LoadIconButton
-                  label='instance-info-button'
+                  label="instance-info-button"
                   icon={<InfoIcon />}
                   onClick={() => setInstanceInfoOpen(true)}
                 />
               </span>
             </Tooltip>
-            <Tooltip title='Start instance'>
+            <Tooltip title="Start instance">
               <span>
                 <LoadIconButton
-                  label='start-instance-button'
+                  label="start-instance-button"
                   icon={<PlayCircleIcon />}
-                  color='success'
+                  color="success"
                   disabled={
                     appInstance.status === 'running' ||
                     instanceStarting ||
@@ -222,10 +216,10 @@ export default function AppInstanceRow(props) {
                 />
               </span>
             </Tooltip>
-            <Tooltip title='Stop instance'>
+            <Tooltip title="Stop instance">
               <span>
                 <LoadIconButton
-                  label='stop-instance-button'
+                  label="stop-instance-button"
                   icon={<StopCircleIcon />}
                   disabled={
                     appInstance.status === 'stopped' ||
@@ -239,23 +233,21 @@ export default function AppInstanceRow(props) {
                 />
               </span>
             </Tooltip>
-            <Tooltip title='Settings of this instance'>
+            <Tooltip title="Settings of this instance">
               <span>
                 <LoadIconButton
-                  label='instance-settings-button'
+                  label="instance-settings-button"
                   icon={<SettingsIcon />}
                   onClick={() => setInstanceSettingsOpen(true)}
                 />
               </span>
             </Tooltip>
-            <Tooltip title='Delete instance'>
+            <Tooltip title="Delete instance">
               <span>
                 <LoadIconButton
-                  label='delete-instance-button'
+                  label="delete-instance-button"
                   icon={<DeleteIcon />}
-                  disabled={
-                    instanceDeleting || instanceStopping || instanceStarting
-                  }
+                  disabled={instanceDeleting || instanceStopping || instanceStarting}
                   onClick={() => setConfirmOpen(true)}
                   loading={instanceDeleting}
                 />
@@ -263,13 +255,13 @@ export default function AppInstanceRow(props) {
             </Tooltip>
           </Grid>
         </TableCell>
-        {showEditors && (<TableCell>
-          <span>
-            <EditorButtons
-              instance={appInstance}
-            ></EditorButtons>
-          </span>
-        </TableCell>)}
+        {showEditors && (
+          <TableCell>
+            <span>
+              <EditorButtons instance={appInstance}></EditorButtons>
+            </span>
+          </TableCell>
+        )}
       </TableRow>
       {/* Portals for Dialogs and Snackbar */}
       {ReactDOM.createPortal(
@@ -280,7 +272,7 @@ export default function AppInstanceRow(props) {
           setOpen={setSnackbarOpen}
           alertSeverity={alertSeverity}
         />,
-        document.body
+        document.body,
       )}
       {ReactDOM.createPortal(
         <ContentDialog
@@ -290,7 +282,7 @@ export default function AppInstanceRow(props) {
         >
           <InstanceInfo instance={appInstance} />
         </ContentDialog>,
-        document.body
+        document.body,
       )}
       {ReactDOM.createPortal(
         <InstanceConfigDialog
@@ -299,7 +291,7 @@ export default function AppInstanceRow(props) {
           open={instanceSettingsOpen}
           onClose={() => setInstanceSettingsOpen(false)}
         />,
-        document.body
+        document.body,
       )}
       {ReactDOM.createPortal(
         <ConfirmDialog
@@ -308,10 +300,10 @@ export default function AppInstanceRow(props) {
           setOpen={setConfirmOpen}
           onConfirm={() => deleteInstance(appInstance.instanceId)}
         />,
-        document.body
+        document.body,
       )}
     </Fragment>
-  )
+  );
 }
 
 AppInstanceRow.propTypes = {
@@ -320,5 +312,5 @@ AppInstanceRow.propTypes = {
   loadAppReferenceData: PropTypes.func,
   updateReferenceDataInstances: PropTypes.func,
   setSnackbarState: PropTypes.func,
-  showEditors: bool
-}
+  showEditors: bool,
+};

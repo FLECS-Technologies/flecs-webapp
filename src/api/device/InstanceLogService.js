@@ -15,21 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
-async function getInstanceLog (instanceId) {
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../api-config';
+async function getInstanceLog(instanceId) {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_INSTANCE_LOG_URL(instanceId))
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_INSTANCE_LOG_URL(instanceId),
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-function getLog (data) {
-  return '--- stdout\n\n' + data.stdout + '--- stderr\n\n' + data.stderr
+function getLog(data) {
+  return '--- stdout\n\n' + data.stdout + '--- stderr\n\n' + data.stderr;
 }
 
-export { getInstanceLog, getLog }
+export { getInstanceLog, getLog };

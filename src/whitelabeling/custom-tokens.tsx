@@ -1,3 +1,3 @@
-import { colors, appBarIconColors } from '../styles/tokens'
+import { colors, appBarIconColors } from '../styles/tokens';
 
-export { colors, appBarIconColors }
+export { colors, appBarIconColors };

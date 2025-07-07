@@ -15,28 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createTheme, ThemeOptions } from '@mui/material/styles'
-import '../styles/fonts.css'
-import { colors } from './tokens'
+import { createTheme, ThemeOptions } from '@mui/material/styles';
+import '../styles/fonts.css';
+import { colors } from './tokens';
 
 const baseTheme: ThemeOptions = createTheme({
   typography: {
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
   },
 
   palette: {
     primary: {
-      main: colors.primary
+      main: colors.primary,
     },
     secondary: {
-      main: colors.secondary
+      main: colors.secondary,
     },
     success: {
-      main: colors.secondary
+      main: colors.secondary,
     },
     info: {
-      main: colors.accent
-    }
+      main: colors.accent,
+    },
   },
 
   components: {
@@ -46,27 +46,27 @@ const baseTheme: ThemeOptions = createTheme({
           '&.Mui-selected': {
             color: colors.primary,
             '& .MuiListItemIcon-root': {
-              color: colors.secondary
-            }
+              color: colors.secondary,
+            },
           },
           '&$selected:hover': {
             color: colors.primary,
             '& .MuiListItemIcon-root': {
-              color: colors.secondary
-            }
+              color: colors.secondary,
+            },
           },
           '&:hover': {
             color: colors.secondary,
             '& .MuiListItemIcon-root': {
-              color: colors.secondary
-            }
-          }
+              color: colors.secondary,
+            },
+          },
         },
-        selected: {}
-      }
-    }
-  }
-})
+        selected: {},
+      },
+    },
+  },
+});
 
 const darkTheme = createTheme({
   ...baseTheme,
@@ -75,7 +75,7 @@ const darkTheme = createTheme({
     text: {
       primary: '#F5F5F5',
       secondary: 'rgba(255, 255, 255, 0.7)',
-      disabled: 'rgba(255, 255, 255, 0.5)'
+      disabled: 'rgba(255, 255, 255, 0.5)',
     },
 
     action: {
@@ -83,27 +83,27 @@ const darkTheme = createTheme({
       hover: 'rgba(255, 255, 255, 0.08)',
       selected: 'rgba(255, 255, 255, 0.16)',
       disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)'
+      disabledBackground: 'rgba(255, 255, 255, 0.12)',
     },
 
     background: {
       default: '#0A0A0A',
-      paper: colors.background
+      paper: colors.background,
     },
 
-    divider: 'rgba(255, 255, 255, 0.12)'
+    divider: 'rgba(255, 255, 255, 0.12)',
   },
   components: {
     ...baseTheme.components,
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: colors.primary
-        }
-      }
-    }
-  }
-})
+          backgroundColor: colors.primary,
+        },
+      },
+    },
+  },
+});
 
 const lightTheme = createTheme({
   ...baseTheme,
@@ -113,13 +113,13 @@ const lightTheme = createTheme({
 
     background: {
       default: '#F5F5F5',
-      paper: '#fff'
+      paper: '#fff',
     },
 
     text: {
-      primary: '#0A0A0A'
-    }
-  }
-})
+      primary: '#0A0A0A',
+    },
+  },
+});
 
-export { darkTheme, lightTheme }
+export { darkTheme, lightTheme };

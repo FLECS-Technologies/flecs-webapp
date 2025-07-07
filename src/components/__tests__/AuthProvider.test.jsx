@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { AuthProvider, RequireAuth } from '../AuthProvider'
+import React from 'react';
+import { render /*, screen */ } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { AuthProvider, RequireAuth } from '../AuthProvider';
 
 const mockUser = {
   user: {
@@ -30,36 +30,36 @@ const mockUser = {
       display_name: 'Homer Simpson',
       user_url: '',
       user_email: 'homer-simpson@springfield.io',
-      user_registered: '2022-01-13 08:43:14'
+      user_registered: '2022-01-13 08:43:14',
     },
     redirect: null,
     jwt: {
       token: 'supersafetoken',
-      token_expires: 1642255418
-    }
+      token_expires: 1642255418,
+    },
   },
-  setUser: jest.fn()
-}
+  setUser: jest.fn(),
+};
 
 jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react')
+  const ActualReact = jest.requireActual('react');
   return {
     ...ActualReact,
-    useContext: () => ({ mockUser }) // what you want to return when useContext get fired goes here
-  }
-})
+    useContext: () => ({ mockUser }), // what you want to return when useContext get fired goes here
+  };
+});
 
 describe('AuthProvider', () => {
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('renders AuthProvider component', () => {
-    render(<AuthProvider />)
+    render(<AuthProvider />);
 
     // screen.debug()
-  })
+  });
 
   test('renders RequireAuth component', () => {
-    expect(() => render(<RequireAuth />)).toThrow()
-  })
-})
+    expect(() => render(<RequireAuth />)).toThrow();
+  });
+});

@@ -15,44 +15,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Import from '../Import'
-import { postImportApps } from '../../api/device/ImportAppsService'
-import { OnboardingDeviceAPI } from '../../api/device/onboarding/onboarding'
-import { ReferenceDataContext } from '../../data/ReferenceDataContext'
-import { JobsContext } from '../../data/JobsContext'
-import {
-  mockJob,
-  mockQueuedJob,
-  mockSuccessJob
-} from '../../models/__mocks__/job'
-import { vitest } from 'vitest'
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Import from '../Import';
+import { postImportApps } from '../../api/device/ImportAppsService';
+import { OnboardingDeviceAPI } from '../../api/device/onboarding/onboarding';
+import { ReferenceDataContext } from '../../data/ReferenceDataContext';
+import { JobsContext } from '../../data/JobsContext';
+import { mockJob, mockQueuedJob, mockSuccessJob } from '../../models/__mocks__/job';
+import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/ImportAppsService')
-vitest.mock('../../api/device/onboarding/onboarding')
+vitest.mock('../../api/device/ImportAppsService');
+vitest.mock('../../api/device/onboarding/onboarding');
 
 const renderWithContext = (
   ui: React.ReactElement,
-  { referenceDataValues, jobsDataValues }: any
+  { referenceDataValues, jobsDataValues }: any,
 ) => {
   return render(
     <ReferenceDataContext.Provider value={referenceDataValues}>
       <JobsContext.Provider value={jobsDataValues}>{ui}</JobsContext.Provider>
-    </ReferenceDataContext.Provider>
-  )
-}
+    </ReferenceDataContext.Provider>,
+  );
+};
 
 describe('Import component', () => {
-  const mockFetchJobs = vitest.fn()
-  const mockFetchJobById = vitest.fn()
-  const mockSetUpdateAppList = vitest.fn()
-  const mockJobs = [mockQueuedJob, mockJob, mockSuccessJob]
+  const mockFetchJobs = vitest.fn();
+  const mockFetchJobById = vitest.fn();
+  const mockSetUpdateAppList = vitest.fn();
+  const mockJobs = [mockQueuedJob, mockJob, mockSuccessJob];
 
   beforeEach(() => {
-    vitest.clearAllMocks()
-  })
+    vitest.clearAllMocks();
+  });
 
   test('renders Import component', () => {
     renderWithContext(<Import />, {
@@ -60,12 +56,12 @@ describe('Import component', () => {
       jobsDataValues: {
         jobs: mockJobs,
         fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById
-      }
-    })
+        fetchJobById: mockFetchJobById,
+      },
+    });
 
-    expect(screen.getByText('Import')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Import')).toBeInTheDocument();
+  });
 
   test('handles JSON file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
@@ -73,25 +69,23 @@ describe('Import component', () => {
       jobsDataValues: {
         jobs: mockJobs,
         fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById
-      }
-    })
+        fetchJobById: mockFetchJobById,
+      },
+    });
 
     const file = new File(['{"key":"value"}'], 'test.json', {
-      type: 'application/json'
-    })
-    const input = screen.getByTestId('fileInput')
+      type: 'application/json',
+    });
+    const input = screen.getByTestId('fileInput');
 
-    fireEvent.change(input, { target: { files: [file] } })
+    fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true))
+    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true));
     await waitFor(() =>
-      expect(
-        screen.getByText('Importing finished successfully')
-      ).toBeInTheDocument()
-    )
-  })
+      expect(screen.getByText('Importing finished successfully')).toBeInTheDocument(),
+    );
+  });
 
   test('handles tar.gz file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
@@ -99,25 +93,23 @@ describe('Import component', () => {
       jobsDataValues: {
         jobs: mockJobs,
         fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById
-      }
-    })
+        fetchJobById: mockFetchJobById,
+      },
+    });
 
     const file = new File(['dummy content'], 'test.tar.gz', {
-      type: 'application/gzip'
-    })
-    const input = screen.getByTestId('fileInput')
+      type: 'application/gzip',
+    });
+    const input = screen.getByTestId('fileInput');
 
-    fireEvent.change(input, { target: { files: [file] } })
+    fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true))
+    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true));
     await waitFor(() =>
-      expect(
-        screen.getByText('Importing finished successfully')
-      ).toBeInTheDocument()
-    )
-  })
+      expect(screen.getByText('Importing finished successfully')).toBeInTheDocument(),
+    );
+  });
 
   test('handles unsupported file type upload', () => {
     renderWithContext(<Import />, {
@@ -125,50 +117,44 @@ describe('Import component', () => {
       jobsDataValues: {
         jobs: mockJobs,
         fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById
-      }
-    })
+        fetchJobById: mockFetchJobById,
+      },
+    });
 
-    const file = new File(['dummy content'], 'test.txt', { type: 'text/plain' })
-    const input = screen.getByTestId('fileInput')
+    const file = new File(['dummy content'], 'test.txt', { type: 'text/plain' });
+    const input = screen.getByTestId('fileInput');
 
-    fireEvent.change(input, { target: { files: [file] } })
+    fireEvent.change(input, { target: { files: [file] } });
 
     expect(
-      screen.queryByText(
-        'Unsupported file type. Please upload a .tar, .tar.gz or .json file.'
-      )
-    ).toBeInTheDocument()
-  })
+      screen.queryByText('Unsupported file type. Please upload a .tar, .tar.gz or .json file.'),
+    ).toBeInTheDocument();
+  });
 
   test('shows error snackbar on API failure', async () => {
     const spyOnboardingDeviceAPI = vitest.spyOn(
       await import('../../api/device/onboarding/onboarding'),
-      'OnboardingDeviceAPI'
-    )
-    spyOnboardingDeviceAPI.mockImplementationOnce(() =>
-      Promise.reject(new Error('Network Error'))
-    )
+      'OnboardingDeviceAPI',
+    );
+    spyOnboardingDeviceAPI.mockImplementationOnce(() => Promise.reject(new Error('Network Error')));
 
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
       jobsDataValues: {
         jobs: mockJobs,
         fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById
-      }
-    })
+        fetchJobById: mockFetchJobById,
+      },
+    });
 
     const file = new File(['{"key":"value"}'], 'test.json', {
-      type: 'application/json'
-    })
-    const input = screen.getByTestId('fileInput')
+      type: 'application/json',
+    });
+    const input = screen.getByTestId('fileInput');
 
-    fireEvent.change(input, { target: { files: [file] } })
+    fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(spyOnboardingDeviceAPI).toHaveBeenCalledTimes(1))
-    await waitFor(() =>
-      expect(screen.getByText('Network Error')).toBeInTheDocument()
-    )
-  })
-})
+    await waitFor(() => expect(spyOnboardingDeviceAPI).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByText('Network Error')).toBeInTheDocument());
+  });
+});

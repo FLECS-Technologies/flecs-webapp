@@ -15,26 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
+import React from 'react';
 
-function getStorageValue (key, defaultValue) {
+function getStorageValue(key, defaultValue) {
   // getting stored value
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(key)
-    const initial = saved !== null ? JSON.parse(saved) : ''
-    return initial || defaultValue
+    const saved = localStorage.getItem(key);
+    const initial = saved !== null ? JSON.parse(saved) : '';
+    return initial || defaultValue;
   }
 }
 
 const useStateWithLocalStorage = (localStorageKey, defaultValue) => {
   const [value, setValue] = React.useState(() => {
-    return getStorageValue(localStorageKey, defaultValue)
-  })
+    return getStorageValue(localStorageKey, defaultValue);
+  });
 
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(value))
-  }, [value])
+    localStorage.setItem(localStorageKey, JSON.stringify(value));
+  }, [value]);
 
-  return [value, setValue]
-}
-export default useStateWithLocalStorage
+  return [value, setValue];
+};
+export default useStateWithLocalStorage;

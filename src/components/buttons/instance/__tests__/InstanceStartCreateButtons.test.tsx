@@ -57,22 +57,18 @@ describe('InstanceStartCreateButtons', () => {
       <InstanceStartCreateButtons
         {...defaultProps}
         app={{ instances: [{}], multiInstance: false }}
-      />
+      />,
     );
     expect(screen.getByLabelText('execute-action')).toBeDisabled();
   });
 
   test('disables button when loading is true', () => {
-    renderWithTheme(
-      <InstanceStartCreateButtons {...defaultProps} loading={true} />
-    );
+    renderWithTheme(<InstanceStartCreateButtons {...defaultProps} loading={true} />);
     expect(screen.getByLabelText('execute-action')).toBeDisabled();
   });
 
   test('disables button when uninstalling is true', () => {
-    renderWithTheme(
-      <InstanceStartCreateButtons {...defaultProps} uninstalling={true} />
-    );
+    renderWithTheme(<InstanceStartCreateButtons {...defaultProps} uninstalling={true} />);
     expect(screen.getByLabelText('execute-action')).toBeDisabled();
   });
 
@@ -106,7 +102,7 @@ describe('InstanceStartCreateButtons', () => {
       <InstanceStartCreateButtons
         {...defaultProps}
         app={{ instances: [{}], multiInstance: false }}
-      />
+      />,
     );
 
     const button = screen.getByLabelText('execute-action');

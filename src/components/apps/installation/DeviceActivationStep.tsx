@@ -15,43 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PropTypes, { InferProps } from 'prop-types'
-import React from 'react'
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext'
-import { Grid } from '@mui/material'
-import DeviceActivation from '../../device/DeviceActivation'
+import PropTypes, { InferProps } from 'prop-types';
+import React from 'react';
+import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
+import { Grid } from '@mui/material';
+import DeviceActivation from '../../device/DeviceActivation';
 
-function DeviceActivationStep(
-  props: InferProps<typeof DeviceActivationStep.propTypes>
-) {
-  const { handleNext } = props
-  const { activated } = React.useContext(DeviceActivationContext)
+function DeviceActivationStep(props: InferProps<typeof DeviceActivationStep.propTypes>) {
+  const { handleNext } = props;
+  const { activated } = React.useContext(DeviceActivationContext);
 
   React.useEffect(() => {
     if (activated && handleNext) {
-      handleNext()
+      handleNext();
     }
-  }, [activated])
+  }, [activated]);
 
   return (
     <Grid
-      data-testid='device-activation-step'
+      data-testid="device-activation-step"
       container
-      direction='column'
+      direction="column"
       spacing={1}
       style={{ minHeight: 350, marginTop: 16 }}
-      justifyContent='center'
-      alignItems='center'
+      justifyContent="center"
+      alignItems="center"
     >
       <Grid>
         <DeviceActivation></DeviceActivation>
       </Grid>
     </Grid>
-  )
+  );
 }
 
 DeviceActivationStep.propTypes = {
-  handleNext: PropTypes.func
-}
+  handleNext: PropTypes.func,
+};
 
-export default DeviceActivationStep
+export default DeviceActivationStep;

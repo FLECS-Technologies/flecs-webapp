@@ -15,18 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/jest-dom'
-import AppAPI from '../AppAPI'
-import { DeviceAPIConfiguration } from '../../api-config'
-import axios from 'axios'
+import '@testing-library/jest-dom';
+import AppAPI from '../AppAPI';
+import { DeviceAPIConfiguration } from '../../api-config';
+import axios from 'axios';
 
-jest.mock('../JobsAPI.js')
+jest.mock('../JobsAPI.js');
 
 describe('AppAPI', () => {
   const testApp = {
     appKey: {
       name: 'org.eclipse.mosquitto',
-      version: '2.0.14-openssl'
+      version: '2.0.14-openssl',
     },
     title: 'Mosquitto MQTT broker',
     description: 'Mosquitto MQTT broker',
@@ -38,163 +38,163 @@ describe('AppAPI', () => {
     ports: ['1883:1883', '9001:9001'],
     status: 'installed',
     availability: 'available',
-    instances: []
-  }
+    instances: [],
+  };
 
   const testInstance = {
     appKey: {
       name: 'org.eclipse.mosquitto',
-      version: '2.0.14-openssl'
+      version: '2.0.14-openssl',
     },
     instanceName: 'Mosquitto MQTT broker0',
     instanceId: '01234567',
-    status: 'running'
-  }
+    status: 'running',
+  };
 
   beforeEach(() => {
-    axios.post = jest.fn()
-  })
+    axios.post = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   test('calls AppAPI.setAppData', async () => {
-    const appAPI = new AppAPI({ ...testApp })
-    expect(appAPI.app.title).toBe(testApp.title)
+    const appAPI = new AppAPI({ ...testApp });
+    expect(appAPI.app.title).toBe(testApp.title);
 
-    const newApp = { ...testApp, author: 'Homer Simpson' }
-    appAPI.setAppData(newApp)
-    expect(appAPI.app.author).toBe('Homer Simpson')
-  })
+    const newApp = { ...testApp, author: 'Homer Simpson' };
+    appAPI.setAppData(newApp);
+    expect(appAPI.app.author).toBe('Homer Simpson');
+  });
 
   test('calls AppAPI.createInstanceName', async () => {
-    const appAPI = new AppAPI({ ...testApp })
-    let instName = appAPI.createInstanceName()
-    expect(instName).toBe('Mosquitto MQTT broker0')
+    const appAPI = new AppAPI({ ...testApp });
+    let instName = appAPI.createInstanceName();
+    expect(instName).toBe('Mosquitto MQTT broker0');
 
-    appAPI.app.instances = [testInstance]
-    instName = appAPI.createInstanceName()
-    expect(instName).toBe('Mosquitto MQTT broker1')
-  })
+    appAPI.app.instances = [testInstance];
+    instName = appAPI.createInstanceName();
+    expect(instName).toBe('Mosquitto MQTT broker1');
+  });
 
   test('calls AppAPI.uninstall', async () => {
     jest.spyOn(AppAPI.prototype, 'uninstall').mockImplementation(async function () {
-      this.lastAPICallSuccessful = true
-      this.app.status = 'uninstalled'
-    })
+      this.lastAPICallSuccessful = true;
+      this.app.status = 'uninstalled';
+    });
 
-    const appAPI = new AppAPI({ ...testApp })
-    await appAPI.uninstall()
+    const appAPI = new AppAPI({ ...testApp });
+    await appAPI.uninstall();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.status).toBe('uninstalled')
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.status).toBe('uninstalled');
+  });
 
   test('calls AppAPI.createInstance', async () => {
-    const appAPI = new AppAPI({ ...testApp })
+    const appAPI = new AppAPI({ ...testApp });
 
     jest.spyOn(appAPI, 'createInstance').mockImplementation(async (name) => {
-      appAPI.lastAPICallSuccessful = true
-    })
+      appAPI.lastAPICallSuccessful = true;
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = [{ ...testInstance, status: 'stopped' }]
-    })
+      appAPI.app.instances = [{ ...testInstance, status: 'stopped' }];
+    });
 
-    const instName = appAPI.createInstanceName()
-    await appAPI.createInstance(instName)
-    await appAPI.fetchInstances()
+    const instName = appAPI.createInstanceName();
+    await appAPI.createInstance(instName);
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.instances[0].status).toBe('stopped')
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.instances[0].status).toBe('stopped');
+  });
 
   test('calls AppAPI.startInstance', async () => {
-    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] })
+    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] });
 
     jest.spyOn(appAPI, 'startInstance').mockImplementation(async () => {
-      appAPI.lastAPICallSuccessful = true
-    })
+      appAPI.lastAPICallSuccessful = true;
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = [{ ...testInstance, status: 'running' }]
-    })
+      appAPI.app.instances = [{ ...testInstance, status: 'running' }];
+    });
 
-    await appAPI.startInstance(testInstance.instanceId)
-    await appAPI.fetchInstances()
+    await appAPI.startInstance(testInstance.instanceId);
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.instances[0].status).toBe('running')
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.instances[0].status).toBe('running');
+  });
 
   test('calls AppAPI.stopInstance', async () => {
-    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] })
+    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] });
 
     jest.spyOn(appAPI, 'stopInstance').mockImplementation(async () => {
-      appAPI.lastAPICallSuccessful = true
-    })
+      appAPI.lastAPICallSuccessful = true;
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = [{ ...testInstance, status: 'stopped' }]
-    })
+      appAPI.app.instances = [{ ...testInstance, status: 'stopped' }];
+    });
 
-    await appAPI.stopInstance(testInstance.instanceId)
-    await appAPI.fetchInstances()
+    await appAPI.stopInstance(testInstance.instanceId);
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.instances[0].status).toBe('stopped')
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.instances[0].status).toBe('stopped');
+  });
 
   test('calls AppAPI.deleteInstance', async () => {
-    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] })
+    const appAPI = new AppAPI({ ...testApp, instances: [testInstance] });
 
     jest.spyOn(appAPI, 'deleteInstance').mockImplementation(async () => {
-      appAPI.lastAPICallSuccessful = true
-    })
+      appAPI.lastAPICallSuccessful = true;
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = []
-    })
+      appAPI.app.instances = [];
+    });
 
-    await appAPI.deleteInstance(testInstance.instanceId)
-    await appAPI.fetchInstances()
+    await appAPI.deleteInstance(testInstance.instanceId);
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.instances.length).toBe(0)
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.instances.length).toBe(0);
+  });
 
   test('calls AppAPI.installFromMarketplace', async () => {
-    const appAPI = new AppAPI({ ...testApp, status: 'uninstalled', instances: [] })
+    const appAPI = new AppAPI({ ...testApp, status: 'uninstalled', instances: [] });
 
     jest.spyOn(appAPI, 'installFromMarketplace').mockImplementation(async () => {
-      appAPI.lastAPICallSuccessful = true
-      appAPI.app.status = 'installed'
-    })
+      appAPI.lastAPICallSuccessful = true;
+      appAPI.app.status = 'installed';
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = [testInstance]
-    })
+      appAPI.app.instances = [testInstance];
+    });
 
-    await appAPI.installFromMarketplace()
-    await appAPI.fetchInstances()
+    await appAPI.installFromMarketplace();
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.status).toBe('installed')
-    expect(appAPI.app.instances.length).toBe(1)
-  })
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.status).toBe('installed');
+    expect(appAPI.app.instances.length).toBe(1);
+  });
 
   test('calls AppAPI.sideloadApp', async () => {
-    const appAPI = new AppAPI({ ...testApp, status: 'uninstalled', instances: [] })
+    const appAPI = new AppAPI({ ...testApp, status: 'uninstalled', instances: [] });
 
     jest.spyOn(appAPI, 'sideloadApp').mockImplementation(async () => {
-      appAPI.lastAPICallSuccessful = true
-      appAPI.app.status = 'installed'
-    })
+      appAPI.lastAPICallSuccessful = true;
+      appAPI.app.status = 'installed';
+    });
     jest.spyOn(appAPI, 'fetchInstances').mockImplementation(async () => {
-      appAPI.app.instances = [{ ...testInstance, status: 'running' }]
-    })
+      appAPI.app.instances = [{ ...testInstance, status: 'running' }];
+    });
 
-    await appAPI.sideloadApp('fakeYaml')
-    await appAPI.fetchInstances()
+    await appAPI.sideloadApp('fakeYaml');
+    await appAPI.fetchInstances();
 
-    expect(appAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(appAPI.app.status).toBe('installed')
-    expect(appAPI.app.instances[0].status).toBe('running')
-  })
-})
+    expect(appAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(appAPI.app.status).toBe('installed');
+    expect(appAPI.app.instances[0].status).toBe('running');
+  });
+});

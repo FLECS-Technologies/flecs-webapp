@@ -16,29 +16,34 @@
  * limitations under the License.
  */
 
-import { MarketplaceAPIConfiguration } from '../api-config'
-import axios from 'axios'
-import { authorizationHeaderUseBearer } from '../auth-header'
+import { MarketplaceAPIConfiguration } from '../api-config';
+import axios from 'axios';
+import { authorizationHeaderUseBearer } from '../auth-header';
 
-function createAppRating (product_id, reviewer, reviewer_email, rating, token) {
+function createAppRating(product_id, reviewer, reviewer_email, rating, token) {
   const data = {
     product_id,
     review: 'This is an in-app rating without review.',
     reviewer,
     reviewer_email,
-    rating
-  }
-  const authHeader = authorizationHeaderUseBearer()
+    rating,
+  };
+  const authHeader = authorizationHeaderUseBearer();
   return axios
-    .post(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_PRODUCT_RATING_URL, { data }, { headers: authHeader })
-    .then(response => {
+    .post(
+      MarketplaceAPIConfiguration.MP_PROXY_URL +
+        MarketplaceAPIConfiguration.POST_PRODUCT_RATING_URL,
+      { data },
+      { headers: authHeader },
+    )
+    .then((response) => {
       if (response.data && response.data.success) {
-        return response.data
+        return response.data;
       }
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-export { createAppRating }
+export { createAppRating };

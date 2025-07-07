@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import InstalledApps from '../InstalledApps'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { JobsContextProvider } from '../../data/JobsContext'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import InstalledApps from '../InstalledApps';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { JobsContextProvider } from '../../data/JobsContext';
 
 describe('Installed Apps', () => {
   test('renders installed apps page', () => {
@@ -30,11 +30,11 @@ describe('Installed Apps', () => {
         <Router>
           <InstalledApps />
         </Router>
-      </JobsContextProvider>
-    )
+      </JobsContextProvider>,
+    );
 
-    expect(screen.getByLabelText('installed-apps-list')).toBeVisible()
+    expect(screen.getByLabelText('installed-apps-list')).toBeVisible();
 
     // screen.debug()
-  })
-})
+  });
+});

@@ -15,15 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Paper,
-} from '@mui/material'
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import React from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Paper } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { QuestContext, useQuestContext } from './QuestContext';
 import { getQuestStateColor } from '../../utils/quests/QuestState';
 import { QuestLogEntryBody } from './QuestLogEntryBody';
@@ -31,13 +25,11 @@ import { QuestLogEntryBody } from './QuestLogEntryBody';
 const MAX_DEPTH: number = 100;
 
 interface QuestLogEntryProps {
-  id: number,
-  level: number,
+  id: number;
+  level: number;
 }
 
-export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({
-  id, level
-}: QuestLogEntryProps) => {
+export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({ id, level }: QuestLogEntryProps) => {
   const context = useQuestContext(QuestContext);
   const quest = context.quests.current.get(id);
   if (!quest) return null;
@@ -48,9 +40,10 @@ export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({
 
   return (
     <Box sx={{ ml: 2 }}>
-      {hasSubquests && level <= MAX_DEPTH ?
-        (<Accordion
-          disableGutters elevation={0}
+      {hasSubquests && level <= MAX_DEPTH ? (
+        <Accordion
+          disableGutters
+          elevation={0}
           sx={{
             borderLeft: `4px solid`,
             borderColor: backgroundColor,
@@ -59,29 +52,27 @@ export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <QuestLogEntryBody quest={quest} key={quest.id} level={level} />
           </AccordionSummary>
-          <AccordionDetails sx={{ padding: "1px 8px" }}>
+          <AccordionDetails sx={{ padding: '1px 8px' }}>
             {quest.subquests?.map((sub) => (
-                <QuestLogEntry key={sub.id} id={sub.id} level={level + 1} />
-              ))
-            }
+              <QuestLogEntry key={sub.id} id={sub.id} level={level + 1} />
+            ))}
           </AccordionDetails>
-        </Accordion>)
-        :
-        (
-          <Paper
-            elevation={0}
-            sx={{
-              paddingLeft: 2,
-              paddingTop: 1,
-              paddingBottom: 1,
-              borderLeft: `4px solid`,
-              borderColor: backgroundColor,
-              minHeight: "32px !important"
-            }}>
-            <QuestLogEntryBody quest={quest} key={quest.id} level={level} />
-          </Paper>
-        )
-      }
+        </Accordion>
+      ) : (
+        <Paper
+          elevation={0}
+          sx={{
+            paddingLeft: 2,
+            paddingTop: 1,
+            paddingBottom: 1,
+            borderLeft: `4px solid`,
+            borderColor: backgroundColor,
+            minHeight: '32px !important',
+          }}
+        >
+          <QuestLogEntryBody quest={quest} key={quest.id} level={level} />
+        </Paper>
+      )}
     </Box>
-  )
-}
+  );
+};

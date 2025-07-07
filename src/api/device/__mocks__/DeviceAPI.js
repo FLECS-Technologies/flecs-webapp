@@ -16,66 +16,66 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class DeviceAPI extends React.Component {
   constructor(props) {
-    super(props)
-    this.appList = null
-    this.lastAPICallSuccessful = false
-    this.lastAPIError = null
-    this.instances = null
+    super(props);
+    this.appList = null;
+    this.lastAPICallSuccessful = false;
+    this.lastAPIError = null;
+    this.instances = null;
   }
 
   async getInstances() {
-    this.lastAPICallSuccessful = true
+    this.lastAPICallSuccessful = true;
     this.instances = [
       {
         instanceId: '4f75d3b9',
         instanceName: 'AnyViz Cloud Adapter0',
         appKey: { name: 'io.anyviz.cloudadapter', version: '0.9.5.1' },
         status: 'stopped',
-        desired: 'stopped'
+        desired: 'stopped',
       },
       {
         instanceId: '409f3f70',
         instanceName: 'edgeConnector Modbus0',
         appKey: {
           name: 'com.softingindustrial.edgeconnector-modbus',
-          version: 'v2-35-1'
+          version: 'v2-35-1',
         },
         status: 'running',
-        desired: 'running'
-      }
-    ]
+        desired: 'running',
+      },
+    ];
   }
 
   async getInstalledApps() {
-    this.lastAPICallSuccessful = true
+    this.lastAPICallSuccessful = true;
     this.appList = [
       {
         appKey: {
           name: 1,
-          version: '1'
-        }
+          version: '1',
+        },
       },
       {
         appKey: {
           name: 2,
-          version: '2'
-        }
+          version: '2',
+        },
       },
       {
         appKey: {
           name: 3,
-          version: '3'
-        }
-      }
-    ]
+          version: '3',
+        },
+      },
+    ];
   }
 }
 
 DeviceAPI.propTypes = {
-  appList: PropTypes.array
-}
+  appList: PropTypes.array,
+};

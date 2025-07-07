@@ -15,88 +15,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
-export default function DataTable (props) {
-  const dataRows = []
+export default function DataTable(props) {
+  const dataRows = [];
   const headCells = [
     {
       id: 'key',
       numeric: false,
       disablePadding: false,
-      label: 'Path'
+      label: 'Path',
     },
     {
       id: 'value',
       numeric: false,
       disablePadding: false,
-      label: 'Value'
+      label: 'Value',
     },
     {
       id: 'encoding',
       numeric: false,
       disablePadding: false,
-      label: 'Encoding'
+      label: 'Encoding',
     },
     {
       id: 'timestamp',
       numeric: false,
       disablePadding: false,
-      label: 'Timestamp'
-    }
-  ]
+      label: 'Timestamp',
+    },
+  ];
 
-  function createData (key, value, encoding, unixTimestamp) {
+  function createData(key, value, encoding, unixTimestamp) {
     // convert timestamp from unix to a human readable date.
-    const timestamp = new Date(Number(unixTimestamp) / 1000000).toLocaleString()
+    const timestamp = new Date(Number(unixTimestamp) / 1000000).toLocaleString();
 
-    return { key, value, encoding, timestamp }
+    return { key, value, encoding, timestamp };
   }
 
   if (props.data && props.data.length > 0) {
-    const tmpData = props.data
-    tmpData.sort((a, b) => (a.key > b.key) ? 1 : ((b.key > a.key) ? -1 : 0))
-    tmpData.forEach(date => {
-      dataRows.push(createData(date.key, date.value, date.encoding, date.timestamp))
-    })
+    const tmpData = props.data;
+    tmpData.sort((a, b) => (a.key > b.key ? 1 : b.key > a.key ? -1 : 0));
+    tmpData.forEach((date) => {
+      dataRows.push(createData(date.key, date.value, date.encoding, date.timestamp));
+    });
   }
 
   return (
-        <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="data table">
-                <TableHead>
-                    <TableRow>
-                    {headCells.map((headCell) => (
-                        <TableCell
-                            key={headCell.id}
-                            align={headCell.numeric ? 'right' : 'left'}
-                            padding={headCell.disablePadding ? 'none' : 'normal'}
-                        >
-                          {headCell.label}
-                        </TableCell>
-                    ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                {dataRows.map((row) => (
-                    <TableRow
-                        key={row.key}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                        <TableCell component="th" scope="row" >{row.key}</TableCell>
-                        <TableCell>{row.value}</TableCell>
-                        <TableCell>{row.encoding}</TableCell>
-                        <TableCell>{row.timestamp}</TableCell>
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-  )
+    <TableContainer>
+      <Table sx={{ minWidth: 650 }} aria-label="data table">
+        <TableHead>
+          <TableRow>
+            {headCells.map((headCell) => (
+              <TableCell
+                key={headCell.id}
+                align={headCell.numeric ? 'right' : 'left'}
+                padding={headCell.disablePadding ? 'none' : 'normal'}
+              >
+                {headCell.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {dataRows.map((row) => (
+            <TableRow key={row.key} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell component="th" scope="row">
+                {row.key}
+              </TableCell>
+              <TableCell>{row.value}</TableCell>
+              <TableCell>{row.encoding}</TableCell>
+              <TableCell>{row.timestamp}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }
 
 DataTable.propTypes = {
-  data: PropTypes.array
-}
+  data: PropTypes.array,
+};

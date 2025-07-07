@@ -15,18 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import NotFound from '../NotFound'
-import { BrowserRouter as Router } from 'react-router-dom'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import NotFound from '../NotFound';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 describe('NotFound', () => {
   test('renders NotFound page', () => {
-    render(<Router><NotFound /></Router>)
+    render(
+      <Router>
+        <NotFound />
+      </Router>,
+    );
 
-    expect(screen.getByLabelText('404')).toBeVisible()
-    expect(screen.getByLabelText('sorry')).toBeVisible()
-    expect(screen.getByLabelText('take-me-back')).toBeVisible()
-  })
-})
+    expect(screen.getByLabelText('404')).toBeVisible();
+    expect(screen.getByLabelText('sorry')).toBeVisible();
+    expect(screen.getByLabelText('take-me-back')).toBeVisible();
+  });
+});

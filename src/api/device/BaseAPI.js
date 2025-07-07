@@ -18,48 +18,48 @@
 
 /* eslint-disable react/no-direct-mutation-state */
 
-import React from 'react'
-import { DeviceAPIConfiguration } from '../api-config'
+import React from 'react';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class BaseAPI extends React.Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
 
     this.state = {
       responseData: null,
       success: false,
-      errorMessage: null
-    }
+      errorMessage: null,
+    };
   }
 
-  async callAPI (apiURL, requestOptions) {
+  async callAPI(apiURL, requestOptions) {
     try {
-      let url
-      let data
+      let url;
+      let data;
       if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-        url = import.meta.env.VITE_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
+        url =
+          import.meta.env.VITE_APP_DEV_CORE_URL + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL;
       } else {
-        url = DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL
+        url = DeviceAPIConfiguration.DEVICE_BASE_ROUTE + apiURL;
       }
-      const response = await fetch(url, requestOptions)
+      const response = await fetch(url, requestOptions);
 
       // try to read data. This might fail e.g. for 404, because .json() can't parse the html in the response body
       try {
-        data = await response.json()
-      } catch (error) {
-
-      }
+        data = await response.json();
+      } catch (error) {}
 
       if (response.ok && (response.status === 200 || response.status === 202)) {
-        this.state.responseData = data
-        this.state.success = true
+        this.state.responseData = data;
+        this.state.success = true;
       } else {
-        const error = 'HTTP status: ' + response.status + ' additional info: ' + (data && data.additionalInfo)
-        throw Error(error)
+        const error =
+          'HTTP status: ' + response.status + ' additional info: ' + (data && data.additionalInfo);
+        throw Error(error);
       }
     } catch (error) {
-      this.state.success = false
-      this.state.errorMessage = error
+      this.state.success = false;
+      this.state.errorMessage = error;
     }
   }
 }

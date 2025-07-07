@@ -15,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import DeviceActivation from '../DeviceActivation'
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext'
+import { render, act, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import DeviceActivation from '../DeviceActivation';
+import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
 
-jest.mock('../../../api/device/license/status')
+jest.mock('../../../api/device/license/status');
 
 describe('DeviceActivation Component', () => {
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   it('Device is activated', () => {
     act(() => {
@@ -38,20 +38,20 @@ describe('DeviceActivation Component', () => {
             validating: false,
             validate: async () => {},
             error: false,
-            statusText: 'Device is activated!'
+            statusText: 'Device is activated!',
           }}
         >
           <DeviceActivation />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    const infoText = screen.getByText('Device is activated!')
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).not.toBeEnabled()
-  })
+    const infoText = screen.getByText('Device is activated!');
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).not.toBeEnabled();
+  });
 
   it('Device is not activated', () => {
     act(() => {
@@ -64,20 +64,20 @@ describe('DeviceActivation Component', () => {
             validating: false,
             validate: async () => {},
             error: false,
-            statusText: 'Device is not activated!'
+            statusText: 'Device is not activated!',
           }}
         >
           <DeviceActivation />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    const infoText = screen.getByText('Device is not activated!')
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).toBeEnabled()
-  })
+    const infoText = screen.getByText('Device is not activated!');
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).toBeEnabled();
+  });
 
   it('Activating device...', () => {
     act(() => {
@@ -90,20 +90,20 @@ describe('DeviceActivation Component', () => {
             validating: false,
             validate: async () => {},
             error: false,
-            statusText: 'Activating the device...'
+            statusText: 'Activating the device...',
           }}
         >
           <DeviceActivation />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    const infoText = screen.getByText('Activating the device...')
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).not.toBeEnabled()
-  })
+    const infoText = screen.getByText('Activating the device...');
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).not.toBeEnabled();
+  });
 
   it('Checking the device activation status...', () => {
     act(() => {
@@ -116,22 +116,20 @@ describe('DeviceActivation Component', () => {
             validating: true,
             validate: async () => {},
             error: false,
-            statusText: 'Checking the device activation status...'
+            statusText: 'Checking the device activation status...',
           }}
         >
           <DeviceActivation />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    const infoText = screen.getByText(
-      'Checking the device activation status...'
-    )
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).not.toBeEnabled()
-  })
+    const infoText = screen.getByText('Checking the device activation status...');
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).not.toBeEnabled();
+  });
 
   it('Line-Variant: Device is activated', () => {
     act(() => {
@@ -144,20 +142,20 @@ describe('DeviceActivation Component', () => {
             validating: false,
             validate: async () => {},
             error: false,
-            statusText: 'Device is activated!'
+            statusText: 'Device is activated!',
           }}
         >
-          <DeviceActivation variant='line' />
-        </DeviceActivationContext.Provider>
-      )
-    })
+          <DeviceActivation variant="line" />
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
-    const infoText = screen.getByText('Device is activated!')
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).not.toBeEnabled()
-  })
+    const infoText = screen.getByText('Device is activated!');
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).not.toBeEnabled();
+  });
 
   it('Error on checking the device activation status', () => {
     act(() => {
@@ -171,20 +169,20 @@ describe('DeviceActivation Component', () => {
             validate: async () => {},
             error: true,
             statusText:
-              'Failed to check activation status! Please login with your account and try again.'
+              'Failed to check activation status! Please login with your account and try again.',
           }}
         >
           <DeviceActivation />
-        </DeviceActivationContext.Provider>
-      )
-    })
+        </DeviceActivationContext.Provider>,
+      );
+    });
 
     const infoText = screen.getByText(
-      'Failed to check activation status! Please login with your account and try again.'
-    )
-    expect(infoText).toBeInTheDocument()
-    const activateButton = screen.getByText('Activate Device')
-    expect(activateButton).toBeVisible()
-    expect(activateButton).not.toBeEnabled()
-  })
-})
+      'Failed to check activation status! Please login with your account and try again.',
+    );
+    expect(infoText).toBeInTheDocument();
+    const activateButton = screen.getByText('Activate Device');
+    expect(activateButton).toBeVisible();
+    expect(activateButton).not.toBeEnabled();
+  });
+});

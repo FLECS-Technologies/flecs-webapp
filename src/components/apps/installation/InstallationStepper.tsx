@@ -15,36 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import PropTypes, { InferProps } from 'prop-types'
-import InstallApp from './InstallApp'
-import SideloadApp from './SideloadApp'
-import UpdateApp from './UpdateApp'
-import { Box, Step, StepLabel, Stepper } from '@mui/material'
-import DeviceActivationStep from './DeviceActivationStep'
-import { App } from '../../../models/app'
+import React from 'react';
+import PropTypes, { InferProps } from 'prop-types';
+import InstallApp from './InstallApp';
+import SideloadApp from './SideloadApp';
+import UpdateApp from './UpdateApp';
+import { Box, Step, StepLabel, Stepper } from '@mui/material';
+import DeviceActivationStep from './DeviceActivationStep';
+import { App } from '../../../models/app';
 
-const steps = ['Check Device Activation', 'Installing', 'Done']
+const steps = ['Check Device Activation', 'Installing', 'Done'];
 
-function InstallationStepper(
-  props: InferProps<typeof InstallationStepper.propTypes>
-) {
-  const { app, version, sideload, update } = props
-  const myApp = app as App
-  const [activeStep, setActiveStep] = React.useState(0)
+function InstallationStepper(props: InferProps<typeof InstallationStepper.propTypes>) {
+  const { app, version, sideload, update } = props;
+  const myApp = app as App;
+  const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = (status?: number) => {
     if (!status) {
-      setActiveStep(activeStep + 1)
+      setActiveStep(activeStep + 1);
     } else {
-      setActiveStep(status)
+      setActiveStep(status);
     }
-  }
+  };
 
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <DeviceActivationStep handleNext={handleNext} />
+        return <DeviceActivationStep handleNext={handleNext} />;
       case -1:
       case 1:
       case 2:
@@ -57,9 +55,9 @@ function InstallationStepper(
               version={version || myApp?.appKey.version}
               handleActiveStep={handleNext}
             />
-          )
+          );
         } else if (sideload) {
-          return <SideloadApp yaml={app} handleActiveStep={handleNext} />
+          return <SideloadApp yaml={app} handleActiveStep={handleNext} />;
         } else if (update) {
           return (
             <UpdateApp
@@ -68,14 +66,14 @@ function InstallationStepper(
               to={version}
               handleActiveStep={handleNext}
             />
-          )
+          );
         } else {
-          return <div>Not Found</div>
+          return <div>Not Found</div>;
         }
       default:
-        return <div>Not Found</div>
+        return <div>Not Found</div>;
     }
-  }
+  };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -88,14 +86,14 @@ function InstallationStepper(
       </Stepper>
       <React.Fragment>{renderStepContent(activeStep)}</React.Fragment>
     </Box>
-  )
+  );
 }
 
 InstallationStepper.propTypes = {
   app: PropTypes.objectOf(PropTypes.any),
   version: PropTypes.string,
   sideload: PropTypes.bool,
-  update: PropTypes.bool
-}
+  update: PropTypes.bool,
+};
 
-export default InstallationStepper
+export default InstallationStepper;

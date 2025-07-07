@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-import { React } from 'react'
-import MarketplaceList from '../components/MarketplaceList'
+import { React } from 'react';
+import MarketplaceList from '../components/MarketplaceList';
 
 export default function Marketplace() {
   return (
     <div>
-      <MarketplaceList aria-label='Marketplace-List' />
+      <MarketplaceList aria-label="Marketplace-List" />
     </div>
-  )
+  );
 }

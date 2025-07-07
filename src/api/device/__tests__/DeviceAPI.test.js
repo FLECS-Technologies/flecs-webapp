@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/jest-dom'
-import DeviceAPI from '../DeviceAPI'
+import '@testing-library/jest-dom';
+import DeviceAPI from '../DeviceAPI';
 
 const appList = [
   {
@@ -26,8 +26,8 @@ const appList = [
         version: '4.1.0',
         status: 'installed',
         desired: 'installed',
-        installedSize: 1234
-      }
+        installedSize: 1234,
+      },
     ],
     instances: [
       {
@@ -35,9 +35,9 @@ const appList = [
         instancename: 'testinstance',
         status: 'started',
         desired: 'created',
-        version: '4.2.0'
-      }
-    ]
+        version: '4.2.0',
+      },
+    ],
   },
   {
     app: 'io.testauthor2.testapp2',
@@ -46,48 +46,48 @@ const appList = [
         version: '5.1.0',
         status: 'installed',
         desired: 'installed',
-        installedSize: 1253
-      }
+        installedSize: 1253,
+      },
     ],
     instances: [
       {
         instanceId: '12345678',
         instancename: 'lol',
         status: 'started',
-        version: '5.1.0'
-      }
-    ]
-  }
-]
+        version: '5.1.0',
+      },
+    ],
+  },
+];
 
 describe('DeviceAPI', () => {
   beforeEach(() => {
-    jest.restoreAllMocks()
-  })
+    jest.restoreAllMocks();
+  });
 
   test('calls successful DeviceAPI.getInstalledApps', async () => {
     jest.spyOn(DeviceAPI.prototype, 'getInstalledApps').mockImplementation(async function () {
-      this.lastAPICallSuccessful = true
-      this.appList = appList
-    })
+      this.lastAPICallSuccessful = true;
+      this.appList = appList;
+    });
 
-    const devAPI = new DeviceAPI()
-    await devAPI.getInstalledApps()
+    const devAPI = new DeviceAPI();
+    await devAPI.getInstalledApps();
 
-    expect(devAPI.lastAPICallSuccessful).toBeTruthy()
-    expect(devAPI.appList).toHaveLength(2)
-  })
+    expect(devAPI.lastAPICallSuccessful).toBeTruthy();
+    expect(devAPI.appList).toHaveLength(2);
+  });
 
   test('calls failed DeviceAPI.getInstalledApps', async () => {
     jest.spyOn(DeviceAPI.prototype, 'getInstalledApps').mockImplementation(async function () {
-      this.lastAPICallSuccessful = false
-      this.appList = null
-    })
+      this.lastAPICallSuccessful = false;
+      this.appList = null;
+    });
 
-    const devAPI = new DeviceAPI()
-    await devAPI.getInstalledApps()
+    const devAPI = new DeviceAPI();
+    await devAPI.getInstalledApps();
 
-    expect(devAPI.lastAPICallSuccessful).toBeFalsy()
-    expect(devAPI.appList).toBeNull()
-  })
-})
+    expect(devAPI.lastAPICallSuccessful).toBeFalsy();
+    expect(devAPI.appList).toBeNull();
+  });
+});

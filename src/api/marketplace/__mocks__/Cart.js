@@ -16,22 +16,19 @@
  * limitations under the License.
  */
 
-function createCart () {}
+function createCart() {}
 
-async function getCurrentCart () {
-}
+async function getCurrentCart() {}
 
-async function addToCart (appId) {
+async function addToCart(appId) {
   return new Promise((resolve, reject) => {
     const responseData = {
       data: {
-        cart_key: 'my-cart-key'
-      }
-    }
-    appId
-      ? resolve(responseData)
-      : reject(new Error('Mock: Failed to add to cart'))
-  })
+        cart_key: 'my-cart-key',
+      },
+    };
+    appId ? resolve(responseData) : reject(new Error('Mock: Failed to add to cart'));
+  });
 }
 
-export { createCart, getCurrentCart, addToCart }
+export { createCart, getCurrentCart, addToCart };

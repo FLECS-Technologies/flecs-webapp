@@ -62,6 +62,7 @@
     "jsdom": "^26.1.0",
     "msw": "^2.7.3",
     "nock": "^14.0.5",
+    "prettier": "3.6.2",
     "ts-jest": "^29.4.0",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.3",
@@ -79,7 +80,9 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "coverage": "vitest run --coverage",
     "generate-license-file": "./generate-license-file.sh",
-    "dependencies": "npm run generate-license-file"
+    "dependencies": "npm run generate-license-file",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "browserslist": [
     ">0.2%",

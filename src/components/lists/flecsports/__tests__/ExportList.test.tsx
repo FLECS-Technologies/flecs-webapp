@@ -18,11 +18,11 @@ vi.mock('../../../../api/flecs-core/api-client', () => ({
 // Polyfill for JSDOM
 if (!('createObjectURL' in URL)) {
   // @ts-ignore
-  URL.createObjectURL = vi.fn(() => 'blob:url')
+  URL.createObjectURL = vi.fn(() => 'blob:url');
 }
 if (!('revokeObjectURL' in URL)) {
   // @ts-ignore
-  URL.revokeObjectURL = vi.fn()
+  URL.revokeObjectURL = vi.fn();
 }
 
 describe('<ExportList />', () => {
@@ -39,17 +39,13 @@ describe('<ExportList />', () => {
   it('renders error message when fetch fails', async () => {
     (api.export.exportsGet as any).mockRejectedValue(new Error('Network error'));
     render(<ExportList />);
-    await waitFor(() =>
-      expect(screen.getByText(/Failed to load exports/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText(/Failed to load exports/i)).toBeInTheDocument());
   });
 
   it('renders empty state when no exports', async () => {
     (api.export.exportsGet as any).mockResolvedValue({ data: [] });
     render(<ExportList />);
-    await waitFor(() =>
-      expect(screen.getByText(/No exports found/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText(/No exports found/i)).toBeInTheDocument());
   });
 
   it('renders exports table when data is available', async () => {

@@ -15,18 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../api-config'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../api-config';
 
-async function SystemInfo () {
+async function SystemInfo() {
   return axios
-    .get(DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.GET_SYSTEM_INFO_URL)
-    .then(response => {
-      return response.data
+    .get(
+      DeviceAPIConfiguration.TARGET +
+        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+        DeviceAPIConfiguration.GET_SYSTEM_INFO_URL,
+    )
+    .then((response) => {
+      return response.data;
     })
-    .catch(error => {
-      return Promise.reject(error)
-    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 }
 
-export { SystemInfo }
+export { SystemInfo };

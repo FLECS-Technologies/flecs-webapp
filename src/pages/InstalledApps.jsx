@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useContext, React } from 'react'
-import InstalledAppsList from '../components/InstalledAppsList'
-import { ReferenceDataContext } from '../data/ReferenceDataContext'
+import { useContext, React } from 'react';
+import InstalledAppsList from '../components/InstalledAppsList';
+import { ReferenceDataContext } from '../data/ReferenceDataContext';
 
 export default function installedApps() {
-  const { appList } = useContext(ReferenceDataContext)
+  const { appList } = useContext(ReferenceDataContext);
 
   return (
     <div>
       <InstalledAppsList appData={appList} />
     </div>
-  )
+  );
 }

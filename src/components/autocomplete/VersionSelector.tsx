@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { Box } from '@mui/system'
+import React from 'react';
+import { Box } from '@mui/system';
 import {
   Autocomplete,
   Badge,
@@ -26,62 +26,50 @@ import {
   ListItemText,
   MenuItem,
   TextField,
-  Typography
-} from '@mui/material'
-import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import NewReleasesIcon from '@mui/icons-material/NewReleases'
-import {
-  findVersionByProperty,
-  getLatestVersion
-} from '../../utils/version-utils'
-import { Version } from '../../models/version'
+  Typography,
+} from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import { findVersionByProperty, getLatestVersion } from '../../utils/version-utils';
+import { Version } from '../../models/version';
 
 interface VersionSelectorProps {
-  availableVersions: Version[]
-  setSelectedVersion: (version: Version) => void
-  selectedVersion: Version | undefined
+  availableVersions: Version[];
+  setSelectedVersion: (version: Version) => void;
+  selectedVersion: Version | undefined;
 }
 
 export const VersionSelector: React.FC<VersionSelectorProps> = ({
   availableVersions,
   setSelectedVersion,
-  selectedVersion
+  selectedVersion,
 }) => {
   const newVersionAvailable =
     !getLatestVersion(availableVersions)?.installed &&
-    availableVersions?.filter((version) => version?.installed).length > 0
+    availableVersions?.filter((version) => version?.installed).length > 0;
 
-  const handleVersionChange = (
-    event: React.ChangeEvent<{}>,
-    newValue: Version | undefined
-  ) => {
+  const handleVersionChange = (event: React.ChangeEvent<{}>, newValue: Version | undefined) => {
     if (newValue && availableVersions) {
-      setSelectedVersion(
-        findVersionByProperty(availableVersions, newValue.version)
-      )
+      setSelectedVersion(findVersionByProperty(availableVersions, newValue.version));
     }
-  }
+  };
 
-  const onReleaseNoteButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const onReleaseNoteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (selectedVersion?.release_notes) {
-      window.open(selectedVersion.release_notes)
+      window.open(selectedVersion.release_notes);
     }
-  }
+  };
 
-  const onBreakingChangesButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const onBreakingChangesButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (selectedVersion?.breaking_changes) {
-      window.open(selectedVersion.breaking_changes)
+      window.open(selectedVersion.breaking_changes);
     }
-  }
+  };
 
   return (
     <Box sx={{ mt: 1, mb: 1 }}>
       {availableVersions?.length === 1 && availableVersions[0]?.version && (
-        <Typography sx={{ fontSize: 14 }} color='text.secondary' gutterBottom>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Version {availableVersions[0].version}
         </Typography>
       )}
@@ -89,9 +77,7 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
         <Badge
           sx={{ width: '100%' }}
           invisible={!newVersionAvailable}
-          badgeContent={
-            <NewReleasesIcon color='primary' fontSize='small'></NewReleasesIcon>
-          }
+          badgeContent={<NewReleasesIcon color="primary" fontSize="small"></NewReleasesIcon>}
         >
           <Autocomplete
             fullWidth
@@ -100,15 +86,13 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
             onChange={handleVersionChange}
             options={availableVersions}
             getOptionLabel={(option) => option.version}
-            isOptionEqualToValue={(option, value) =>
-              option.version === value.version
-            }
+            isOptionEqualToValue={(option, value) => option.version === value.version}
             renderOption={(props, option) => (
               <MenuItem {...props} key={option.version}>
                 <ListItemText primary={option.version} />
                 {option.installed && (
                   <ListItemSecondaryAction>
-                    <Typography variant='caption' color='textSecondary'>
+                    <Typography variant="caption" color="textSecondary">
                       installed
                     </Typography>
                   </ListItemSecondaryAction>
@@ -118,8 +102,8 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label='Version'
-                variant='outlined'
+                label="Version"
+                variant="outlined"
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -128,19 +112,14 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
                       {params.inputProps.value &&
                         availableVersions.find(
                           (version) =>
-                            version.version === params.inputProps.value &&
-                            version.installed
+                            version.version === params.inputProps.value && version.installed,
                         ) && (
-                          <Typography
-                            variant='caption'
-                            color='textSecondary'
-                            sx={{ ml: 1 }}
-                          >
+                          <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
                             installed
                           </Typography>
                         )}
                     </>
-                  )
+                  ),
                 }}
               />
             )}
@@ -148,25 +127,17 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
         </Badge>
       )}
       {selectedVersion?.release_notes && (
-        <Button
-          size='small'
-          onClick={onReleaseNoteButtonClick}
-          startIcon={<OpenInNewIcon />}
-        >
+        <Button size="small" onClick={onReleaseNoteButtonClick} startIcon={<OpenInNewIcon />}>
           Release Notes
         </Button>
       )}
       {selectedVersion?.breaking_changes && (
-        <Button
-          size='small'
-          onClick={onBreakingChangesButtonClick}
-          startIcon={<OpenInNewIcon />}
-        >
+        <Button size="small" onClick={onBreakingChangesButtonClick} startIcon={<OpenInNewIcon />}>
           Breaking Changes
         </Button>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default VersionSelector
+export default VersionSelector;

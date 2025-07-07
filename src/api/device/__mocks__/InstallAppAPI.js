@@ -15,18 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import BaseAPI from '../BaseAPI'
+import BaseAPI from '../BaseAPI';
 
 export default class PostInstallAppAPI extends BaseAPI {
-  async installApp (app, version) {
+  async installApp(app, version) {
     if (app) {
-      this.state.success = true
-      this.state.responseData = { jobId: 1 }
+      this.state.success = true;
+      this.state.responseData = { jobId: 1 };
     }
     return new Promise((resolve, reject) => {
-      app
-        ? resolve()
-        : reject(new Error('Mock: Failed to install app.'))
-    })
+      app ? resolve() : reject(new Error('Mock: Failed to install app.'));
+    });
   }
 }

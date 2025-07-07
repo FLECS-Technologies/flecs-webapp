@@ -15,29 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { act } from 'react-dom/test-utils'
-import { render, screen, fireEvent } from '@testing-library/react'
-import CollapsableRow from '../CollapsableRow'
-import { Table, Typography } from '@mui/material'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
+import { render, screen, fireEvent } from '@testing-library/react';
+import CollapsableRow from '../CollapsableRow';
+import { Table, Typography } from '@mui/material';
 
 describe('CollabsableRow', () => {
   test('renders CollabsableRow component', async () => {
     await act(async () => {
-      render(<Table><CollapsableRow title='Test Title'></CollapsableRow></Table>)
-    })
-    expect(screen.getByText('Test Title')).toBeVisible()
-  })
+      render(
+        <Table>
+          <CollapsableRow title="Test Title"></CollapsableRow>
+        </Table>,
+      );
+    });
+    expect(screen.getByText('Test Title')).toBeVisible();
+  });
 
   test('click expand button', async () => {
     await act(async () => {
-      render(<Table><CollapsableRow title='Test Title'><Typography>This is inside</Typography></CollapsableRow></Table>)
-    })
-    const expandButton = screen.getByTestId('expand-button')
+      render(
+        <Table>
+          <CollapsableRow title="Test Title">
+            <Typography>This is inside</Typography>
+          </CollapsableRow>
+        </Table>,
+      );
+    });
+    const expandButton = screen.getByTestId('expand-button');
 
-    await act(async () => { fireEvent.click(expandButton) })
-    expect(screen.getByText('Test Title')).toBeVisible()
-    expect(screen.getByText('This is inside')).toBeVisible()
-  })
-})
+    await act(async () => {
+      fireEvent.click(expandButton);
+    });
+    expect(screen.getByText('Test Title')).toBeVisible();
+    expect(screen.getByText('This is inside')).toBeVisible();
+  });
+});

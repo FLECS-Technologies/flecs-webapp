@@ -17,6 +17,6 @@
  */
 export function sleep(milliseconds) {
   return new Promise((resolve, reject) => {
-    resolve(1)
-  })
+    resolve(1);
+  });
 }

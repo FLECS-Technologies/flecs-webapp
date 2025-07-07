@@ -15,39 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Tooltip,
-  ListItemText
-} from '@mui/material'
-import { Cancel, CheckCircle, Usb, UsbOff } from '@mui/icons-material'
-import { UsbDevice } from '../UsbConfigTab'
+import React from 'react';
+import { Card, CardContent, Typography, Button, Tooltip, ListItemText } from '@mui/material';
+import { Cancel, CheckCircle, Usb, UsbOff } from '@mui/icons-material';
+import { UsbDevice } from '../UsbConfigTab';
 
 interface UsbConfigCardProps {
-  device: UsbDevice
-  onEnable: (port: string, enabled: boolean) => void
+  device: UsbDevice;
+  onEnable: (port: string, enabled: boolean) => void;
 }
 
 const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
   return (
-    <Card
-      key={device.port}
-      sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }}
-    >
+    <Card key={device.port} sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }}>
       <Tooltip
-        title={`USB device ${device.name} ${
-          device.enabled ? 'enabled in app' : 'disabled in app'
-        }`}
+        title={`USB device ${device.name} ${device.enabled ? 'enabled in app' : 'disabled in app'}`}
       >
         {device.device_connected ? (
-          <Usb
-            sx={{ mr: 2, alignSelf: 'center' }}
-            color={device.enabled ? 'success' : 'error'}
-          />
+          <Usb sx={{ mr: 2, alignSelf: 'center' }} color={device.enabled ? 'success' : 'error'} />
         ) : (
           <UsbOff
             sx={{ mr: 2, alignSelf: 'center' }}
@@ -55,21 +40,9 @@ const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
           />
         )}
       </Tooltip>
-      <ListItemText
-        primary={device.port}
-        secondary='Port'
-        sx={{ flex: 1, mr: 2 }}
-      />
-      <ListItemText
-        primary={device.name}
-        secondary='Name'
-        sx={{ flex: 1, mr: 2 }}
-      />
-      <ListItemText
-        primary={device.vendor}
-        secondary='Vendor'
-        sx={{ flex: 1, mr: 2 }}
-      />
+      <ListItemText primary={device.port} secondary="Port" sx={{ flex: 1, mr: 2 }} />
+      <ListItemText primary={device.name} secondary="Name" sx={{ flex: 1, mr: 2 }} />
+      <ListItemText primary={device.vendor} secondary="Vendor" sx={{ flex: 1, mr: 2 }} />
       <Button
         sx={{ flexShrink: 0 }}
         color={device.enabled ? 'error' : 'success'}
@@ -79,7 +52,7 @@ const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
         {device.enabled ? 'Disable' : 'Enable'}
       </Button>
     </Card>
-  )
-}
+  );
+};
 
-export default UsbConfigCard
+export default UsbConfigCard;

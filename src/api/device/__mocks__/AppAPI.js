@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import { sleep } from '../../../utils/sleep'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { sleep } from '../../../utils/sleep';
 
 export default class AppAPI extends React.Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
 
     this.app = {
       appKey: {
         name: props.appKey.name,
-        version: props.appKey.version
+        version: props.appKey.version,
       },
       avatar: props.avatar,
       title: props.title,
@@ -36,21 +36,21 @@ export default class AppAPI extends React.Component {
       status: props.status,
       availability: props.availability,
       instances: props.instances,
-      multiInstance: props.multiInstance
-    }
+      multiInstance: props.multiInstance,
+    };
 
-    this._lastAPICallSuccessful = false
-    this.lastAPIError = null
-    this.jobId = null
-    this.jobStatus = null
+    this._lastAPICallSuccessful = false;
+    this.lastAPIError = null;
+    this.jobId = null;
+    this.jobStatus = null;
   }
 
-  setAppData (props) {
+  setAppData(props) {
     if (props) {
       this.app = {
         appKey: {
           name: props.appKey.name,
-          version: props.appKey.version
+          version: props.appKey.version,
         },
         avatar: props.avatar,
         title: props.title,
@@ -59,59 +59,59 @@ export default class AppAPI extends React.Component {
         status: props.status,
         availability: props.availability,
         instances: props.instances,
-        multiInstance: props.multiInstance
-      }
+        multiInstance: props.multiInstance,
+      };
     }
   }
 
-  get lastAPICallSuccessful () {
-    return this._lastAPICallSuccessful
+  get lastAPICallSuccessful() {
+    return this._lastAPICallSuccessful;
   }
 
-  set lastAPICallSuccessful (value) {
-    this._lastAPICallSuccessful = value
+  set lastAPICallSuccessful(value) {
+    this._lastAPICallSuccessful = value;
   }
 
   // Installs an app from the marketplace and automatically creates and starts an instance of this app
-  async installFromMarketplace (version, handleInstallationJob) {
-    handleInstallationJob('running')
-    await sleep(500)
-    handleInstallationJob('successful')
-    this.lastAPICallSuccessful = true
+  async installFromMarketplace(version, handleInstallationJob) {
+    handleInstallationJob('running');
+    await sleep(500);
+    handleInstallationJob('successful');
+    this.lastAPICallSuccessful = true;
   }
 
-  async uninstall () {
-    this.lastAPICallSuccessful = true
+  async uninstall() {
+    this.lastAPICallSuccessful = true;
   }
 
-  async createInstance (instanceName) {
-    this.lastAPICallSuccessful = true
+  async createInstance(instanceName) {
+    this.lastAPICallSuccessful = true;
   }
 
-  async startInstance (instanceId) {
-    this.lastAPICallSuccessful = true
+  async startInstance(instanceId) {
+    this.lastAPICallSuccessful = true;
   }
 
-  async stopInstance (instanceId) {
-    this.lastAPICallSuccessful = true
+  async stopInstance(instanceId) {
+    this.lastAPICallSuccessful = true;
   }
 
-  async deleteInstance (instanceId) {
-    this.lastAPICallSuccessful = true
+  async deleteInstance(instanceId) {
+    this.lastAPICallSuccessful = true;
   }
 
-  async sideloadApp (appYaml, handleInstallationJob) {
-    handleInstallationJob('running')
-    await sleep(500)
-    handleInstallationJob('successful')
-    this.lastAPICallSuccessful = true
+  async sideloadApp(appYaml, handleInstallationJob) {
+    handleInstallationJob('running');
+    await sleep(500);
+    handleInstallationJob('successful');
+    this.lastAPICallSuccessful = true;
   }
 
-  createInstanceName () {
-    return 'new-instance'
+  createInstanceName() {
+    return 'new-instance';
   }
 
-  static get propTypes () {
+  static get propTypes() {
     return {
       appKey: PropTypes.object,
       avatar: PropTypes.string,
@@ -121,7 +121,7 @@ export default class AppAPI extends React.Component {
       status: PropTypes.string,
       availability: PropTypes.string,
       multiInstance: PropTypes.bool,
-      instances: PropTypes.array
-    }
+      instances: PropTypes.array,
+    };
   }
 }

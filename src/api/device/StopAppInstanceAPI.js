@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class StopAppInstanceAPI extends BaseAPI {
-  async stopAppInstance (instanceId) {
+  async stopAppInstance(instanceId) {
     // POST request using fetch with error handling
     const requestOptions = {
-      method: 'POST'
-    }
+      method: 'POST',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(instanceId), requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.POST_STOP_INSTANCE_URL(instanceId), requestOptions);
+    } catch (error) {}
   }
 }

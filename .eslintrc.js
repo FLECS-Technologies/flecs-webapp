@@ -2,15 +2,15 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    jest: true
+    jest: true,
   },
   extends: ['plugin:react/recommended', 'standard', 'prettier'],
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: ['react'],
   rules: {
@@ -19,6 +19,6 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     'no-undef': 'off',
     'no-unused-vars': 'off',
-    'no-use-before-define': 'off'
-  }
-}
+    'no-use-before-define': 'off',
+  },
+};

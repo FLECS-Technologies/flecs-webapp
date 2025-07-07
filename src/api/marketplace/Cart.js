@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 // import React from 'react'
-import CoCartAPI from '@cocart/cocart-rest-api'
-import { MarketplaceAPIConfiguration } from '../api-config'
-import AuthService from './AuthService'
+import CoCartAPI from '@cocart/cocart-rest-api';
+import { MarketplaceAPIConfiguration } from '../api-config';
+import AuthService from './AuthService';
 
-function createCart () {}
+function createCart() {}
 
-async function getCurrentCart () {
+async function getCurrentCart() {
   /* getCurrentCart is currently not used. */
   /*
   const currentUser = AuthService.getCurrentUser()
@@ -47,30 +47,30 @@ async function getCurrentCart () {
     */
 }
 
-async function addToCart (appId) {
-  const currentUser = AuthService.getCurrentUser()
+async function addToCart(appId) {
+  const currentUser = AuthService.getCurrentUser();
 
   const CoCart = new CoCartAPI({
     url: MarketplaceAPIConfiguration.MP_URL,
 
     consumerKey: currentUser?.user?.data?.user_login,
-    consumerSecret: currentUser?.jwt?.token
-  })
+    consumerSecret: currentUser?.jwt?.token,
+  });
   return CoCart.post('cart/add-item', {
     id: appId.toString(),
-    quantity: '1'
+    quantity: '1',
   })
     .then((response) => {
       // Successful request
-      return response.data?.cart_key
+      return response.data?.cart_key;
     })
     .catch((error) => {
       // Invalid request, for 4xx and 5xx statuses
-      return Promise.reject(error)
+      return Promise.reject(error);
     })
     .finally(() => {
       // Always executed.
-    })
+    });
 }
 
-export { createCart, getCurrentCart, addToCart }
+export { createCart, getCurrentCart, addToCart };

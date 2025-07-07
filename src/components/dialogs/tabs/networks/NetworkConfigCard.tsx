@@ -15,30 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { Card, Tooltip, ListItemText, Button } from '@mui/material'
-import { NetworkState } from '../NetworkConfigTab'
-import { Cancel, CheckCircle, Wifi, WifiOff } from '@mui/icons-material'
+import React from 'react';
+import { Card, Tooltip, ListItemText, Button } from '@mui/material';
+import { NetworkState } from '../NetworkConfigTab';
+import { Cancel, CheckCircle, Wifi, WifiOff } from '@mui/icons-material';
 
 interface NetworkConfigCardProps {
-  network: NetworkState
+  network: NetworkState;
   onActivationChange: (
     event: React.ChangeEvent<HTMLInputElement>,
     id: string,
-    name: string
-  ) => void
+    name: string,
+  ) => void;
 }
 
-const NetworkConfigCard: React.FC<NetworkConfigCardProps> = ({
-  network,
-  onActivationChange
-}) => {
+const NetworkConfigCard: React.FC<NetworkConfigCardProps> = ({ network, onActivationChange }) => {
   return (
     <Card sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }} key={network.id}>
       <Tooltip
-        title={`Adapter ${network.name} ${
-          network.is_connected ? 'connected' : 'not connected'
-        }`}
+        title={`Adapter ${network.name} ${network.is_connected ? 'connected' : 'not connected'}`}
       >
         {network.is_connected ? (
           <Wifi
@@ -52,17 +47,9 @@ const NetworkConfigCard: React.FC<NetworkConfigCardProps> = ({
           />
         )}
       </Tooltip>
-      <ListItemText
-        primary={network.name}
-        secondary='Adapter'
-        sx={{ flex: 1, mr: 2 }}
-      />
+      <ListItemText primary={network.name} secondary="Adapter" sx={{ flex: 1, mr: 2 }} />
       {network.ipAddress && (
-        <ListItemText
-          primary={network.ipAddress}
-          secondary='IP Address'
-          sx={{ flex: 1, mr: 2 }}
-        />
+        <ListItemText primary={network.ipAddress} secondary="IP Address" sx={{ flex: 1, mr: 2 }} />
       )}
       <Button
         sx={{ flexShrink: 0 }}
@@ -71,17 +58,17 @@ const NetworkConfigCard: React.FC<NetworkConfigCardProps> = ({
         onClick={() =>
           onActivationChange(
             {
-              target: { checked: !network.is_activated }
+              target: { checked: !network.is_activated },
             } as React.ChangeEvent<HTMLInputElement>,
             network.id,
-            network.name
+            network.name,
           )
         }
       >
         {network.is_activated ? 'Disconnect' : 'Connect'}
       </Button>
     </Card>
-  )
-}
+  );
+};
 
-export default NetworkConfigCard
+export default NetworkConfigCard;

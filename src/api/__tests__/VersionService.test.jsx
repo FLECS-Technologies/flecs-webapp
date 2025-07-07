@@ -15,64 +15,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@testing-library/dom'
-import { waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import axios from 'axios'
-import { getLatestVersion, getVersion, isLaterThan } from '../VersionService'
+import '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import axios from 'axios';
+import { getLatestVersion, getVersion, isLaterThan } from '../VersionService';
 
-jest.mock('axios')
+jest.mock('axios');
 
 const mockVersion = {
   data: {
-    core: '1.1.0-porpoise-475591c'
-  }
-}
+    core: '1.1.0-porpoise-475591c',
+  },
+};
 
 describe('VersionService', () => {
   beforeAll(() => {
-    axios.get = jest.fn()
-  })
+    axios.get = jest.fn();
+  });
 
   afterAll(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
   test('calls successful getVersion', async () => {
-    axios.get.mockResolvedValueOnce(mockVersion)
-    const version = await waitFor(() => getVersion())
+    axios.get.mockResolvedValueOnce(mockVersion);
+    const version = await waitFor(() => getVersion());
 
-    expect(version.core).toBe(mockVersion.data.core)
-  })
+    expect(version.core).toBe(mockVersion.data.core);
+  });
 
   test('calls unsuccessful getVersion', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load version'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load version'));
     await act(async () => {
-      expect(getVersion()).rejects.toThrowError()
-    })
-  })
+      expect(getVersion()).rejects.toThrowError();
+    });
+  });
 
   test('calls successful getLatestVersion', async () => {
-    axios.get.mockResolvedValueOnce(mockVersion)
-    const version = await waitFor(() => getLatestVersion())
+    axios.get.mockResolvedValueOnce(mockVersion);
+    const version = await waitFor(() => getLatestVersion());
 
-    expect(version.core).toBe(mockVersion.data.core)
-  })
+    expect(version.core).toBe(mockVersion.data.core);
+  });
 
   test('calls unsuccessful getLatestVersion', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load latest version'))
+    axios.get.mockRejectedValueOnce(new Error('Failed to load latest version'));
     await act(async () => {
-      expect(getLatestVersion()).rejects.toThrowError()
-    })
-  })
+      expect(getLatestVersion()).rejects.toThrowError();
+    });
+  });
 
   test('calls isLaterThan function', () => {
-    const later = isLaterThan('1.3.0-porpoise', '1.2.0-porpoise')
-    expect(later).toBeTruthy()
+    const later = isLaterThan('1.3.0-porpoise', '1.2.0-porpoise');
+    expect(later).toBeTruthy();
 
-    const notLater = isLaterThan('1.3.0-porpoise', '1.4.0-porpoise')
-    expect(notLater).toBeFalsy()
+    const notLater = isLaterThan('1.3.0-porpoise', '1.4.0-porpoise');
+    expect(notLater).toBeFalsy();
 
-    const noResult = isLaterThan(undefined, undefined)
-    expect(noResult).toBeFalsy()
-  })
-})
+    const noResult = isLaterThan(undefined, undefined);
+    expect(noResult).toBeFalsy();
+  });
+});

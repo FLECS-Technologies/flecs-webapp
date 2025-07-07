@@ -15,30 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
-import InstanceInfo from '../InstanceInfo'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import InstanceInfo from '../InstanceInfo';
 
-jest.mock('../../api/device/InstanceDetailsService')
+jest.mock('../../api/device/InstanceDetailsService');
 
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
   appKey: {
-    version: '1.0.0'
+    version: '1.0.0',
   },
   status: 'running',
-  desired: 'stopped'
-}
+  desired: 'stopped',
+};
 describe('InstanceInfo', () => {
   test('renders InstanceInfo component', () => {
-    render(<InstanceInfo instance={testInstance}></InstanceInfo>)
+    render(<InstanceInfo instance={testInstance}></InstanceInfo>);
 
-    expect(screen.getByText('TestInstance')).toBeVisible()
-    expect(screen.getByText('ABCDE')).toBeVisible()
-    expect(screen.getByText('1.0.0')).toBeVisible()
-    expect(screen.getByText('running')).toBeVisible()
-    expect(screen.getByText('stopped')).toBeVisible()
-  })
-})
+    expect(screen.getByText('TestInstance')).toBeVisible();
+    expect(screen.getByText('ABCDE')).toBeVisible();
+    expect(screen.getByText('1.0.0')).toBeVisible();
+    expect(screen.getByText('running')).toBeVisible();
+    expect(screen.getByText('stopped')).toBeVisible();
+  });
+});

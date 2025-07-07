@@ -15,49 +15,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { useJobsContext } from '../../data/JobsContext'
-import { Job as Job_Type } from '../../models/job'
-import { Typography } from '@mui/material'
+import React from 'react';
+import { useJobsContext } from '../../data/JobsContext';
+import { Job as Job_Type } from '../../models/job';
+import { Typography } from '@mui/material';
 
 interface JobProps {
-  jobId: number
-  setStatus: React.Dispatch<React.SetStateAction<string>>
-  displayResult: boolean
+  jobId: number;
+  setStatus: React.Dispatch<React.SetStateAction<string>>;
+  displayResult: boolean;
 }
 
 const Job: React.FC<JobProps> = ({ jobId, setStatus, displayResult }) => {
-  const { jobs, fetchJobById, fetchJobs } = useJobsContext()
-  const [job, setJob] = React.useState<Job_Type>()
+  const { jobs, fetchJobById, fetchJobs } = useJobsContext();
+  const [job, setJob] = React.useState<Job_Type>();
 
   React.useEffect(() => {
-    let interval: NodeJS.Timeout
+    let interval: NodeJS.Timeout;
     if (jobId > 0) {
       // Start polling
       interval = setInterval(async () => {
-        await fetchJobById(jobId)
-      }, 2000) // Poll every 2 seconds
-      const findJob = jobs.find((job) => job.id === jobId)
+        await fetchJobById(jobId);
+      }, 2000); // Poll every 2 seconds
+      const findJob = jobs.find((job) => job.id === jobId);
 
       if (findJob) {
-        setJob(findJob)
-        setStatus(findJob.status)
-        if (findJob.status === 'successful' || findJob.status === 'failed')
-          clearInterval(interval)
+        setJob(findJob);
+        setStatus(findJob.status);
+        if (findJob.status === 'successful' || findJob.status === 'failed') clearInterval(interval);
       }
     } else {
-      fetchJobs()
+      fetchJobs();
     }
-    return () => clearInterval(interval) // Cleanup interval on component unmount
-  }, [jobId, jobs, job])
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [jobId, jobs, job]);
 
   return (
     <>
       {job && (
         <React.Fragment>
-          {job.status === 'queued' && (
-            <Typography>{`${job.description} is queued...`}</Typography>
-          )}
+          {job.status === 'queued' && <Typography>{`${job.description} is queued...`}</Typography>}
           {job.status === 'running' && (
             <Typography>
               {`${job.description}: ${job.currentStep.description} (step ${job.currentStep.num} of ${job.numSteps})...`}
@@ -66,21 +63,17 @@ const Job: React.FC<JobProps> = ({ jobId, setStatus, displayResult }) => {
           {displayResult && (
             <React.Fragment>
               {job.status === 'successful' && (
-                <Typography>
-                  {`${job.description} successfully finished!`}
-                </Typography>
+                <Typography>{`${job.description} successfully finished!`}</Typography>
               )}
               {job.status === 'failed' && (
-                <Typography>
-                  {`${job.description} failed: ${job.result}!`}
-                </Typography>
+                <Typography>{`${job.description} failed: ${job.result}!`}</Typography>
               )}
             </React.Fragment>
           )}
         </React.Fragment>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Job
+export default Job;

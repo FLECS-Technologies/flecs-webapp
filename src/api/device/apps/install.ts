@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios'
-import { DeviceAPIConfiguration } from '../../api-config'
-import { job_meta } from '../../../models/job'
+import axios from 'axios';
+import { DeviceAPIConfiguration } from '../../api-config';
+import { job_meta } from '../../../models/job';
 
 export async function InstallAppAPI(app: string, version: string) {
   return axios
@@ -26,12 +26,12 @@ export async function InstallAppAPI(app: string, version: string) {
         DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
         DeviceAPIConfiguration.APP_ROUTE +
         DeviceAPIConfiguration.POST_INSTALL_APP_URL,
-      JSON.stringify({ appKey: { name: app, version } })
+      JSON.stringify({ appKey: { name: app, version } }),
     )
     .then((response) => {
-      return (response.data as job_meta).jobId
+      return (response.data as job_meta).jobId;
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }

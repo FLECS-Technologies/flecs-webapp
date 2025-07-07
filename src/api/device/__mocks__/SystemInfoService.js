@@ -15,26 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function SystemInfo () {
+function SystemInfo() {
   return new Promise((resolve, reject) => {
-    resolve(
-      {
-        arch: 'amd64',
-        distro: {
-          codename: 'jammy',
-          id: 'ubuntu',
-          name: 'Ubuntu 22.04 LTS',
-          version: '22.04'
-        },
-        kernel: {
-          build: '#25-Ubuntu SMP Thu Sep 1 18:19:31 UTC 2022',
-          machine: 'x86_64',
-          version: '5.15.0-1020-azure'
-        },
-        platform: 'flecs'
-      }
-    )
-  })
+    resolve({
+      arch: 'amd64',
+      distro: {
+        codename: 'jammy',
+        id: 'ubuntu',
+        name: 'Ubuntu 22.04 LTS',
+        version: '22.04',
+      },
+      kernel: {
+        build: '#25-Ubuntu SMP Thu Sep 1 18:19:31 UTC 2022',
+        machine: 'x86_64',
+        version: '5.15.0-1020-azure',
+      },
+      platform: 'flecs',
+    });
+  });
 }
 
-export { SystemInfo }
+export { SystemInfo };

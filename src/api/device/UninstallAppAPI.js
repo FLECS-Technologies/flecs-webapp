@@ -16,18 +16,26 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class DeleteUninstallAppAPI extends BaseAPI {
-  async uninstallApp (app, version) {
+  async uninstallApp(app, version) {
     // DELETE request using fetch with error handling
     const requestOptions = {
-      method: 'DELETE'
-    }
+      method: 'DELETE',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.APP_ROUTE + DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL + '/' + app + '?version=' + version, requestOptions)
-    } catch (error) { }
+      await this.callAPI(
+        DeviceAPIConfiguration.APP_ROUTE +
+          DeviceAPIConfiguration.DELETE_UNINSTALL_APP_URL +
+          '/' +
+          app +
+          '?version=' +
+          version,
+        requestOptions,
+      );
+    } catch (error) {}
   }
 }

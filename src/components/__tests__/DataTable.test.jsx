@@ -15,40 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
-import DataTable from '../DataTable'
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import DataTable from '../DataTable';
 
 const testData = [
   {
     key: 'root/app/1',
     value: 'xyz',
     encoding: 'plain/text',
-    timestamp: '1666011327519825920'
+    timestamp: '1666011327519825920',
   },
   {
     key: 'root/app/2',
     value: 'abc',
     encoding: 'plain/json',
-    timestamp: '1666011337519825920'
+    timestamp: '1666011337519825920',
   },
   {
     key: 'root/app/3',
     value: 'Hello World!',
     encoding: 'application/octet-stream',
-    timestamp: '1666011347519825920'
-  }
-]
+    timestamp: '1666011347519825920',
+  },
+];
 describe('DataTable', () => {
   test('renders DataTable component', () => {
-    render(<DataTable data={testData}></DataTable>)
+    render(<DataTable data={testData}></DataTable>);
 
-    expect(screen.getByText('root/app/1')).toBeVisible()
-    expect(screen.getByText('xyz')).toBeVisible()
-    expect(screen.getByText('plain/text')).toBeVisible()
-    expect(screen.getByText(new Date(1666011327519825920 / 1000000).toLocaleString())).toBeVisible()
-    expect(screen.getByText('root/app/2')).toBeVisible()
-    expect(screen.getByText('Hello World!')).toBeVisible()
-  })
-})
+    expect(screen.getByText('root/app/1')).toBeVisible();
+    expect(screen.getByText('xyz')).toBeVisible();
+    expect(screen.getByText('plain/text')).toBeVisible();
+    expect(
+      screen.getByText(new Date(1666011327519825920 / 1000000).toLocaleString()),
+    ).toBeVisible();
+    expect(screen.getByText('root/app/2')).toBeVisible();
+    expect(screen.getByText('Hello World!')).toBeVisible();
+  });
+});

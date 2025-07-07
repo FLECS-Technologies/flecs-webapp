@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI'
-import { DeviceAPIConfiguration } from '../api-config'
+import BaseAPI from './BaseAPI';
+import { DeviceAPIConfiguration } from '../api-config';
 
 export default class GetInstancesAPI extends BaseAPI {
-  async getInstances () {
+  async getInstances() {
     // GET request using fetch with error handling
     const requestOptions = {
-      method: 'GET'
-    }
+      method: 'GET',
+    };
 
     try {
-      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE, requestOptions)
-    } catch (error) { }
+      await this.callAPI(DeviceAPIConfiguration.INSTANCES_ROUTE, requestOptions);
+    } catch (error) {}
   }
 }

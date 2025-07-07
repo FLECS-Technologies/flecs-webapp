@@ -16,28 +16,28 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render /*, screen */ } from '@testing-library/react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import '@testing-library/jest-dom'
-import Frame from '../Frame'
-import { DarkModeState } from '../ThemeHandler'
-import { JobsContextProvider } from '../../data/JobsContext'
-import { QuestContextProvider } from '../quests/QuestContext'
+import React from 'react';
+import { render /*, screen */ } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import '@testing-library/jest-dom';
+import Frame from '../Frame';
+import { DarkModeState } from '../ThemeHandler';
+import { JobsContextProvider } from '../../data/JobsContext';
+import { QuestContextProvider } from '../quests/QuestContext';
 
 describe('Frame', () => {
   test('renders Frame component', () => {
     render(
-        <Router>
-            <DarkModeState>
-              <JobsContextProvider>
-                <QuestContextProvider>
-                  <Frame />
-                </QuestContextProvider>
-              </JobsContextProvider>
-            </DarkModeState>
-        </Router>
-    )
+      <Router>
+        <DarkModeState>
+          <JobsContextProvider>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </JobsContextProvider>
+        </DarkModeState>
+      </Router>,
+    );
     // screen.debug()
-  })
-})
+  });
+});

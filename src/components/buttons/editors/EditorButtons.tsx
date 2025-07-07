@@ -15,17 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import { AppInstance } from '../../../api/device/instances/instance'
-import { EditorButton, createUrl } from './EditorButton'
-import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, Tooltip } from '@mui/material';
+import React from 'react';
+import { AppInstance } from '../../../api/device/instances/instance';
+import { EditorButton, createUrl } from './EditorButton';
+import {
+  Button,
+  ButtonGroup,
+  ClickAwayListener,
+  Grow,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Tooltip,
+} from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import LaunchIcon from '@mui/icons-material/Launch'
+import LaunchIcon from '@mui/icons-material/Launch';
 
 interface OpenButtonsProps {
-  instance: AppInstance,
+  instance: AppInstance;
 }
-
 
 const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsProps) => {
   const [open, setOpen] = React.useState(false);
@@ -45,10 +54,7 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
   };
 
   const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
 
@@ -63,13 +69,16 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
         aria-label={`open-editor-button-multi`}
         disabled={instance.status !== 'running'}
       >
-        <Tooltip title={`Open ${instance.editors[selectedIndex].name || 'editor'} in a new tab`} disableInteractive>
-          <Button 
-            onClick={() => window.open(createUrl(instance.editors[selectedIndex].url))} 
-            startIcon={<LaunchIcon />} 
+        <Tooltip
+          title={`Open ${instance.editors[selectedIndex].name || 'editor'} in a new tab`}
+          disableInteractive
+        >
+          <Button
+            onClick={() => window.open(createUrl(instance.editors[selectedIndex].url))}
+            startIcon={<LaunchIcon />}
             aria-label="open-editor"
           >
-              {instance.editors[selectedIndex].name || instance.editors[selectedIndex].port}
+            {instance.editors[selectedIndex].name || instance.editors[selectedIndex].port}
           </Button>
         </Tooltip>
         <Tooltip title={`Select editor`} disableInteractive>
@@ -97,8 +106,7 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
             <Paper>
@@ -121,25 +129,17 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
       </Popper>
     </React.Fragment>
   );
-}
+};
 
-export const EditorButtons: React.FC<OpenButtonsProps> = ({
-  instance
-}: OpenButtonsProps) => {
+export const EditorButtons: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsProps) => {
   return (
     <React.Fragment>
       {instance?.editors && instance.editors.length === 1 && (
         <React.Fragment>
-          <EditorButton
-            key={0}
-            editor={instance.editors[0]}
-            index={0}
-          />
+          <EditorButton key={0} editor={instance.editors[0]} index={0} />
         </React.Fragment>
       )}
-      {instance?.editors && instance.editors.length > 1 && (
-        <EditorDropdown instance={instance}/>
-      )}
+      {instance?.editors && instance.editors.length > 1 && <EditorDropdown instance={instance} />}
     </React.Fragment>
-  )
-}
+  );
+};

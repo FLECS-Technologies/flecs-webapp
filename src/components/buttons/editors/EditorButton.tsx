@@ -15,45 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-import LaunchIcon from '@mui/icons-material/Launch'
-import { Button, ButtonGroup, Tooltip } from '@mui/material'
+import React from 'react';
+import LaunchIcon from '@mui/icons-material/Launch';
+import { Button, ButtonGroup, Tooltip } from '@mui/material';
 
 interface EditorButtonProps {
-  editor: { url: string; name?: string }
-  index: number
+  editor: { url: string; name?: string };
+  index: number;
 }
 
 export const createUrl = (editorUrl: string) => {
-  let baseURL: string = 'http://'
+  let baseURL: string = 'http://';
 
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-      baseURL = import.meta.env.VITE_APP_DEV_CORE_URL || ''
+    baseURL = import.meta.env.VITE_APP_DEV_CORE_URL || '';
   } else {
-      baseURL = baseURL.concat(window.location.host)
+    baseURL = baseURL.concat(window.location.host);
   }
 
-  return baseURL + '/api' + editorUrl
-}
+  return baseURL + '/api' + editorUrl;
+};
 
-export const EditorButton: React.FC<EditorButtonProps> = ({
-  editor,
-  index,
-}: EditorButtonProps) => {
-
+export const EditorButton: React.FC<EditorButtonProps> = ({ editor, index }: EditorButtonProps) => {
   return (
     <React.Fragment>
-      <ButtonGroup disableElevation variant='contained' sx={{ m: 1 }}>
-      <Tooltip title={`Open ${editor.name || 'editor'} in a new tab`}>
+      <ButtonGroup disableElevation variant="contained" sx={{ m: 1 }}>
+        <Tooltip title={`Open ${editor.name || 'editor'} in a new tab`}>
           <Button
-          aria-label={`open-editor-button-${index}`}
-          onClick={() => window.open(createUrl(editor.url))}
-          startIcon={<LaunchIcon />}
+            aria-label={`open-editor-button-${index}`}
+            onClick={() => window.open(createUrl(editor.url))}
+            startIcon={<LaunchIcon />}
           >
-          {`Open ${editor.name || 'editor'}`}
+            {`Open ${editor.name || 'editor'}`}
           </Button>
-      </Tooltip>
+        </Tooltip>
       </ButtonGroup>
     </React.Fragment>
-  )
-}
+  );
+};

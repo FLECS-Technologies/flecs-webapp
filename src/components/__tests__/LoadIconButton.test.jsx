@@ -16,39 +16,35 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import LoadIconButton from '../LoadIconButton'
+import React from 'react';
+import { render /*, screen , fireEvent, waitFor */ } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import LoadIconButton from '../LoadIconButton';
 
 describe('LoadIconButton', () => {
   test('renders LoadIconButton component', () => {
-    render(<LoadIconButton />)
+    render(<LoadIconButton />);
     // screen.debug()
-  })
+  });
 
   test('LoadIconButton loading', async () => {
-    const { getByTestId } = render(<LoadIconButton
-        loading = {true}
-        />)
-    const button = getByTestId('icon-button')
-    const circularprogress = getByTestId('circularprogress')
+    const { getByTestId } = render(<LoadIconButton loading={true} />);
+    const button = getByTestId('icon-button');
+    const circularprogress = getByTestId('circularprogress');
 
-    expect(button).toBeInTheDocument()
-    expect(circularprogress).toBeInTheDocument()
+    expect(button).toBeInTheDocument();
+    expect(circularprogress).toBeInTheDocument();
 
     // screen.debug()
-  })
+  });
 
   test('LoadIconButton not loading', async () => {
-    const { getByTestId } = render(<LoadIconButton
-        loading = {false}
-        />)
-    const button = getByTestId('icon-button')
+    const { getByTestId } = render(<LoadIconButton loading={false} />);
+    const button = getByTestId('icon-button');
 
-    expect(button).toBeInTheDocument()
-    expect(() => getByTestId('circularprogress')).toThrow()
+    expect(button).toBeInTheDocument();
+    expect(() => getByTestId('circularprogress')).toThrow();
 
     // screen.debug()
-  })
-})
+  });
+});

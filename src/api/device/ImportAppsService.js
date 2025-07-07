@@ -15,28 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DeviceAPIConfiguration } from '../api-config'
+import { DeviceAPIConfiguration } from '../api-config';
 
-async function postImportApps (file, fileName) {
+async function postImportApps(file, fileName) {
   return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    const url = DeviceAPIConfiguration.TARGET + DeviceAPIConfiguration.DEVICE_BASE_ROUTE + DeviceAPIConfiguration.POST_IMPORT_URL
+    const xhr = new XMLHttpRequest();
+    const url =
+      DeviceAPIConfiguration.TARGET +
+      DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
+      DeviceAPIConfiguration.POST_IMPORT_URL;
     const formData = new FormData();
     formData.append('file', file);
-    xhr.open('POST', url, true)
-    xhr.setRequestHeader('Content-Disposition', fileName)
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Disposition', fileName);
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 202) {
-          resolve(xhr.responseText)
-          return xhr.response
+          resolve(xhr.responseText);
+          return xhr.response;
         } else {
-          reject(xhr.statusText)
+          reject(xhr.statusText);
         }
       }
-    }
-    xhr.send(formData)
-  })
+    };
+    xhr.send(formData);
+  });
 }
 
-export { postImportApps }
+export { postImportApps };

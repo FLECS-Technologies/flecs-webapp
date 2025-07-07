@@ -15,150 +15,134 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MarketplaceAPIConfiguration } from '../api-config'
-import axios from 'axios'
+import { MarketplaceAPIConfiguration } from '../api-config';
+import axios from 'axios';
 
 async function getProducts() {
   return axios
-    .get(
-      MarketplaceAPIConfiguration.MP_PROXY_URL +
-        MarketplaceAPIConfiguration.GET_PRODUCTS_URL
-    )
+    .get(MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_PRODUCTS_URL)
     .then((response) => {
-      if (
-        response.data &&
-        response.data.statusCode === 200 &&
-        response.data.data.products
-      ) {
-        return response.data.data.products
+      if (response.data && response.data.statusCode === 200 && response.data.data.products) {
+        return response.data.data.products;
       }
     })
     .catch((error) => {
-      return Promise.reject(error)
-    })
+      return Promise.reject(error);
+    });
 }
 
 function getReverseDomainName(app) {
-  let reverseDomainName
+  let reverseDomainName;
   if (app) {
-    reverseDomainName = app.attributes?.find(
-      (o) => o.name === 'reverse-domain-name'
-    )?.options[0]
+    reverseDomainName = app.attributes?.find((o) => o.name === 'reverse-domain-name')?.options[0];
   }
-  return reverseDomainName
+  return reverseDomainName;
 }
 
 function getEditorAddress(app) {
-  return app?.attributes?.find((o) => o.name === 'editor')?.options[0]
+  return app?.attributes?.find((o) => o.name === 'editor')?.options[0];
 }
 
 function getAppIcon(app) {
-  return app?.meta_data.find((o) => o.key === 'app-icon')?.value
+  return app?.meta_data.find((o) => o.key === 'app-icon')?.value;
 }
 
 function getAuthor(app) {
-  return app?.meta_data.find((o) => o.key === 'port-author-name')?.value
+  return app?.meta_data.find((o) => o.key === 'port-author-name')?.value;
 }
 
 function getVersion(app) {
-  return app?.meta_data.find((o) => o.key === 'port-version')?.value
+  return app?.meta_data.find((o) => o.key === 'port-version')?.value;
 }
 
 function getVersions(app) {
   const collator = new Intl.Collator('en', {
     numeric: true,
-    sensitivity: 'base'
-  })
-  const versions = app?.attributes?.find((o) => o.name === 'versions')?.options
+    sensitivity: 'base',
+  });
+  const versions = app?.attributes?.find((o) => o.name === 'versions')?.options;
   if (versions) {
-    versions.sort((a, b) => collator.compare(a, b))
-    versions.reverse()
+    versions.sort((a, b) => collator.compare(a, b));
+    versions.reverse();
   }
-  return versions
+  return versions;
 }
 
 function getBlacklist(app) {
-  const blacklist = app?.attributes?.find(
-    (o) => o.name === 'blacklist'
-  )?.options
+  const blacklist = app?.attributes?.find((o) => o.name === 'blacklist')?.options;
 
-  return blacklist
+  return blacklist;
 }
 
 function isBlacklisted(systemInfo, blacklist) {
-  let isListed = false
+  let isListed = false;
   if (blacklist && systemInfo?.platform) {
-    isListed = blacklist.includes(systemInfo?.platform)
+    isListed = blacklist.includes(systemInfo?.platform);
   }
 
-  return isListed
+  return isListed;
 }
 
 function getShortDescription(app) {
-  return app?.short_description?.replace(/<[^>]+>/g, '')
+  return app?.short_description?.replace(/<[^>]+>/g, '');
 }
 
 function getCustomLinks(app) {
-  const customLinks = app?.meta_data.find(
-    (o) => o.key === 'app-custom-link'
-  )?.value
+  const customLinks = app?.meta_data.find((o) => o.key === 'app-custom-link')?.value;
   if (!customLinks || customLinks === '') {
-    return undefined
+    return undefined;
   } else if (!Array.isArray(customLinks)) {
-    const retval = []
-    retval.push(customLinks['1'])
-    return retval
+    const retval = [];
+    retval.push(customLinks['1']);
+    return retval;
   } else {
-    return customLinks
+    return customLinks;
   }
 }
 
 function getMultiInstance(app) {
-  const multiInstance = app.attributes?.find((o) => o.name === 'multiInstance')
-    ?.options[0]
-  return !!multiInstance
+  const multiInstance = app.attributes?.find((o) => o.name === 'multiInstance')?.options[0];
+  return !!multiInstance;
 }
 
 function getRequirement(app) {
-  return app?.attributes.find((o) => o.name === 'archs')?.options
+  return app?.attributes.find((o) => o.name === 'archs')?.options;
 }
 
 function getId(app) {
-  return app?.id
+  return app?.id;
 }
 
 function getCategories(app) {
-  return app?.categories
+  return app?.categories;
 }
 
 function getAverageRating(app) {
-  return app?.average_rating
+  return app?.average_rating;
 }
 
 function getRatingCount(app) {
-  return app?.rating_count
+  return app?.rating_count;
 }
 
 function getPrice(app) {
-  return app?.price
+  return app?.price;
 }
 
 function getPermalink(app) {
-  return app?.permalink
+  return app?.permalink;
 }
 
 function getPurchasable(app) {
-  return app?.purchasable
+  return app?.purchasable;
 }
 
 function getDocumentationUrl(app) {
-  const documenationUrl = app?.meta_data.find(
-    (o) => o.key === '_documentation_url'
-  )?.value
+  const documenationUrl = app?.meta_data.find((o) => o.key === '_documentation_url')?.value;
   if (!documenationUrl || documenationUrl === '') {
-    return undefined
+    return undefined;
   } else {
-    return documenationUrl
+    return documenationUrl;
   }
 }
 
@@ -183,5 +167,5 @@ export {
   getRequirement,
   getPurchasable,
   getPermalink,
-  getPrice
-}
+  getPrice,
+};

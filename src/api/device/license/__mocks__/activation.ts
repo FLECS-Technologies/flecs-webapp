@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import { ActivateDeviceAPIResponse } from '../activation'
+import { ActivateDeviceAPIResponse } from '../activation';
 
 export const mockActivateDeviceAPIResponse = {
   data: {
-    additionalInfo: 'Ok'
-  } as ActivateDeviceAPIResponse
-}
+    additionalInfo: 'Ok',
+  } as ActivateDeviceAPIResponse,
+};
 
 function ActivateDeviceAPI() {
   return new Promise((resolve, reject) => {
-    resolve(mockActivateDeviceAPIResponse)
-  })
+    resolve(mockActivateDeviceAPIResponse);
+  });
 }
 
-export { ActivateDeviceAPI }
+export { ActivateDeviceAPI };

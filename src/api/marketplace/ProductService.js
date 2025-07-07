@@ -84,7 +84,13 @@ function isBlacklisted(systemInfo, blacklist) {
 }
 
 function getShortDescription(app) {
-  return app?.short_description?.replace(/<[^>]+>/g, '');
+  let description = app?.short_description || '';
+  let previous;
+  do {
+    previous = description;
+    description = description.replace(/<[^>]+>/g, '');
+  } while (description !== previous);
+  return description;
 }
 
 function getCustomLinks(app) {

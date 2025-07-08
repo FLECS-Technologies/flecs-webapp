@@ -16,8 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import { CoreVersion, Distro, Kernel } from './VersionInterfaces';
+import { OpenInNew } from '@mui/icons-material';
 
 interface VersionsTableProps {
   coreVersion?: CoreVersion;
@@ -28,6 +37,7 @@ interface VersionsTableProps {
 interface VersionData {
   component: string;
   version?: string;
+  sbom?: string;
 }
 
 const VersionsTable: React.FC<VersionsTableProps> = ({
@@ -36,15 +46,15 @@ const VersionsTable: React.FC<VersionsTableProps> = ({
   distro = { name: 'Distro', version: 'N/A' },
   kernel = { version: 'N/A' },
 }) => {
-  function createData(component: string, version?: string): VersionData {
-    return { component, version };
+  function createData(component: string, version?: string, sbom?: string): VersionData {
+    return { component, version, sbom };
   }
 
   const versions = React.useMemo(
     () => [
       createData('Core', coreVersion?.core),
       createData('API', coreVersion?.api),
-      createData('UI', webappVersion),
+      createData('UI', webappVersion, 'src/assets/sbom.json'),
       createData(distro?.name || 'Distro', distro?.version),
       createData('Kernel', kernel?.version),
     ],
@@ -55,16 +65,23 @@ const VersionsTable: React.FC<VersionsTableProps> = ({
     <Table data-testid="versions-table" size="small" aria-label="versions-table">
       <TableHead>
         <TableRow key="versions-table-head">
-          <TableCell colSpan={2}>
+          <TableCell colSpan={3}>
             <Typography variant="h6">Versions</Typography>
           </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {versions.map(({ component, version }) => (
+        {versions.map(({ component, version, sbom }) => (
           <TableRow key={`${component}-${version}`} style={{ borderBottom: 'none' }}>
             <TableCell style={{ borderBottom: 'none' }}>{component}</TableCell>
             <TableCell style={{ borderBottom: 'none' }}>{version || 'N/A'}</TableCell>
+            <TableCell style={{ borderBottom: 'none' }}>
+              {sbom && (
+                <Button href={sbom} target="_blank" endIcon={<OpenInNew />}>
+                  SBOM
+                </Button>
+              )}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

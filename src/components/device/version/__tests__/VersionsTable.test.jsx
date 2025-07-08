@@ -35,5 +35,6 @@ describe('VersionsTable', () => {
     expect(screen.getByText('UI')).toBeVisible();
     expect(screen.getByText('1.2.0-porpoise')).toBeVisible();
     expect(screen.getByText('1.2.0-porpoise-ABCDE')).toBeVisible();
+    expect(screen.getByText('SBOM')).toBeVisible();
   });
 });

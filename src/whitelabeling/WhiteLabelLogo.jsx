@@ -16,17 +16,18 @@
  * limitations under the License.
  */
 import React from 'react'
-import Logo from '../assets/images/logo.svg?react' // Vite-compatible SVG import using vite-plugin-svgr
+import Logo from '../assets/images/logo-hp.svg?react' // Vite-compatible SVG import using vite-plugin-svgr
 import { useTheme } from '@mui/material/styles'
 import PropTypes from 'prop-types'
 
 // Set to true if the whitelabel logo should be used
-export const useWhiteLabelLogo = false
+export const useWhiteLabelLogo = true
 // Set to false if 'powered by flecs' should not be shown
 export const showPoweredBy = true
 
 export default function WhiteLabelLogo({ logoColor }) {
   const theme = useTheme() // Access the Material-UI theme
+  logoColor = 'white'
   // Customize the whitelabel logo here
   return (
     <Logo

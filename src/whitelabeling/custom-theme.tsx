@@ -17,17 +17,69 @@
  */
 import { createTheme, ThemeOptions } from '@mui/material/styles'
 import './custom-fonts.css'
-import {
-  darkTheme as flecsDarkTheme,
-  lightTheme as flecsLightTheme
-} from '../styles/theme'
+import { darkTheme as flecsDarkTheme, lightTheme as flecsLightTheme } from '../styles/theme'
+import { colors, hpGrey, hpGreen } from './custom-tokens'
+
+const baseTheme = createTheme({
+  typography: {
+    fontFamily: "'Encode Sans', sans-serif",
+  },
+  palette: {
+    primary: {
+      main: colors.primary,
+    },
+    secondary: {
+      main: colors.secondary,
+    },
+    text: {
+      primary: hpGrey,
+    },
+  },
+})
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
+  ...baseTheme,
+  palette: {
+    ...baseTheme.palette,
+    ...flecsDarkTheme.palette,
+    primary: {
+      main: colors.accent,
+    },
+    success: {
+      main: hpGreen,
+    },
+  },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: colors.secondary,
+            '& .MuiListItemIcon-root': {
+              color: colors.accent,
+            },
+          },
+          '&$selected:hover': {
+            color: colors.accent,
+            '& .MuiListItemIcon-root': {
+              color: colors.accent,
+            },
+          },
+          '&:hover': {
+            color: colors.secondary,
+            '& .MuiListItemIcon-root': {
+              color: colors.secondary,
+            },
+          },
+        },
+        selected: {},
+      },
+    },
+  },
 } as ThemeOptions)
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
+  ...baseTheme,
 } as ThemeOptions)
 
 export { darkTheme, lightTheme }

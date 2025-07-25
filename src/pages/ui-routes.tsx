@@ -7,6 +7,7 @@ import System from './System';
 import NotFound from './NotFound';
 import Login from './Login';
 import OpenSource from './OpenSource';
+import SplashScreen from './SplashScreen';
 
 const UIRoutes: React.FC = () => {
   return useRoutes([
@@ -16,6 +17,7 @@ const UIRoutes: React.FC = () => {
     { path: '/system', element: <System /> },
     { path: '/login', element: <Login /> },
     { path: '/open-source', element: <OpenSource /> },
+    { path: '/splash-screen', element: <SplashScreen /> },
     { path: '*', element: <NotFound /> },
   ]);
 };

@@ -47,6 +47,7 @@ import HelpButton from './buttons/help/HelpButton';
 import { helpdomain } from './help/helplinks';
 import { appBarIconColors } from '../whitelabeling/custom-tokens';
 import QuestLogDialog from './dialogs/QuestLogDialog';
+import { Fingerprint, Login } from '@mui/icons-material';
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -100,6 +101,10 @@ export default function ElevateAppBar(props) {
 
   const handleSignIn = () => {
     navigate('/Login');
+  };
+
+  const handleSplashScreen = () => {
+    navigate('/splash-screen');
   };
 
   const DarkModeContext = useContext(darkModeContext);
@@ -215,6 +220,13 @@ export default function ElevateAppBar(props) {
                   <MenuItem onClick={handleSignout}>Sign out</MenuItem>
                 </Menu>
               </div>
+              <IconButton
+                aria-label="device-login-button"
+                sx={{ ml: 1, mr: 1, color: appBarIconColors.primary }}
+                onClick={handleSplashScreen}
+              >
+                <Fingerprint></Fingerprint>
+              </IconButton>
             </Toolbar>
           </AppBar>
         </ElevationScroll>

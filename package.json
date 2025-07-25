@@ -9,7 +9,6 @@
   "homepage": "http://localhost/ui/",
   "main": "src/index.js",
   "dependencies": {
-    "@cocart/cocart-rest-api": "^1.1.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts",
@@ -19,8 +18,6 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "axios": "^1.7.4",
-    "base-64": "^1.0.0",
-    "buffer": "^6.0.3",
     "draft-js": "^0.11.7",
     "emailjs-com": "^3.2.0",
     "js-yaml": "^4.1.0",
@@ -28,7 +25,6 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
-    "stream-browserify": "^3.0.0",
     "styled-components": "^6.0.8"
   },
   "devDependencies": {

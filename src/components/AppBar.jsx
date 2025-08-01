@@ -37,7 +37,6 @@ import PropTypes from 'prop-types';
 import { darkModeContext } from './ThemeHandler';
 import Logo from './app_bar/Logo';
 import { Stack } from '@mui/material';
-import { useAuth } from './AuthProvider';
 import AuthService from '../api/marketplace/AuthService';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
@@ -74,7 +73,7 @@ export default function ElevateAppBar(props) {
   const [anchorElMenu, setAnchorElMenu] = React.useState(null);
   const [anchorElPopover, setAnchorElPopover] = React.useState(null);
   const [questLogOpen, setQuestLogOpen] = React.useState(false);
-  const user = useAuth();
+  const user = null;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { jobs, fetchExports } = React.useContext(JobsContext);

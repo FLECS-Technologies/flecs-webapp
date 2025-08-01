@@ -89,10 +89,6 @@ function LicenseInfo() {
                 <TableCell style={{ borderBottom: 'none' }}>{info.license}</TableCell>
               </TableRow>
             )}
-            <TableRow key={String(info.type)} style={{ borderBottom: 'none' }}>
-              <TableCell style={{ borderBottom: 'none' }}>Type</TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>{String(info.type)}</TableCell>
-            </TableRow>
             {info.sessionId && info.sessionId.id && (
               <TableRow key={info.sessionId.id} style={{ borderBottom: 'none' }}>
                 <TableCell style={{ borderBottom: 'none' }}>Session ID</TableCell>

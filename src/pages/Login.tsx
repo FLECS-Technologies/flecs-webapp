@@ -20,7 +20,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Grid, Link, Paper, TextField, Typography, IconButton, Box, Button } from '@mui/material';
 import styled from 'styled-components';
 import AuthService from '../api/marketplace/AuthService';
-import { useAuth } from '../components/AuthProvider';
+// import { useAuth } from '../components/AuthProvider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { postMPLogin } from '../api/device/DeviceAuthAPI';
 import { DeviceActivationContext } from '../components/providers/DeviceActivationContext';
@@ -40,7 +40,7 @@ export default function Login() {
   const [message, setMessage] = React.useState('');
   const { validate } = React.useContext(DeviceActivationContext);
 
-  const user = useAuth();
+  const user = null;
   const navigate = useNavigate();
   const [location] = React.useState(useLocation());
   const from = location.state?.from?.pathname || '/';
@@ -56,7 +56,7 @@ export default function Login() {
         () => {
           setMessage('Successfully logged in!');
 
-          user.setUser(AuthService.getCurrentUser());
+          // user.setUser(AuthService.getCurrentUser());
           postMPLogin(AuthService.getCurrentUser()).then(
             () => {
               validate();

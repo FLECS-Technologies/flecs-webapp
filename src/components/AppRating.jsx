@@ -20,13 +20,12 @@ import React, { Fragment } from 'react';
 import { IconButton, Rating, Typography } from '@mui/material';
 import { createAppRating } from '../api/marketplace/AppRatingService';
 import { Cancel, CheckCircle } from '@mui/icons-material';
-import { useAuth } from '../components/AuthProvider';
 import ActionSnackbar from './ActionSnackbar';
 import { jwt } from '../api/auth-header';
 
 export default function AppRating(props) {
   const { app } = props;
-  const user = useAuth();
+  const user = null;
   const [value, setValue] = React.useState(Number(app?.average_rating));
   const [rated, setRated] = React.useState(false);
   const [save, setSave] = React.useState(false);

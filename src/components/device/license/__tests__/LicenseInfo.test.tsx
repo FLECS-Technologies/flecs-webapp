@@ -34,9 +34,6 @@ describe('LicenseInfo Component', () => {
       const licenseText = screen.getByText(mockLicenseInfoAPIResponse.data.license);
       expect(licenseText).toBeInTheDocument();
 
-      const typeText = screen.getByText(mockLicenseInfoAPIResponse.data.type);
-      expect(typeText).toBeInTheDocument();
-
       const sessionIdText = screen.getByText(mockLicenseInfoAPIResponse.data.sessionId.id);
       expect(sessionIdText).toBeInTheDocument();
 

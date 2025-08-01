@@ -20,11 +20,13 @@ import { Box, Button, CircularProgress, Typography, Alert, Paper, Container } fr
 import { useNavigate } from 'react-router-dom';
 import WhiteLabelLogo from '../whitelabeling/WhiteLabelLogo';
 import { api } from '../api/flecs-core/api-client';
+import { useAuth } from 'react-oidc-context';
 
 export default function SplashScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [identityProviderUrl, setIdentityProviderUrl] = useState<string | null>(null);
+  const auth = useAuth();
 
   useEffect(() => {
     checkBackendAvailability();
@@ -57,7 +59,7 @@ export default function SplashScreen() {
 
   const handleLoginClick = () => {
     if (identityProviderUrl) {
-      window.location.href = identityProviderUrl;
+      auth.signinRedirect();
     }
   };
 

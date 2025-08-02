@@ -28,28 +28,31 @@ import { JobsContextProvider } from './data/JobsContext';
 import { FilterContextProvider } from './data/FilterContext';
 import { QuestContextProvider } from './components/quests/QuestContext';
 import { ThemeHandler } from './styles/ThemeHandler';
+import { ApiProvider } from './components/providers/ApiProvider';
 
 export default function App() {
   return (
     <ThemeHandler>
       <AuthProvider>
-        <JobsContextProvider>
-          <QuestContextProvider>
-            <FilterContextProvider>
-              <Frame>
-                <SystemContextProvider>
-                  <SystemData>
-                    <ReferenceDataContextProvider>
-                      <AppList>
-                        <UIRoutes />
-                      </AppList>
-                    </ReferenceDataContextProvider>
-                  </SystemData>
-                </SystemContextProvider>
-              </Frame>
-            </FilterContextProvider>
-          </QuestContextProvider>
-        </JobsContextProvider>
+        <ApiProvider>
+          <JobsContextProvider>
+            <QuestContextProvider>
+              <FilterContextProvider>
+                <Frame>
+                  <SystemContextProvider>
+                    <SystemData>
+                      <ReferenceDataContextProvider>
+                        <AppList>
+                          <UIRoutes />
+                        </AppList>
+                      </ReferenceDataContextProvider>
+                    </SystemData>
+                  </SystemContextProvider>
+                </Frame>
+              </FilterContextProvider>
+            </QuestContextProvider>
+          </JobsContextProvider>
+        </ApiProvider>
       </AuthProvider>
     </ThemeHandler>
   );

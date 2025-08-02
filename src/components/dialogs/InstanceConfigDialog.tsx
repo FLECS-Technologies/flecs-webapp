@@ -30,8 +30,8 @@ import EnvironmentConfigTab from './tabs/EnvironmentConfigTab';
 import UsbConfigTab from './tabs/UsbConfigTab';
 import NetworkConfigTab from './tabs/NetworkConfigTab';
 import PortsConfigTab from './tabs/PortsConfigTab';
-import { api } from '../../api/flecs-core/api-client';
 import EditorConfigTab from './tabs/EditorConfigTab';
+import { useApi } from '../../components/providers/ApiProvider';
 
 interface InstanceConfigDialogProps {
   open: boolean;
@@ -51,6 +51,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   const [activeTab, setActiveTab] = useState(0);
   const [hasChanges, setHasChanges] = useState(false);
   const [restarting, setRestarting] = useState(false);
+  const api = useApi();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);

@@ -41,29 +41,3 @@ export function createApi(config: Configuration) {
     quests: new QuestsApi(config),
   };
 }
-
-function getBaseURL(): string {
-  return host() + baseURL();
-}
-
-function host() {
-  let target = '';
-  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-    target = import.meta.env.VITE_APP_DEV_CORE_URL || '';
-  }
-  return target;
-}
-
-function baseURL() {
-  if (
-    import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
-    import.meta.env.VITE_APP_ENVIRONMENT === 'development'
-  ) {
-    return '/api/v2';
-  }
-  return '../api/v2';
-}
-
-const config = new Configuration({ basePath: getBaseURL() });
-
-export const api = createApi(config);

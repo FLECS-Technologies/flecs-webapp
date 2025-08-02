@@ -19,26 +19,28 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, CircularProgress, Typography, Alert, Paper, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import WhiteLabelLogo from '../whitelabeling/WhiteLabelLogo';
-import { api } from '../api/flecs-core/api-client';
 import { useAuth } from 'react-oidc-context';
+// import { useApi } from '../components/providers/ApiProvider';
 
 export default function SplashScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [identityProviderUrl, setIdentityProviderUrl] = useState<string | null>(null);
   const auth = useAuth();
+  // const api = useApi();
 
   useEffect(() => {
     checkBackendAvailability();
   }, []);
 
   const checkBackendAvailability = async () => {
-    setLoading(true);
+    setLoading(false);
     setError(null);
+    setIdentityProviderUrl('https://your-identity-provider.com/login');
 
-    api.system
-      .systemPingGet()
-      .then(() => {
+    /*api.system
+    //  .systemPingGet()
+    //  .then(() => {
         // Backend is available, proceed to fetch identity provider URL
         // Fetch identity provider URL (adjust the API call based on your actual endpoint)
         // This is an example - replace with your actual API call
@@ -55,6 +57,7 @@ export default function SplashScreen() {
       .finally(() => {
         setLoading(false);
       });
+      */
   };
 
   const handleLoginClick = () => {

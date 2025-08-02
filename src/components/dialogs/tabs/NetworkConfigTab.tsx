@@ -17,7 +17,6 @@
  */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box, List, CircularProgress, Stack, Typography } from '@mui/material';
-import { api } from '../../../api/flecs-core/api-client';
 import {
   DeploymentNetwork,
   InstanceConfigNetwork,
@@ -30,6 +29,7 @@ import NetworkConfigCard from './networks/NetworkConfigCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancenicconfig } from '../../../components/help/helplinks';
 import ActionSnackbar from '../../../components/ActionSnackbar';
+import { useApi } from '../../../components/providers/ApiProvider';
 
 export interface NetworkState {
   id: string;
@@ -49,6 +49,7 @@ interface NetworkConfigTabProps {
 
 const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChange }) => {
   const executedRef = React.useRef(false);
+  const api = useApi();
   const [networks, setNetworks] = useState<NetworkState[]>([]);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(false);

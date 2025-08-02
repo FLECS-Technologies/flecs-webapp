@@ -19,10 +19,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, List, CircularProgress, Stack } from '@mui/material';
 import ActionSnackbar from '../../ActionSnackbar';
 import { InstanceEditor } from '@flecs/core-client-ts';
-import { api } from '../../../api/flecs-core/api-client';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
 import EditorConfigCard from './editors/EditorConfigCard';
+import { useApi } from '../../../components/providers/ApiProvider';
 
 interface EditorConfigTabProps {
   instanceId: string;
@@ -37,6 +37,7 @@ export interface EditorConfigSnackbar {
 
 const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange }) => {
   const executedRef = React.useRef(false);
+  const api = useApi();
   const [editors, setEditors] = useState<InstanceEditor[]>([]);
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);

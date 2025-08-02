@@ -12,9 +12,10 @@ import {
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { api } from '../../../api/flecs-core/api-client';
+import { useApi } from '../../../components/providers/ApiProvider';
 
 export default function ExportList() {
+  const api = useApi();
   const [exports, setExports] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

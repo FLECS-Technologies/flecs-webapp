@@ -17,7 +17,7 @@
  */
 import React, { createContext, ReactNode } from 'react';
 import { Quest, QuestState } from '@flecs/core-client-ts';
-import { api } from '../../api/flecs-core/api-client';
+import { useApi } from '../../components/providers/ApiProvider';
 
 export interface QuestContextType {
   quests: React.RefObject<Map<number, Quest>>;
@@ -56,6 +56,7 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
   const quests = React.useRef<Map<number, Quest>>(new Map<number, Quest>());
   const [fetching, setFetching] = React.useState(false);
   const [mainQuestIds, setMainQuestIds] = React.useState<number[]>([]);
+  const api = useApi();
 
   React.useEffect(() => {
     if (quests.current.size === 0) {

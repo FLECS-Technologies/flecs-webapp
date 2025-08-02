@@ -22,7 +22,7 @@ import AppBar from '../AppBar';
 import { DarkModeState } from '../ThemeHandler';
 import { JobsContextProvider } from '../../data/JobsContext';
 import { vi } from 'vitest';
-import * as AuthProvider from '../AuthProvider';
+import * as AuthProvider from '../providers/AuthProvider';
 import { QuestContextProvider } from '../quests/QuestContext';
 
 // mock react-router-dom navigate
@@ -58,7 +58,8 @@ const currentUser = {
 };
 
 vi.mock('../AuthProvider', async () => {
-  const actual = (await vi.importActual) < typeof import('../AuthProvider') > '../AuthProvider';
+  const actual =
+    (await vi.importActual) < typeof import('../providers/AuthProvider') > '../AuthProvider';
   return {
     ...actual,
     useAuth: vi.fn(),

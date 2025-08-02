@@ -27,9 +27,9 @@ import {
   InstancePortMappingSingle,
   TransportProtocol,
 } from '@flecs/core-client-ts';
-import { api } from '../../../api/flecs-core/api-client';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
+import { useApi } from '../../../components/providers/ApiProvider';
 
 interface PortsConfigTabProps {
   instanceId: string;
@@ -43,6 +43,7 @@ interface PortWithProtocol {
 
 const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange }) => {
   const executedRef = React.useRef(false);
+  const api = useApi();
   const [ports, setPorts] = useState<PortWithProtocol[]>([]);
   const [loading, setLoading] = useState(true);
   const [save, setSave] = useState(false);

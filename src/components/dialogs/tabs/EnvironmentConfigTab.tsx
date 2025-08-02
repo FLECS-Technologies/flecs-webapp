@@ -18,12 +18,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, List, Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { api } from '../../../api/flecs-core/api-client';
 import { InstanceEnvironmentVariable } from '@flecs/core-client-ts';
 import ActionSnackbar from '../../ActionSnackbar';
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
+import { useApi } from '../../../components/providers/ApiProvider';
 
 interface EnvironmentConfigTabProps {
   instanceId: string;
@@ -32,6 +32,7 @@ interface EnvironmentConfigTabProps {
 
 const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId, onChange }) => {
   const executedRef = React.useRef(false);
+  const api = useApi();
   const [envVars, setEnvVars] = useState<InstanceEnvironmentVariable[]>([]);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);

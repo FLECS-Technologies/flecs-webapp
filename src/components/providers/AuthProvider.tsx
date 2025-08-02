@@ -16,14 +16,18 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { AuthProvider as OidcAuthProvider, useAuth } from 'react-oidc-context';
+import { AuthProvider as OidcAuthProvider, useAuth, useAutoSignin } from 'react-oidc-context';
 import { CircularProgress, Box } from '@mui/material';
-import SplashScreen from '../pages/SplashScreen';
+import SplashScreen from '../../pages/SplashScreen';
+import { WebStorageStateStore } from 'oidc-client-ts';
 
 const oidcConfig = {
   authority: 'http://localhost:8080/realms/master',
   client_id: 'flecs',
   redirect_uri: `${window.location.origin}`,
+  automaticSilentRenew: true,
+  userStore: new WebStorageStateStore({ store: window.localStorage }),
+  accessTokenExpiringNotificationTimeInSeconds: 300, // refresh token 5 minutes before expiry
 };
 
 interface AuthProviderProps {
@@ -33,6 +37,7 @@ interface AuthProviderProps {
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
 
+  // Show loading while either auth is loading or auto sign-in is in progress
   if (auth.isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -41,7 +46,13 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!auth.isAuthenticated || auth.error) {
+  // If not authenticated and auto sign-in failed, show splash screen
+  if (!auth.isAuthenticated) {
+    return <SplashScreen />;
+  }
+
+  // If there's an auth error that's not related to auto sign-in, show splash screen
+  if (auth.error) {
     return <SplashScreen />;
   }
 

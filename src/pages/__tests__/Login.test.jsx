@@ -23,7 +23,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Login from '../Login';
 import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../../api/api-config';
 import axios from 'axios';
-import { useAuth } from '../../components/AuthProvider';
+import { useAuth } from '../../components/providers/AuthProvider';
 import { vitest } from 'vitest';
 
 vitest.mock('axios');

@@ -19,7 +19,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
-import Layout from './Layout';
 import AppBar from './AppBar';
 import Drawer from './Drawer';
 import styled from 'styled-components';
@@ -50,16 +49,14 @@ const Frame = ({ children }) => {
   };
 
   return (
-    <Layout>
-      <Box sx={{ display: 'flex' }}>
-        <AppBar />
-        <Drawer />
-        <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
-          {appBarIsVisible && <Header aria-label="Header-Placeholder" />}
-          {children}
-        </Box>
+    <Box sx={{ display: 'flex' }}>
+      <AppBar />
+      <Drawer />
+      <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+        {appBarIsVisible && <Header aria-label="Header-Placeholder" />}
+        {children}
       </Box>
-    </Layout>
+    </Box>
   );
 };
 

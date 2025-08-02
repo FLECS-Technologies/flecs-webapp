@@ -21,10 +21,7 @@ import ReactDOM from 'react-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -34,19 +31,15 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
-import { darkModeContext } from './ThemeHandler';
+import { useDarkMode } from '../styles/ThemeHandler';
 import Logo from './app_bar/Logo';
-import { Stack } from '@mui/material';
-import AuthService from '../api/marketplace/AuthService';
-import LoginIcon from '@mui/icons-material/Login';
-import PersonIcon from '@mui/icons-material/Person';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { JobsContext } from '../data/JobsContext';
 import HelpButton from './buttons/help/HelpButton';
 import { helpdomain } from './help/helplinks';
 import { appBarIconColors } from '../whitelabeling/custom-tokens';
 import QuestLogDialog from './dialogs/QuestLogDialog';
-import { Fingerprint, Login } from '@mui/icons-material';
+import Avatar from './menus/avatar/Avatar';
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -70,12 +63,10 @@ ElevationScroll.propTypes = {
 
 export default function ElevateAppBar(props) {
   const [visible, setIsVisible] = React.useState(true);
-  const [anchorElMenu, setAnchorElMenu] = React.useState(null);
   const [anchorElPopover, setAnchorElPopover] = React.useState(null);
   const [questLogOpen, setQuestLogOpen] = React.useState(false);
-  const user = null;
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isDarkMode, setDarkMode } = useDarkMode();
   const { jobs, fetchExports } = React.useContext(JobsContext);
   const finishedJobs = jobs?.filter(
     (j) => j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled',
@@ -83,43 +74,9 @@ export default function ElevateAppBar(props) {
   const open = Boolean(anchorElPopover);
   const id = open ? 'simple-popover' : undefined;
 
-  const handleMenu = (event) => {
-    setAnchorElMenu(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorElMenu(null);
-  };
-
-  const handleSignout = () => {
-    AuthService.logout();
-    user?.setUser(null);
-
-    setAnchorElMenu(null);
-  };
-
-  const handleSignIn = () => {
-    navigate('/Login');
-  };
-
-  const handleSplashScreen = () => {
-    navigate('/splash-screen');
-  };
-
-  const DarkModeContext = useContext(darkModeContext);
-  const { darkMode, setDarkMode } = DarkModeContext || {};
-
   const handleThemeChange = () => {
-    if (darkMode) {
-      localStorage.setItem('preferred-theme', 'light');
-      setDarkMode(false);
-    } else {
-      localStorage.setItem('preferred-theme', 'dark');
-      setDarkMode(true);
-    }
+    setDarkMode(!isDarkMode);
   };
-
-  React.useEffect(() => {}, [user]);
 
   React.useEffect(() => {
     fetchExports();
@@ -178,54 +135,13 @@ export default function ElevateAppBar(props) {
                 sx={{ ml: 1, mr: 1, color: appBarIconColors.primary }}
                 onClick={handleThemeChange}
               >
-                {darkMode ? (
+                {isDarkMode ? (
                   <LightModeIcon aria-label="LightModeIcon" />
                 ) : (
                   <DarkModeIcon aria-label="DarkModeIcon" />
                 )}
               </IconButton>
-
-              <div>
-                <IconButton
-                  aria-label="avatar-button"
-                  component="span"
-                  onClick={user?.user ? handleMenu : handleSignIn}
-                  size="small"
-                  sx={{ color: appBarIconColors.primary }}
-                >
-                  {user?.user ? (
-                    <PersonIcon aria-label="user-menu-button" />
-                  ) : (
-                    <LoginIcon aria-label="login-button" />
-                  )}
-                </IconButton>
-                <Menu
-                  id="user-menu"
-                  aria-label="user-menu"
-                  anchorEl={anchorElMenu}
-                  keepMounted
-                  open={Boolean(anchorElMenu)}
-                  onClose={handleCloseMenu}
-                >
-                  <MenuItem divider={true} style={{ pointerEvents: 'none' }}>
-                    <Stack>
-                      <Typography variant="caption">Signed in as</Typography>
-                      <Typography variant="caption" style={{ fontWeight: 600 }}>
-                        {user?.user?.user?.display_name}
-                      </Typography>
-                    </Stack>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
-                  <MenuItem onClick={handleSignout}>Sign out</MenuItem>
-                </Menu>
-              </div>
-              <IconButton
-                aria-label="device-login-button"
-                sx={{ ml: 1, mr: 1, color: appBarIconColors.primary }}
-                onClick={handleSplashScreen}
-              >
-                <Fingerprint></Fingerprint>
-              </IconButton>
+              <Avatar />
             </Toolbar>
           </AppBar>
         </ElevationScroll>

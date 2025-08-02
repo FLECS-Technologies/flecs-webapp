@@ -17,9 +17,9 @@
  */
 
 import React from 'react';
-import { render /*, screen */ } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AuthProvider, RequireAuth } from '../AuthProvider';
+import { AuthProvider } from '../AuthProvider';
 
 const mockUser = {
   user: {
@@ -55,11 +55,5 @@ describe('AuthProvider', () => {
   });
   test('renders AuthProvider component', () => {
     render(<AuthProvider />);
-
-    // screen.debug()
-  });
-
-  test('renders RequireAuth component', () => {
-    expect(() => render(<RequireAuth />)).toThrow();
   });
 });

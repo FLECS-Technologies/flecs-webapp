@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 import { CoreVersion, Distro, Kernel } from './VersionInterfaces';
 import { OpenInNew } from '@mui/icons-material';
+import sbomJson from '../../../assets/sbom.json?url';
 
 interface VersionsTableProps {
   coreVersion?: CoreVersion;
@@ -54,7 +55,7 @@ const VersionsTable: React.FC<VersionsTableProps> = ({
     () => [
       createData('Core', coreVersion?.core),
       createData('API', coreVersion?.api),
-      createData('UI', webappVersion, 'src/assets/sbom.json'),
+      createData('UI', webappVersion, sbomJson),
       createData(distro?.name || 'Distro', distro?.version),
       createData('Kernel', kernel?.version),
     ],

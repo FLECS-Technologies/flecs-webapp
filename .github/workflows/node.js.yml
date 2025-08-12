@@ -29,12 +29,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
-      - name: Debug generated files
-        run: |
-          ls -la src/assets/
-          echo "--- SBOM content ---"
-          cat src/assets/sbom.json || echo "SBOM file not found"
-          echo "--- License file size ---"
-          wc -c src/assets/third-party-licenses.txt || echo "License file not found"
       - run: npm run build:test --if-present
       - run: npm test

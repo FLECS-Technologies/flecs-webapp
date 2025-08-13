@@ -16,40 +16,48 @@
  * limitations under the License.
  */
 import React, { useEffect, useState } from 'react';
-import { Box, Button, CircularProgress, Typography, Alert, Paper, Container } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  Alert,
+  Paper,
+  Container,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import { Check } from '@mui/icons-material';
 import WhiteLabelLogo from '../whitelabeling/WhiteLabelLogo';
 import { useAuth } from 'react-oidc-context';
-// import { useApi } from '../components/providers/ApiProvider';
+import { usePublicApi } from '../components/providers/ApiProvider';
+import { useAuthConfig } from '../components/providers/AuthProvider';
 
 export default function SplashScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [identityProviderUrl, setIdentityProviderUrl] = useState<string | null>(null);
+  const [clientId, setClientId] = useState('');
+
   const auth = useAuth();
-  // const api = useApi();
+  const api = usePublicApi();
+  const { oidcConfig, updateClientId } = useAuthConfig();
+
+  useEffect(() => {
+    // Initialize clientId from current config
+    setClientId(oidcConfig.client_id);
+  }, [oidcConfig.client_id]);
 
   useEffect(() => {
     checkBackendAvailability();
   }, []);
 
   const checkBackendAvailability = async () => {
-    setLoading(false);
+    setLoading(true);
     setError(null);
-    setIdentityProviderUrl('https://your-identity-provider.com/login');
 
-    /*api.system
-    //  .systemPingGet()
-    //  .then(() => {
-        // Backend is available, proceed to fetch identity provider URL
-        // Fetch identity provider URL (adjust the API call based on your actual endpoint)
-        // This is an example - replace with your actual API call
-        // const response = await api.system.getIdentityProviderUrl?.();
-        // const idpUrl = response?.data || 'https://your-identity-provider.com/login';
-        const idpUrl = 'https://your-identity-provider.com/login';
-
-        setIdentityProviderUrl(idpUrl);
-      })
+    api.system
+      .systemPingGet()
       .catch(() => {
         // Handle backend not available case
         setError('Backend is not available. Please try again later.');
@@ -57,11 +65,19 @@ export default function SplashScreen() {
       .finally(() => {
         setLoading(false);
       });
-      */
+  };
+
+  const handleClientIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newClientId = event.target.value;
+    setClientId(newClientId); // Only update local state
+  };
+
+  const handleApplyClientId = () => {
+    updateClientId(clientId);
   };
 
   const handleLoginClick = () => {
-    if (identityProviderUrl) {
+    if (!error) {
       auth.signinRedirect();
     }
   };
@@ -69,6 +85,9 @@ export default function SplashScreen() {
   const handleRetry = () => {
     checkBackendAvailability();
   };
+
+  // Check if clientId has changed from the current config
+  const hasClientIdChanged = clientId !== oidcConfig.client_id;
 
   return (
     <Container maxWidth="sm">
@@ -120,16 +139,41 @@ export default function SplashScreen() {
             </Box>
           )}
 
-          {!loading && !error && identityProviderUrl && (
-            <Button
-              variant="contained"
-              onClick={handleLoginClick}
-              size="large"
-              fullWidth
-              sx={{ py: 1.5 }}
-            >
-              Login
-            </Button>
+          {!loading && !error && (
+            <Box display="flex" flexDirection="column" gap={2} width="100%">
+              <TextField
+                label="Client ID"
+                value={clientId}
+                onChange={handleClientIdChange}
+                variant="outlined"
+                fullWidth
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleApplyClientId}
+                          disabled={!hasClientIdChanged}
+                          color="primary"
+                          title="Apply Client ID"
+                        >
+                          <Check />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleLoginClick}
+                size="large"
+                fullWidth
+                sx={{ py: 1.5 }}
+              >
+                Login
+              </Button>
+            </Box>
           )}
         </Paper>
       </Box>

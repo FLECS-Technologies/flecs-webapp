@@ -1,13 +1,32 @@
+/*
+ * Copyright (c) 2022 FLECS Technologies GmbH
+ *
+ * Created on Tue Aug 05 2025
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { Login, Person } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { useAuth } from 'react-oidc-context';
 import { useNavigate } from 'react-router-dom';
 import { appBarIconColors } from '../../../styles/tokens';
+import { useAuthActions } from '../../../components/providers/AuthProvider';
 
 export default function Avatar() {
   const [anchorElMenu, setAnchorElMenu] = React.useState<HTMLElement | null>(null);
   const user = useAuth();
+  const { signOut } = useAuthActions();
   const navigate = useNavigate();
 
   interface MenuEventHandler {
@@ -23,11 +42,7 @@ export default function Avatar() {
   };
 
   const handleSignout = async () => {
-    user.signoutRedirect({
-      extraQueryParams: {
-        post_logout_redirect_uri: `${window.location.origin}`,
-      },
-    });
+    signOut();
 
     setAnchorElMenu(null);
   };

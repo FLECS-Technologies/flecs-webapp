@@ -31,7 +31,7 @@ import UsbConfigTab from './tabs/UsbConfigTab';
 import NetworkConfigTab from './tabs/NetworkConfigTab';
 import PortsConfigTab from './tabs/PortsConfigTab';
 import EditorConfigTab from './tabs/EditorConfigTab';
-import { useApi } from '../../components/providers/ApiProvider';
+import { useProtectedApi } from '../../components/providers/ApiProvider';
 
 interface InstanceConfigDialogProps {
   open: boolean;
@@ -51,7 +51,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   const [activeTab, setActiveTab] = useState(0);
   const [hasChanges, setHasChanges] = useState(false);
   const [restarting, setRestarting] = useState(false);
-  const api = useApi();
+  const api = useProtectedApi();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);

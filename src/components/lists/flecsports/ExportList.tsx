@@ -12,10 +12,10 @@ import {
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '../../../components/providers/ApiProvider';
 
 export default function ExportList() {
-  const api = useApi();
+  const api = useProtectedApi();
   const [exports, setExports] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

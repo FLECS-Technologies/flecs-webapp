@@ -11,7 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts",
+    "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts#FLX-1085-rbac",
     "@mui/icons-material": "^7.1.2",
     "@mui/lab": "^7.0.0-beta.14",
     "@mui/material": "^7.1.2",

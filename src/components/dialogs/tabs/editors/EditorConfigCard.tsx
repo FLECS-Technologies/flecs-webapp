@@ -21,7 +21,7 @@ import { Delete, Save } from '@mui/icons-material';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
 import { createUrl } from '../../../../components/buttons/editors/EditorButton';
-import { useApi } from '../../../../components/providers/ApiProvider';
+import { useProtectedApi } from '../../../../components/providers/ApiProvider';
 
 interface EditorConfigCardProps {
   editor: InstanceEditor;
@@ -42,7 +42,7 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
   const [current_editor_path_prefix, setCurrentEditorPathPrefix] = useState<string | undefined>(
     editor.path_prefix,
   );
-  const api = useApi();
+  const api = useProtectedApi();
   const putEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
       await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut(instanceId, port, {

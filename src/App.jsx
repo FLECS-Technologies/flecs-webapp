@@ -18,42 +18,24 @@
 
 import { React } from 'react';
 import Frame from './components/Frame';
-import { ReferenceDataContextProvider } from './data/ReferenceDataContext';
 import { AppList } from './data/AppList';
-import { AuthProvider } from './components/providers/AuthProvider';
 import { UIRoutes } from './pages/ui-routes';
-import { SystemContextProvider } from './data/SystemProvider';
 import { SystemData } from './data/SystemData';
-import { JobsContextProvider } from './data/JobsContext';
-import { FilterContextProvider } from './data/FilterContext';
-import { QuestContextProvider } from './components/quests/QuestContext';
 import { ThemeHandler } from './styles/ThemeHandler';
-import { ApiProvider } from './components/providers/ApiProvider';
+import Providers from './components/providers/Providers';
 
 export default function App() {
   return (
     <ThemeHandler>
-      <AuthProvider>
-        <ApiProvider>
-          <JobsContextProvider>
-            <QuestContextProvider>
-              <FilterContextProvider>
-                <Frame>
-                  <SystemContextProvider>
-                    <SystemData>
-                      <ReferenceDataContextProvider>
-                        <AppList>
-                          <UIRoutes />
-                        </AppList>
-                      </ReferenceDataContextProvider>
-                    </SystemData>
-                  </SystemContextProvider>
-                </Frame>
-              </FilterContextProvider>
-            </QuestContextProvider>
-          </JobsContextProvider>
-        </ApiProvider>
-      </AuthProvider>
+      <Providers>
+        <Frame>
+          <SystemData>
+            <AppList>
+              <UIRoutes />
+            </AppList>
+          </SystemData>
+        </Frame>
+      </Providers>
     </ThemeHandler>
   );
 }

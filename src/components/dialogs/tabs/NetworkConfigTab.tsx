@@ -29,7 +29,7 @@ import NetworkConfigCard from './networks/NetworkConfigCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancenicconfig } from '../../../components/help/helplinks';
 import ActionSnackbar from '../../../components/ActionSnackbar';
-import { useApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '../../../components/providers/ApiProvider';
 
 export interface NetworkState {
   id: string;
@@ -49,7 +49,7 @@ interface NetworkConfigTabProps {
 
 const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChange }) => {
   const executedRef = React.useRef(false);
-  const api = useApi();
+  const api = useProtectedApi();
   const [networks, setNetworks] = useState<NetworkState[]>([]);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(false);

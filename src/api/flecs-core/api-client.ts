@@ -26,6 +26,7 @@ import {
   QuestsApi,
   Configuration,
   SystemApi,
+  AuthenticationApi,
 } from '@flecs/core-client-ts';
 
 export function createApi(config: Configuration) {
@@ -39,5 +40,6 @@ export function createApi(config: Configuration) {
     jobs: new JobsApi(config),
     system: new SystemApi(config),
     quests: new QuestsApi(config),
+    authentication: new AuthenticationApi(config),
   };
 }

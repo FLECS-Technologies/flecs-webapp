@@ -16,31 +16,22 @@
  * limitations under the License.
  */
 import axios from 'axios';
-import { DeviceAPIConfiguration } from '../../api-config';
+import { createApi } from '../../flecs-core/api-client';
 
 export interface OnboardingDeviceAPIResponse {
   jobId: number;
 }
 
-export async function OnboardingDeviceAPI(file: File) {
+export async function OnboardingDeviceAPI(file: File, api: ReturnType<typeof createApi>) {
   const fileContent = await file.text();
   const jsonData = JSON.parse(fileContent);
-  return axios
-    .post(
-      DeviceAPIConfiguration.TARGET +
-        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.POST_ONBOARDING_URL,
-      jsonData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-    .then((response) => {
+
+  return api.device
+    .deviceOnboardingPost(jsonData)
+    .then((response: any) => {
       return response.data as OnboardingDeviceAPIResponse;
     })
-    .catch((error) => {
+    .catch((error: any) => {
       return Promise.reject(error);
     });
 }

@@ -8,8 +8,6 @@ import { SystemData } from '../../data/SystemData';
 import { JobsContextProvider } from '../../data/JobsContext';
 import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/SystemInfoService');
-vitest.mock('../../api/device/SystemPingService');
 vitest.mock('../../api/device/JobsAPI');
 vitest.mock('../../api/device/AppAPI');
 vitest.mock('../../api/device/DeviceAuthAPI');

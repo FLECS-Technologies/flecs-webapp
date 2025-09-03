@@ -36,6 +36,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Avatar from '@mui/material/Avatar';
 
 import LoadIconButton from './LoadIconButton';
+import UninstallButton from './buttons/app/UninstallButton';
 import { ReferenceDataContext } from '../data/ReferenceDataContext';
 import AppAPI from '../api/device/AppAPI';
 import AppInstanceRow from './AppInstanceRow';
@@ -51,15 +52,14 @@ export default function Row(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
   const { row } = props;
   const [open, setOpen] = useStateWithLocalStorage(props.row.appKey.name + '.row.collapsed', false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [uninstalling, setUninstalling] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: 'Info',
     alertSeverity: 'success',
-    snackbarErrorText: '',
+    displayCopyState: 'none',
+    clipBoardContent: '',
   });
-  const { alertSeverity, snackbarText, snackbarErrorText } = snackbarState;
+  const { alertSeverity, snackbarText, displayCopyState, clipBoardContent } = snackbarState;
   const [newInstanceStarting, setNewInstanceStarting] = useState(false);
   const { setFetchingJobs } = useContext(JobsContext);
 
@@ -85,34 +85,6 @@ export default function Row(props) {
   if (!('multiInstance' in row)) {
     row.multiInstance = false;
   }
-
-  const uninstallApp = async (props) => {
-    setUninstalling(true);
-    setFetchingJobs(true);
-    let snackbarText;
-    let alertSeverity;
-    const appAPI = new AppAPI(props.row);
-    await appAPI.uninstall();
-
-    if (appAPI.lastAPICallSuccessful) {
-      if (setUpdateAppList) {
-        setUpdateAppList(true);
-      }
-      snackbarText = appAPI.app.title + ' successfully uninstalled.';
-      alertSeverity = 'success';
-    } else {
-      snackbarText = 'Failed to uninstall ' + appAPI.app.title + '.';
-      alertSeverity = 'error';
-    }
-
-    setSnackbarState({
-      alertSeverity,
-      snackbarText,
-    });
-    setSnackbarOpen(true);
-    setFetchingJobs(false);
-    setUninstalling(false);
-  };
 
   const createNewInstance = async (props, start) => {
     setNewInstanceStarting(true);
@@ -141,6 +113,8 @@ export default function Row(props) {
     setSnackbarState({
       alertSeverity,
       snackbarText,
+      displayCopyState: 'none',
+      clipBoardContent: '',
     });
     setSnackbarOpen(true);
 
@@ -167,6 +141,8 @@ export default function Row(props) {
       setSnackbarState({
         alertSeverity,
         snackbarText,
+        displayCopyState: 'none',
+        clipBoardContent: '',
       });
       setSnackbarOpen(true);
       setUpdateAppList(true);
@@ -174,6 +150,19 @@ export default function Row(props) {
 
     setNewInstanceStarting(false);
     setFetchingJobs(false);
+  };
+
+  const handleUninstallComplete = (success, message, error) => {
+    const alertSeverity = success ? 'success' : 'error';
+    const displayCopyIcon = success ? 'none' : 'block';
+
+    setSnackbarState({
+      alertSeverity,
+      snackbarText: message,
+      displayCopyState: displayCopyIcon,
+      clipBoardContent: error || '',
+    });
+    setSnackbarOpen(true);
   };
 
   return (
@@ -218,25 +207,18 @@ export default function Row(props) {
                   data-testid="start-new-instance-icon-button"
                   icon={<AddTaskIcon data-testid="start-new-instance-icon-button-icon" />}
                   onClick={() => createNewInstance(props, true)}
-                  disabled={
-                    (!row.multiInstance && row.instances.length > 0) ||
-                    newInstanceStarting ||
-                    uninstalling
-                  }
+                  disabled={(!row.multiInstance && row.instances.length > 0) || newInstanceStarting}
                   loading={newInstanceStarting}
                 />
               </span>
             </Tooltip>
             <Tooltip title={'Uninstall app'}>
-              <span>
-                <LoadIconButton
-                  data-testid="uninstall-button"
-                  icon={<DeleteIcon />}
-                  onClick={() => setConfirmOpen(true)}
-                  loading={uninstalling}
-                  disabled={uninstalling}
-                />
-              </span>
+              <UninstallButton
+                app={row}
+                selectedVersion={{ version: row.appKey.version }}
+                variant="icon"
+                onUninstallComplete={handleUninstallComplete}
+              />
             </Tooltip>
             {row.documentationUrl && (
               <HelpButton url={row.documentationUrl} label="Documentation" />
@@ -262,7 +244,6 @@ export default function Row(props) {
                   startNewInstanceCallback={() => createNewInstance(props, true)}
                   createNewInstanceCallback={() => createNewInstance(props, false)}
                   loading={newInstanceStarting}
-                  uninstalling={uninstalling}
                 />
               </Toolbar>
               <Table
@@ -299,19 +280,13 @@ export default function Row(props) {
           <ActionSnackbar
             data-testid="snackbar"
             text={snackbarText}
-            errorText={snackbarErrorText}
+            errorText={clipBoardContent}
             open={snackbarOpen}
             setOpen={setSnackbarOpen}
             alertSeverity={alertSeverity}
           />
         </TableCell>
       </TableRow>
-      <ConfirmDialog
-        title={'Uninstall ' + row.title + '?'}
-        open={confirmOpen}
-        setOpen={setConfirmOpen}
-        onConfirm={() => uninstallApp(props)}
-      ></ConfirmDialog>
     </Fragment>
   );
 }

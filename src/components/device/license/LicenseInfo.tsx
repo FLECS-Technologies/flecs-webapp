@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import { LicenseInfoAPI, LicenseInfoAPIResponse } from '../../../api/device/license/info';
 import {
   Skeleton,
   Table,
@@ -27,18 +26,22 @@ import {
   Typography,
 } from '@mui/material';
 import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
+import { useProtectedApi } from '../../providers/ApiProvider';
+import { DeviceLicenseInfoGet200Response } from '@flecs/core-client-ts';
 
 function LicenseInfo() {
-  const [info, setInfo] = React.useState<LicenseInfoAPIResponse>();
+  const [info, setInfo] = React.useState<DeviceLicenseInfoGet200Response>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const { activated } = React.useContext(DeviceActivationContext);
+  const api = useProtectedApi();
 
   const fetchLicenseInfo = async () => {
     setLoading(true);
-    await LicenseInfoAPI()
+    await api.device
+      .deviceLicenseInfoGet()
       .then((response) => {
-        setInfo(response);
+        setInfo(response.data);
         setError(false);
       })
       .catch(() => {
@@ -96,7 +99,10 @@ function LicenseInfo() {
               </TableRow>
             )}
             {info.sessionId && info.sessionId.timestamp && (
-              <TableRow key={String(info.sessionId.timestamp)} style={{ borderBottom: 'none' }}>
+              <TableRow
+                key={String(new Date(info.sessionId.timestamp))}
+                style={{ borderBottom: 'none' }}
+              >
                 <TableCell style={{ borderBottom: 'none' }}>Last session renewal</TableCell>
                 <TableCell style={{ borderBottom: 'none' }}>
                   {String(info.sessionId.timestamp)}

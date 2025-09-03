@@ -16,58 +16,71 @@
  * limitations under the License.
  */
 import { Button, Grid, Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ReplayIcon from '@mui/icons-material/Replay';
-import ReportIcon from '@mui/icons-material/Report';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import PropTypes from 'prop-types';
 import React from 'react';
-import AppAPI from '../../../api/device/AppAPI';
+import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { useProtectedApi } from '../../providers/ApiProvider';
+import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-import { JobsContext } from '../../../data/JobsContext';
-import { mapJobStatus } from '../../../utils/mapJobStatus';
 
 export default function InstallApp(props) {
   const { app, version, handleActiveStep } = props;
-  const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const context = useQuestContext(QuestContext);
+  const referenceDataContext = React.useContext(ReferenceDataContext);
+  const api = useProtectedApi();
   const [installing, setInstalling] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [retry, setRetry] = React.useState(false);
-  const [installationMessage, setInstallationMessage] = React.useState('');
   const [infoMessage, setInfoMessage] = React.useState(false);
-  const { setFetchingJobs, fetchJobs } = React.useContext(JobsContext);
-  const [running, setRunning] = React.useState(false);
   const executedRef = React.useRef(false);
-
-  function loadReferenceData(props) {
-    if (appList) {
-      const tmpApp = appList.find((obj) => {
-        return obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version;
-      });
-
-      return tmpApp;
-    }
-  }
+  const [currentQuest, setCurrentQuest] = React.useState();
 
   const installApp = React.useCallback(async (app) => {
     setInstalling(true);
     setSuccess(false);
     setError(false);
-    setFetchingJobs(true);
+    setInfoMessage(
+      'You can close this window. Installation takes place automatically in the background.',
+    );
+    try {
+      //step 1: install app
+      const installationQuestId = await api.app.appsInstallPost({
+        appKey: { name: app.appKey.name, version: version },
+      });
+      await context.fetchQuest(installationQuestId.data.jobId);
+      setCurrentQuest(installationQuestId.data.jobId);
+      await context.waitForQuest(installationQuestId.data.jobId);
 
-    const appAPI = new AppAPI(app);
-    appAPI.setAppData(loadReferenceData(app));
-    await appAPI.installFromMarketplace(version, handleInstallationJob);
+      // step 2: create instance
+      const instanceQuestId = await api.instances.instancesCreatePost({
+        appKey: { name: app.appKey.name, version: version },
+      });
+      await context.fetchQuest(instanceQuestId.data.jobId);
+      setCurrentQuest(instanceQuestId.data.jobId);
+      const instanceQuest = await context.waitForQuest(instanceQuestId.data.jobId);
 
-    if (appAPI.lastAPICallSuccessful) {
-      await fetchJobs();
-      setUpdateAppList(true);
+      // step 3: start instance
+      const startInstanceQuestId = await api.instances.instancesInstanceIdStartPost(
+        instanceQuest.result,
+      );
+      await context.fetchQuest(startInstanceQuestId.data.jobId);
+      setCurrentQuest(startInstanceQuestId.data.jobId);
+      await context.waitForQuest(startInstanceQuestId.data.jobId);
+
+      setSuccess(true);
+      setInfoMessage(app.title + ' successfully installed.');
+      referenceDataContext.setUpdateAppList(true);
+      handleActiveStep();
+    } catch (error) {
+      setError(true);
+      setInfoMessage('Error during the installation of ' + app?.title + '.');
+    } finally {
+      setInstalling(false);
     }
-
-    setFetchingJobs(false);
   });
 
   React.useEffect(() => {
@@ -89,32 +102,6 @@ export default function InstallApp(props) {
     setRetry(true);
   };
 
-  const handleInstallationJob = (status) => {
-    const mappedStatus = mapJobStatus(status);
-    if (mappedStatus === 1) {
-      setInstallationMessage(
-        `We're busy installing or uninstalling another app. Installation of ${app.title} will begin soon.`,
-      );
-    } else if (mappedStatus === 2) {
-      setRunning(true);
-      setInstallationMessage('Installing ' + app.title + '.');
-      setInfoMessage(true);
-    } else if (mappedStatus === 4) {
-      setRunning(false);
-      setInstallationMessage(app.title + ' successfully installed.');
-      setInfoMessage(false);
-      setSuccess(true);
-      setInstalling(false);
-    } else if (mappedStatus === -1) {
-      setRunning(false);
-      setInstallationMessage('Error during the installation of ' + app.title + '.');
-      setSuccess(false);
-      setError(true);
-      setInstalling(false);
-    }
-    handleActiveStep(mappedStatus);
-  };
-
   return (
     <div>
       <Grid
@@ -127,29 +114,13 @@ export default function InstallApp(props) {
         alignItems="center"
       >
         <Grid>
-          {installing && !running && <CircularProgress color="secondary" />} {/* pending job */}
-          {running && <CircularProgress />}
-          {success && !installing && (
-            <CheckCircleIcon
-              data-testid="success-icon"
-              fontSize="large"
-              color="success"
-            ></CheckCircleIcon>
-          )}
-          {error && (
-            <ReportIcon data-testid="error-icon" fontSize="large" color="error"></ReportIcon>
-          )}
-        </Grid>
-        <Grid>
-          <Typography data-testid="installationMessage">{installationMessage}</Typography>
+          <QuestLogEntry id={currentQuest} level={0} showBorder={false} />
         </Grid>
         <Grid>
           {infoMessage ? (
             <Alert sx={{ mb: 2, marginTop: '50px' }} severity="info">
               <AlertTitle>Info</AlertTitle>
-              <Typography variant="body2">
-                You can close this window. Installation takes place automatically in the background.
-              </Typography>
+              <Typography variant="body2">{infoMessage}</Typography>
             </Alert>
           ) : null}
         </Grid>

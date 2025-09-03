@@ -11,10 +11,12 @@ import { InstallAppAPI } from '../../../api/device/apps/install';
 import { checkAllJobStatuses, checkJobStatus } from '../../../utils/checkJobStatus';
 import { UpdateInstances } from '../../../api/device/instances/instance';
 import Job from '../../job/Job';
+import { useProtectedApi } from '../../../components/providers/ApiProvider';
 
 export default function UpdateApp({ app, from, to, handleActiveStep }) {
   const executedRef = useRef(false);
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
+  const api = useProtectedApi();
 
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -38,7 +40,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
 
         // 1. install the requested version
         setInstallationMessage(from < to ? 'Updating...' : 'Downgrading...');
-        const installJobId = await InstallAppAPI(app.appKey.name, to);
+        const installJobId = await InstallAppAPI(app.appKey.name, to, api);
         setJobId(installJobId);
 
         // 2. wait until installation is finished
@@ -47,7 +49,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
 
         // 3. update all instances
         setInstallationMessage(`Migrating ${installedApp?.instances?.length} instances...`);
-        const updateJobIds = await UpdateInstances(installedApp?.instances, to);
+        const updateJobIds = await UpdateInstances(installedApp?.instances, to, api);
         // 4. wait until all instances are updated
         const updateStatuses = await checkAllJobStatuses(updateJobIds);
         const unsuccessfulJob = updateStatuses.find((status) => status !== 'successful');

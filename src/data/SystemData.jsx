@@ -18,12 +18,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSystemContext } from './SystemProvider';
-import { SystemPing } from '../api/device/SystemPingService';
-import { SystemInfo } from '../api/device/SystemInfoService';
+import { useProtectedApi } from '../components/providers/ApiProvider';
 
 function SystemData(props) {
   const { setPing, loading, setLoading, setSystemInfo } = useSystemContext();
   const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false);
+  const api = useProtectedApi();
 
   React.useEffect(() => {
     if (!loading) {
@@ -39,7 +39,8 @@ function SystemData(props) {
 
   const fetchPing = async (props) => {
     setLoading(true);
-    SystemPing()
+    api.system
+      .systemPingGet()
       .then(() => {
         setPing(true);
       })
@@ -53,11 +54,13 @@ function SystemData(props) {
 
   const fetchSystemInfo = async (props) => {
     setLoadingSystemInfo(true);
-    SystemInfo()
+    api.system
+      .systemInfoGet()
       .then((response) => {
-        setSystemInfo(response);
+        setSystemInfo(response.data);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         setSystemInfo(undefined);
       })
       .finally(() => {

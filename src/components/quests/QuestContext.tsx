@@ -27,6 +27,7 @@ export interface QuestContextType {
   setFetching: React.Dispatch<React.SetStateAction<boolean>>;
   fetching: boolean;
   clearQuests: () => Promise<void>;
+  waitForQuest: (questId: number, timeoutMs?: number) => Promise<Quest>;
 }
 
 const QuestContext = createContext<QuestContextType | undefined>(undefined);
@@ -110,6 +111,31 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const waitForQuest = async (questId: number): Promise<Quest> => {
+    return new Promise((resolve, reject) => {
+      const checkQuest = async () => {
+        try {
+          // Fetch the latest quest state from the API
+          await fetchQuest(questId);
+          const quest = quests.current.get(questId);
+
+          if (quest && questFinished(quest)) {
+            resolve(quest);
+            return;
+          }
+
+          // Continue checking
+          setTimeout(checkQuest, 500);
+        } catch (error) {
+          reject(new Error(`Failed to fetch quest ${questId}: ${error}`));
+        }
+      };
+
+      // Start checking immediately
+      checkQuest();
+    });
+  };
+
   return (
     <QuestContext.Provider
       value={{
@@ -120,6 +146,7 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
         fetching,
         clearQuests,
         mainQuestIds,
+        waitForQuest,
       }}
     >
       {children}

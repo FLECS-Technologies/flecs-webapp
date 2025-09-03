@@ -2,24 +2,32 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
 import { UpdateInstanceAPI, UpdateInstances, AppInstance } from '../instance';
 
-vi.mock('axios');
-const mockedAxios = axios as unknown as { patch: ReturnType<typeof vi.fn> };
+function createMockApi() {
+  return {
+    instances: {
+      instancesInstanceIdPatch: vi.fn(),
+    },
+  } as any;
+}
 
 describe('UpdateInstanceAPI', () => {
+  let mockApi: any;
   beforeEach(() => {
-    mockedAxios.patch = vi.fn();
+    mockApi = createMockApi();
   });
 
   it('returns jobId on success', async () => {
-    mockedAxios.patch.mockResolvedValueOnce({ data: { jobId: 42 } });
-    const jobId = await UpdateInstanceAPI('abc123', 'running');
-    expect(mockedAxios.patch).toHaveBeenCalled();
+    mockApi.instances.instancesInstanceIdPatch.mockResolvedValueOnce({ data: { jobId: 42 } });
+    const jobId = await UpdateInstanceAPI('abc123', 'running', mockApi);
+    expect(mockApi.instances.instancesInstanceIdPatch).toHaveBeenCalledWith('abc123', {
+      to: 'running',
+    });
     expect(jobId).toBe(42);
   });
 
   it('rejects on error', async () => {
-    mockedAxios.patch.mockRejectedValueOnce(new Error('fail'));
-    await expect(UpdateInstanceAPI('abc123', 'stopped')).rejects.toThrow('fail');
+    mockApi.instances.instancesInstanceIdPatch.mockRejectedValueOnce(new Error('fail'));
+    await expect(UpdateInstanceAPI('abc123', 'stopped', mockApi)).rejects.toThrow('fail');
   });
 });
 
@@ -43,31 +51,32 @@ describe('UpdateInstances', () => {
     },
   ];
 
+  let mockApi: any;
   beforeEach(() => {
-    mockedAxios.patch = vi.fn();
+    mockApi = createMockApi();
   });
 
   it('returns empty array if no instances', async () => {
-    const result = await UpdateInstances([], 'stopped');
+    const result = await UpdateInstances([], 'stopped', mockApi);
     expect(result).toEqual([]);
-    expect(mockedAxios.patch).not.toHaveBeenCalled();
+    expect(mockApi.instances.instancesInstanceIdPatch).not.toHaveBeenCalled();
   });
 
   it('returns jobIds for all instances', async () => {
-    mockedAxios.patch
+    mockApi.instances.instancesInstanceIdPatch
       .mockResolvedValueOnce({ data: { jobId: 1 } })
       .mockResolvedValueOnce({ data: { jobId: 2 } });
 
-    const result = await UpdateInstances(instances, 'stopped');
-    expect(mockedAxios.patch).toHaveBeenCalledTimes(2);
+    const result = await UpdateInstances(instances, 'stopped', mockApi);
+    expect(mockApi.instances.instancesInstanceIdPatch).toHaveBeenCalledTimes(2);
     expect(result).toEqual([1, 2]);
   });
 
   it('rejects if any update fails', async () => {
-    mockedAxios.patch
+    mockApi.instances.instancesInstanceIdPatch
       .mockResolvedValueOnce({ data: { jobId: 1 } })
       .mockRejectedValueOnce(new Error('fail'));
 
-    await expect(UpdateInstances(instances, 'stopped')).rejects.toThrow('fail');
+    await expect(UpdateInstances(instances, 'stopped', mockApi)).rejects.toThrow('fail');
   });
 });

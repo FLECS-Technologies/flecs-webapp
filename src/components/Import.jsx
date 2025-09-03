@@ -24,9 +24,11 @@ import FileOpen from './FileOpen';
 import { ReferenceDataContext } from '../data/ReferenceDataContext';
 import { JobsContext } from '../data/JobsContext';
 import { OnboardingDeviceAPI } from '../api/device/onboarding/onboarding';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function Import(props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const api = useProtectedApi();
   const { ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -91,7 +93,7 @@ export default function Import(props) {
 
   const handleJsonFile = async (file) => {
     setImporting(true);
-    OnboardingDeviceAPI(file)
+    OnboardingDeviceAPI(file, api)
       .then(async (response) => {
         if (response.jobId) {
           await fetchJobs();

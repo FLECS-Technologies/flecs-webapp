@@ -22,8 +22,6 @@ import { SystemData } from '../SystemData';
 import { useSystemContext } from '../SystemProvider';
 import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/SystemPingService');
-vitest.mock('../../api/device/SystemInfoService');
 vitest.mock('../SystemProvider', () => ({ useSystemContext: vitest.fn() }));
 
 const mockSystem = {

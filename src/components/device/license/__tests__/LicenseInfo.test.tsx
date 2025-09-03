@@ -18,7 +18,7 @@
 import { render, act, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LicenseInfo from '../LicenseInfo';
-import { mockLicenseInfoAPIResponse } from '../../../../api/device/license/__mocks__/info';
+import { mockDeviceLicenseInfoGet200Response } from '../../../../api/device/license/__mocks__/info';
 import { vitest } from 'vitest';
 
 vitest.mock('../../../../api/device/license/info');
@@ -31,14 +31,19 @@ describe('LicenseInfo Component', () => {
   it('Show license info', async () => {
     render(<LicenseInfo />);
     await waitFor(() => {
-      const licenseText = screen.getByText(mockLicenseInfoAPIResponse.data.license);
+      const licenseText = screen.getByText(mockDeviceLicenseInfoGet200Response.license || '');
       expect(licenseText).toBeInTheDocument();
 
-      const sessionIdText = screen.getByText(mockLicenseInfoAPIResponse.data.sessionId.id);
+      const typeText = screen.getByText(mockDeviceLicenseInfoGet200Response.type);
+      expect(typeText).toBeInTheDocument();
+
+      const sessionIdText = screen.getByText(
+        mockDeviceLicenseInfoGet200Response.sessionId?.id || '',
+      );
       expect(sessionIdText).toBeInTheDocument();
 
       const timestamp = screen.getByText(
-        String(mockLicenseInfoAPIResponse.data.sessionId.timestamp),
+        String(mockDeviceLicenseInfoGet200Response.sessionId?.timestamp),
       );
       expect(timestamp).toBeInTheDocument();
     });

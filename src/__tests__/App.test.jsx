@@ -22,7 +22,6 @@ import '@testing-library/jest-dom/vitest';
 
 import App from '../App';
 
-vi.mock('../api/device/SystemPingService');
 vi.mock('../api/device/ExportAppsService.js');
 vi.mock('axios');
 

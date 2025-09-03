@@ -51,7 +51,7 @@ export default function InstallApp(props) {
       const installationQuestId = await api.app.appsInstallPost({
         appKey: { name: app.appKey.name, version: version },
       });
-      await context.fetchQuest(installationQuestId.data.jobId);
+      // await context.fetchQuest(installationQuestId.data.jobId);
       setCurrentQuest(installationQuestId.data.jobId);
       await context.waitForQuest(installationQuestId.data.jobId);
 
@@ -59,7 +59,7 @@ export default function InstallApp(props) {
       const instanceQuestId = await api.instances.instancesCreatePost({
         appKey: { name: app.appKey.name, version: version },
       });
-      await context.fetchQuest(instanceQuestId.data.jobId);
+      // await context.fetchQuest(instanceQuestId.data.jobId);
       setCurrentQuest(instanceQuestId.data.jobId);
       const instanceQuest = await context.waitForQuest(instanceQuestId.data.jobId);
 
@@ -67,7 +67,7 @@ export default function InstallApp(props) {
       const startInstanceQuestId = await api.instances.instancesInstanceIdStartPost(
         instanceQuest.result,
       );
-      await context.fetchQuest(startInstanceQuestId.data.jobId);
+      // await context.fetchQuest(startInstanceQuestId.data.jobId);
       setCurrentQuest(startInstanceQuestId.data.jobId);
       await context.waitForQuest(startInstanceQuestId.data.jobId);
 
@@ -82,6 +82,10 @@ export default function InstallApp(props) {
       setInstalling(false);
     }
   });
+
+  React.useEffect(() => {
+    if (currentQuest) context.fetchQuest(currentQuest);
+  }, [currentQuest]);
 
   React.useEffect(() => {
     if (executedRef.current) {
@@ -113,13 +117,15 @@ export default function InstallApp(props) {
         justifyContent="center"
         alignItems="center"
       >
-        <Grid>
-          <QuestLogEntry id={currentQuest} level={0} showBorder={false} />
-        </Grid>
+        {(installing || error) && (
+          <Grid>
+            <QuestLogEntry id={currentQuest} level={0} showBorder={false} />
+          </Grid>
+        )}
         <Grid>
           {infoMessage ? (
-            <Alert sx={{ mb: 2, marginTop: '50px' }} severity="info">
-              <AlertTitle>Info</AlertTitle>
+            <Alert sx={{ mb: 2, marginTop: '50px' }} severity={success ? 'success' : 'info'}>
+              <AlertTitle>{success ? 'Success' : 'Info'}</AlertTitle>
               <Typography variant="body2">{infoMessage}</Typography>
             </Alert>
           ) : null}

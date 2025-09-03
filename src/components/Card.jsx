@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { React, useState, useContext } from 'react';
+import { React, useState } from 'react';
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -27,10 +27,7 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { IconButton, Tooltip } from '@mui/material';
 import LoadButton from './LoadButton';
-import ConfirmDialog from './ConfirmDialog';
-import AppAPI from '../api/device/AppAPI';
 import RequestAppDialog from './RequestAppDialog';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
 import ActionSnackbar from './ActionSnackbar';
 import ContentDialog from './ContentDialog';
 // import InstallAppStepper from './InstallAppStepper'
@@ -39,14 +36,12 @@ import { VersionSelector } from './autocomplete/VersionSelector';
 import AppRating from './AppRating';
 import { useSystemContext } from '../data/SystemProvider';
 import { isBlacklisted } from '../api/marketplace/ProductService';
-import { JobsContext } from '../data/JobsContext';
 import InstallationStepper from './apps/installation/InstallationStepper';
 import { ShoppingCart } from '@mui/icons-material';
 import HelpButton from './buttons/help/HelpButton';
 import UninstallButton from './buttons/app/UninstallButton';
 
 export default function OutlinedCard(props) {
-  const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
   const { systemInfo } = useSystemContext();
   const [blackListed] = useState(isBlacklisted(systemInfo, props.blacklist));
   const installed = props.status === 'installed';
@@ -76,17 +71,6 @@ export default function OutlinedCard(props) {
   const { alertSeverity, snackbarText, clipBoardContent } = snackbarState;
   const [installAppOpen, setInstallAppOpen] = useState(false);
   const [updateAppOpen, setUpdateAppOpen] = useState(false);
-  const { setFetchingJobs } = useContext(JobsContext);
-
-  function loadReferenceData(props) {
-    if (appList) {
-      const tmpApp = appList.find((obj) => {
-        return obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version;
-      });
-
-      return tmpApp;
-    }
-  }
 
   const handleUninstallComplete = (success, message, error) => {
     const alertSeverity = success ? 'success' : 'error';

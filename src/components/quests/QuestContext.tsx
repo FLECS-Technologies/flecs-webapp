@@ -28,6 +28,7 @@ export interface QuestContextType {
   fetching: boolean;
   clearQuests: () => Promise<void>;
   waitForQuest: (questId: number, timeoutMs?: number) => Promise<Quest>;
+  waitForQuests: (questIds: number[]) => Promise<Quest[]>;
 }
 
 const QuestContext = createContext<QuestContextType | undefined>(undefined);
@@ -136,6 +137,22 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const waitForQuests = async (questIds: number[]): Promise<Quest[]> => {
+    if (questIds.length === 0) {
+      return [];
+    }
+
+    // Wait for all quests to finish concurrently
+    const questPromises = questIds.map((questId) => waitForQuest(questId));
+
+    try {
+      const finishedQuests = await Promise.all(questPromises);
+      return finishedQuests;
+    } catch (error) {
+      throw new Error(`Failed to wait for quests: ${error}`);
+    }
+  };
+
   return (
     <QuestContext.Provider
       value={{
@@ -147,6 +164,7 @@ const QuestContextProvider = ({ children }: { children: ReactNode }) => {
         clearQuests,
         mainQuestIds,
         waitForQuest,
+        waitForQuests,
       }}
     >
       {children}

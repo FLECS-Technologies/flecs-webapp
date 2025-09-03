@@ -57,7 +57,7 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
             />
           );
         } else if (sideload) {
-          return <SideloadApp yaml={app} handleActiveStep={handleNext} />;
+          return <SideloadApp manifest={app} handleActiveStep={handleNext} />;
         } else if (update) {
           return (
             <UpdateApp

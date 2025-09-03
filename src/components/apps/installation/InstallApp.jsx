@@ -25,6 +25,7 @@ import { QuestContext, useQuestContext } from '../../quests/QuestContext';
 import { useProtectedApi } from '../../providers/ApiProvider';
 import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
+import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 export default function InstallApp(props) {
   const { app, version, handleActiveStep } = props;
@@ -39,6 +40,19 @@ export default function InstallApp(props) {
   const executedRef = React.useRef(false);
   const [currentQuest, setCurrentQuest] = React.useState();
 
+  const executeQuestStep = React.useCallback(
+    async (questId) => {
+      await context.fetchQuest(questId);
+      setCurrentQuest(questId);
+      const result = await context.waitForQuest(questId);
+      if (!questStateFinishedOk(result.state)) {
+        throw new Error(result.description);
+      }
+      return result;
+    },
+    [context],
+  );
+
   const installApp = React.useCallback(async (app) => {
     setInstalling(true);
     setSuccess(false);
@@ -51,25 +65,19 @@ export default function InstallApp(props) {
       const installationQuestId = await api.app.appsInstallPost({
         appKey: { name: app.appKey.name, version: version },
       });
-      // await context.fetchQuest(installationQuestId.data.jobId);
-      setCurrentQuest(installationQuestId.data.jobId);
-      await context.waitForQuest(installationQuestId.data.jobId);
+      await executeQuestStep(installationQuestId.data.jobId);
 
       // step 2: create instance
       const instanceQuestId = await api.instances.instancesCreatePost({
         appKey: { name: app.appKey.name, version: version },
       });
-      // await context.fetchQuest(instanceQuestId.data.jobId);
-      setCurrentQuest(instanceQuestId.data.jobId);
-      const instanceQuest = await context.waitForQuest(instanceQuestId.data.jobId);
+      const instanceQuest = await executeQuestStep(instanceQuestId.data.jobId);
 
       // step 3: start instance
       const startInstanceQuestId = await api.instances.instancesInstanceIdStartPost(
         instanceQuest.result,
       );
-      // await context.fetchQuest(startInstanceQuestId.data.jobId);
-      setCurrentQuest(startInstanceQuestId.data.jobId);
-      await context.waitForQuest(startInstanceQuestId.data.jobId);
+      await executeQuestStep(startInstanceQuestId.data.jobId);
 
       setSuccess(true);
       setInfoMessage(app.title + ' successfully installed.');
@@ -84,10 +92,6 @@ export default function InstallApp(props) {
   });
 
   React.useEffect(() => {
-    if (currentQuest) context.fetchQuest(currentQuest);
-  }, [currentQuest]);
-
-  React.useEffect(() => {
     if (executedRef.current) {
       return;
     }
@@ -96,7 +100,7 @@ export default function InstallApp(props) {
       installApp(app);
     } else {
       setError(true);
-      setInstallationMessage('Error during the installation of ' + app?.title + '.');
+      setInfoMessage('Error during the installation of ' + app?.title + '.');
     }
     executedRef.current = true;
   }, [retry]);

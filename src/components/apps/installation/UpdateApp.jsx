@@ -1,13 +1,8 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
-import { Button, Grid, Typography, CircularProgress, Alert, AlertTitle } from '@mui/material';
-import {
-  CheckCircle as CheckCircleIcon,
-  Replay as ReplayIcon,
-  Report as ReportIcon,
-} from '@mui/icons-material';
+import { Button, Grid, Typography, Alert, AlertTitle } from '@mui/material';
+import { Replay as ReplayIcon } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-import { InstallAppAPI } from '../../../api/device/apps/install';
 import { UpdateInstances } from '../../../api/device/instances/instance';
 import { useProtectedApi } from '../../../components/providers/ApiProvider';
 import { QuestContext, useQuestContext } from '../../quests/QuestContext';
@@ -26,6 +21,19 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
   const [installationMessage, setInstallationMessage] = useState('');
   const [currentQuest, setCurrentQuest] = React.useState();
 
+  const executeQuestStep = useCallback(
+    async (questId) => {
+      await context.fetchQuest(questId);
+      setCurrentQuest(questId);
+      const result = await context.waitForQuest(questId);
+      if (!questStateFinishedOk(result.state)) {
+        throw new Error(result.description);
+      }
+      return result;
+    },
+    [context],
+  );
+
   const updateApp = useCallback(
     async (app, from, to) => {
       try {
@@ -39,11 +47,11 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         setUpdating(true);
 
         // 1. install the requested version
-        const installQuestId = await InstallAppAPI(app.appKey.name, to, api);
-        setCurrentQuest(installQuestId);
-        await context.fetchQuest(installQuestId);
-        const result = await context.waitForQuest(installQuestId);
-        if (!questStateFinishedOk(result.state)) throw new Error('Installation failed');
+        const installQuest = await api.app.appsInstallPost({
+          appKey: { name: app.appKey.name, version: to },
+        });
+        const installQuestId = installQuest.data.jobId;
+        await executeQuestStep(installQuestId);
 
         // 2. update all instances
         setInstallationMessage(`Migrating ${installedApp?.instances?.length} instances...`);
@@ -82,10 +90,6 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
     },
     [appList, setUpdateAppList],
   );
-
-  React.useEffect(() => {
-    if (currentQuest) context.fetchQuest(currentQuest);
-  }, [currentQuest]);
 
   React.useEffect(() => {
     if (executedRef.current) return;

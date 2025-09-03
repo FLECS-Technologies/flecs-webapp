@@ -16,75 +16,91 @@
  * limitations under the License.
  */
 import { Button, Grid, Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ReplayIcon from '@mui/icons-material/Replay';
-import ReportIcon from '@mui/icons-material/Report';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import PropTypes from 'prop-types';
 import React from 'react';
-import AppAPI from '../../../api/device/AppAPI';
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-import { JobsContext } from '../../../data/JobsContext';
-import { mapJobStatus } from '../../../utils/mapJobStatus';
+import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
+import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 export default function SideloadApp(props) {
-  const { yaml, handleActiveStep } = props;
+  const { manifest, handleActiveStep } = props;
   const executedRef = React.useRef(false);
   const { appList, setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const api = useProtectedApi();
+  const context = useQuestContext(QuestContext);
   const [installing, setInstalling] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [retry, setRetry] = React.useState(false);
-  const [installationMessage, setInstallationMessage] = React.useState('');
   const [infoMessage, setInfoMessage] = React.useState(false);
-  const { setFetchingJobs } = React.useContext(JobsContext);
-  const [running, setRunning] = React.useState(false);
+  const [currentQuest, setCurrentQuest] = React.useState();
 
-  function loadReferenceData(props) {
-    if (appList) {
-      const tmpApp = appList.find((obj) => {
-        return obj.appKey.name === yaml?.app && obj.appKey.version === yaml?.version;
-      });
+  const executeQuestStep = React.useCallback(
+    async (questId) => {
+      await context.fetchQuest(questId);
+      setCurrentQuest(questId);
+      const result = await context.waitForQuest(questId);
+      if (!questStateFinishedOk(result.state)) {
+        throw new Error(result.description);
+      }
+      return result;
+    },
+    [context],
+  );
 
-      return tmpApp;
-    }
-  }
-
-  const sideloadApp = React.useCallback(async (yaml) => {
+  const sideloadApp = React.useCallback(async (manifest) => {
     setInstalling(true);
     setSuccess(false);
     setError(false);
-    setFetchingJobs(true);
 
-    const appAPI = new AppAPI(yaml);
-    appAPI.setAppData(loadReferenceData(yaml));
-    await appAPI.sideloadApp(yaml, handleInstallationJob);
+    try {
+      // step 1: sideload
+      const sideloadQuest = await api.app.appsSideloadPost({ manifest: JSON.stringify(manifest) });
+      const sideloadQuestId = sideloadQuest.data.jobId;
+      await executeQuestStep(sideloadQuestId);
 
-    if (appAPI.lastAPICallSuccessful) {
+      // step 2: create instance
+      const instanceQuestId = await api.instances.instancesCreatePost({
+        appKey: { name: manifest.app, version: manifest.version },
+      });
+      const instanceQuestIdValue = instanceQuestId.data.jobId;
+      const instanceQuest = await executeQuestStep(instanceQuestIdValue);
+
+      // step 3: start instance
+      const startInstanceQuestId = await api.instances.instancesInstanceIdStartPost(
+        instanceQuest.result,
+      );
+      const startQuestIdValue = startInstanceQuestId.data.jobId;
+      await executeQuestStep(startQuestIdValue);
+
       // trigger a reload of all installed apps
       setUpdateAppList(true);
-    } else {
+      setSuccess(true);
+      setInfoMessage(manifest.title + ' successfully installed.');
+      setInstalling(false);
+      handleActiveStep();
+    } catch (error) {
       setError(true);
       setSuccess(false);
-      setInstallationMessage(appAPI.lastAPIError || 'Error during sideload');
-      setRunning(false);
+      setInfoMessage(error.message || 'Error during sideload');
       setInstalling(false);
+      setUpdateAppList(true);
     }
-    setFetchingJobs(false);
   });
 
   React.useEffect(() => {
-    if (executedRef.current) {
-      return;
-    }
-    if (yaml && !installing && (!success || !error)) {
+    if (executedRef.current) return;
+
+    if (manifest && !installing && (!success || !error)) {
       setRetry(false);
-      sideloadApp(yaml);
+      sideloadApp(manifest);
     } else {
       setError(true);
-      setInstallationMessage('Error during the installation of ' + yaml?.title + '.');
+      setInfoMessage('Error during the installation of ' + manifest?.title + '.');
     }
     executedRef.current = true;
   }, [retry]);
@@ -92,32 +108,6 @@ export default function SideloadApp(props) {
   const handleRetryClick = (event) => {
     setRetry(true);
     executedRef.current = false;
-  };
-
-  const handleInstallationJob = (status) => {
-    const mappedStatus = mapJobStatus(status);
-    if (mappedStatus === 1) {
-      setInstallationMessage(
-        `We're busy installing or uninstalling another app. Installation of ${yaml.title} will begin soon.`,
-      );
-    } else if (mappedStatus === 2) {
-      setRunning(true);
-      setInstallationMessage('Installing ' + yaml.title + '.');
-      setInfoMessage(true);
-    } else if (mappedStatus === 4) {
-      setRunning(false);
-      setInstallationMessage(yaml.title + ' successfully installed.');
-      setInfoMessage(false);
-      setSuccess(true);
-      setInstalling(false);
-    } else if (mappedStatus === -1) {
-      setRunning(false);
-      setInstallationMessage('Error during the installation of ' + yaml.title + '.');
-      setSuccess(false);
-      setError(true);
-      setInstalling(false);
-    }
-    handleActiveStep(mappedStatus);
   };
 
   return (
@@ -131,32 +121,18 @@ export default function SideloadApp(props) {
         justifyContent="center"
         alignItems="center"
       >
+        {installing && (
+          <Grid>
+            {currentQuest && <QuestLogEntry id={currentQuest} level={0} showBorder={false} />}
+          </Grid>
+        )}
         <Grid>
-          {installing && !running && <CircularProgress color="secondary" />} {/* pending job */}
-          {running && <CircularProgress />}
-          {success && !installing && (
-            <CheckCircleIcon
-              data-testid="success-icon"
-              fontSize="large"
-              color="success"
-            ></CheckCircleIcon>
-          )}
-          {error && (
-            <ReportIcon data-testid="error-icon" fontSize="large" color="error"></ReportIcon>
-          )}
-        </Grid>
-        <Grid>
-          <Typography data-testid="installationMessage">{installationMessage}</Typography>
-        </Grid>
-        <Grid>
-          {infoMessage ? (
-            <Alert sx={{ mb: 2, marginTop: '50px' }} severity="info">
-              <AlertTitle>Info</AlertTitle>
-              <Typography variant="body2">
-                You can close this window. Installation takes place automatically in the background.
-              </Typography>
+          {infoMessage && !error && (
+            <Alert sx={{ mb: 2, marginTop: '50px' }} severity={success ? 'success' : 'info'}>
+              <AlertTitle>{success ? 'Success' : 'Info'}</AlertTitle>
+              <Typography variant="body2">{infoMessage}</Typography>
             </Alert>
-          ) : null}
+          )}
         </Grid>
         {error && (
           <Grid>
@@ -169,8 +145,3 @@ export default function SideloadApp(props) {
     </div>
   );
 }
-
-SideloadApp.propTypes = {
-  yaml: PropTypes.object,
-  handleActiveStep: PropTypes.func,
-};

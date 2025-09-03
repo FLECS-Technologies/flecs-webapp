@@ -17,11 +17,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  getHostname,
-  getInstanceDetails,
-  getIPAddress,
-} from '../api/device/InstanceDetailsService';
+import { getHostname, getIPAddress } from '../api/device/InstanceDetailsService';
 import {
   Table,
   TableBody,
@@ -34,10 +30,12 @@ import {
 import CollapsableRow from './CollapsableRow';
 import VolumesTable from './VolumesTable';
 import HostContainerTable from './HostContainerTable';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function InstanceDetails(props) {
   const { instance } = props;
   const executedRef = React.useRef(false);
+  const api = useProtectedApi();
   const [loadingDetails, setLoadingDetails] = React.useState(false);
   const [reloadDetails, setReloadDetails] = React.useState(false);
   const [networkDetails, setNetworkDetails] = React.useState([]);
@@ -70,10 +68,12 @@ export default function InstanceDetails(props) {
 
   const fetchDetails = async (props) => {
     setLoadingDetails(true);
-    getInstanceDetails(instance.instanceId)
+
+    api.instances
+      .instancesInstanceIdGet(instance.instanceId)
       .then((response) => {
-        createNetworkDetails(response);
-        setInstanceDetails(response);
+        createNetworkDetails(response.data);
+        setInstanceDetails(response.data);
       })
       .catch((error) => {
         console.log(error);

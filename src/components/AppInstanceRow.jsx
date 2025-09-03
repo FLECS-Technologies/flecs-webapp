@@ -29,21 +29,23 @@ import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
-
 import LoadIconButton from './LoadIconButton';
-import AppAPI from '../api/device/AppAPI';
 import ActionSnackbar from './ActionSnackbar';
 import { ReferenceDataContext } from '../data/ReferenceDataContext';
 import ContentDialog from './ContentDialog';
 import InstanceInfo from './InstanceInfo';
-import { JobsContext } from '../data/JobsContext';
 import ConfirmDialog from './ConfirmDialog';
 import InstanceConfigDialog from './dialogs/InstanceConfigDialog';
 import { EditorButtons } from './buttons/editors/EditorButtons';
+import { questStateFinishedOk } from '../utils/quests/QuestState';
+import { QuestContext, useQuestContext } from './quests/QuestContext';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function AppInstanceRow(props) {
-  const { app, appInstance, loadAppReferenceData, showEditors } = props;
+  const { appInstance, showEditors } = props;
   const { setUpdateAppList } = React.useContext(ReferenceDataContext);
+  const api = useProtectedApi();
+  const context = useQuestContext(QuestContext);
   const [instanceStarting, setInstanceStarting] = React.useState(false);
   const [instanceStopping, setInstanceStopping] = React.useState(false);
   const [instanceDeleting, setInstanceDeleting] = React.useState(false);
@@ -60,117 +62,99 @@ export default function AppInstanceRow(props) {
     alertSeverity: 'success',
   });
   const { snackbarText, snackbarErrorText, alertSeverity } = snackbarState;
-  const { setFetchingJobs } = React.useContext(JobsContext);
 
   const stopInstance = async (instanceId) => {
     setInstanceStopping(true);
-    setFetchingJobs(true);
     let snackbarText;
     let alertSeverity;
-    const appAPI = new AppAPI(app);
-    appAPI.setAppData(loadAppReferenceData(app));
-    await appAPI.stopInstance(instanceId);
+    let snackbarErrorText;
 
-    if (appAPI.lastAPICallSuccessful) {
-      setUpdateAppList(true);
-      snackbarText =
-        'Successully stopped ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId;
-        }).instanceName +
-        '.';
-    } else {
-      // error snackbar
-      snackbarText =
-        'Failed to stop ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId;
-        }).instanceName +
-        '.';
-      alertSeverity = 'success';
+    try {
+      const stopQuest = await api.instances.instancesInstanceIdStopPost(instanceId);
+      const result = await context.waitForQuest(stopQuest.data.jobId);
+
+      if (questStateFinishedOk(result.state)) {
+        setUpdateAppList(true);
+        snackbarText = 'Successully stopped instance.';
+        alertSeverity = 'success';
+      } else {
+        throw new Error(result.description);
+      }
+    } catch (error) {
+      snackbarText = 'Failed to stop instance.';
+      alertSeverity = 'error';
+      snackbarErrorText = error.message;
+    } finally {
       setSnackbarState({
         alertSeverity,
         snackbarText,
-        snackbarErrorText: appAPI.lastAPIError,
+        snackbarErrorText: snackbarErrorText,
       });
       setSnackbarOpen(true);
+      setInstanceStopping(false);
     }
-    setInstanceStopping(false);
-    setFetchingJobs(false);
   };
 
   const startInstance = async (instanceId) => {
     setInstanceStarting(true);
-    setFetchingJobs(true);
     let snackbarText;
     let alertSeverity;
-    const appAPI = new AppAPI(app);
+    let snackbarErrorText;
 
     try {
-      appAPI.setAppData(loadAppReferenceData(app));
-      await appAPI.startInstance(instanceId);
-
-      if (appAPI.lastAPICallSuccessful) {
+      const startQuest = await api.instances.instancesInstanceIdStartPost(instanceId);
+      const result = await context.waitForQuest(startQuest.data.jobId);
+      if (questStateFinishedOk(result.state)) {
         setUpdateAppList(true);
-        snackbarText =
-          'Successully started ' +
-          appAPI.app.instances.find((obj) => {
-            return obj.instanceId === instanceId;
-          }).instanceName +
-          '.';
+        snackbarText = 'Successully started instance.';
+        alertSeverity = 'success';
+      } else {
+        throw new Error(result.description);
       }
     } catch {
-      // error snackbar
-      snackbarText =
-        'Failed to start ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId;
-        }).instanceName +
-        '.';
+      snackbarText = 'Failed to start instance.';
       alertSeverity = 'error';
+      snackbarErrorText = error.message;
+    } finally {
       setSnackbarState({
         alertSeverity,
         snackbarText,
-        snackbarErrorText: appAPI.lastAPIError,
+        snackbarErrorText: snackbarErrorText,
       });
       setSnackbarOpen(true);
-    } finally {
       setInstanceStarting(false);
-      setFetchingJobs(false);
     }
   };
 
   const deleteInstance = async (instanceId) => {
     setInstanceDeleting(true);
-    setFetchingJobs(true);
     let snackbarText;
     let alertSeverity;
-    const appAPI = new AppAPI(app);
-    appAPI.setAppData(loadAppReferenceData(app));
-    await appAPI.deleteInstance(instanceId);
+    let snackbarErrorText;
 
-    if (appAPI.lastAPICallSuccessful) {
-      setUpdateAppList(true);
-      snackbarText = appAPI.app.title + ' instance successully deleted.';
-      alertSeverity = 'success';
-    } else {
-      // error snackbar
-      snackbarText =
-        'Failed to delete ' +
-        appAPI.app.instances.find((obj) => {
-          return obj.instanceId === instanceId;
-        }).instanceName +
-        '.';
+    try {
+      const deleteQuest = await api.instances.instancesInstanceIdDelete(instanceId);
+      const result = await context.waitForQuest(deleteQuest.data.jobId);
+      if (questStateFinishedOk(result.state)) {
+        setUpdateAppList(true);
+        snackbarText = 'Successully deleted instance.';
+        alertSeverity = 'success';
+      } else {
+        throw new Error(result.description);
+      }
+    } catch {
+      snackbarText = 'Failed to delete instance.';
       alertSeverity = 'error';
+      snackbarErrorText = error.message;
+    } finally {
+      setSnackbarState({
+        alertSeverity,
+        snackbarText,
+        snackbarErrorText: snackbarErrorText,
+      });
+      setSnackbarOpen(true);
+      setInstanceDeleting(false);
     }
-    setSnackbarState({
-      alertSeverity,
-      snackbarText,
-      snackbarErrorText: appAPI.lastAPIError,
-    });
-    setSnackbarOpen(true);
-    setInstanceDeleting(false);
-    setFetchingJobs(false);
   };
 
   return (
@@ -309,7 +293,6 @@ export default function AppInstanceRow(props) {
 AppInstanceRow.propTypes = {
   app: PropTypes.object,
   appInstance: PropTypes.object,
-  loadAppReferenceData: PropTypes.func,
   updateReferenceDataInstances: PropTypes.func,
   setSnackbarState: PropTypes.func,
   showEditors: bool,

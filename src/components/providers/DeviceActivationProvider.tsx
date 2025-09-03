@@ -17,8 +17,7 @@
  */
 import React, { useContext } from 'react';
 import { DeviceActivationContext } from './DeviceActivationContext';
-import { ValidateDeviceAPI } from '../../api/device/license/status';
-import { ActivateDeviceAPI } from '../../api/device/license/activation';
+import { useProtectedApi } from './ApiProvider';
 
 const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) => {
   const [validated, setValidated] = React.useState(false);
@@ -27,15 +26,17 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
   const [activating, setActivating] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [statusText, setStatusText] = React.useState('');
+  const api = useProtectedApi();
 
   const validate = async () => {
     setValidating(true);
     setStatusText('Checking the device activation status...');
-    await ValidateDeviceAPI()
+    await api.device
+      .deviceLicenseActivationStatusGet()
       .then((response) => {
-        setValidated(response.isValid);
-        setActivated(response.isValid);
-        if (response.isValid) {
+        setValidated(response.data.isValid);
+        setActivated(response.data.isValid);
+        if (response.data.isValid) {
           setStatusText('Device is activated!');
         } else {
           setStatusText('Device is not activated!');
@@ -56,7 +57,8 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
   const activate = async () => {
     setActivating(true);
     setStatusText('Activating the device...');
-    await ActivateDeviceAPI()
+    await api.device
+      .deviceLicenseActivationPost()
       .then((response) => {
         setActivated(true);
         setValidated(true);

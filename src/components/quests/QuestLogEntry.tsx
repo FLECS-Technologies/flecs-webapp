@@ -27,9 +27,14 @@ const MAX_DEPTH: number = 100;
 interface QuestLogEntryProps {
   id: number;
   level: number;
+  showBorder?: boolean;
 }
 
-export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({ id, level }: QuestLogEntryProps) => {
+export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({
+  id,
+  level,
+  showBorder = true,
+}: QuestLogEntryProps) => {
   const context = useQuestContext(QuestContext);
   const quest = context.quests.current.get(id);
   if (!quest) return null;
@@ -45,8 +50,10 @@ export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({ id, level }: Quest
           disableGutters
           elevation={0}
           sx={{
-            borderLeft: `4px solid`,
-            borderColor: backgroundColor,
+            ...(showBorder && {
+              borderLeft: `4px solid`,
+              borderColor: backgroundColor,
+            }),
           }}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -54,7 +61,7 @@ export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({ id, level }: Quest
           </AccordionSummary>
           <AccordionDetails sx={{ padding: '1px 8px' }}>
             {quest.subquests?.map((sub) => (
-              <QuestLogEntry key={sub.id} id={sub.id} level={level + 1} />
+              <QuestLogEntry key={sub.id} id={sub.id} level={level + 1} showBorder={showBorder} />
             ))}
           </AccordionDetails>
         </Accordion>
@@ -65,9 +72,11 @@ export const QuestLogEntry: React.FC<QuestLogEntryProps> = ({ id, level }: Quest
             paddingLeft: 2,
             paddingTop: 1,
             paddingBottom: 1,
-            borderLeft: `4px solid`,
-            borderColor: backgroundColor,
             minHeight: '32px !important',
+            ...(showBorder && {
+              borderLeft: `4px solid`,
+              borderColor: backgroundColor,
+            }),
           }}
         >
           <QuestLogEntryBody quest={quest} key={quest.id} level={level} />

@@ -16,23 +16,13 @@
  * limitations under the License.
  */
 
-import { LicenseInfoAPIResponse } from '../info';
+import { DeviceLicenseInfoGet200Response } from '@flecs/core-client-ts';
 
-export const mockLicenseInfoAPIResponse = {
-  data: {
-    license: 'license-key',
-    type: 'user license',
-    sessionId: {
-      id: 'session-id',
-      timestamp: new Date(1718009140),
-    },
-  } as LicenseInfoAPIResponse,
+export const mockDeviceLicenseInfoGet200Response: DeviceLicenseInfoGet200Response = {
+  license: 'license-key',
+  type: 'user license',
+  sessionId: {
+    id: 'session-id',
+    timestamp: 1718009140,
+  },
 };
-
-function LicenseInfoAPI() {
-  return new Promise((resolve, reject) => {
-    resolve(mockLicenseInfoAPIResponse.data);
-  });
-}
-
-export { LicenseInfoAPI };

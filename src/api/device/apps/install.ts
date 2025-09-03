@@ -18,16 +18,15 @@
 import axios from 'axios';
 import { DeviceAPIConfiguration } from '../../api-config';
 import { job_meta } from '../../../models/job';
+import { createApi } from '../../flecs-core/api-client';
 
-export async function InstallAppAPI(app: string, version: string) {
-  return axios
-    .post(
-      DeviceAPIConfiguration.TARGET +
-        DeviceAPIConfiguration.DEVICE_BASE_ROUTE +
-        DeviceAPIConfiguration.APP_ROUTE +
-        DeviceAPIConfiguration.POST_INSTALL_APP_URL,
-      JSON.stringify({ appKey: { name: app, version } }),
-    )
+export async function InstallAppAPI(
+  app: string,
+  version: string,
+  api: ReturnType<typeof createApi>,
+) {
+  return api.app
+    .appsInstallPost({ appKey: { name: app, version } })
     .then((response) => {
       return (response.data as job_meta).jobId;
     })

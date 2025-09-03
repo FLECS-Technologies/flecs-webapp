@@ -103,7 +103,6 @@ export default function ElevateAppBar(props) {
               <HelpButton url={helpdomain} sx={{ color: appBarIconColors.primary }} />
               <Button
                 sx={{
-                  display: jobs?.length > 0 ? 'block' : 'none',
                   minWidth: '24px',
                   color: appBarIconColors.primary,
                 }}

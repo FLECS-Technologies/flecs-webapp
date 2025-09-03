@@ -19,7 +19,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useReferenceDataContext } from './ReferenceDataContext';
-import DeviceAPI from '../api/device/DeviceAPI';
 import {
   getAppIcon,
   getAuthor,
@@ -31,6 +30,7 @@ import {
   getPurchasable,
   getReverseDomainName,
 } from '../api/marketplace/ProductService';
+import { useProtectedApi } from '../components/providers/ApiProvider';
 
 function AppList(props) {
   const {
@@ -43,6 +43,7 @@ function AppList(props) {
     loadedProducts,
     setLoadedProducts,
   } = useReferenceDataContext();
+  const api = useProtectedApi();
 
   React.useEffect(() => {
     if (!appListLoading) {
@@ -84,12 +85,12 @@ function AppList(props) {
     });
     setAppListLoading(true);
 
-    // call api from the device to get all installed apps
-    const deviceAPI = new DeviceAPI();
-    await deviceAPI.getInstances();
-    await deviceAPI.getInstalledApps();
-    if (deviceAPI.lastAPICallSuccessful) {
-      const mergedList = deviceAPI.appList;
+    try {
+      const instances = await api.instances.instancesGet();
+      const installedApps = await api.app.appsGet();
+      // call api from the device to get all installed apps
+
+      const mergedList = installedApps.data;
 
       mergedList.forEach((app) => {
         const mpApp = findApp(app.appKey, loadedProducts);
@@ -107,20 +108,20 @@ function AppList(props) {
           app.installedVersions = getInstalledVersions(mergedList, app.appKey.name);
           app.installedVersions.sort((a, b) => collator.compare(a, b));
           app.installedVersions.reverse();
-          app.instances = getAppInstances(app, deviceAPI.instances);
+          app.instances = getAppInstances(app, instances.data);
         }
       });
 
       setAppList((appList) => [...mergedList]);
       setAppListLoading(false);
       setAppListError(false);
-    } else {
+    } catch (error) {
       setAppList((appList) => [...loadedProducts]);
       setAppListLoading(false);
       setAppListError(true);
       console.error(
         'Something went wrong at deviceAPI.getInstalledApps(). This is the error message:' +
-          deviceAPI.lastAPIError,
+          error.message,
       );
     }
   };

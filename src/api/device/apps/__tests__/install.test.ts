@@ -5,23 +5,33 @@ import { InstallAppAPI } from '../install';
 vi.mock('axios');
 const mockedAxios = axios as unknown as { post: ReturnType<typeof vi.fn> };
 
+function createMockApi() {
+  return {
+    app: {
+      appsInstallPost: vi.fn(),
+    },
+  } as any;
+}
+
 describe('InstallAppAPI', () => {
+  let mockApi: any;
+
   beforeEach(() => {
     mockedAxios.post = vi.fn();
+    mockApi = createMockApi();
   });
 
   it('returns jobId on success', async () => {
-    mockedAxios.post.mockResolvedValueOnce({ data: { jobId: 99 } });
-    const jobId = await InstallAppAPI('my-app', '1.2.3');
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      expect.stringContaining('/apps'),
-      JSON.stringify({ appKey: { name: 'my-app', version: '1.2.3' } }),
-    );
+    mockApi.app.appsInstallPost.mockResolvedValueOnce({ data: { jobId: 99 } });
+    const jobId = await InstallAppAPI('my-app', '1.2.3', mockApi);
+    expect(mockApi.app.appsInstallPost).toHaveBeenCalledWith({
+      appKey: { name: 'my-app', version: '1.2.3' },
+    });
     expect(jobId).toBe(99);
   });
 
   it('rejects on error', async () => {
-    mockedAxios.post.mockRejectedValueOnce(new Error('fail'));
-    await expect(InstallAppAPI('my-app', '1.2.3')).rejects.toThrow('fail');
+    mockApi.app.appsInstallPost.mockRejectedValueOnce(new Error('fail'));
+    await expect(InstallAppAPI('my-app', '1.2.3', mockApi)).rejects.toThrow('fail');
   });
 });

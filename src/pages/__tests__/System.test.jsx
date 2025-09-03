@@ -21,8 +21,6 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import System from '../System';
-
-import { LicenseInfoAPI } from '../../api/device/license/info';
 import { vitest } from 'vitest';
 
 vitest.mock('../../api/device/license/info');

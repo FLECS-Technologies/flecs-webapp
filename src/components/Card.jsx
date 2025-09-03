@@ -43,6 +43,7 @@ import { JobsContext } from '../data/JobsContext';
 import InstallationStepper from './apps/installation/InstallationStepper';
 import { ShoppingCart } from '@mui/icons-material';
 import HelpButton from './buttons/help/HelpButton';
+import UninstallButton from './buttons/app/UninstallButton';
 
 export default function OutlinedCard(props) {
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
@@ -59,14 +60,12 @@ export default function OutlinedCard(props) {
       props.version,
     ),
   );
-  const [uninstalling, setUninstalling] = useState(false);
   const [available] = useState(
     props.availability === 'available' || props.availability === 'instock',
   );
   const installable = props.requirement && props.requirement?.includes(systemInfo?.arch);
   const displayStateRequest = available ? 'none' : 'block';
   const displayState = available ? 'block' : 'none';
-  const [open, setConfirmOpen] = useState(false);
   const [requestOpen, setRequestOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
@@ -89,38 +88,17 @@ export default function OutlinedCard(props) {
     }
   }
 
-  const uninstallApp = async (props) => {
-    setUninstalling(true);
-    setFetchingJobs(true);
-    const appAPI = new AppAPI(props);
-    appAPI.setAppData(loadReferenceData(props));
-    appAPI.setVersion(selectedVersion.version);
-    await appAPI.uninstall();
-
-    const alertSeverity = appAPI.lastAPICallSuccessful ? 'success' : 'error';
-    const displayCopyIcon = appAPI.lastAPICallSuccessful ? 'none' : 'block';
-    let snackbarText;
-    let clipBoardContent;
-
-    if (appAPI.lastAPICallSuccessful) {
-      // trigger a reload of all installed apps
-      setUpdateAppList(true);
-
-      snackbarText = props.title + ' successfully uninstalled.';
-    } else {
-      snackbarText = 'Failed to uninstall ' + props.title + '.';
-      clipBoardContent = appAPI.lastAPIError;
-    }
+  const handleUninstallComplete = (success, message, error) => {
+    const alertSeverity = success ? 'success' : 'error';
+    const displayCopyIcon = success ? 'none' : 'block';
 
     setSnackbarState({
       alertSeverity,
-      snackbarText,
+      snackbarText: message,
       displayCopyState: displayCopyIcon,
-      clipBoardContent,
+      clipBoardContent: error || '',
     });
     setSnackbarOpen(true);
-    setUninstalling(false);
-    setFetchingJobs(false);
   };
 
   function requestApp(props, success) {
@@ -216,18 +194,12 @@ export default function OutlinedCard(props) {
             displaystate={displayState}
           />
         )}
-        {props.installedVersions?.includes(selectedVersion.version) && (
-          <LoadButton
-            text="Uninstall"
-            variant="outlined"
-            label="uninstall-app-button"
-            disabled={uninstalling}
-            color="error"
-            onClick={() => setConfirmOpen(true)}
-            displaystate={displayState}
-            loading={uninstalling || false}
-          />
-        )}
+        <UninstallButton
+          app={props}
+          selectedVersion={selectedVersion}
+          displayState={displayState}
+          onUninstallComplete={handleUninstallComplete}
+        />
         {props.purchasable && Number(props.price) > 0 && (
           <Tooltip title={`Buy license for ${props.title}`}>
             <IconButton href={props.permalink} target="_blank" rel="noreferrer">
@@ -238,15 +210,6 @@ export default function OutlinedCard(props) {
         {props.documentationUrl && (
           <HelpButton url={props.documentationUrl} label="Documentation" />
         )}
-        <ConfirmDialog
-          data-testid="confirm-dialog"
-          title={'Uninstall ' + props.title + '?'}
-          open={open}
-          setOpen={setConfirmOpen}
-          onConfirm={() => uninstallApp(props)}
-        >
-          Are you sure you want to uninstall {props.title}?
-        </ConfirmDialog>
         <RequestAppDialog
           appName={props.title}
           appauthor={props.author}

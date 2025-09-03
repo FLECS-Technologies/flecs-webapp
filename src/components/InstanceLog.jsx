@@ -21,10 +21,12 @@ import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
 import { getInstanceLog, getLog } from '../api/device/InstanceLogService';
 import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function InstanceLog(props) {
   const { instance } = props;
   const executedRef = React.useRef(false);
+  const api = useProtectedApi();
   const [loadingLog, setLoadingLog] = React.useState(false);
   const [reloadLog, setReloadLog] = React.useState(false);
   const content = ContentState.createFromText('No log available...');
@@ -47,7 +49,8 @@ export default function InstanceLog(props) {
 
   const fetchLog = async (props) => {
     setLoadingLog(true);
-    getInstanceLog(instance.instanceId)
+    api.instances
+      .instancesInstanceIdLogsGet(instance.instanceId)
       .then((response) => {
         const currentContent = editorState.getCurrentContent();
         const newLog = Modifier.replaceText(
@@ -58,7 +61,7 @@ export default function InstanceLog(props) {
             focusOffset: currentContent.getLastBlock().getText().length,
             focusKey: currentContent.getLastBlock().getKey(),
           }),
-          getLog(response),
+          getLog(response.data),
         );
         const newEditorState = EditorState.push(editorState, newLog, 'insert-characters');
         setEditorState(newEditorState);

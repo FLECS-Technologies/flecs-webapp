@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { React, useContext, useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
@@ -30,27 +29,27 @@ import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 import Avatar from '@mui/material/Avatar';
-
 import LoadIconButton from './LoadIconButton';
 import UninstallButton from './buttons/app/UninstallButton';
 import { ReferenceDataContext } from '../data/ReferenceDataContext';
-import AppAPI from '../api/device/AppAPI';
 import AppInstanceRow from './AppInstanceRow';
 import ActionSnackbar from './ActionSnackbar';
-import ConfirmDialog from './ConfirmDialog';
 import useStateWithLocalStorage from './LocalStorage';
-import { JobsContext } from '../data/JobsContext';
 import HelpButton from './buttons/help/HelpButton';
 import { EditorButtons } from './buttons/editors/EditorButtons';
 import { InstanceStartCreateButtons } from './buttons/instance/InstanceStartCreateButtons';
+import { questStateFinishedOk } from '../utils/quests/QuestState';
+import { QuestContext, useQuestContext } from './quests/QuestContext';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function Row(props) {
-  const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
+  const { setUpdateAppList } = useContext(ReferenceDataContext);
   const { row } = props;
+  const api = useProtectedApi();
+  const context = useQuestContext(QuestContext);
   const [open, setOpen] = useStateWithLocalStorage(props.row.appKey.name + '.row.collapsed', false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
@@ -59,17 +58,8 @@ export default function Row(props) {
     displayCopyState: 'none',
     clipBoardContent: '',
   });
-  const { alertSeverity, snackbarText, displayCopyState, clipBoardContent } = snackbarState;
+  const { alertSeverity, snackbarText, clipBoardContent } = snackbarState;
   const [newInstanceStarting, setNewInstanceStarting] = useState(false);
-  const { setFetchingJobs } = useContext(JobsContext);
-
-  function loadReferenceData(props) {
-    const tmpApp = appList?.find((obj) => {
-      return obj.appKey.name === props.appKey.name && obj.appKey.version === props.appKey.version;
-    });
-
-    return tmpApp;
-  }
 
   // set defaults
   const appId = props.row.appKey.name.split('.');
@@ -88,56 +78,35 @@ export default function Row(props) {
 
   const createNewInstance = async (props, start) => {
     setNewInstanceStarting(true);
-    setFetchingJobs(true);
     let snackbarText;
     let alertSeverity;
-    let instanceId;
-    const appAPI = new AppAPI(props.row);
 
     try {
-      await appAPI.createInstance(appAPI.createInstanceName());
+      const createQuest = await api.instances.instancesCreatePost({
+        appKey: { name: props.row.appKey.name, version: props.row.appKey.version },
+      });
+      const createResult = await context.waitForQuest(createQuest.data.jobId);
 
-      if (appAPI.jobStatus === 'successful') {
-        // instance has been created
-        // success snackbar
-        snackbarText = 'Successfully created a new instance of ' + appAPI.app.title + '.';
+      if (questStateFinishedOk(createResult.state)) {
+        snackbarText = 'Successfully created a new instance of ' + props.row.title + '.';
         alertSeverity = 'success';
       }
 
-      instanceId = appAPI.instanceId;
-    } catch {
-      // error snackbar
-      snackbarText = 'Failed to create a new instance of ' + appAPI.app.title + '.';
-      alertSeverity = 'error';
-    }
-    setSnackbarState({
-      alertSeverity,
-      snackbarText,
-      displayCopyState: 'none',
-      clipBoardContent: '',
-    });
-    setSnackbarOpen(true);
+      if (createResult.result && start) {
+        const startInstanceQuestId = await api.instances.instancesInstanceIdStartPost(
+          createResult.result,
+        );
 
-    if (instanceId) {
-      // instance has been created, regardless of status
-      setUpdateAppList(true);
-    }
-
-    if (instanceId && start) {
-      try {
-        await appAPI.startInstance(instanceId);
-
-        if (appAPI.jobStatus === 'successful') {
-          // instance has started
-          // success snackbar
-          snackbarText = 'Successfully started a new instance of ' + appAPI.app.title + '.';
+        const startResult = await context.waitForQuest(startInstanceQuestId.data.jobId);
+        if (questStateFinishedOk(startResult.state)) {
+          snackbarText = 'Successfully started a new instance of ' + props.row.title + '.';
           alertSeverity = 'success';
         }
-      } catch {
-        // error snackbar
-        snackbarText = 'Failed to start the new instance of ' + appAPI.app.title + '.';
-        alertSeverity = 'error';
       }
+    } catch (error) {
+      snackbarText = 'Failed to create a new instance of ' + props.row.title + '.';
+      alertSeverity = 'error';
+    } finally {
       setSnackbarState({
         alertSeverity,
         snackbarText,
@@ -146,10 +115,8 @@ export default function Row(props) {
       });
       setSnackbarOpen(true);
       setUpdateAppList(true);
+      setNewInstanceStarting(false);
     }
-
-    setNewInstanceStarting(false);
-    setFetchingJobs(false);
   };
 
   const handleUninstallComplete = (success, message, error) => {
@@ -269,7 +236,6 @@ export default function Row(props) {
                       key={appInstance.instanceId}
                       app={row}
                       appInstance={appInstance}
-                      loadAppReferenceData={loadReferenceData}
                       showEditors={row.instances.length > 1}
                     />
                   ))}

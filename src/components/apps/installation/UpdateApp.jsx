@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
+import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Button, Grid, Typography, CircularProgress, Alert, AlertTitle } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
@@ -8,23 +8,23 @@ import {
 import PropTypes from 'prop-types';
 import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
 import { InstallAppAPI } from '../../../api/device/apps/install';
-import { checkAllJobStatuses, checkJobStatus } from '../../../utils/checkJobStatus';
 import { UpdateInstances } from '../../../api/device/instances/instance';
-import Job from '../../job/Job';
 import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
+import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 export default function UpdateApp({ app, from, to, handleActiveStep }) {
   const executedRef = useRef(false);
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
+  const context = useQuestContext(QuestContext);
   const api = useProtectedApi();
-
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(false);
   const [installationMessage, setInstallationMessage] = useState('');
-  const [jobId, setJobId] = useState();
-  const [status, setStatus] = useState();
+  const [currentQuest, setCurrentQuest] = React.useState();
 
   const updateApp = useCallback(
     async (app, from, to) => {
@@ -39,22 +39,21 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         setUpdating(true);
 
         // 1. install the requested version
-        setInstallationMessage(from < to ? 'Updating...' : 'Downgrading...');
-        const installJobId = await InstallAppAPI(app.appKey.name, to, api);
-        setJobId(installJobId);
+        const installQuestId = await InstallAppAPI(app.appKey.name, to, api);
+        setCurrentQuest(installQuestId);
+        await context.fetchQuest(installQuestId);
+        const result = await context.waitForQuest(installQuestId);
+        if (!questStateFinishedOk(result.state)) throw new Error('Installation failed');
 
-        // 2. wait until installation is finished
-        const installStatus = await checkJobStatus(installJobId);
-        if (installStatus !== 'successful') throw new Error('Installation failed');
-
-        // 3. update all instances
+        // 2. update all instances
         setInstallationMessage(`Migrating ${installedApp?.instances?.length} instances...`);
-        const updateJobIds = await UpdateInstances(installedApp?.instances, to, api);
-        // 4. wait until all instances are updated
-        const updateStatuses = await checkAllJobStatuses(updateJobIds);
-        const unsuccessfulJob = updateStatuses.find((status) => status !== 'successful');
-        if (unsuccessfulJob) {
-          throw new Error(`One or more instance migrations failed with status: ${unsuccessfulJob}`);
+        const updateQuestIds = await UpdateInstances(installedApp?.instances, to, api);
+        const updateQuests = await context.waitForQuests(updateQuestIds);
+        const unsuccessfulQuests = updateQuests.find((quest) => !questStateFinishedOk(quest.state));
+        if (unsuccessfulQuests) {
+          throw new Error(
+            `One or more instance migrations failed with status: ${unsuccessfulQuests}`,
+          );
         }
 
         setInstallationMessage(
@@ -81,10 +80,14 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         handleActiveStep(-1);
       }
     },
-    [appList, setUpdateAppList, checkJobStatus],
+    [appList, setUpdateAppList],
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
+    if (currentQuest) context.fetchQuest(currentQuest);
+  }, [currentQuest]);
+
+  React.useEffect(() => {
     if (executedRef.current) return;
 
     if (app && from && to && !updating && (!success || !error)) {
@@ -111,18 +114,18 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         justifyContent="center"
         alignItems="center"
       >
+        {updating && (
+          <Grid>
+            <QuestLogEntry id={currentQuest} level={0} showBorder={false} />
+          </Grid>
+        )}
         <Grid>
-          {updating && <CircularProgress />}
-          {success && !updating && (
-            <CheckCircleIcon data-testid="success-icon" fontSize="large" color="success" />
-          )}
-          {error && <ReportIcon data-testid="error-icon" fontSize="large" color="error" />}
-        </Grid>
-        <Grid>
-          <Typography data-testid="installationMessage">{installationMessage}</Typography>
-        </Grid>
-        <Grid>
-          <Job jobId={jobId} setStatus={setStatus}></Job>
+          {installationMessage ? (
+            <Alert sx={{ mb: 2, marginTop: '50px' }} severity={success ? 'success' : 'info'}>
+              <AlertTitle>{success ? 'Success' : 'Info'}</AlertTitle>
+              <Typography variant="body2">{installationMessage}</Typography>
+            </Alert>
+          ) : null}
         </Grid>
         {error && (
           <Grid>

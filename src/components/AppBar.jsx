@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import React, { useContext } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
@@ -25,16 +25,11 @@ import IconButton from '@mui/material/IconButton';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import Badge from '@mui/material/Badge';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
-import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import { useDarkMode } from '../styles/ThemeHandler';
 import Logo from './app_bar/Logo';
 import { useSearchParams } from 'react-router-dom';
-import { JobsContext } from '../data/JobsContext';
 import HelpButton from './buttons/help/HelpButton';
 import { helpdomain } from './help/helplinks';
 import { appBarIconColors } from '../whitelabeling/custom-tokens';
@@ -67,10 +62,6 @@ export default function ElevateAppBar(props) {
   const [questLogOpen, setQuestLogOpen] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { isDarkMode, setDarkMode } = useDarkMode();
-  const { jobs, fetchExports } = React.useContext(JobsContext);
-  const finishedJobs = jobs?.filter(
-    (j) => j.status === 'successful' || j.status === 'failed' || j.status === 'cancelled',
-  );
   const open = Boolean(anchorElPopover);
   const id = open ? 'simple-popover' : undefined;
 
@@ -79,7 +70,6 @@ export default function ElevateAppBar(props) {
   };
 
   React.useEffect(() => {
-    fetchExports();
     isVisible();
   }, []);
 
@@ -101,34 +91,12 @@ export default function ElevateAppBar(props) {
             <Toolbar>
               <Logo></Logo>
               <HelpButton url={helpdomain} sx={{ color: appBarIconColors.primary }} />
-              <Button
-                sx={{
-                  minWidth: '24px',
-                  color: appBarIconColors.primary,
-                }}
-                aria-describedby={id}
-                variant="text"
+              <IconButton
+                sx={{ ml: 1, color: appBarIconColors.primary }}
                 onClick={() => setQuestLogOpen(true)}
               >
-                <Badge
-                  color="info"
-                  badgeContent={
-                    finishedJobs?.length < jobs?.length ? jobs?.length - finishedJobs?.length : null
-                  }
-                >
-                  {jobs?.filter((j) => j.status !== 'successful').length > 0 ? (
-                    jobs?.filter((j) => j.status === 'failed' || j.status === 'cancelled').length >
-                    0 ? (
-                      <AssignmentLateIcon /> // at least one job failed or cancelled
-                    ) : (
-                      <AssignmentIcon />
-                    ) // still running some jobs
-                  ) : (
-                    <AssignmentTurnedInIcon />
-                  )}
-                </Badge>
-              </Button>
-
+                <AssignmentIcon />
+              </IconButton>
               <IconButton
                 aria-label="change-theme-button"
                 sx={{ ml: 1, mr: 1, color: appBarIconColors.primary }}

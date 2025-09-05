@@ -18,17 +18,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
-import { postImportApps } from '../api/device/ImportAppsService';
 import ActionSnackbar from './ActionSnackbar';
 import FileOpen from './FileOpen';
 import { ReferenceDataContext } from '../data/ReferenceDataContext';
-import { JobsContext } from '../data/JobsContext';
-import { OnboardingDeviceAPI } from '../api/device/onboarding/onboarding';
 import { useProtectedApi } from './providers/ApiProvider';
+import { QuestContext, useQuestContext } from './quests/QuestContext';
+import { questStateFinishedOk } from '../utils/quests/QuestState';
 
 export default function Import(props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext);
   const api = useProtectedApi();
+  const context = useQuestContext(QuestContext);
   const { ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -36,43 +36,6 @@ export default function Import(props) {
     snackbarText: 'Info',
     alertSeverity: 'success',
   });
-  const { jobs, fetchJobs, fetchJobById } = React.useContext(JobsContext);
-  const [jobId, setJobId] = React.useState(null);
-
-  React.useEffect(() => {
-    let interval;
-    if (jobId) {
-      const job = jobs.find((job) => job.id === jobId);
-      if (job && (job.status === 'running' || job.status === 'queued')) {
-        // Start polling
-        interval = setInterval(async () => {
-          await fetchJobById(jobId);
-        }, 2000); // Poll every 2 seconds
-      } else if (job && job.status === 'successful') {
-        setUpdateAppList(true);
-        clearInterval(interval); // Clear interval when job is finished
-        setSnackbarState({
-          alertSeverity: 'success',
-          snackbarText: 'Importing finished successfully',
-        });
-        setSnackbarOpen(true);
-        setImporting(false);
-        setJobId(null);
-      } else if (job && job.status === 'failed') {
-        setSnackbarState({
-          alertSeverity: 'error',
-          snackbarText: 'Importing failed',
-        });
-        setSnackbarOpen(true);
-        setImporting(false);
-        setJobId(null);
-        clearInterval(interval); // Clear interval when job is finished
-      } else {
-        clearInterval(interval); // Clear interval when job is finished
-      }
-    }
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [jobId, jobs]);
 
   const handleFileUpload = (file) => {
     if (file) {
@@ -93,49 +56,55 @@ export default function Import(props) {
 
   const handleJsonFile = async (file) => {
     setImporting(true);
-    OnboardingDeviceAPI(file, api)
-      .then(async (response) => {
-        if (response.jobId) {
-          await fetchJobs();
-          setJobId(response.jobId);
-        }
-      })
-      .catch((error) => {
-        setImporting(false);
-        setSnackbarState({
-          alertSeverity: 'error',
-          snackbarText: error?.response?.data?.message
-            ? error?.response?.data?.message
-            : error?.message,
-        });
-        setSnackbarOpen(true);
+
+    try {
+      const fileContent = await file.text();
+      const jsonData = JSON.parse(fileContent);
+
+      const onboardingQuest = await api.device.deviceOnboardingPost(jsonData);
+      await context.fetchQuest(onboardingQuest.data.jobId);
+      const result = await context.waitForQuest(onboardingQuest.data.jobId);
+
+      if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+    } catch (error) {
+      setImporting(false);
+      setSnackbarState({
+        alertSeverity: 'error',
+        snackbarText: error?.response?.data?.message
+          ? error?.response?.data?.message
+          : error?.message,
       });
+      setSnackbarOpen(true);
+    } finally {
+      setImporting(false);
+      setUpdateAppList(true);
+    }
   };
 
   const handleTarFile = async (props) => {
     setImporting(true);
 
-    const file = props;
-    const fileName = props.name;
+    try {
+      const file = props;
+      const fileName = props.name;
 
-    postImportApps(file, fileName)
-      .then(async (response) => {
-        const jobId = JSON.parse(response).jobId;
-        if (jobId) {
-          await fetchJobs();
-          setJobId(jobId);
-        }
-      })
-      .catch((error) => {
-        setImporting(false);
-        setSnackbarState({
-          alertSeverity: 'error',
-          snackbarText: error?.response?.data?.message
-            ? error?.response?.data?.message
-            : error?.message,
-        });
-        setSnackbarOpen(true);
+      const importQuest = await api.export.importsPost(fileName, file);
+      await context.fetchQuest(importQuest.data.jobId);
+      const result = await context.waitForQuest(importQuest.data.jobId);
+
+      if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+    } catch (error) {
+      setSnackbarState({
+        alertSeverity: 'error',
+        snackbarText: error?.response?.data?.message
+          ? error?.response?.data?.message
+          : error?.message,
       });
+      setSnackbarOpen(true);
+    } finally {
+      setImporting(false);
+      setUpdateAppList(true);
+    }
   };
 
   return (

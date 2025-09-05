@@ -18,12 +18,38 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import InstalledApps from '../InstalledApps';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { createMockApi } from '../../__mocks__/core-client-ts';
+
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+// Mock the ReferenceDataContext
+vi.mock('../../data/ReferenceDataContext', () => ({
+  ReferenceDataContext: React.createContext({ appList: [] }),
+}));
+
+// Mock the child components that use the API
+vi.mock('../../components/InstalledAppsList', () => ({
+  default: ({ appData }) => <div aria-label="installed-apps-list">Installed Apps List</div>,
+}));
 
 describe('Installed Apps', () => {
-  test('renders installed apps page', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  it('renders installed apps page', () => {
     render(
       <Router>
         <InstalledApps />

@@ -16,18 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Login from '../Login';
 import { DeviceAPIConfiguration, MarketplaceAPIConfiguration } from '../../api/api-config';
 import axios from 'axios';
 import { useAuth } from '../../components/providers/AuthProvider';
-import { vitest } from 'vitest';
 
-vitest.mock('axios');
-vitest.mock('../../components/AuthProvider', () => ({ useAuth: vitest.fn() }));
+vi.mock('axios');
+vi.mock('../../components/providers/AuthProvider', () => ({ useAuth: vi.fn() }));
 
 describe('Login', () => {
   const homer = {
@@ -50,21 +49,19 @@ describe('Login', () => {
         },
       },
     },
-    setUser: vitest.fn(),
+    setUser: vi.fn(),
   };
 
-  afterAll(() => {
-    vitest.clearAllMocks();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  test('renders Login page', async () => {
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+  it('renders Login page', async () => {
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     expect(screen.getByLabelText('user-name')).toBeVisible();
     expect(screen.getByLabelText('password')).toBeVisible();
@@ -74,15 +71,13 @@ describe('Login', () => {
     expect(screen.getByLabelText('privacy-policy-link')).toBeVisible();
   });
 
-  test('Enter Username', async () => {
+  it('Enter Username', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const goButton = screen.getByLabelText('login-button');
 
@@ -96,15 +91,13 @@ describe('Login', () => {
     expect(goButton).toBeDisabled();
   });
 
-  test('Enter Password', async () => {
+  it('Enter Password', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const goButton = screen.getByLabelText('login-button');
 
@@ -118,15 +111,13 @@ describe('Login', () => {
     expect(goButton).toBeDisabled();
   });
 
-  test('Show Password', async () => {
+  it('Show Password', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const showPassword = screen.getByLabelText('toggle password visibility');
 
@@ -140,15 +131,13 @@ describe('Login', () => {
     await user.click(showPassword);
   });
 
-  test('Enter Username and Password', async () => {
+  it('Enter Username and Password', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const goButton = screen.getByLabelText('login-button');
 
@@ -162,18 +151,16 @@ describe('Login', () => {
     expect(goButton).toBeEnabled();
   });
 
-  test('Successful Login', async () => {
-    axios.post.mockResolvedValueOnce(homer);
-    axios.put.mockResolvedValueOnce();
-    useAuth.mockReturnValue(homer);
+  it('Successful Login', async () => {
+    vi.mocked(axios.post).mockResolvedValueOnce(homer);
+    vi.mocked(axios.put).mockResolvedValueOnce();
+    vi.mocked(useAuth).mockReturnValue(homer);
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const goButton = screen.getByLabelText('login-button');
 
@@ -185,9 +172,7 @@ describe('Login', () => {
     await user.keyboard('pass1234');
 
     expect(goButton).toBeEnabled();
-    await act(async () => {
-      user.click(goButton);
-    });
+    await user.click(goButton);
 
     await waitFor(() => screen.getByLabelText('message'));
     const message = screen.getByLabelText('message');
@@ -207,16 +192,14 @@ describe('Login', () => {
     );
   });
 
-  test('Unsuccessful Login', async () => {
-    axios.post.mockRejectedValueOnce(new Error('Failed to login'));
+  it('Unsuccessful Login', async () => {
+    vi.mocked(axios.post).mockRejectedValueOnce(new Error('Failed to login'));
     const user = userEvent.setup();
-    await act(async () => {
-      render(
-        <Router>
-          <Login />
-        </Router>,
-      );
-    });
+    render(
+      <Router>
+        <Login />
+      </Router>,
+    );
 
     const goButton = screen.getByLabelText('login-button');
 

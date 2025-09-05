@@ -17,16 +17,78 @@
  */
 
 import React from 'react';
-import { render /*, screen */ } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
-import '@testing-library/jest-dom';
 import Frame from '../Frame';
-import { DarkModeState } from '../ThemeHandler';
+import { DarkModeState } from '../../styles/ThemeHandler';
 import { QuestContextProvider } from '../quests/QuestContext';
+import { createMockApi } from '../../__mocks__/core-client-ts';
+
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+// Mock react-router-dom navigate
+const mockedUsedNavigate = vi.fn();
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useNavigate: () => mockedUsedNavigate,
+  };
+});
+
+// Mock AuthProvider to avoid dependency issues
+vi.mock('../providers/AuthProvider', () => ({
+  useAuth: vi.fn(() => null),
+  useAuthActions: vi.fn(() => ({
+    signOut: vi.fn(),
+  })),
+  useAuthConfig: vi.fn(() => ({})),
+}));
+
+// Mock react-oidc-context
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn(() => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    error: null,
+  })),
+  AuthProvider: ({ children }) => children,
+}));
+
+// Mock window.matchMedia for theme handler
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 describe('Frame', () => {
-  test('renders Frame component', () => {
-    render(
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  test('renders Frame component', async () => {
+    const { getByLabelText } = render(
       <Router>
         <DarkModeState>
           <QuestContextProvider>
@@ -35,6 +97,32 @@ describe('Frame', () => {
         </DarkModeState>
       </Router>,
     );
-    // screen.debug()
+
+    await waitFor(() => {
+      const headerPlaceholder = getByLabelText('Header-Placeholder');
+      expect(headerPlaceholder).toBeVisible();
+    });
+  });
+
+  test('renders Frame component with children', async () => {
+    const TestChild = () => <div data-testid="test-child">Test Content</div>;
+
+    const { getByTestId, getByLabelText } = render(
+      <Router>
+        <DarkModeState>
+          <QuestContextProvider>
+            <Frame>
+              <TestChild />
+            </Frame>
+          </QuestContextProvider>
+        </DarkModeState>
+      </Router>,
+    );
+
+    await waitFor(() => {
+      expect(getByLabelText('Header-Placeholder')).toBeVisible();
+      expect(getByTestId('test-child')).toBeVisible();
+      expect(getByTestId('test-child')).toHaveTextContent('Test Content');
+    });
   });
 });

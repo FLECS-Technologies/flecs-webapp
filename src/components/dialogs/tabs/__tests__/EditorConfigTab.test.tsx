@@ -16,54 +16,50 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { api } from '../../../../api/flecs-core/api-client';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import EditorConfigTab from '../EditorConfigTab';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
-// Mock the API client
-jest.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    instances: {
-      instancesInstanceIdConfigEditorsGet: jest.fn(),
-      instancesInstanceIdConfigEditorsPortPathPrefixDelete: jest.fn(),
-      instancesInstanceIdConfigEditorsPortPathPrefixPut: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('EditorConfigTab', () => {
   const instanceId = 'test-instance-id';
+  const mockOnChange = vi.fn();
+  let mockApi: any;
 
   beforeEach(() => {
-    api.instances.instancesInstanceIdConfigEditorsGet = jest.fn();
-    api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete = jest.fn();
-    api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut = jest.fn();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner while fetching editors', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
   });
 
   it('renders editors when data is fetched', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByText('Testeditor')).toBeInTheDocument();
@@ -74,14 +70,16 @@ describe('EditorConfigTab', () => {
   });
 
   it('changing path prefix updates url', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
 
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
@@ -94,14 +92,16 @@ describe('EditorConfigTab', () => {
   });
 
   it('no path prefix disables delete', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, url: '/test/url' }],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
     const deleteButton = screen.getByLabelText('delete-editor-prefix-button');
@@ -109,14 +109,16 @@ describe('EditorConfigTab', () => {
   });
 
   it('path prefix enables delete', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
     const deleteButton = screen.getByLabelText('delete-editor-prefix-button');
@@ -124,40 +126,43 @@ describe('EditorConfigTab', () => {
   });
 
   it('delete path prefix', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
-    (
-      api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete as jest.Mock
-    ).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete.mockResolvedValueOnce(
+      {},
+    );
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
     const deleteButton = screen.getByLabelText('delete-editor-prefix-button');
     fireEvent.click(deleteButton);
 
-    expect(api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete).toHaveBeenCalledWith(
-      instanceId,
-      200,
-    );
+    expect(
+      mockApi.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete,
+    ).toHaveBeenCalledWith(instanceId, 200);
 
     const pathPrefix = screen.getByLabelText('Path Prefix');
     await waitFor(() => expect(pathPrefix).not.toHaveValue());
   });
 
   it('changing path prefix enables save', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
     const saveButton = screen.getByLabelText('put-editor-prefix-button');
@@ -169,17 +174,17 @@ describe('EditorConfigTab', () => {
   });
 
   it('save path prefix', async () => {
-    (api.instances.instancesInstanceIdConfigEditorsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEditorsGet.mockResolvedValueOnce({
       data: [{ name: 'Testeditor', port: 200, path_prefix: 'test_prefix', url: '/test/url' }],
     });
-    (
-      api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut as jest.Mock
-    ).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut.mockResolvedValueOnce({});
 
-    render(<EditorConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EditorConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigEditorsGet).toHaveBeenCalledWith(
+        instanceId,
+      ),
     );
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
     const saveButton = screen.getByLabelText('put-editor-prefix-button');
@@ -187,11 +192,9 @@ describe('EditorConfigTab', () => {
     const entry = screen.getByLabelText('Path Prefix');
     fireEvent.change(entry, { target: { value: 'new_test_prefix' } });
     fireEvent.click(saveButton);
-    expect(api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut).toHaveBeenCalledWith(
-      instanceId,
-      200,
-      { path_prefix: 'new_test_prefix' },
-    );
+    expect(
+      mockApi.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut,
+    ).toHaveBeenCalledWith(instanceId, 200, { path_prefix: 'new_test_prefix' });
     await waitFor(() => expect(saveButton).toBeDisabled());
   });
 });

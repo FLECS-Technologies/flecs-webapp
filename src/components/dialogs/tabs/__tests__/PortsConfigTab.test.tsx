@@ -19,62 +19,57 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import PortsConfigTab from '../PortsConfigTab';
-import { api } from '../../../../api/flecs-core/api-client';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
+import { vi } from 'vitest';
 
-// Mock the API client
-jest.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    instances: {
-      instancesInstanceIdConfigPortsGet: jest.fn(),
-      instancesInstanceIdConfigPortsTransportProtocolPut: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('PortsConfigTab', () => {
   const instanceId = 'test-instance-id';
+  let mockApi: ReturnType<typeof createMockApi>;
 
   beforeEach(() => {
-    api.instances.instancesInstanceIdConfigPortsGet = jest.fn();
-    api.instances.instancesInstanceIdConfigPortsTransportProtocolPut = jest.fn();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner while fetching ports', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: { tcp: [], udp: [] },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigPortsGet).toHaveBeenCalledWith(instanceId),
+      expect(mockApi.instances.instancesInstanceIdConfigPortsGet).toHaveBeenCalledWith(instanceId),
     );
   });
 
   it('renders "No ports configured" when no ports are returned', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: { tcp: [], udp: [] },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => expect(screen.getByText('No ports configured.')).toBeInTheDocument());
   });
 
   it('renders ports when data is fetched', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: {
         tcp: [{ host_port: 8080, container_port: 80 }],
         udp: [],
       },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Host Port')).toHaveValue('8080');
@@ -83,11 +78,11 @@ describe('PortsConfigTab', () => {
   });
 
   it('handles adding a single port mapping', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: { tcp: [], udp: [] },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => expect(screen.getByText('No ports configured.')).toBeInTheDocument());
 
@@ -100,17 +95,15 @@ describe('PortsConfigTab', () => {
 
   it('handles saving ports', async () => {
     // Mock API responses
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: {
         tcp: [{ host_port: 8080, container_port: 80 }],
         udp: [],
       },
     });
-    (
-      api.instances.instancesInstanceIdConfigPortsTransportProtocolPut as jest.Mock
-    ).mockResolvedValueOnce();
+    mockApi.instances.instancesInstanceIdConfigPortsTransportProtocolPut.mockResolvedValueOnce({});
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Host Port')).toHaveValue('8080');
@@ -127,19 +120,21 @@ describe('PortsConfigTab', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigPortsTransportProtocolPut).toHaveBeenCalled(),
+      expect(
+        mockApi.instances.instancesInstanceIdConfigPortsTransportProtocolPut,
+      ).toHaveBeenCalled(),
     );
   });
 
   it('handles deleting a port', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: {
         tcp: [{ host_port: 8080, container_port: 80 }],
         udp: [],
       },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Host Port')).toHaveValue('8080');
@@ -153,11 +148,11 @@ describe('PortsConfigTab', () => {
   });
 
   it('handles adding a port range mapping', async () => {
-    (api.instances.instancesInstanceIdConfigPortsGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigPortsGet.mockResolvedValueOnce({
       data: { tcp: [], udp: [] },
     });
 
-    render(<PortsConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<PortsConfigTab instanceId={instanceId} onChange={vi.fn()} />);
 
     await waitFor(() => expect(screen.getByText('No ports configured.')).toBeInTheDocument());
 
@@ -188,7 +183,9 @@ describe('PortsConfigTab', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigPortsTransportProtocolPut).toHaveBeenCalled(),
+      expect(
+        mockApi.instances.instancesInstanceIdConfigPortsTransportProtocolPut,
+      ).toHaveBeenCalled(),
     );
   });
 });

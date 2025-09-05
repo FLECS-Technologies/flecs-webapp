@@ -1,9 +1,47 @@
 import React from 'react';
-import '@testing-library/jest-dom';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
 import Row from '../InstalledAppsListRow';
+import { ReferenceDataContext } from '../../data/ReferenceDataContext';
+import { createMockApi } from '../../__mocks__/core-client-ts';
+
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
+
+const renderWithContext = (ui, { referenceDataValues }) => {
+  return render(
+    <ReferenceDataContext.Provider value={referenceDataValues}>{ui}</ReferenceDataContext.Provider>,
+  );
+};
 
 describe('Test Installed Apps List row', () => {
+  let mockApi;
+  let mockQuestContext;
+  const mockSetUpdateAppList = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(() => Promise.resolve({ state: 'Success' })),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+  });
+
   const app = {
     appKey: {
       name: 'com.codesys.codesyscontrol',
@@ -12,6 +50,7 @@ describe('Test Installed Apps List row', () => {
     status: 'installed',
     editor: ':8080',
     multiInstance: true,
+    installedVersions: ['4.2.0'], // Add this so UninstallButton renders
     instances: [
       {
         instanceId: 'com.codesys.codesyscontrol.01234567',
@@ -35,16 +74,19 @@ describe('Test Installed Apps List row', () => {
   };
 
   afterAll(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
-  test('renders installed apps list row component', async () => {
-    render(
+  it('renders installed apps list row component', async () => {
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     const crtInstnButton = await waitFor(() =>
@@ -56,13 +98,16 @@ describe('Test Installed Apps List row', () => {
     expect(deleteButton).toBeVisible();
   });
 
-  test('create new instance', async () => {
-    render(
+  it('create new instance', async () => {
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     const crtInstnButton = await waitFor(() =>
@@ -78,13 +123,16 @@ describe('Test Installed Apps List row', () => {
     });
   });
 
-  test('test delete app', async () => {
-    render(
+  it('test delete app', async () => {
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     const deleteButton = await waitFor(() => screen.getByTestId('DeleteIcon'));
@@ -100,15 +148,18 @@ describe('Test Installed Apps List row', () => {
     });
   });
 
-  test('test app with documentation url', async () => {
+  it('test app with documentation url', async () => {
     app.documentationUrl = 'https://google.com';
 
-    render(
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     const documentationButton = await waitFor(() => screen.getByTestId('HelpCenterIcon'));
@@ -116,15 +167,18 @@ describe('Test Installed Apps List row', () => {
     expect(documentationButton).toBeVisible();
   });
 
-  test('test app without documentation url', async () => {
+  it('test app without documentation url', async () => {
     app.documentationUrl = undefined;
 
-    render(
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     await waitFor(() => {
@@ -132,16 +186,19 @@ describe('Test Installed Apps List row', () => {
     });
   });
 
-  test('renders an app with an editor', async () => {
-    const closeSpy = jest.fn();
-    window.open = jest.fn().mockReturnValue({ close: closeSpy });
+  it('renders an app with an editor', async () => {
+    const closeSpy = vi.fn();
+    window.open = vi.fn().mockReturnValue({ close: closeSpy });
 
-    render(
+    renderWithContext(
       <table>
         <tbody>
           <Row key={app.appKey.name} row={app} />
         </tbody>
       </table>,
+      {
+        referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
+      },
     );
 
     const expandButton = await waitFor(() => screen.getByLabelText('expand row'));

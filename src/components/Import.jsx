@@ -66,8 +66,14 @@ export default function Import(props) {
       const result = await context.waitForQuest(onboardingQuest.data.jobId);
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+
+      // Success case
+      setSnackbarState({
+        alertSeverity: 'success',
+        snackbarText: 'Importing finished successfully',
+      });
+      setSnackbarOpen(true);
     } catch (error) {
-      setImporting(false);
       setSnackbarState({
         alertSeverity: 'error',
         snackbarText: error?.response?.data?.message
@@ -93,6 +99,13 @@ export default function Import(props) {
       const result = await context.waitForQuest(importQuest.data.jobId);
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+
+      // Success case
+      setSnackbarState({
+        alertSeverity: 'success',
+        snackbarText: 'Importing finished successfully',
+      });
+      setSnackbarOpen(true);
     } catch (error) {
       setSnackbarState({
         alertSeverity: 'error',

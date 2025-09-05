@@ -1,4 +1,6 @@
-import { mockApi, mockGetBaseURL, mockTransportProtocol } from './__mocks__/api';
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import { mockCoreClientTs } from './__mocks__/core-client-ts';
 
 const localStorageMock = (function () {
   let store = {};
@@ -24,18 +26,10 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
-// Mock the Configuration class
-jest.mock('@flecs/core-client-ts', () => ({
-  Configuration: jest.fn(() => ({
-    basePath: '',
-  })),
-}));
+// Mock the entire @flecs/core-client-ts module
+vi.mock('@flecs/core-client-ts', () => mockCoreClientTs());
 
-jest.mock('./api/flecs-core/api-client', () => ({
-  api: {
-    instances: {
-      instancesInstanceIdConfigPortsGet: jest.fn(),
-      instancesInstanceIdConfigPortsTransportProtocolPut: jest.fn(),
-    },
-  },
-}));
+// Global test utilities for Vitest
+global.createMockApi = require('./__mocks__/core-client-ts').createMockApi;
+global.resetAllApiMocks = require('./__mocks__/core-client-ts').resetAllApiMocks;
+global.setupQuestFailure = require('./__mocks__/core-client-ts').setupQuestFailure;

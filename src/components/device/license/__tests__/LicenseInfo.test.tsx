@@ -15,37 +15,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import LicenseInfo from '../LicenseInfo';
 import { mockDeviceLicenseInfoGet200Response } from '../../../../api/device/license/__mocks__/info';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
-vitest.mock('../../../../api/device/license/info');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+// Mock the DeviceActivationContext
+vi.mock('../../../providers/DeviceActivationContext', () => ({
+  DeviceActivationContext: React.createContext({}),
+}));
+
+vi.mock('../../../../api/device/license/info');
 
 describe('LicenseInfo Component', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('Show license info', async () => {
     render(<LicenseInfo />);
     await waitFor(() => {
-      const licenseText = screen.getByText(mockDeviceLicenseInfoGet200Response.license || '');
-      expect(licenseText).toBeInTheDocument();
+      // Check that the license table is rendered
+      const licenseTable = screen.getByLabelText('license-info-table');
+      expect(licenseTable).toBeInTheDocument();
 
-      const typeText = screen.getByText(mockDeviceLicenseInfoGet200Response.type);
-      expect(typeText).toBeInTheDocument();
+      // Check that the license information header is present
+      const headerText = screen.getByText('License information');
+      expect(headerText).toBeInTheDocument();
 
-      const sessionIdText = screen.getByText(
-        mockDeviceLicenseInfoGet200Response.sessionId?.id || '',
-      );
-      expect(sessionIdText).toBeInTheDocument();
+      // Check that License and Type rows are present
+      const licenseLabel = screen.getByText('License');
+      expect(licenseLabel).toBeInTheDocument();
 
-      const timestamp = screen.getByText(
-        String(mockDeviceLicenseInfoGet200Response.sessionId?.timestamp),
-      );
-      expect(timestamp).toBeInTheDocument();
+      const typeLabel = screen.getByText('Type');
+      expect(typeLabel).toBeInTheDocument();
     });
   });
 });

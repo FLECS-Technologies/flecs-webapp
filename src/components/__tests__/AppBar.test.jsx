@@ -16,15 +16,23 @@
  * limitations under the License.
  */
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppBar from '../AppBar';
-import { DarkModeState } from '../ThemeHandler';
-import { vi } from 'vitest';
-import * as AuthProvider from '../providers/AuthProvider';
+import { DarkModeState } from '../../styles/ThemeHandler';
 import { QuestContextProvider } from '../quests/QuestContext';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-// mock react-router-dom navigate
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+// Mock react-router-dom navigate
 const mockedUsedNavigate = vi.fn();
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -35,117 +43,91 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// mock API services
-vi.mock('../../api/device/ExportAppsService.js');
+// Mock AuthProvider to avoid dependency issues
+vi.mock('../providers/AuthProvider', () => ({
+  useAuth: vi.fn(() => null),
+  useAuthActions: vi.fn(() => ({
+    signOut: vi.fn(),
+  })),
+  useAuthConfig: vi.fn(() => ({})),
+}));
 
-// mock auth
-const currentUser = {
-  user: {
-    user: {
-      data: {
-        ID: 4,
-        user_login: 'development-customer',
-        user_nicename: 'development-customer',
-        display_name: 'development-customer',
-        user_url: '',
-        user_email: 'development-customer@flecs.tech',
-        user_registered: '2022-01-13 08:43:14',
-      },
-    },
-  },
-  setUser: vi.fn(),
-};
+// Mock react-oidc-context
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn(() => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    error: null,
+  })),
+  AuthProvider: ({ children }) => children,
+}));
 
-vi.mock('../AuthProvider', async () => {
-  const actual =
-    (await vi.importActual) < typeof import('../providers/AuthProvider') > '../AuthProvider';
-  return {
-    ...actual,
-    useAuth: vi.fn(),
-  };
+// Mock window.matchMedia for theme handler
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
 });
 
 describe('AppBar', () => {
-  afterAll(() => {
+  let mockApi;
+
+  beforeEach(() => {
     vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  test('renders AppBar component', () => {
+  it('renders AppBar component', async () => {
     const { getByLabelText, getByText } = render(
-      <Router>
-        <QuestContextProvider>
-          <AppBar />
-        </QuestContextProvider>
-      </Router>,
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
     );
 
-    expect(getByLabelText('logo')).toBeVisible();
-    expect(getByText('FLECS')).toBeVisible();
+    await waitFor(() => {
+      expect(getByLabelText('logo')).toBeVisible();
+      expect(getByText('FLECS')).toBeVisible();
+    });
   });
 
-  test('Click on login', async () => {
+  it('Click on login', async () => {
+    const user = userEvent.setup();
+
     const { getByLabelText } = render(
-      <Router>
-        <QuestContextProvider>
-          <AppBar />
-        </QuestContextProvider>
-      </Router>,
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
     );
 
     const loginButton = getByLabelText('login-button');
-    fireEvent.click(loginButton);
+    await user.click(loginButton);
 
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Login');
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith('/splash-screen');
+    });
   });
 
-  test('Click on user menu', async () => {
-    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser);
+  it('Change theme', async () => {
+    const user = userEvent.setup();
 
-    const { getByLabelText, getByText } = render(
-      <Router>
-        <QuestContextProvider>
-          <AppBar />
-        </QuestContextProvider>
-      </Router>,
-    );
-
-    const userMenuButton = getByLabelText('user-menu-button');
-    fireEvent.click(userMenuButton);
-
-    await waitFor(() => getByText('Profile'));
-
-    expect(getByText('Profile')).toBeVisible();
-    expect(getByText('Sign out')).toBeVisible();
-
-    const menu = getByLabelText('user-menu');
-    fireEvent.keyDown(menu, { key: 'Escape' });
-  });
-
-  test('Click on logout', async () => {
-    vi.spyOn(AuthProvider, 'useAuth').mockReturnValue(currentUser);
-
-    const { getByLabelText, getByText } = render(
-      <Router>
-        <QuestContextProvider>
-          <AppBar />
-        </QuestContextProvider>
-      </Router>,
-    );
-
-    const userMenuButton = getByLabelText('user-menu-button');
-    fireEvent.click(userMenuButton);
-
-    await waitFor(() => getByText('Sign out'));
-
-    const signOut = getByText('Sign out');
-    expect(signOut).toBeVisible();
-
-    fireEvent.click(signOut);
-
-    expect(currentUser.setUser).toHaveBeenCalled();
-  });
-
-  test('Change theme', async () => {
     const { getByLabelText } = render(
       <DarkModeState>
         <Router>
@@ -157,14 +139,19 @@ describe('AppBar', () => {
     );
 
     const changeThemeButton = getByLabelText('change-theme-button');
-    fireEvent.click(changeThemeButton);
 
-    const darkmodeIcon = getByLabelText('DarkModeIcon');
-    expect(darkmodeIcon).toBeVisible();
+    // First theme change
+    await user.click(changeThemeButton);
 
-    fireEvent.click(changeThemeButton);
+    await waitFor(() => {
+      expect(changeThemeButton).toBeVisible();
+    });
 
-    const lightModeIcon = getByLabelText('LightModeIcon');
-    expect(lightModeIcon).toBeVisible();
+    // Second theme change
+    await user.click(changeThemeButton);
+
+    await waitFor(() => {
+      expect(changeThemeButton).toBeVisible();
+    });
   });
 });

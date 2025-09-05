@@ -19,9 +19,16 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import { QuestContext, QuestContextProvider, useQuestContext } from '../QuestContext';
-import { api } from '../../../api/flecs-core/api-client';
+import { createMockApi, createMockQuestObject } from '../../../__mocks__/core-client-ts';
 import { QuestState, Quest } from '@flecs/core-client-ts';
 import { AxiosResponse } from 'axios';
+
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 // Consumer component to expose context values for testing
 function TestConsumer() {
@@ -41,9 +48,13 @@ function TestConsumer() {
 }
 
 describe('QuestContextProvider integration', () => {
+  let mockApi: ReturnType<typeof createMockApi>;
+
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   afterEach(() => {
@@ -56,7 +67,7 @@ describe('QuestContextProvider integration', () => {
       { id: 1, state: QuestState.Pending } as Quest,
       { id: 2, state: QuestState.Ongoing } as Quest,
     ];
-    vi.spyOn(api.quests, 'questsGet').mockResolvedValue({
+    mockApi.quests.questsGet.mockResolvedValue({
       data: mockQuests,
     } as any as AxiosResponse<Quest[], any>);
 
@@ -72,9 +83,9 @@ describe('QuestContextProvider integration', () => {
 
   it('polling triggers additional fetches when fetching is true', async () => {
     const mockQuests: Quest[] = [];
-    const spy = vi
-      .spyOn(api.quests, 'questsGet')
-      .mockResolvedValue({ data: mockQuests } as any as AxiosResponse<Quest[], any>);
+    mockApi.quests.questsGet.mockResolvedValue({
+      data: mockQuests,
+    } as any as AxiosResponse<Quest[], any>);
 
     render(
       <QuestContextProvider>
@@ -83,15 +94,19 @@ describe('QuestContextProvider integration', () => {
     );
 
     // initial fetch
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(screen.getByText('Start Fetching'));
+    expect(mockApi.quests.questsGet).toHaveBeenCalledTimes(1);
 
     act(() => {
-      vi.advanceTimersByTime(1500); // 3 intervals of 500ms
+      fireEvent.click(screen.getByText('Start Fetching'));
     });
 
-    expect(spy).toHaveBeenCalledTimes(1 + 3);
+    await act(async () => {
+      vi.advanceTimersByTime(1500); // 3 intervals of 500ms
+      // Allow any pending promises to resolve
+      await Promise.resolve();
+    });
+
+    expect(mockApi.quests.questsGet).toHaveBeenCalledTimes(1 + 3);
   });
 
   it('fetchQuest adds quest and subquests to map', async () => {
@@ -102,10 +117,10 @@ describe('QuestContextProvider integration', () => {
       subquests: [subQuest],
     } as Quest;
     // Prevent initial fetch from adding quests
-    vi.spyOn(api.quests, 'questsGet').mockResolvedValue({
+    mockApi.quests.questsGet.mockResolvedValue({
       data: [],
     } as any as AxiosResponse<Quest[], any>);
-    vi.spyOn(api.quests, 'questsIdGet').mockResolvedValue({
+    mockApi.quests.questsIdGet.mockResolvedValue({
       data: mainQuest,
     } as any as AxiosResponse<Quest, any>);
 
@@ -115,19 +130,19 @@ describe('QuestContextProvider integration', () => {
       </QuestContextProvider>,
     );
 
-    fireEvent.click(screen.getByText('Fetch Quest 5'));
+    act(() => {
+      fireEvent.click(screen.getByText('Fetch Quest 5'));
+    });
     await waitFor(() => expect(screen.getByTestId('questCount').textContent).toBe('2'));
   });
 
   it('clearQuests deletes only finished main quests', async () => {
     const finishedQuest = { id: 10, state: QuestState.Failed } as Quest;
     const ongoingQuest = { id: 20, state: QuestState.Ongoing } as Quest;
-    vi.spyOn(api.quests, 'questsGet').mockResolvedValue({
+    mockApi.quests.questsGet.mockResolvedValue({
       data: [finishedQuest, ongoingQuest],
     } as any as AxiosResponse<Quest[], any>);
-    const deleteSpy = vi
-      .spyOn(api.quests, 'questsIdDelete')
-      .mockResolvedValue({} as any as AxiosResponse<void, any>);
+    mockApi.quests.questsIdDelete.mockResolvedValue({} as any as AxiosResponse<void, any>);
 
     render(
       <QuestContextProvider>
@@ -138,9 +153,11 @@ describe('QuestContextProvider integration', () => {
     // wait for initial fetch
     await waitFor(() => expect(screen.getByTestId('questCount').textContent).toBe('2'));
 
-    fireEvent.click(screen.getByText('Clear Quests'));
-    await waitFor(() => expect(deleteSpy).toHaveBeenCalledTimes(1));
-    expect(deleteSpy).toHaveBeenCalledWith(finishedQuest.id);
+    await act(async () => {
+      fireEvent.click(screen.getByText('Clear Quests'));
+    });
+    await waitFor(() => expect(mockApi.quests.questsIdDelete).toHaveBeenCalledTimes(1));
+    expect(mockApi.quests.questsIdDelete).toHaveBeenCalledWith(finishedQuest.id);
   });
 
   it('useQuestContext throws if no provider', () => {

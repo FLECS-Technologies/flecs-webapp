@@ -16,36 +16,62 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import Export from '../Export';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-jest.mock('../../api/device/ExportAppsService');
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
 
 describe('Export', () => {
-  window.URL.createObjectURL = jest.fn();
-  window.URL.revokeObjectURL = jest.fn();
+  let mockApi;
+  let mockQuestContext;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(() => Promise.resolve({ state: 'Success' })),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    // Mock URL methods for file download
+    window.URL.createObjectURL = vi.fn();
+    window.URL.revokeObjectURL = vi.fn();
+  });
 
   afterEach(() => {
     window.URL.createObjectURL.mockReset();
     window.URL.revokeObjectURL.mockReset();
   });
-  test('renders Export component', async () => {
-    await act(async () => {
-      render(<Export></Export>);
-    });
+
+  it('renders Export component', async () => {
+    render(<Export />);
     expect(screen.getByText('Export')).toBeVisible();
   });
 
-  test('click on export button', async () => {
+  it('click on export button', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(<Export></Export>);
-    });
+    render(<Export />);
     expect(screen.getByText('Export')).toBeVisible();
     const exportButton = screen.getByText('Export');
+
     await user.click(exportButton);
   });
 });

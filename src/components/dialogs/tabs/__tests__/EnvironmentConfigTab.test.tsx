@@ -16,56 +16,50 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import EnvironmentConfigTab from '../EnvironmentConfigTab';
-import { api } from '../../../../api/flecs-core/api-client';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
-// Mock the API client
-jest.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    instances: {
-      instancesInstanceIdConfigEnvironmentGet: jest.fn(),
-      instancesInstanceIdConfigEnvironmentPut: jest.fn(),
-      instancesInstanceIdConfigEnvironmentVariableNameDelete: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('EnvironmentConfigTab', () => {
   const instanceId = 'test-instance-id';
+  const mockOnChange = vi.fn();
+  let mockApi: any;
 
   beforeEach(() => {
-    api.instances.instancesInstanceIdConfigEnvironmentGet = jest.fn();
-    api.instances.instancesInstanceIdConfigEnvironmentPut = jest.fn();
-    api.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete = jest.fn();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner while fetching environment variables', async () => {
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [],
     });
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEnvironmentGet).toHaveBeenCalledWith(
+      expect(mockApi.instances.instancesInstanceIdConfigEnvironmentGet).toHaveBeenCalledWith(
         instanceId,
       ),
     );
   });
 
   it('renders environment variables when data is fetched', async () => {
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
@@ -74,14 +68,14 @@ describe('EnvironmentConfigTab', () => {
   });
 
   it('adds a new environment variable', async () => {
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [],
     });
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEnvironmentGet).toHaveBeenCalled(),
+      expect(mockApi.instances.instancesInstanceIdConfigEnvironmentGet).toHaveBeenCalled(),
     );
 
     await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeInTheDocument());
@@ -93,14 +87,14 @@ describe('EnvironmentConfigTab', () => {
   });
 
   it('deletes an environment variable', async () => {
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
-    (
-      api.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete as jest.Mock
-    ).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete.mockResolvedValueOnce(
+      {},
+    );
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
@@ -112,19 +106,19 @@ describe('EnvironmentConfigTab', () => {
     await waitFor(() => {
       // expect(screen.queryByDisplayValue('TEST_KEY')).not.toBeInTheDocument()
       expect(
-        api.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete,
+        mockApi.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete,
       ).toHaveBeenCalled();
     });
   });
 
   it('saves environment variables', async () => {
     // Mock API responses
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
-    (api.instances.instancesInstanceIdConfigEnvironmentPut as jest.Mock).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigEnvironmentPut.mockResolvedValueOnce({});
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
@@ -140,7 +134,7 @@ describe('EnvironmentConfigTab', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigEnvironmentPut).toHaveBeenCalledWith(
+      expect(mockApi.instances.instancesInstanceIdConfigEnvironmentPut).toHaveBeenCalledWith(
         instanceId,
         [{ name: 'UPDATED_KEY', value: 'TEST_VALUE' }],
       ),
@@ -149,12 +143,12 @@ describe('EnvironmentConfigTab', () => {
 
   it('shows a success snackbar when saving succeeds', async () => {
     // Mock API responses
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
-    (api.instances.instancesInstanceIdConfigEnvironmentPut as jest.Mock).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigEnvironmentPut.mockResolvedValueOnce({});
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
@@ -168,14 +162,12 @@ describe('EnvironmentConfigTab', () => {
 
   it('shows an error snackbar when saving fails', async () => {
     // Mock API responses
-    (api.instances.instancesInstanceIdConfigEnvironmentGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
-    (api.instances.instancesInstanceIdConfigEnvironmentPut as jest.Mock).mockRejectedValueOnce(
-      new Error(),
-    );
+    mockApi.instances.instancesInstanceIdConfigEnvironmentPut.mockRejectedValueOnce(new Error());
 
-    render(<EnvironmentConfigTab instanceId={instanceId} onChange={jest.fn()} />);
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();

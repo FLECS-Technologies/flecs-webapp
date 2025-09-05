@@ -22,6 +22,16 @@ export default defineConfig({
       reporter: ['text', 'html', 'lcov'], // output formats
       all: true, // include files not directly imported in tests
       reportsDirectory: './coverage', // optional
+      exclude: [
+        'node_modules/**',
+        'dist/**',
+        'coverage/**',
+        '**/__mocks__/**',
+        '**/*.{test,spec}.{js,jsx,ts,tsx}',
+        '**/*.d.ts',
+        'src/test/**',
+        'src/setupTests.js',
+      ],
     },
   },
 });

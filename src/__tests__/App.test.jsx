@@ -17,21 +17,50 @@
  */
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/vitest';
-
+import { render, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import App from '../App';
 
-vi.mock('../api/device/ExportAppsService.js');
-vi.mock('axios');
+// Mock the entire App's complex dependency tree for a basic smoke test
+vi.mock('../components/Frame', () => ({
+  default: ({ children }) => <div data-testid="frame">{children}</div>,
+}));
+
+vi.mock('../data/AppList', () => ({
+  AppList: ({ children }) => <div data-testid="app-list">{children}</div>,
+}));
+
+vi.mock('../pages/ui-routes', () => ({
+  UIRoutes: () => <div data-testid="ui-routes">Routes</div>,
+}));
+
+vi.mock('../data/SystemData', () => ({
+  SystemData: ({ children }) => <div data-testid="system-data">{children}</div>,
+}));
+
+vi.mock('../styles/ThemeHandler', () => ({
+  ThemeHandler: ({ children }) => <div data-testid="theme-handler">{children}</div>,
+}));
+
+vi.mock('../components/providers/Providers', () => ({
+  default: ({ children }) => <div data-testid="providers">{children}</div>,
+}));
 
 describe('App', () => {
   it('renders App component', async () => {
-    render(
+    const { getByTestId } = render(
       <Router>
         <App />
       </Router>,
     );
-    expect(true).toBe(true);
+
+    await waitFor(() => {
+      expect(getByTestId('theme-handler')).toBeDefined();
+      expect(getByTestId('providers')).toBeDefined();
+      expect(getByTestId('frame')).toBeDefined();
+      expect(getByTestId('system-data')).toBeDefined();
+      expect(getByTestId('app-list')).toBeDefined();
+      expect(getByTestId('ui-routes')).toBeDefined();
+    });
   });
 });

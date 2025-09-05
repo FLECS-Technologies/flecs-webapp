@@ -16,35 +16,50 @@
  * limitations under the License.
  */
 import React from 'react';
-import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import '@testing-library/jest-dom';
+import { render, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AppList } from '../AppList';
 import { useReferenceDataContext } from '../ReferenceDataContext';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../../api/marketplace/ProductService');
-vitest.mock('../../api/device/DeviceAPI');
-vitest.mock('../ReferenceDataContext', () => ({ useReferenceDataContext: vitest.fn() }));
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../../api/marketplace/ProductService');
+vi.mock('../../api/device/DeviceAPI');
+vi.mock('../ReferenceDataContext', () => ({ useReferenceDataContext: vi.fn() }));
 
 const mockReferenceDataContext = {
-  setAppList: vitest.fn(),
-  setAppListLoading: vitest.fn(),
-  setAppListError: vitest.fn(),
-  setUpdateAppList: vitest.fn(),
-  setLoadedProducts: vitest.fn(),
-  updateAppList: false,
+  setAppList: vi.fn(),
+  setAppListLoading: vi.fn(),
+  setAppListError: vi.fn(),
+  setUpdateAppList: vi.fn(),
+  setLoadedProducts: vi.fn(),
+  updateAppList: true, // Set to true to trigger loadAppList
   appListLoading: false,
+  loadedProducts: [], // Set to empty array (truthy) to trigger loadAppList instead of loadProducts
 };
 
 describe('AppList', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
-  test('renders AppList component', async () => {
+
+  it('renders AppList component', async () => {
     useReferenceDataContext.mockReturnValue(mockReferenceDataContext);
-    await act(async () => {
-      render(<AppList></AppList>);
+    render(<AppList></AppList>);
+
+    await waitFor(() => {
+      expect(mockApi.instances.instancesGet).toHaveBeenCalled();
+      expect(mockApi.app.appsGet).toHaveBeenCalled();
     });
   });
 });

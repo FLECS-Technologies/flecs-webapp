@@ -22,7 +22,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import Frame from '../Frame';
 import { DarkModeState } from '../ThemeHandler';
-import { JobsContextProvider } from '../../data/JobsContext';
 import { QuestContextProvider } from '../quests/QuestContext';
 
 describe('Frame', () => {
@@ -30,11 +29,9 @@ describe('Frame', () => {
     render(
       <Router>
         <DarkModeState>
-          <JobsContextProvider>
-            <QuestContextProvider>
-              <Frame />
-            </QuestContextProvider>
-          </JobsContextProvider>
+          <QuestContextProvider>
+            <Frame />
+          </QuestContextProvider>
         </DarkModeState>
       </Router>,
     );

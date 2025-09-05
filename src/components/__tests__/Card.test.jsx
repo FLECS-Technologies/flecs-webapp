@@ -5,11 +5,8 @@ import '@testing-library/jest-dom';
 import Card from '../Card';
 import { SystemContextProvider } from '../../data/SystemProvider';
 import { SystemData } from '../../data/SystemData';
-import { JobsContextProvider } from '../../data/JobsContext';
 import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/JobsAPI');
-vitest.mock('../../api/device/AppAPI');
 vitest.mock('../../api/device/DeviceAuthAPI');
 vitest.mock('../../api/device/license/activation');
 vitest.mock('../../api/device/license/status');
@@ -31,22 +28,14 @@ describe('Card', () => {
 
   test('renders Card component', async () => {
     await waitFor(() => {
-      render(
-        <JobsContextProvider>
-          <Card />
-        </JobsContextProvider>,
-      );
+      render(<Card />);
     });
 
     expect(screen.getByTestId('app-card')).toBeInTheDocument();
   });
 
   test('Click request', async () => {
-    render(
-      <JobsContextProvider>
-        <Card />
-      </JobsContextProvider>,
-    );
+    render(<Card />);
 
     const requestButton = await waitFor(() => screen.getByTestId('app-request-button'));
     expect(requestButton).toBeVisible();
@@ -58,25 +47,23 @@ describe('Card', () => {
   test('Click install', async () => {
     await waitFor(() =>
       render(
-        <JobsContextProvider>
-          <SystemContextProvider>
-            <SystemData>
-              <Card
-                app="Testapp"
-                avatar=""
-                title="Test App Title"
-                author="Test App author"
-                versions={['Test App Version']}
-                description="Test App Description"
-                status="uninstalled"
-                availability="available"
-                requirement={['amd64']} // valid architecture
-                installedVersions={[]}
-                instances={[]}
-              />
-            </SystemData>
-          </SystemContextProvider>
-        </JobsContextProvider>,
+        <SystemContextProvider>
+          <SystemData>
+            <Card
+              app="Testapp"
+              avatar=""
+              title="Test App Title"
+              author="Test App author"
+              versions={['Test App Version']}
+              description="Test App Description"
+              status="uninstalled"
+              availability="available"
+              requirement={['amd64']} // valid architecture
+              installedVersions={[]}
+              instances={[]}
+            />
+          </SystemData>
+        </SystemContextProvider>,
       ),
     );
 
@@ -93,20 +80,18 @@ describe('Card', () => {
   test('Click uninstall', async () => {
     await waitFor(() =>
       render(
-        <JobsContextProvider>
-          <Card
-            app="Testapp"
-            avatar=""
-            title="Test App Title"
-            author="Test App author"
-            version="Test App Version"
-            description="Test App Description"
-            status="installed"
-            availability="available"
-            installedVersions={['Test App Version']}
-            instances={[]}
-          />
-        </JobsContextProvider>,
+        <Card
+          app="Testapp"
+          avatar=""
+          title="Test App Title"
+          author="Test App author"
+          version="Test App Version"
+          description="Test App Description"
+          status="installed"
+          availability="available"
+          installedVersions={['Test App Version']}
+          instances={[]}
+        />,
       ),
     );
 
@@ -115,22 +100,14 @@ describe('Card', () => {
   });
 
   test('Card with documentation url', async () => {
-    render(
-      <JobsContextProvider>
-        <Card documentationUrl="https://google.com" />
-      </JobsContextProvider>,
-    );
+    render(<Card documentationUrl="https://google.com" />);
 
     const helpCenterIcon = await waitFor(() => screen.getByTestId('HelpCenterIcon'));
     expect(helpCenterIcon).toBeVisible();
   });
 
   test('Card without documentation url', async () => {
-    render(
-      <JobsContextProvider>
-        <Card />
-      </JobsContextProvider>,
-    );
+    render(<Card />);
 
     await waitFor(() => {
       expect(() => screen.getByTestId('HelpCenterIcon')).toThrow();

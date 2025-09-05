@@ -15,27 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-async function getVersion() {
-  return new Promise((resolve, reject) => {
-    resolve({
-      core: '1.1.0-porpoise-475591c',
-    });
-  });
-}
+import axios from 'axios';
+import { MarketplaceAPIConfiguration } from '../api-config';
 
 async function getLatestVersion() {
-  return new Promise((resolve, reject) => {
-    resolve({
-      success: true,
-      version: '1.1.0-porpoise-475591c',
-      release_notes: 'www.release-notes.com',
+  return axios
+    .get(
+      MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_LATEST_VERSION_URL,
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return Promise.reject(error);
     });
-  });
 }
 
 function isLaterThan(version1, version2) {
-  return true;
+  if (version1 && version2) {
+    const v1 = version1.split('-');
+    const v2 = version2.split('-');
+    if (v1[0] > v2[0]) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 }
-
-export { getVersion, getLatestVersion, isLaterThan };
+export { getLatestVersion, isLaterThan };

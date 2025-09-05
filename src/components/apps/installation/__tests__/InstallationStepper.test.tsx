@@ -21,10 +21,8 @@ import InstallationStepper from '../InstallationStepper';
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
 import { mockApp } from '../../../../models/__mocks__/app';
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
-import { JobsContextProvider } from '../../../../data/JobsContext';
 import { vitest } from 'vitest';
 
-vitest.mock('../../../../api/device/AppAPI');
 vitest.mock('../../../../api/device/DeviceAuthAPI');
 vitest.mock('../../../../api/device/license/status');
 vitest.mock('../../../../api/device/license/activation');
@@ -37,26 +35,26 @@ describe('InstallationStepper Component', () => {
   it('App installation', () => {
     act(() => {
       render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <DeviceActivationContext.Provider
-              value={{
-                activated: true,
-                activating: false,
-                activate: async () => {},
-                validating: false,
-                validate: async () => {},
-              }}
-            >
-              <InstallationStepper
-                app={mockApp}
-                version={mockApp.appKey.version}
-                sideload={false}
-                update={false}
-              />
-            </DeviceActivationContext.Provider>
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>,
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider
+            value={{
+              activated: true,
+              activating: false,
+              activate: async () => {},
+              validating: false,
+              validate: async () => {},
+              error: false,
+              statusText: '',
+            }}
+          >
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={false}
+              update={false}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
       );
     });
 
@@ -67,26 +65,26 @@ describe('InstallationStepper Component', () => {
   it('App update', () => {
     act(() => {
       render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <DeviceActivationContext.Provider
-              value={{
-                activated: true,
-                activating: false,
-                activate: async () => {},
-                validating: false,
-                validate: async () => {},
-              }}
-            >
-              <InstallationStepper
-                app={mockApp}
-                version={mockApp.appKey.version}
-                sideload={false}
-                update={true}
-              />
-            </DeviceActivationContext.Provider>
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>,
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider
+            value={{
+              activated: true,
+              activating: false,
+              activate: async () => {},
+              validating: false,
+              validate: async () => {},
+              error: false,
+              statusText: '',
+            }}
+          >
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={false}
+              update={true}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
       );
     });
 
@@ -97,26 +95,26 @@ describe('InstallationStepper Component', () => {
   it('App sideload', () => {
     act(() => {
       render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <DeviceActivationContext.Provider
-              value={{
-                activated: true,
-                activating: false,
-                activate: async () => {},
-                validating: false,
-                validate: async () => {},
-              }}
-            >
-              <InstallationStepper
-                app={mockApp}
-                version={mockApp.appKey.version}
-                sideload={true}
-                update={false}
-              />
-            </DeviceActivationContext.Provider>
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>,
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider
+            value={{
+              activated: true,
+              activating: false,
+              activate: async () => {},
+              validating: false,
+              validate: async () => {},
+              error: false,
+              statusText: '',
+            }}
+          >
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={true}
+              update={false}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
       );
     });
 
@@ -127,26 +125,26 @@ describe('InstallationStepper Component', () => {
   it('Missing activation', () => {
     act(() => {
       render(
-        <JobsContextProvider>
-          <ReferenceDataContextProvider>
-            <DeviceActivationContext.Provider
-              value={{
-                activated: false,
-                activating: false,
-                activate: async () => {},
-                validating: false,
-                validate: async () => {},
-              }}
-            >
-              <InstallationStepper
-                app={mockApp}
-                version={mockApp.appKey.version}
-                sideload={false}
-                update={false}
-              />
-            </DeviceActivationContext.Provider>
-          </ReferenceDataContextProvider>
-        </JobsContextProvider>,
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider
+            value={{
+              activated: false,
+              activating: false,
+              activate: async () => {},
+              validating: false,
+              validate: async () => {},
+              error: false,
+              statusText: '',
+            }}
+          >
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={false}
+              update={false}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
       );
     });
 

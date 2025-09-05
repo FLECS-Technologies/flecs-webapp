@@ -19,7 +19,7 @@ import '@testing-library/dom';
 import { waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import axios from 'axios';
-import { getHostname, getInstanceDetails, getIPAddress, getPorts } from '../InstanceDetailsService';
+import { getHostname, getIPAddress, getPorts } from '../InstanceDetailsService';
 import { vitest } from 'vitest';
 
 vitest.mock('axios');
@@ -66,19 +66,6 @@ describe('InstanceDetailsService', () => {
 
   afterAll(() => {
     vitest.clearAllMocks();
-  });
-  test('calls successful getInstanceDetails', async () => {
-    axios.get.mockResolvedValueOnce(mockDetails);
-    const details = await waitFor(() => getInstanceDetails(mockDetails.data.instanceId));
-
-    expect(details.app).toBe(mockDetails.data.app);
-  });
-
-  test('calls unsuccessful getCurrentUserLicenses', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load instance details'));
-    await act(async () => {
-      expect(getInstanceDetails(mockDetails.data.instanceId)).rejects.toThrowError();
-    });
   });
 
   test('Get IP Address from Details', () => {

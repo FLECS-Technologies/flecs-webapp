@@ -20,53 +20,9 @@ import { Component } from 'react';
 
 const DEVICE_BASE_ROUTE = '../api/v2';
 const DEVICE_BASE_ROUTE_TEST = '/api/v2';
-const APP_ROUTE = '/apps';
 const CONSOLE_ROUTE = '/console';
-const INSTANCES_ROUTE = '/instances';
-const SYSTEM_ROUTE = '/system';
-const DOWNLOAD_ROUTE = SYSTEM_ROUTE + '/download';
-const EXPORTS_ROUTE = '/exports';
-const JOBS_ROUTE = '/jobs';
-const DEVICE_ROUTE = '/device';
-
-const GET_INSTALLED_APP_LIST_URL = '';
-const GET_PING_URL = SYSTEM_ROUTE + '/ping';
-const GET_SYSTEM_INFO_URL = SYSTEM_ROUTE + '/info';
-const GET_VERSION_URL = SYSTEM_ROUTE + '/version';
-const GET_DOWNLOAD_URL = (path) => DOWNLOAD_ROUTE + `/${path}`;
-const GET_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`;
-const GET_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`;
-const GET_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`;
-const GET_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs';
-const GET_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config';
-const GET_INSTANCE_ENVIRONMENT_URL = (instanceId) =>
-  GET_INSTANCE_CONFIG_URL(instanceId) + '/environment';
-const GET_INSTANCE_PORTS_URL = (instanceId) => GET_INSTANCE_CONFIG_URL(instanceId) + '/ports';
-const GET_VALIDATE_URL = DEVICE_ROUTE + '/license/activation/status';
-const GET_LICENSE_INFO_URL = DEVICE_ROUTE + '/license/info';
-
-const POST_INSTALL_APP_URL = '/install';
-const POST_UPDATE_APP_URL = DEVICE_BASE_ROUTE + APP_ROUTE + '/update';
-const POST_START_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/start';
-const POST_STOP_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/stop';
-const POST_CREATE_INSTANCE_URL = INSTANCES_ROUTE + '/create';
-const POST_INSTANCE_DETAILS_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`;
-const POST_INSTANCE_LOG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/logs';
-const POST_INSTANCE_CONFIG_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}` + '/config';
-const POST_EXPORT_URL = EXPORTS_ROUTE;
-const POST_SIDELOAD_APP = '/sideload';
-const POST_IMPORT_URL = '/imports';
-const POST_ACTIVATE_URL = DEVICE_ROUTE + '/license/activation';
-const POST_ONBOARDING_URL = DEVICE_ROUTE + '/onboarding';
 
 const PUT_CONSOLE_AUTH_URL = '/authentication';
-
-const PATCH_INSTANCE_UPDATE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`;
-
-const DELETE_UNINSTALL_APP_URL = '';
-const DELETE_EXPORT_URL = (exportId) => EXPORTS_ROUTE + `/${exportId}`;
-const DELETE_INSTANCE_URL = (instanceId) => INSTANCES_ROUTE + `/${instanceId}`;
-const DELETE_JOB_URL = (jobId) => JOBS_ROUTE + `/${jobId}`;
 const DELETE_CONSOLE_AUTH_URL = '/authentication';
 
 const MP_BASE_URL = 'https://console.flecs.tech';
@@ -108,166 +64,17 @@ class DeviceAPIConfiguration extends Component {
     return DEVICE_BASE_ROUTE;
   }
 
-  static get APP_ROUTE() {
-    return APP_ROUTE;
-  }
-
   static get CONSOLE_ROUTE() {
     return CONSOLE_ROUTE;
   }
 
-  static get INSTANCES_ROUTE() {
-    return INSTANCES_ROUTE;
-  }
-
-  static get SYSTEM_ROUTE() {
-    return SYSTEM_ROUTE;
-  }
-
-  static get JOBS_ROUTE() {
-    return JOBS_ROUTE;
-  }
-
   // post requests
-  static get POST_INSTALL_APP_URL() {
-    return POST_INSTALL_APP_URL;
-  }
-
-  static get POST_START_INSTANCE_URL() {
-    return POST_START_INSTANCE_URL;
-  }
-
-  static get POST_STOP_INSTANCE_URL() {
-    return POST_STOP_INSTANCE_URL;
-  }
-
-  static get POST_CREATE_INSTANCE_URL() {
-    return POST_CREATE_INSTANCE_URL;
-  }
-
-  static get POST_SIDELOAD_APP() {
-    return POST_SIDELOAD_APP;
-  }
-
-  static get POST_INSTANCE_DETAILS_URL() {
-    return POST_INSTANCE_DETAILS_URL;
-  }
-
-  static get POST_INSTANCE_LOG_URL() {
-    return POST_INSTANCE_LOG_URL;
-  }
-
-  static get POST_INSTANCE_CONFIG_URL() {
-    return POST_INSTANCE_CONFIG_URL;
-  }
-
-  static get POST_UPDATE_APP_URL() {
-    return POST_UPDATE_APP_URL;
-  }
-
-  static get POST_EXPORT_URL() {
-    return POST_EXPORT_URL;
-  }
-
-  static get POST_IMPORT_URL() {
-    return POST_IMPORT_URL;
-  }
-
-  static get POST_ACTIVATE_URL() {
-    return POST_ACTIVATE_URL;
-  }
-
-  static get POST_ONBOARDING_URL() {
-    return POST_ONBOARDING_URL;
-  }
 
   static get PUT_CONSOLE_AUTH_URL() {
     return PUT_CONSOLE_AUTH_URL;
   }
 
-  // get requests
-  static get GET_INSTALLED_APP_LIST_URL() {
-    return GET_INSTALLED_APP_LIST_URL;
-  }
-
-  static get GET_PING_URL() {
-    return GET_PING_URL;
-  }
-
-  static get GET_SYSTEM_INFO_URL() {
-    return GET_SYSTEM_INFO_URL;
-  }
-
-  static get GET_VERSION_URL() {
-    return GET_VERSION_URL;
-  }
-
-  static get GET_DOWNLOAD_URL() {
-    return GET_DOWNLOAD_URL;
-  }
-
-  static get EXPORTS_ROUTE() {
-    return EXPORTS_ROUTE;
-  }
-
-  static get GET_EXPORT_URL() {
-    return GET_EXPORT_URL;
-  }
-
-  static get GET_JOB_URL() {
-    return GET_JOB_URL;
-  }
-
-  static get GET_INSTANCE_DETAILS_URL() {
-    return GET_INSTANCE_DETAILS_URL;
-  }
-
-  static get GET_INSTANCE_LOG_URL() {
-    return GET_INSTANCE_LOG_URL;
-  }
-
-  static get GET_INSTANCE_CONFIG_URL() {
-    return GET_INSTANCE_CONFIG_URL;
-  }
-
-  static get GET_VALIDATE_URL() {
-    return GET_VALIDATE_URL;
-  }
-
-  static get GET_LICENSE_INFO_URL() {
-    return GET_LICENSE_INFO_URL;
-  }
-
-  static get GET_INSTANCE_ENVIRONMENT_URL() {
-    return GET_INSTANCE_ENVIRONMENT_URL;
-  }
-
-  static get GET_INSTANCE_PORTS_URL() {
-    return GET_INSTANCE_PORTS_URL;
-  }
-
-  // patch requests
-  static get PATCH_INSTANCE_UPDATE_URL() {
-    return PATCH_INSTANCE_UPDATE_URL;
-  }
-
   // delete requests
-  static get DELETE_UNINSTALL_APP_URL() {
-    return DELETE_UNINSTALL_APP_URL;
-  }
-
-  static get DELETE_EXPORT_URL() {
-    return DELETE_EXPORT_URL;
-  }
-
-  static get DELETE_INSTANCE_URL() {
-    return DELETE_INSTANCE_URL;
-  }
-
-  static get DELETE_JOB_URL() {
-    return DELETE_JOB_URL;
-  }
-
   static get DELETE_CONSOLE_AUTH_URL() {
     return DELETE_CONSOLE_AUTH_URL;
   }

@@ -16,13 +16,7 @@
  * limitations under the License.
  */
 import '@testing-library/dom';
-import { waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import axios from 'axios';
-import { getInstanceLog, getLog } from '../InstanceLogService';
-import { vitest } from 'vitest';
-
-vitest.mock('axios');
+import { getLog } from '../InstanceLogService';
 
 const mockLog = {
   data: {
@@ -32,27 +26,6 @@ const mockLog = {
 };
 
 describe('InstanceLogService', () => {
-  beforeAll(() => {
-    axios.post = vitest.fn();
-  });
-
-  afterAll(() => {
-    vitest.clearAllMocks();
-  });
-  test('calls successful getInstanceLog', async () => {
-    axios.get.mockResolvedValueOnce(mockLog);
-    const response = await waitFor(() => getInstanceLog('abcd'));
-
-    expect(response.log).toBe(mockLog.data.log);
-  });
-
-  test('calls unsuccessful getInstanceLog', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load instance log'));
-    await act(async () => {
-      expect(getInstanceLog('abcd')).rejects.toThrowError();
-    });
-  });
-
   test('Get log from the response', () => {
     const log = getLog(mockLog.data);
     expect(log).toBe(

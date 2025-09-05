@@ -18,13 +18,15 @@
 import React from 'react';
 import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/material';
 import VersionsTable from '../components/device/version/VersionsTable';
-import { getLatestVersion, getVersion, isLaterThan } from '../api/VersionService';
+import { getLatestVersion, isLaterThan } from '../api/marketplace/VersionService';
 import { VersionSelector } from './autocomplete/VersionSelector';
 import { useSystemContext } from '../data/SystemProvider';
+import { useProtectedApi } from './providers/ApiProvider';
 
 export default function Version() {
   const executedRef = React.useRef(false);
   const { systemInfo } = useSystemContext();
+  const api = useProtectedApi();
   const [loadingVersion, setLoadingVersion] = React.useState(false);
   const [version, setVersion] = React.useState();
   const [loadingLatestVersion, setLoadingLatestVersion] = React.useState(false);
@@ -48,10 +50,11 @@ export default function Version() {
   const fetchVersion = async (props) => {
     setLoadingVersion(true);
 
-    getVersion()
+    api.system
+      .systemVersionGet()
       .then((response) => {
         if (response) {
-          setVersion(response);
+          setVersion(response.data);
         }
         setError(false);
       })

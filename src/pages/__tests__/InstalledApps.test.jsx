@@ -21,16 +21,13 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import InstalledApps from '../InstalledApps';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { JobsContextProvider } from '../../data/JobsContext';
 
 describe('Installed Apps', () => {
   test('renders installed apps page', () => {
     render(
-      <JobsContextProvider>
-        <Router>
-          <InstalledApps />
-        </Router>
-      </JobsContextProvider>,
+      <Router>
+        <InstalledApps />
+      </Router>,
     );
 
     expect(screen.getByLabelText('installed-apps-list')).toBeVisible();

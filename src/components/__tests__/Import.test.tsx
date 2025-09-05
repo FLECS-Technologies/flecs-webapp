@@ -17,12 +17,24 @@
  */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Import from '../Import';
 import { ReferenceDataContext } from '../../data/ReferenceDataContext';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
+import { QuestState } from '@flecs/core-client-ts';
 
-vitest.mock('../../api/device/onboarding/onboarding');
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
 
 const renderWithContext = (ui: React.ReactElement, { referenceDataValues }: any) => {
   return render(
@@ -31,13 +43,27 @@ const renderWithContext = (ui: React.ReactElement, { referenceDataValues }: any)
 };
 
 describe('Import component', () => {
-  const mockSetUpdateAppList = vitest.fn();
+  let mockApi: any;
+  let mockQuestContext: any;
+  const mockSetUpdateAppList = vi.fn();
 
   beforeEach(() => {
-    vitest.clearAllMocks();
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(() => Promise.resolve({ state: QuestState.Success })),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    // Mock File.text() method for JSON files
+    global.File.prototype.text = vi.fn(() => Promise.resolve('{"test": "data"}'));
   });
 
-  test('renders Import component', () => {
+  it('renders Import component', () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
     });
@@ -45,7 +71,7 @@ describe('Import component', () => {
     expect(screen.getByText('Import')).toBeInTheDocument();
   });
 
-  test('handles JSON file upload and shows success snackbar', async () => {
+  it('handles JSON file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
     });
@@ -63,7 +89,7 @@ describe('Import component', () => {
     );
   });
 
-  test('handles tar.gz file upload and shows success snackbar', async () => {
+  it('handles tar.gz file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
     });
@@ -81,7 +107,7 @@ describe('Import component', () => {
     );
   });
 
-  test('handles unsupported file type upload', () => {
+  it('handles unsupported file type upload', () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
     });
@@ -96,12 +122,9 @@ describe('Import component', () => {
     ).toBeInTheDocument();
   });
 
-  test('shows error snackbar on API failure', async () => {
-    const spyOnboardingDeviceAPI = vitest.spyOn(
-      await import('../../api/device/onboarding/onboarding'),
-      'OnboardingDeviceAPI',
-    );
-    spyOnboardingDeviceAPI.mockImplementationOnce(() => Promise.reject(new Error('Network Error')));
+  it('shows error snackbar on API failure', async () => {
+    // Mock the API to reject with an error for JSON files (deviceOnboardingPost)
+    mockApi.device.deviceOnboardingPost = vi.fn(() => Promise.reject(new Error('Network Error')));
 
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
@@ -114,7 +137,7 @@ describe('Import component', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(spyOnboardingDeviceAPI).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockApi.device.deviceOnboardingPost).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(screen.getByText('Network Error')).toBeInTheDocument());
   });
 });

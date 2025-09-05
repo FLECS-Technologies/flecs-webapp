@@ -17,24 +17,51 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import DeviceAppsList from '../InstalledAppsList';
+import { createMockApi } from '../../__mocks__/core-client-ts';
+import { QuestContextProvider } from '../quests/QuestContext';
+
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 describe('Test Installed Apps List', () => {
-  test('renders installed apps list component', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  test('renders installed apps list component', async () => {
+    const user = userEvent.setup();
+
     const { getByTestId } = render(
       <Router>
-        <DeviceAppsList />
+        <QuestContextProvider>
+          <DeviceAppsList />
+        </QuestContextProvider>
       </Router>,
     );
 
+    await waitFor(() => {
+      const sideloadButton = getByTestId('DeveloperModeIcon');
+      expect(sideloadButton).toBeVisible();
+    });
+
     const sideloadButton = getByTestId('DeveloperModeIcon');
+    await user.click(sideloadButton);
 
-    fireEvent.click(sideloadButton);
-
-    expect(sideloadButton).toBeVisible();
-    // screen.debug()
+    await waitFor(() => {
+      expect(sideloadButton).toBeVisible();
+    });
   });
 });

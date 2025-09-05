@@ -17,30 +17,32 @@
  */
 
 import React from 'react';
-import { render /*, screen */ } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import { describe, it, vi } from 'vitest';
 import { SystemContextProvider } from '../SystemProvider';
+
+// Mock the DeviceActivationProvider to avoid state update warnings
+vi.mock('../../components/providers/DeviceActivationProvider', () => ({
+  default: ({ children }) => children,
+}));
 
 const mockSystem = {
   ping: true,
-  setPing: jest.fn(),
+  setPing: vi.fn(),
   loading: false,
-  setLoading: jest.fn(),
+  setLoading: vi.fn(),
 };
 
-jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react');
+vi.mock('react', async () => {
+  const ActualReact = await vi.importActual('react');
   return {
     ...ActualReact,
-    useContext: () => ({ mockSystem }), // what you want to return when useContext get fired goes here
+    useContext: () => ({ mockSystem }),
   };
 });
 
 describe('SystemContextProvider', () => {
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
-  test('renders SystemContextProvider component', () => {
+  it('renders SystemContextProvider component', () => {
     render(<SystemContextProvider />);
   });
 });

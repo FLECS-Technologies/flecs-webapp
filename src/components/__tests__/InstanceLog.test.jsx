@@ -16,12 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import InstanceLog from '../InstanceLog';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../../api/device/InstanceLogService');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 const testInstance = {
   instanceName: 'TestInstance',
@@ -30,21 +35,33 @@ const testInstance = {
   status: 'running',
   desired: 'stopped',
 };
-describe('InstanceLog', () => {
-  test('renders InstanceLog component', async () => {
-    render(<InstanceLog instance={testInstance}></InstanceLog>);
 
-    expect(await screen.getByTestId('log-editor')).toBeVisible();
+describe('InstanceLog', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  test('Click refresh', async () => {
+  it('renders InstanceLog component', async () => {
     render(<InstanceLog instance={testInstance}></InstanceLog>);
 
-    const refreshButton = await screen.getByTestId('refresh-button');
-
-    act(async () => {
-      fireEvent.click(refreshButton);
+    await waitFor(() => {
+      expect(screen.getByTestId('log-editor')).toBeVisible();
     });
-    expect(screen.getByTestId('log-editor')).toBeVisible();
+  });
+
+  it('Click refresh', async () => {
+    render(<InstanceLog instance={testInstance}></InstanceLog>);
+
+    const refreshButton = await waitFor(() => screen.getByTestId('refresh-button'));
+
+    fireEvent.click(refreshButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('log-editor')).toBeVisible();
+    });
   });
 });

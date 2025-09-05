@@ -15,38 +15,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import React from 'react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QuestState } from '@flecs/core-client-ts';
 import InstallationStepper from '../InstallationStepper';
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
-import { mockApp } from '../../../../models/__mocks__/app';
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
-import { vitest } from 'vitest';
+import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
 
-vitest.mock('../../../../api/device/DeviceAuthAPI');
-vitest.mock('../../../../api/device/license/status');
-vitest.mock('../../../../api/device/license/activation');
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../../../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
+
+const mockApp = {
+  appKey: {
+    name: 'tech.flecs.test',
+    version: '1.0.0',
+  },
+  title: 'Test App',
+  description: 'A test application',
+  status: 'available',
+  instances: [],
+  installedVersions: ['0.9.0'],
+};
+
+const createMockDeviceActivationContext = (activated = true) => ({
+  activated,
+  activating: false,
+  activate: vi.fn(),
+  validating: false,
+  validate: vi.fn(),
+  error: false,
+  statusText: '',
+});
+
+const createMockQuestContext = () => ({
+  quests: { current: new Map() },
+  fetchQuest: vi.fn(() => Promise.resolve()),
+  waitForQuest: vi.fn(() => Promise.resolve(createMockQuestResult({ state: QuestState.Success }))),
+  setFetching: vi.fn(),
+  fetching: false,
+  clearQuests: vi.fn(),
+  mainQuestIds: [],
+  waitForQuests: vi.fn(),
+});
 
 describe('InstallationStepper Component', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseProtectedApi.mockReturnValue(createMockApi());
+    mockUseQuestContext.mockReturnValue(createMockQuestContext());
   });
 
-  it('App installation', () => {
-    act(() => {
+  it('renders app installation stepper when device is activated', async () => {
+    const mockDeviceContext = createMockDeviceActivationContext(true);
+
+    await act(async () => {
       render(
         <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider
-            value={{
-              activated: true,
-              activating: false,
-              activate: async () => {},
-              validating: false,
-              validate: async () => {},
-              error: false,
-              statusText: '',
-            }}
-          >
+          <DeviceActivationContext.Provider value={mockDeviceContext}>
             <InstallationStepper
               app={mockApp}
               version={mockApp.appKey.version}
@@ -58,55 +95,43 @@ describe('InstallationStepper Component', () => {
       );
     });
 
-    const infoText = screen.getByTestId('install-app-step');
-    expect(infoText).toBeInTheDocument();
+    // Should show the installation step since device is activated
+    await waitFor(() => {
+      expect(screen.getByTestId('install-app-step')).toBeInTheDocument();
+    });
+
+    // Should show stepper with correct labels
+    expect(screen.getByText('Check Device Activation')).toBeInTheDocument();
+    expect(screen.getByText('Installing')).toBeInTheDocument();
+    expect(screen.getByText('Done')).toBeInTheDocument();
   });
 
-  it('App update', () => {
-    act(() => {
+  it('renders app update stepper when update=true', async () => {
+    const mockDeviceContext = createMockDeviceActivationContext(true);
+
+    await act(async () => {
       render(
         <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider
-            value={{
-              activated: true,
-              activating: false,
-              activate: async () => {},
-              validating: false,
-              validate: async () => {},
-              error: false,
-              statusText: '',
-            }}
-          >
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={false}
-              update={true}
-            />
+          <DeviceActivationContext.Provider value={mockDeviceContext}>
+            <InstallationStepper app={mockApp} version="2.0.0" sideload={false} update={true} />
           </DeviceActivationContext.Provider>
         </ReferenceDataContextProvider>,
       );
     });
 
-    const infoText = screen.getByTestId('update-app-step');
-    expect(infoText).toBeInTheDocument();
+    // Should show the update step since device is activated and update=true
+    await waitFor(() => {
+      expect(screen.getByTestId('update-app-step')).toBeInTheDocument();
+    });
   });
 
-  it('App sideload', () => {
-    act(() => {
+  it('renders app sideload stepper when sideload=true', async () => {
+    const mockDeviceContext = createMockDeviceActivationContext(true);
+
+    await act(async () => {
       render(
         <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider
-            value={{
-              activated: true,
-              activating: false,
-              activate: async () => {},
-              validating: false,
-              validate: async () => {},
-              error: false,
-              statusText: '',
-            }}
-          >
+          <DeviceActivationContext.Provider value={mockDeviceContext}>
             <InstallationStepper
               app={mockApp}
               version={mockApp.appKey.version}
@@ -118,25 +143,19 @@ describe('InstallationStepper Component', () => {
       );
     });
 
-    const infoText = screen.getByTestId('sideload-app-step');
-    expect(infoText).toBeInTheDocument();
+    // Should show the sideload step since device is activated and sideload=true
+    await waitFor(() => {
+      expect(screen.getByTestId('sideload-app-step')).toBeInTheDocument();
+    });
   });
 
-  it('Missing activation', () => {
-    act(() => {
+  it('renders device activation step when device is not activated', async () => {
+    const mockDeviceContext = createMockDeviceActivationContext(false);
+
+    await act(async () => {
       render(
         <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider
-            value={{
-              activated: false,
-              activating: false,
-              activate: async () => {},
-              validating: false,
-              validate: async () => {},
-              error: false,
-              statusText: '',
-            }}
-          >
+          <DeviceActivationContext.Provider value={mockDeviceContext}>
             <InstallationStepper
               app={mockApp}
               version={mockApp.appKey.version}
@@ -148,7 +167,52 @@ describe('InstallationStepper Component', () => {
       );
     });
 
-    const infoText = screen.getByTestId('device-activation-step');
-    expect(infoText).toBeInTheDocument();
+    // Should show the device activation step since device is not activated
+    expect(screen.getByTestId('device-activation-step')).toBeInTheDocument();
+  });
+
+  it('handles step progression correctly', async () => {
+    const mockDeviceContext = createMockDeviceActivationContext(false);
+
+    const { rerender } = await act(async () => {
+      return render(
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider value={mockDeviceContext}>
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={false}
+              update={false}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    // Initially should show device activation step
+    expect(screen.getByTestId('device-activation-step')).toBeInTheDocument();
+
+    // Simulate device becoming activated
+    const activatedContext = createMockDeviceActivationContext(true);
+
+    await act(async () => {
+      rerender(
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider value={activatedContext}>
+            <InstallationStepper
+              app={mockApp}
+              version={mockApp.appKey.version}
+              sideload={false}
+              update={false}
+            />
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    // Should now show installation step
+    await waitFor(() => {
+      expect(screen.getByTestId('install-app-step')).toBeInTheDocument();
+    });
   });
 });

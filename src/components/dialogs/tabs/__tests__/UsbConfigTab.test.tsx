@@ -19,45 +19,35 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import UsbConfigTab from '../UsbConfigTab';
-import { api } from '../../../../api/flecs-core/api-client';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
+import { vi } from 'vitest';
 
-// Mock the API client
-jest.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    system: {
-      systemDevicesUsbGet: jest.fn(),
-    },
-    instances: {
-      instancesInstanceIdConfigDevicesUsbGet: jest.fn(),
-      instancesInstanceIdConfigDevicesUsbPortPut: jest.fn(),
-      instancesInstanceIdConfigDevicesUsbPortDelete: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('UsbConfigTab', () => {
   const mockInstanceId = 'test-instance-id';
+  let mockApi: ReturnType<typeof createMockApi>;
 
   beforeEach(() => {
-    api.system.systemDevicesUsbGet = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbGet = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbPortPut = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbPortDelete = jest.fn();
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner while fetching data', async () => {
     // Mock API responses
-    (api.system.systemDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemDevicesUsbGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.instances.instancesInstanceIdConfigDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigDevicesUsbGet.mockResolvedValueOnce({
       data: [],
     });
 
-    render(<UsbConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<UsbConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Check for loading spinner
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -68,7 +58,7 @@ describe('UsbConfigTab', () => {
 
   it('renders the list of USB devices after fetching data', async () => {
     // Mock API responses
-    (api.system.systemDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemDevicesUsbGet.mockResolvedValueOnce({
       data: [
         {
           port: '1',
@@ -82,11 +72,11 @@ describe('UsbConfigTab', () => {
         },
       ],
     });
-    (api.instances.instancesInstanceIdConfigDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigDevicesUsbGet.mockResolvedValueOnce({
       data: [{ port: '1', device_connected: true }],
     });
 
-    render(<UsbConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<UsbConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Wait for the devices to be rendered
     await waitFor(() => {
@@ -99,7 +89,7 @@ describe('UsbConfigTab', () => {
 
   it('handles USB device toggle', async () => {
     // Mock API responses
-    (api.system.systemDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemDevicesUsbGet.mockResolvedValueOnce({
       data: [
         {
           port: '1',
@@ -108,17 +98,13 @@ describe('UsbConfigTab', () => {
         },
       ],
     });
-    (api.instances.instancesInstanceIdConfigDevicesUsbGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigDevicesUsbGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.instances.instancesInstanceIdConfigDevicesUsbPortPut as jest.Mock).mockResolvedValueOnce(
-      {},
-    );
-    (
-      api.instances.instancesInstanceIdConfigDevicesUsbPortDelete as jest.Mock
-    ).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigDevicesUsbPortPut.mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigDevicesUsbPortDelete.mockResolvedValueOnce({});
 
-    render(<UsbConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<UsbConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Wait for the devices to be rendered
     await waitFor(() => {
@@ -131,7 +117,7 @@ describe('UsbConfigTab', () => {
 
     // Wait for the API call to be made
     await waitFor(() =>
-      expect(api.instances.instancesInstanceIdConfigDevicesUsbPortPut).toHaveBeenCalledWith(
+      expect(mockApi.instances.instancesInstanceIdConfigDevicesUsbPortPut).toHaveBeenCalledWith(
         mockInstanceId,
         '1',
       ),

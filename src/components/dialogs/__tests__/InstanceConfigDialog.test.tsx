@@ -1,49 +1,26 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import InstanceConfigDialog from '../InstanceConfigDialog';
-import { api } from '../../../api/flecs-core/api-client';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
-// Mock the API client
-jest.mock('../../../api/flecs-core/api-client', () => ({
-  api: {
-    system: {
-      systemDevicesUsbGet: jest.fn(),
-    },
-    instances: {
-      instancesInstanceIdStopPost: jest.fn(),
-      instancesInstanceIdStartPost: jest.fn(),
-      instancesInstanceIdConfigDevicesUsbGet: jest.fn(),
-      instancesInstanceIdConfigDevicesUsbPortPut: jest.fn(),
-      instancesInstanceIdConfigDevicesUsbPortDelete: jest.fn(),
-      instancesInstanceIdConfigPortsGet: jest.fn(),
-      instancesInstanceIdConfigPortsTransportProtocolPut: jest.fn(),
-      instancesInstanceIdConfigEnvironmentGet: jest.fn(),
-      instancesInstanceIdConfigEnvironmentPut: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('InstanceConfigDialog', () => {
-  const mockOnClose = jest.fn();
+  const mockOnClose = vi.fn();
+  const mockSetActiveTab = vi.fn();
   const mockInstanceId = 'test-instance-id';
   const mockInstanceName = 'Test Instance';
 
   beforeEach(() => {
-    api.system.systemDevicesUsbGet = jest.fn();
-    api.instances.instancesInstanceIdStopPost = jest.fn();
-    api.instances.instancesInstanceIdStartPost = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbGet = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbPortPut = jest.fn();
-    api.instances.instancesInstanceIdConfigDevicesUsbPortDelete = jest.fn();
-    api.instances.instancesInstanceIdConfigPortsGet = jest.fn();
-    api.instances.instancesInstanceIdConfigPortsTransportProtocolPut = jest.fn();
-    api.instances.instancesInstanceIdConfigEnvironmentGet = jest.fn();
-    api.instances.instancesInstanceIdConfigEnvironmentPut = jest.fn();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    const mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders the dialog with the correct title', async () => {
@@ -54,7 +31,7 @@ describe('InstanceConfigDialog', () => {
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
         activeTab={0}
-        setActiveTab={jest.fn()}
+        setActiveTab={mockSetActiveTab}
       />,
     );
 
@@ -71,7 +48,7 @@ describe('InstanceConfigDialog', () => {
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
         activeTab={0}
-        setActiveTab={jest.fn()}
+        setActiveTab={mockSetActiveTab}
       />,
     );
 
@@ -103,7 +80,7 @@ describe('InstanceConfigDialog', () => {
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
         activeTab={0}
-        setActiveTab={jest.fn()}
+        setActiveTab={mockSetActiveTab}
       />,
     );
 

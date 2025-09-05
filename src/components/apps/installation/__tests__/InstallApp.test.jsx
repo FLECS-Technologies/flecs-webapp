@@ -17,17 +17,30 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { QuestState } from '@flecs/core-client-ts';
 import InstallApp from '../InstallApp';
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
-import { vitest } from 'vitest';
+import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
+import { createSuccessfulInstallTest, createFailedInstallTest } from '../../../../test/test-utils';
 
-vitest.mock('../../../../api/device/DeviceAuthAPI');
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../../../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
 
 const app = {
   appKey: {
-    name: 'com.codesys.codesyscontrol',
+    name: 'tech.flecs.ample',
     version: '4.2.0',
   },
   title: 'test app',
@@ -35,51 +48,184 @@ const app = {
   instances: [],
 };
 
-const handleActiveStep = vitest.fn();
+const handleActiveStep = vi.fn();
 
-describe('Test Install App', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
+describe('InstallApp Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  test('renders InstallApp component', () => {
-    render(
-      <ReferenceDataContextProvider>
-        <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
-      </ReferenceDataContextProvider>,
-    );
+  it('renders InstallApp component', async () => {
+    const { mockApi, mockQuestContext } = createSuccessfulInstallTest();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    await act(async () => {
+      render(
+        <ReferenceDataContextProvider>
+          <InstallApp app={app} version="4.2.0" handleActiveStep={handleActiveStep} />
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    expect(screen.getByTestId('install-app-step')).toBeInTheDocument();
   });
 
-  test('Successfully install app', async () => {
-    const { getByTestId } = render(
-      <ReferenceDataContextProvider>
-        <InstallApp app={app} handleActiveStep={handleActiveStep}></InstallApp>
-      </ReferenceDataContextProvider>,
+  it('successfully installs app', async () => {
+    const mockApi = createMockApi();
+
+    // Create a more comprehensive mock quest context for the multi-step process
+    const mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi
+        .fn()
+        .mockResolvedValueOnce(createMockQuestResult({ state: QuestState.Success })) // install step
+        .mockResolvedValueOnce(
+          createMockQuestResult({ state: QuestState.Success, result: 'instance-id' }),
+        ) // create instance step
+        .mockResolvedValueOnce(createMockQuestResult({ state: QuestState.Success })), // start instance step
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    await act(async () => {
+      render(
+        <ReferenceDataContextProvider>
+          <InstallApp app={app} version="4.2.0" handleActiveStep={handleActiveStep} />
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    // Wait for the installation process to complete
+    await waitFor(
+      () => {
+        expect(screen.getByText(app.title + ' successfully installed.')).toBeInTheDocument();
+      },
+      { timeout: 5000 },
     );
 
-    await screen.findByText('Installing ' + app.title + '.');
-    await screen.findByText(app.title + ' successfully installed.');
+    // Verify the API calls were made
+    expect(mockApi.app.appsInstallPost).toHaveBeenCalledWith({
+      appKey: { name: app.appKey.name, version: '4.2.0' },
+    });
+    expect(mockApi.instances.instancesCreatePost).toHaveBeenCalledWith({
+      appKey: { name: app.appKey.name, version: '4.2.0' },
+    });
+    expect(mockApi.instances.instancesInstanceIdStartPost).toHaveBeenCalledWith('instance-id');
 
-    const icon = getByTestId('success-icon');
-    expect(icon).toBeVisible();
+    // Verify quest context methods were called multiple times (3 steps)
+    expect(mockQuestContext.fetchQuest).toHaveBeenCalledTimes(3);
+    expect(mockQuestContext.waitForQuest).toHaveBeenCalledTimes(3);
+
+    // Verify handleActiveStep was called on success
+    expect(handleActiveStep).toHaveBeenCalled();
   });
 
-  test('Failed to install app', async () => {
-    // will fail because no app is passed to InstallApp
-    const { getByTestId } = render(
-      <ReferenceDataContextProvider>
-        <InstallApp handleActiveStep={handleActiveStep}></InstallApp>
-      </ReferenceDataContextProvider>,
-    );
+  it('handles installation failure', async () => {
+    const { mockApi, mockQuestContext } = createFailedInstallTest('Installation failed');
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
 
-    await screen.findByText('Error during the installation of undefined.');
+    await act(async () => {
+      render(
+        <ReferenceDataContextProvider>
+          <InstallApp app={app} version="4.2.0" handleActiveStep={handleActiveStep} />
+        </ReferenceDataContextProvider>,
+      );
+    });
 
-    const icon = getByTestId('error-icon');
-    expect(icon).toBeVisible();
+    // Wait for the error message to appear
+    await waitFor(() => {
+      expect(
+        screen.getByText('Error during the installation of ' + app.title + '.'),
+      ).toBeInTheDocument();
+    });
 
-    const retry = screen.getByRole('button', { name: 'Retry' });
-    fireEvent.click(retry);
+    // Verify retry button is present
+    const retryButton = screen.getByRole('button', { name: 'Retry' });
+    expect(retryButton).toBeInTheDocument();
 
-    await screen.findByText('Error during the installation of undefined.');
+    // Test retry functionality
+    await act(async () => {
+      fireEvent.click(retryButton);
+    });
+
+    // Verify API calls were made again
+    await waitFor(() => {
+      expect(mockApi.app.appsInstallPost).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('handles missing app gracefully', async () => {
+    const mockApi = createMockApi();
+    const mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(() => Promise.resolve(createMockQuestResult())),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    await act(async () => {
+      render(
+        <ReferenceDataContextProvider>
+          <InstallApp handleActiveStep={handleActiveStep} />
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    // Wait for error message about undefined app
+    await waitFor(() => {
+      expect(screen.getByText('Error during the installation of undefined.')).toBeInTheDocument();
+    });
+
+    // Verify retry button works
+    const retryButton = screen.getByRole('button', { name: 'Retry' });
+
+    await act(async () => {
+      fireEvent.click(retryButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Error during the installation of undefined.')).toBeInTheDocument();
+    });
+  });
+
+  it('shows quest progress during installation', async () => {
+    const mockApi = createMockApi();
+    const mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(
+        () => new Promise((resolve) => setTimeout(() => resolve(createMockQuestResult()), 100)),
+      ),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    await act(async () => {
+      render(
+        <ReferenceDataContextProvider>
+          <InstallApp app={app} version="4.2.0" handleActiveStep={handleActiveStep} />
+        </ReferenceDataContextProvider>,
+      );
+    });
+
+    // Initially should show the info message
+    expect(
+      screen.getByText(
+        'You can close this window. Installation takes place automatically in the background.',
+      ),
+    ).toBeInTheDocument();
+
+    // Quest log entry should be rendered when currentQuest is set
+    await waitFor(() => {
+      // The QuestLogEntry component should be rendered with the quest ID
+      expect(mockQuestContext.fetchQuest).toHaveBeenCalled();
+    });
   });
 });

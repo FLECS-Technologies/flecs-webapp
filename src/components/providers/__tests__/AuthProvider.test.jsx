@@ -17,43 +17,43 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthProvider } from '../AuthProvider';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
-const mockUser = {
-  user: {
-    data: {
-      ID: 4,
-      user_login: 'homer-simpson',
-      user_nicename: 'Homer Simpson',
-      display_name: 'Homer Simpson',
-      user_url: '',
-      user_email: 'homer-simpson@springfield.io',
-      user_registered: '2022-01-13 08:43:14',
-    },
-    redirect: null,
-    jwt: {
-      token: 'supersafetoken',
-      token_expires: 1642255418,
-    },
-  },
-  setUser: jest.fn(),
-};
+// Mock the API provider
+const mockUsePublicApi = vi.fn();
 
-jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react');
+vi.mock('../ApiProvider', () => ({
+  usePublicApi: () => mockUsePublicApi(),
+}));
+
+// Mock react-oidc-context using direct function calls (avoid hoisting issues)
+vi.mock('react-oidc-context', async () => {
+  const { createMockAuthContext } = await import('../../../__mocks__/AuthProvider');
+  const authMocks = createMockAuthContext();
+
   return {
-    ...ActualReact,
-    useContext: () => ({ mockUser }), // what you want to return when useContext get fired goes here
+    AuthProvider: authMocks.AuthProvider,
+    useAuth: authMocks.useAuth,
   };
 });
 
 describe('AuthProvider', () => {
-  afterAll(() => {
-    jest.clearAllMocks();
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUsePublicApi.mockReturnValue(mockApi);
   });
-  test('renders AuthProvider component', () => {
+
+  it('renders AuthProvider component', async () => {
     render(<AuthProvider />);
+
+    await waitFor(() => {
+      expect(mockApi.authentication.authProvidersDefaultProtocolGet).toHaveBeenCalled();
+    });
   });
 });

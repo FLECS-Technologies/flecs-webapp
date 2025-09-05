@@ -15,40 +15,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import '@testing-library/jest-dom';
+import React from 'react';
+import { render, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SystemData } from '../SystemData';
 import { useSystemContext } from '../SystemProvider';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../SystemProvider', () => ({ useSystemContext: vitest.fn() }));
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../SystemProvider', () => ({ useSystemContext: vi.fn() }));
 
 const mockSystem = {
   ping: true,
-  setPing: jest.fn(),
+  setPing: vi.fn(),
   loading: false,
-  setLoading: jest.fn(),
+  setLoading: vi.fn(),
   systemInfo: undefined,
-  setSystemInfo: jest.fn(),
+  setSystemInfo: vi.fn(),
 };
 
-vitest.mock('react', async () => {
-  const ActualReact = await vitest.importActual('react');
-  return {
-    ...ActualReact,
-    useContext: () => mockSystem, // Return mockSystem directly
-  };
-});
-
 describe('SystemData', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
-  });
-  test('renders SystemData component', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
     useSystemContext.mockReturnValue(mockSystem);
-    act(() => {
-      render(<SystemData></SystemData>);
+  });
+
+  it('renders SystemData component', async () => {
+    render(<SystemData />);
+
+    await waitFor(() => {
+      // Verify the component calls the ping API
+      expect(mockApi.system.systemPingGet).toHaveBeenCalled();
     });
   });
 });

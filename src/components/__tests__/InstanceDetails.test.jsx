@@ -16,12 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import InstanceDetails from '../InstanceDetails';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-jest.mock('../../api/device/InstanceDetailsService');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 const testInstance = {
   instanceName: 'TestInstance',
@@ -32,10 +37,20 @@ const testInstance = {
 };
 
 describe('InstanceDetails', () => {
-  test('renders InstanceDetails component', () => {
-    act(() => {
-      render(<InstanceDetails instance={testInstance}></InstanceDetails>);
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  it('renders InstanceDetails component', async () => {
+    render(<InstanceDetails instance={testInstance}></InstanceDetails>);
+
+    // Wait for the component to finish loading and API calls to complete
+    await waitFor(() => {
+      expect(screen.getByText('Storage')).toBeVisible();
     });
-    expect(screen.getByText('Storage')).toBeVisible();
   });
 });

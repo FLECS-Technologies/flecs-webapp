@@ -16,11 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import InstanceInfo from '../InstanceInfo';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-jest.mock('../../api/device/InstanceDetailsService');
+// Mock the API provider for child components
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 const testInstance = {
   instanceName: 'TestInstance',
@@ -31,14 +37,26 @@ const testInstance = {
   status: 'running',
   desired: 'stopped',
 };
+
 describe('InstanceInfo', () => {
-  test('renders InstanceInfo component', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  it('renders InstanceInfo component', async () => {
     render(<InstanceInfo instance={testInstance}></InstanceInfo>);
 
-    expect(screen.getByText('TestInstance')).toBeVisible();
-    expect(screen.getByText('ABCDE')).toBeVisible();
-    expect(screen.getByText('1.0.0')).toBeVisible();
-    expect(screen.getByText('running')).toBeVisible();
-    expect(screen.getByText('stopped')).toBeVisible();
+    // Wait for the component and child components to finish loading
+    await waitFor(() => {
+      expect(screen.getByText('TestInstance')).toBeVisible();
+      expect(screen.getByText('ABCDE')).toBeVisible();
+      expect(screen.getByText('1.0.0')).toBeVisible();
+      expect(screen.getByText('running')).toBeVisible();
+      expect(screen.getByText('stopped')).toBeVisible();
+    });
   });
 });

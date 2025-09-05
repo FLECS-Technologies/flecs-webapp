@@ -17,24 +17,41 @@
  */
 
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import '@testing-library/jest-dom';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import System from '../System';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../../api/device/license/info');
-vitest.mock('../../api/device/license/status');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../../api/device/license/info');
+vi.mock('../../api/device/license/status');
 
 describe('System', () => {
-  test('renders System page', () => {
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  it('renders System page', async () => {
     render(
       <Router>
         <System />
       </Router>,
     );
 
-    expect(screen.getByLabelText('system-page')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByLabelText('system-page')).toBeVisible();
+    });
 
     expect(screen.getByLabelText('open-source')).toBeVisible();
     // screen.debug()

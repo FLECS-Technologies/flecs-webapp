@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useContext } from 'react';
+import React from 'react';
 import { DeviceActivationContext } from './DeviceActivationContext';
 import { useProtectedApi } from './ApiProvider';
 
@@ -96,7 +96,5 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
     <DeviceActivationContext.Provider value={value}>{children}</DeviceActivationContext.Provider>
   );
 };
-
-export const useICaaSContext = () => useContext(DeviceActivationContext);
 
 export default DeviceActivationProvider;

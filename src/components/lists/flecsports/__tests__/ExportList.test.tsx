@@ -1,18 +1,14 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ExportList from '../ExportList';
-import { api } from '../../../../api/flecs-core/api-client';
-import { vi } from 'vitest';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
-// Mock the api
-vi.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    export: {
-      exportsGet: vi.fn(),
-      exportsExportIdGet: vi.fn(),
-      exportsExportIdDelete: vi.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 // Polyfill for JSDOM
@@ -26,30 +22,34 @@ if (!('revokeObjectURL' in URL)) {
 }
 
 describe('<ExportList />', () => {
+  let mockApi: ReturnType<typeof createMockApi>;
+
   beforeEach(() => {
     vi.resetAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner initially', () => {
-    (api.export.exportsGet as any).mockReturnValue(new Promise(() => {}));
+    mockApi.export.exportsGet.mockReturnValue(new Promise(() => {}));
     render(<ExportList />);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('renders error message when fetch fails', async () => {
-    (api.export.exportsGet as any).mockRejectedValue(new Error('Network error'));
+    mockApi.export.exportsGet.mockRejectedValue(new Error('Network error'));
     render(<ExportList />);
     await waitFor(() => expect(screen.getByText(/Failed to load exports/i)).toBeInTheDocument());
   });
 
   it('renders empty state when no exports', async () => {
-    (api.export.exportsGet as any).mockResolvedValue({ data: [] });
+    mockApi.export.exportsGet.mockResolvedValue({ data: [] });
     render(<ExportList />);
     await waitFor(() => expect(screen.getByText(/No exports found/i)).toBeInTheDocument());
   });
 
   it('renders exports table when data is available', async () => {
-    (api.export.exportsGet as any).mockResolvedValue({ data: ['export1', 'export2'] });
+    mockApi.export.exportsGet.mockResolvedValue({ data: ['export1', 'export2'] });
     render(<ExportList />);
     expect(await screen.findByText(/Exports/)).toBeInTheDocument();
     expect(screen.getByText('export1')).toBeInTheDocument();
@@ -57,8 +57,8 @@ describe('<ExportList />', () => {
   });
 
   it('handles download action', async () => {
-    (api.export.exportsGet as any).mockResolvedValue({ data: ['export1'] });
-    (api.export.exportsExportIdGet as any).mockResolvedValue({
+    mockApi.export.exportsGet.mockResolvedValue({ data: ['export1'] });
+    mockApi.export.exportsExportIdGet.mockResolvedValue({
       data: new Blob(['test content']),
     });
 
@@ -72,7 +72,7 @@ describe('<ExportList />', () => {
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
-      expect(api.export.exportsExportIdGet).toHaveBeenCalledWith('export1', {
+      expect(mockApi.export.exportsExportIdGet).toHaveBeenCalledWith('export1', {
         responseType: 'blob',
       });
       expect(createObjectURLMock).toHaveBeenCalled();
@@ -84,8 +84,8 @@ describe('<ExportList />', () => {
   });
 
   it('handles delete action', async () => {
-    (api.export.exportsGet as any).mockResolvedValue({ data: ['export1'] });
-    (api.export.exportsExportIdDelete as any).mockResolvedValue({});
+    mockApi.export.exportsGet.mockResolvedValue({ data: ['export1'] });
+    mockApi.export.exportsExportIdDelete.mockResolvedValue({});
 
     render(<ExportList />);
 
@@ -93,7 +93,7 @@ describe('<ExportList />', () => {
     fireEvent.click(deleteButton);
 
     await waitFor(() => {
-      expect(api.export.exportsExportIdDelete).toHaveBeenCalledWith('export1');
+      expect(mockApi.export.exportsExportIdDelete).toHaveBeenCalledWith('export1');
       expect(screen.getByText(/No exports found/i)).toBeInTheDocument();
     });
   });

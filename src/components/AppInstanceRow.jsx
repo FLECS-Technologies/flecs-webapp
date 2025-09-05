@@ -111,7 +111,7 @@ export default function AppInstanceRow(props) {
       } else {
         throw new Error(result.description);
       }
-    } catch {
+    } catch (error) {
       snackbarText = 'Failed to start instance.';
       alertSeverity = 'error';
       snackbarErrorText = error.message;

@@ -16,22 +16,42 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Version from '../Version';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../../api/VersionService');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+// Mock the SystemProvider
+vi.mock('../../data/SystemProvider', () => ({
+  useSystemContext: () => ({ systemInfo: {} }),
+}));
+
+vi.mock('../../api/marketplace/VersionService');
 
 describe('Version', () => {
-  test('renders Version component', async () => {
-    await act(async () => {
-      render(<Version></Version>);
+  let mockApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
+  });
+
+  it('renders Version component', async () => {
+    render(<Version />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Versions')).toBeVisible();
+      expect(screen.getByText('Core')).toBeVisible();
+      expect(screen.getByText('UI')).toBeVisible();
+      expect(screen.getByText('API')).toBeVisible();
     });
-    expect(screen.getByText('Versions')).toBeVisible();
-    expect(screen.getByText('Core')).toBeVisible();
-    expect(screen.getByText('UI')).toBeVisible();
-    expect(screen.getByText('Info')).toBeVisible();
   });
 });

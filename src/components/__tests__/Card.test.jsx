@@ -1,51 +1,94 @@
+/*
+ * Copyright (c) 2021 FLECS Technologies GmbH
+ *
+ * Created on Mon Nov 04 2024
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from 'react';
-import nock from 'nock';
-import { screen, render, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { screen, render, fireEvent, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Card from '../Card';
 import { SystemContextProvider } from '../../data/SystemProvider';
 import { SystemData } from '../../data/SystemData';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../__mocks__/core-client-ts';
 
-vitest.mock('../../api/device/DeviceAuthAPI');
-vitest.mock('../../api/device/license/activation');
-vitest.mock('../../api/device/license/status');
+// Mock the API provider and Quest context
+const mockUseProtectedApi = vi.fn();
+const mockUseQuestContext = vi.fn();
+
+vi.mock('../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
+
+vi.mock('../quests/QuestContext', () => ({
+  useQuestContext: () => mockUseQuestContext(),
+  QuestContext: {},
+}));
+
+// Mock the System Context to provide architecture info
+vi.mock('../../data/SystemProvider', () => ({
+  useSystemContext: () => ({
+    systemInfo: { arch: 'amd64' },
+  }),
+  SystemContextProvider: ({ children }) => children,
+}));
+
+// Mock SystemData to prevent side effect API calls
+vi.mock('../../data/SystemData', () => ({
+  SystemData: ({ children }) => children,
+}));
 
 describe('Card', () => {
+  let mockApi;
+  let mockQuestContext;
+
   beforeEach(() => {
-    nock.disableNetConnect();
-    nock.enableNetConnect(['127.0.0.1']);
+    vi.clearAllMocks();
+    mockApi = createMockApi();
+    mockQuestContext = {
+      quests: { current: new Map() },
+      fetchQuest: vi.fn(() => Promise.resolve()),
+      waitForQuest: vi.fn(() => Promise.resolve({ state: 'Success' })),
+    };
+
+    mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUseQuestContext.mockReturnValue(mockQuestContext);
   });
 
-  afterEach(() => {
-    nock.cleanAll();
-    nock.enableNetConnect();
-  });
-
-  afterAll(() => {
-    vitest.clearAllMocks();
-  });
-
-  test('renders Card component', async () => {
-    await waitFor(() => {
+  it('renders Card component', async () => {
+    await act(async () => {
       render(<Card />);
     });
 
     expect(screen.getByTestId('app-card')).toBeInTheDocument();
   });
 
-  test('Click request', async () => {
+  it('Click request', async () => {
     render(<Card />);
 
     const requestButton = await waitFor(() => screen.getByTestId('app-request-button'));
     expect(requestButton).toBeVisible();
     expect(requestButton).toBeEnabled();
 
-    fireEvent.click(requestButton);
+    await act(async () => {
+      fireEvent.click(requestButton);
+    });
   });
 
-  test('Click install', async () => {
-    await waitFor(() =>
+  it('Click install', async () => {
+    await act(async () => {
       render(
         <SystemContextProvider>
           <SystemData>
@@ -64,8 +107,8 @@ describe('Card', () => {
             />
           </SystemData>
         </SystemContextProvider>,
-      ),
-    );
+      );
+    });
 
     const installButton = await waitFor(() => screen.getByLabelText('install-app-button'));
     const uninstallButton = screen.queryByText('Uninstall');
@@ -77,8 +120,8 @@ describe('Card', () => {
     expect(requestButton).not.toBeVisible();
   });
 
-  test('Click uninstall', async () => {
-    await waitFor(() =>
+  it('Click uninstall', async () => {
+    await act(async () => {
       render(
         <Card
           app="Testapp"
@@ -92,21 +135,24 @@ describe('Card', () => {
           installedVersions={['Test App Version']}
           instances={[]}
         />,
-      ),
-    );
+      );
+    });
 
     const uninstallButton = await waitFor(() => screen.getByText('Uninstall'));
-    fireEvent.click(uninstallButton);
+
+    await act(async () => {
+      fireEvent.click(uninstallButton);
+    });
   });
 
-  test('Card with documentation url', async () => {
+  it('Card with documentation url', async () => {
     render(<Card documentationUrl="https://google.com" />);
 
     const helpCenterIcon = await waitFor(() => screen.getByTestId('HelpCenterIcon'));
     expect(helpCenterIcon).toBeVisible();
   });
 
-  test('Card without documentation url', async () => {
+  it('Card without documentation url', async () => {
     render(<Card />);
 
     await waitFor(() => {

@@ -15,38 +15,132 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { render, act, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DeviceActivationStep from '../DeviceActivationStep';
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
-import { vitest } from 'vitest';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
-vitest.mock('../../../../api/device/license/status');
-vitest.mock('../../../../api/device/license/activation');
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
+}));
 
 describe('DeviceActivationStep Component', () => {
-  afterAll(() => {
-    vitest.clearAllMocks();
+  let mockHandleNext: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockHandleNext = vi.fn();
+    mockUseProtectedApi.mockReturnValue(createMockApi());
   });
 
-  it('renders the DeviceActivationStep component', () => {
-    const handleNext = jest.fn();
-    act(() => {
-      render(
-        <DeviceActivationContext.Provider
-          value={{
-            activated: true,
-            activating: false,
-            activate: async () => {},
-            validating: false,
-            validate: async () => {},
-          }}
-        >
-          <DeviceActivationStep handleNext={handleNext} />
-        </DeviceActivationContext.Provider>,
-      );
-    });
+  it('renders the DeviceActivationStep component when device is activated', () => {
+    render(
+      <DeviceActivationContext.Provider
+        value={{
+          activated: true,
+          activating: false,
+          activate: vi.fn(),
+          validating: false,
+          validate: vi.fn(),
+          error: false,
+          statusText: '',
+        }}
+      >
+        <DeviceActivationStep handleNext={mockHandleNext} />
+      </DeviceActivationContext.Provider>,
+    );
 
-    expect(handleNext).toBeCalled();
+    expect(screen.getByTestId('device-activation-step')).toBeInTheDocument();
+    expect(mockHandleNext).toHaveBeenCalled();
+  });
+
+  it('renders the DeviceActivationStep component when device is not activated', () => {
+    render(
+      <DeviceActivationContext.Provider
+        value={{
+          activated: false,
+          activating: false,
+          activate: vi.fn(),
+          validating: false,
+          validate: vi.fn(),
+          error: false,
+          statusText: '',
+        }}
+      >
+        <DeviceActivationStep handleNext={mockHandleNext} />
+      </DeviceActivationContext.Provider>,
+    );
+
+    expect(screen.getByTestId('device-activation-step')).toBeInTheDocument();
+    expect(mockHandleNext).not.toHaveBeenCalled();
+  });
+
+  it('calls handleNext when device becomes activated', async () => {
+    const mockActivate = vi.fn();
+
+    const { rerender } = render(
+      <DeviceActivationContext.Provider
+        value={{
+          activated: false,
+          activating: false,
+          activate: mockActivate,
+          validating: false,
+          validate: vi.fn(),
+          error: false,
+          statusText: '',
+        }}
+      >
+        <DeviceActivationStep handleNext={mockHandleNext} />
+      </DeviceActivationContext.Provider>,
+    );
+
+    expect(mockHandleNext).not.toHaveBeenCalled();
+
+    // Simulate device becoming activated
+    rerender(
+      <DeviceActivationContext.Provider
+        value={{
+          activated: true,
+          activating: false,
+          activate: mockActivate,
+          validating: false,
+          validate: vi.fn(),
+          error: false,
+          statusText: '',
+        }}
+      >
+        <DeviceActivationStep handleNext={mockHandleNext} />
+      </DeviceActivationContext.Provider>,
+    );
+
+    await waitFor(() => {
+      expect(mockHandleNext).toHaveBeenCalled();
+    });
+  });
+
+  it('handles case when handleNext is not provided', () => {
+    render(
+      <DeviceActivationContext.Provider
+        value={{
+          activated: true,
+          activating: false,
+          activate: vi.fn(),
+          validating: false,
+          validate: vi.fn(),
+          error: false,
+          statusText: '',
+        }}
+      >
+        <DeviceActivationStep />
+      </DeviceActivationContext.Provider>,
+    );
+
+    expect(screen.getByTestId('device-activation-step')).toBeInTheDocument();
+    // Should not throw an error even when handleNext is not provided
   });
 });

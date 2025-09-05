@@ -19,58 +19,39 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import NetworkConfigTab from '../NetworkConfigTab';
-import { api } from '../../../../api/flecs-core/api-client';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 import { NetworkKind, NetworkType } from '@flecs/core-client-ts';
+import { vi } from 'vitest';
 
-// Mock the API client
-jest.mock('../../../../api/flecs-core/api-client', () => ({
-  api: {
-    system: {
-      systemNetworkAdaptersGet: jest.fn(),
-    },
-    deployments: {
-      deploymentsDeploymentIdNetworksGet: jest.fn(),
-      deploymentsDeploymentIdNetworksPost: jest.fn(),
-      deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post: jest.fn(),
-    },
-    instances: {
-      instancesInstanceIdConfigNetworksGet: jest.fn(),
-      instancesInstanceIdConfigNetworksPost: jest.fn(),
-      instancesInstanceIdConfigNetworksNetworkIdDelete: jest.fn(),
-    },
-  },
+// Mock the API provider
+const mockUseProtectedApi = vi.fn();
+
+vi.mock('../../../../components/providers/ApiProvider', () => ({
+  useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 describe('NetworkConfigTab', () => {
   const mockInstanceId = 'test-instance-id';
+  let mockApi: ReturnType<typeof createMockApi>;
 
   beforeEach(() => {
-    api.system.systemNetworkAdaptersGet = jest.fn();
-    api.deployments.deploymentsDeploymentIdNetworksGet = jest.fn();
-    api.instances.instancesInstanceIdConfigNetworksGet = jest.fn();
-    api.deployments.deploymentsDeploymentIdNetworksPost = jest.fn();
-    api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post = jest.fn();
-    api.instances.instancesInstanceIdConfigNetworksPost = jest.fn();
-    api.instances.instancesInstanceIdConfigNetworksNetworkIdDelete = jest.fn();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
+    mockApi = createMockApi();
+    mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
   it('renders loading spinner while fetching data', async () => {
     // Mock API responses
-    (api.system.systemNetworkAdaptersGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemNetworkAdaptersGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.deployments.deploymentsDeploymentIdNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.deployments.deploymentsDeploymentIdNetworksGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.instances.instancesInstanceIdConfigNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigNetworksGet.mockResolvedValueOnce({
       data: [],
     });
 
-    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Check for loading spinner
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -81,7 +62,7 @@ describe('NetworkConfigTab', () => {
 
   it('renders the list of networks after fetching data', async () => {
     // Mock API responses
-    (api.system.systemNetworkAdaptersGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemNetworkAdaptersGet.mockResolvedValueOnce({
       data: [
         {
           name: 'Adapter1',
@@ -97,14 +78,14 @@ describe('NetworkConfigTab', () => {
         },
       ],
     });
-    (api.deployments.deploymentsDeploymentIdNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.deployments.deploymentsDeploymentIdNetworksGet.mockResolvedValueOnce({
       data: [{ parent: 'Adapter1', name: 'DeploymentNetwork1' }],
     });
-    (api.instances.instancesInstanceIdConfigNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigNetworksGet.mockResolvedValueOnce({
       data: [{ name: 'DeploymentNetwork1', ipAddress: '192.168.1.1' }],
     });
 
-    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Wait for the networks to be rendered
     await waitFor(() => {
@@ -116,7 +97,7 @@ describe('NetworkConfigTab', () => {
 
   it('handles network activation change', async () => {
     // Mock API responses
-    (api.system.systemNetworkAdaptersGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.system.systemNetworkAdaptersGet.mockResolvedValueOnce({
       data: [
         {
           name: 'Adapter1',
@@ -126,21 +107,19 @@ describe('NetworkConfigTab', () => {
         },
       ],
     });
-    (api.deployments.deploymentsDeploymentIdNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.deployments.deploymentsDeploymentIdNetworksGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.instances.instancesInstanceIdConfigNetworksGet as jest.Mock).mockResolvedValueOnce({
+    mockApi.instances.instancesInstanceIdConfigNetworksGet.mockResolvedValueOnce({
       data: [],
     });
-    (api.deployments.deploymentsDeploymentIdNetworksPost as jest.Mock).mockResolvedValueOnce({});
-    (
-      api.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post as jest.Mock
-    ).mockResolvedValueOnce({
+    mockApi.deployments.deploymentsDeploymentIdNetworksPost.mockResolvedValueOnce({});
+    mockApi.deployments.deploymentsDeploymentIdNetworksNetworkIdDhcpIpv4Post.mockResolvedValueOnce({
       data: { ipv4_address: '192.168.1.2' },
     });
-    (api.instances.instancesInstanceIdConfigNetworksPost as jest.Mock).mockResolvedValueOnce({});
+    mockApi.instances.instancesInstanceIdConfigNetworksPost.mockResolvedValueOnce({});
 
-    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={jest.fn()} />);
+    render(<NetworkConfigTab instanceId={mockInstanceId} onChange={vi.fn()} />);
 
     // Wait for the networks to be rendered
     await waitFor(() => {
@@ -153,13 +132,16 @@ describe('NetworkConfigTab', () => {
 
     // Wait for the API call to be made
     await waitFor(() =>
-      expect(api.deployments.deploymentsDeploymentIdNetworksPost).toHaveBeenCalledWith('default', {
-        network_id: 'flecs-ipvlan_l2-Adapter1',
-        network_kind: NetworkKind.Ipvlanl2,
-        parent_adapter: 'Adapter1',
-      }),
+      expect(mockApi.deployments.deploymentsDeploymentIdNetworksPost).toHaveBeenCalledWith(
+        'default',
+        {
+          network_id: 'flecs-ipvlan_l2-Adapter1',
+          network_kind: NetworkKind.Ipvlanl2,
+          parent_adapter: 'Adapter1',
+        },
+      ),
     );
-    expect(api.instances.instancesInstanceIdConfigNetworksPost).toHaveBeenCalledWith(
+    expect(mockApi.instances.instancesInstanceIdConfigNetworksPost).toHaveBeenCalledWith(
       mockInstanceId,
       {
         network_id: 'flecs-ipvlan_l2-Adapter1',

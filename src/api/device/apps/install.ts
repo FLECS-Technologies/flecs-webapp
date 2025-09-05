@@ -15,8 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import axios from 'axios';
-import { DeviceAPIConfiguration } from '../../api-config';
 import { job_meta } from '../../../models/job';
 import { createApi } from '../../flecs-core/api-client';
 

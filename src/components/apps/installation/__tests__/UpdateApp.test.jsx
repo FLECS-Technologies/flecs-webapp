@@ -22,17 +22,13 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import UpdateApp from '../UpdateApp';
 import { ReferenceDataContext } from '../../../../data/ReferenceDataContext';
-import { JobsContextProvider } from '../../../../data/JobsContext';
 import { mockInstalledApps } from '../../../../data/__mocks__/AppList';
 import { mockApp } from '../../../../models/__mocks__/app';
 import { vitest } from 'vitest';
 
 vitest.mock('../../../../api/device/apps/install');
 vitest.mock('../../../../api/device/instances/instance');
-vitest.mock('../../../../api/device/AppAPI');
-vitest.mock('../../../../api/device/ExportAppsService');
 vitest.mock('../../../../api/device/DeviceAuthAPI');
-vitest.mock('../../../../api/device/JobsAPI');
 vitest.mock('../../../../utils/sleep');
 
 const app = mockInstalledApps[0];
@@ -48,18 +44,16 @@ describe('Test Update App', () => {
 
   test('Successfully update app', async () => {
     render(
-      <JobsContextProvider>
-        <ReferenceDataContext.Provider
-          value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
-        >
-          <UpdateApp
-            app={app}
-            from={app.appKey.version}
-            to="4.3.0"
-            handleActiveStep={handleActiveStep}
-          />
-        </ReferenceDataContext.Provider>
-      </JobsContextProvider>,
+      <ReferenceDataContext.Provider
+        value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
+      >
+        <UpdateApp
+          app={app}
+          from={app.appKey.version}
+          to="4.3.0"
+          handleActiveStep={handleActiveStep}
+        />
+      </ReferenceDataContext.Provider>,
     );
 
     await waitFor(() => {
@@ -84,18 +78,16 @@ describe('Test Update App', () => {
     const user = userEvent.setup();
 
     render(
-      <JobsContextProvider>
-        <ReferenceDataContext.Provider
-          value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
-        >
-          <UpdateApp
-            app={mockApp}
-            from={mockApp.appKey.version}
-            to="4.3.0"
-            handleActiveStep={handleActiveStep}
-          />
-        </ReferenceDataContext.Provider>
-      </JobsContextProvider>,
+      <ReferenceDataContext.Provider
+        value={{ appList: mockInstalledApps, setUpdateAppList: () => {} }}
+      >
+        <UpdateApp
+          app={mockApp}
+          from={mockApp.appKey.version}
+          to="4.3.0"
+          handleActiveStep={handleActiveStep}
+        />
+      </ReferenceDataContext.Provider>,
     );
 
     await waitFor(() => {

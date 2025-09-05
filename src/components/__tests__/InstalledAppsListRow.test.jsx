@@ -2,9 +2,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import Row from '../InstalledAppsListRow';
-import { JobsContextProvider } from '../../data/JobsContext';
-
-jest.mock('../../api/device/AppAPI');
 
 describe('Test Installed Apps List row', () => {
   const app = {
@@ -43,13 +40,11 @@ describe('Test Installed Apps List row', () => {
 
   test('renders installed apps list row component', async () => {
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     const crtInstnButton = await waitFor(() =>
@@ -63,13 +58,11 @@ describe('Test Installed Apps List row', () => {
 
   test('create new instance', async () => {
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     const crtInstnButton = await waitFor(() =>
@@ -87,13 +80,11 @@ describe('Test Installed Apps List row', () => {
 
   test('test delete app', async () => {
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     const deleteButton = await waitFor(() => screen.getByTestId('DeleteIcon'));
@@ -113,13 +104,11 @@ describe('Test Installed Apps List row', () => {
     app.documentationUrl = 'https://google.com';
 
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     const documentationButton = await waitFor(() => screen.getByTestId('HelpCenterIcon'));
@@ -131,13 +120,11 @@ describe('Test Installed Apps List row', () => {
     app.documentationUrl = undefined;
 
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     await waitFor(() => {
@@ -150,13 +137,11 @@ describe('Test Installed Apps List row', () => {
     window.open = jest.fn().mockReturnValue({ close: closeSpy });
 
     render(
-      <JobsContextProvider>
-        <table>
-          <tbody>
-            <Row key={app.appKey.name} row={app} />
-          </tbody>
-        </table>
-      </JobsContextProvider>,
+      <table>
+        <tbody>
+          <Row key={app.appKey.name} row={app} />
+        </tbody>
+      </table>,
     );
 
     const expandButton = await waitFor(() => screen.getByLabelText('expand row'));

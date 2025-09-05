@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021 FLECS Technologies GmbH
+ * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Tue Nov 30 2021
+ * Created on Wed Jun 01 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,18 @@
  * limitations under the License.
  */
 
-import BaseAPI from './BaseAPI';
-import { DeviceAPIConfiguration } from '../api-config';
-
-export default class StartAppInstanceAPI extends BaseAPI {
-  async startAppInstance(instanceId) {
-    // POST request using fetch with error handling
-    const requestOptions = {
-      method: 'POST',
-    };
-
-    try {
-      await this.callAPI(
-        DeviceAPIConfiguration.POST_START_INSTANCE_URL(instanceId),
-        requestOptions,
-      );
-    } catch (error) {}
-  }
+async function getLatestVersion() {
+  return new Promise((resolve, reject) => {
+    resolve({
+      success: true,
+      version: '1.1.0-porpoise-475591c',
+      release_notes: 'www.release-notes.com',
+    });
+  });
 }
+
+function isLaterThan(version1, version2) {
+  return true;
+}
+
+export { getLatestVersion, isLaterThan };

@@ -21,10 +21,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SideloadApp from '../SideloadApp';
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
-import { JobsContextProvider } from '../../../../data/JobsContext';
 import { vitest } from 'vitest';
-
-vitest.mock('../../../../api/device/AppAPI');
 
 const yaml = {
   appKey: {
@@ -44,21 +41,17 @@ describe('Test Sideload App', () => {
   });
   test('renders SideloadApp component', () => {
     render(
-      <JobsContextProvider>
-        <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
-        </ReferenceDataContextProvider>
-      </JobsContextProvider>,
+      <ReferenceDataContextProvider>
+        <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
+      </ReferenceDataContextProvider>,
     );
   });
 
   test('Successfully sideload app', async () => {
     const { getByTestId } = render(
-      <JobsContextProvider>
-        <ReferenceDataContextProvider>
-          <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
-        </ReferenceDataContextProvider>
-      </JobsContextProvider>,
+      <ReferenceDataContextProvider>
+        <SideloadApp yaml={yaml} handleActiveStep={handleActiveStep}></SideloadApp>
+      </ReferenceDataContextProvider>,
     );
 
     await screen.findByText('Installing ' + yaml.title + '.');
@@ -71,11 +64,9 @@ describe('Test Sideload App', () => {
   test('Failed to sideload app', async () => {
     // will fail because no yaml is passed to SideloadApp
     const { getByTestId } = render(
-      <JobsContextProvider>
-        <ReferenceDataContextProvider>
-          <SideloadApp handleActiveStep={handleActiveStep}></SideloadApp>
-        </ReferenceDataContextProvider>
-      </JobsContextProvider>,
+      <ReferenceDataContextProvider>
+        <SideloadApp handleActiveStep={handleActiveStep}></SideloadApp>
+      </ReferenceDataContextProvider>,
     );
 
     await screen.findByText('Error during the installation of undefined.');

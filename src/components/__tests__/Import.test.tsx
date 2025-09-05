@@ -19,32 +19,19 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Import from '../Import';
-import { postImportApps } from '../../api/device/ImportAppsService';
-import { OnboardingDeviceAPI } from '../../api/device/onboarding/onboarding';
 import { ReferenceDataContext } from '../../data/ReferenceDataContext';
-import { JobsContext } from '../../data/JobsContext';
-import { mockJob, mockQueuedJob, mockSuccessJob } from '../../models/__mocks__/job';
 import { vitest } from 'vitest';
 
-vitest.mock('../../api/device/ImportAppsService');
 vitest.mock('../../api/device/onboarding/onboarding');
 
-const renderWithContext = (
-  ui: React.ReactElement,
-  { referenceDataValues, jobsDataValues }: any,
-) => {
+const renderWithContext = (ui: React.ReactElement, { referenceDataValues }: any) => {
   return render(
-    <ReferenceDataContext.Provider value={referenceDataValues}>
-      <JobsContext.Provider value={jobsDataValues}>{ui}</JobsContext.Provider>
-    </ReferenceDataContext.Provider>,
+    <ReferenceDataContext.Provider value={referenceDataValues}>{ui}</ReferenceDataContext.Provider>,
   );
 };
 
 describe('Import component', () => {
-  const mockFetchJobs = vitest.fn();
-  const mockFetchJobById = vitest.fn();
   const mockSetUpdateAppList = vitest.fn();
-  const mockJobs = [mockQueuedJob, mockJob, mockSuccessJob];
 
   beforeEach(() => {
     vitest.clearAllMocks();
@@ -53,11 +40,6 @@ describe('Import component', () => {
   test('renders Import component', () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
-      jobsDataValues: {
-        jobs: mockJobs,
-        fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById,
-      },
     });
 
     expect(screen.getByText('Import')).toBeInTheDocument();
@@ -66,11 +48,6 @@ describe('Import component', () => {
   test('handles JSON file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
-      jobsDataValues: {
-        jobs: mockJobs,
-        fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById,
-      },
     });
 
     const file = new File(['{"key":"value"}'], 'test.json', {
@@ -80,7 +57,6 @@ describe('Import component', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true));
     await waitFor(() =>
       expect(screen.getByText('Importing finished successfully')).toBeInTheDocument(),
@@ -90,11 +66,6 @@ describe('Import component', () => {
   test('handles tar.gz file upload and shows success snackbar', async () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
-      jobsDataValues: {
-        jobs: mockJobs,
-        fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById,
-      },
     });
 
     const file = new File(['dummy content'], 'test.tar.gz', {
@@ -104,7 +75,6 @@ describe('Import component', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => expect(mockFetchJobs).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(mockSetUpdateAppList).toHaveBeenCalledWith(true));
     await waitFor(() =>
       expect(screen.getByText('Importing finished successfully')).toBeInTheDocument(),
@@ -114,11 +84,6 @@ describe('Import component', () => {
   test('handles unsupported file type upload', () => {
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
-      jobsDataValues: {
-        jobs: mockJobs,
-        fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById,
-      },
     });
 
     const file = new File(['dummy content'], 'test.txt', { type: 'text/plain' });
@@ -140,11 +105,6 @@ describe('Import component', () => {
 
     renderWithContext(<Import />, {
       referenceDataValues: { setUpdateAppList: mockSetUpdateAppList },
-      jobsDataValues: {
-        jobs: mockJobs,
-        fetchJobs: mockFetchJobs,
-        fetchJobById: mockFetchJobById,
-      },
     });
 
     const file = new File(['{"key":"value"}'], 'test.json', {

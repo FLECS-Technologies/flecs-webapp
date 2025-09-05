@@ -19,7 +19,7 @@ import '@testing-library/dom';
 import { waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import axios from 'axios';
-import { getLatestVersion, getVersion, isLaterThan } from '../VersionService';
+import { getLatestVersion, isLaterThan } from '../VersionService';
 
 jest.mock('axios');
 
@@ -36,19 +36,6 @@ describe('VersionService', () => {
 
   afterAll(() => {
     jest.clearAllMocks();
-  });
-  test('calls successful getVersion', async () => {
-    axios.get.mockResolvedValueOnce(mockVersion);
-    const version = await waitFor(() => getVersion());
-
-    expect(version.core).toBe(mockVersion.data.core);
-  });
-
-  test('calls unsuccessful getVersion', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Failed to load version'));
-    await act(async () => {
-      expect(getVersion()).rejects.toThrowError();
-    });
   });
 
   test('calls successful getLatestVersion', async () => {

@@ -21,7 +21,6 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import { render, screen } from '@testing-library/react';
 import Export from '../Export';
-import { JobsContextProvider } from '../../data/JobsContext';
 
 jest.mock('../../api/device/ExportAppsService');
 
@@ -35,11 +34,7 @@ describe('Export', () => {
   });
   test('renders Export component', async () => {
     await act(async () => {
-      render(
-        <JobsContextProvider>
-          <Export></Export>
-        </JobsContextProvider>,
-      );
+      render(<Export></Export>);
     });
     expect(screen.getByText('Export')).toBeVisible();
   });
@@ -47,11 +42,7 @@ describe('Export', () => {
   test('click on export button', async () => {
     const user = userEvent.setup();
     await act(async () => {
-      render(
-        <JobsContextProvider>
-          <Export></Export>
-        </JobsContextProvider>,
-      );
+      render(<Export></Export>);
     });
     expect(screen.getByText('Export')).toBeVisible();
     const exportButton = screen.getByText('Export');

@@ -21,6 +21,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QuestState } from '@flecs/core-client-ts';
 import InstallationStepper from '../InstallationStepper';
 import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
+import { MarketplaceUserProvider } from '../../../providers/MarketplaceUserProvider';
 import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
 import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
 
@@ -77,21 +78,30 @@ describe('InstallationStepper Component', () => {
     mockUseQuestContext.mockReturnValue(createMockQuestContext());
   });
 
+  const renderWithProviders = (deviceActivationValue: any, component: React.ReactElement) => {
+    return render(
+      <MarketplaceUserProvider>
+        <ReferenceDataContextProvider>
+          <DeviceActivationContext.Provider value={deviceActivationValue}>
+            {component}
+          </DeviceActivationContext.Provider>
+        </ReferenceDataContextProvider>
+      </MarketplaceUserProvider>,
+    );
+  };
+
   it('renders app installation stepper when device is activated', async () => {
     const mockDeviceContext = createMockDeviceActivationContext(true);
 
     await act(async () => {
-      render(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={mockDeviceContext}>
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={false}
-              update={false}
-            />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+      renderWithProviders(
+        mockDeviceContext,
+        <InstallationStepper
+          app={mockApp}
+          version={mockApp.appKey.version}
+          sideload={false}
+          update={false}
+        />,
       );
     });
 
@@ -110,12 +120,9 @@ describe('InstallationStepper Component', () => {
     const mockDeviceContext = createMockDeviceActivationContext(true);
 
     await act(async () => {
-      render(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={mockDeviceContext}>
-            <InstallationStepper app={mockApp} version="2.0.0" sideload={false} update={true} />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+      renderWithProviders(
+        mockDeviceContext,
+        <InstallationStepper app={mockApp} version="2.0.0" sideload={false} update={true} />,
       );
     });
 
@@ -129,17 +136,14 @@ describe('InstallationStepper Component', () => {
     const mockDeviceContext = createMockDeviceActivationContext(true);
 
     await act(async () => {
-      render(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={mockDeviceContext}>
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={true}
-              update={false}
-            />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+      renderWithProviders(
+        mockDeviceContext,
+        <InstallationStepper
+          app={mockApp}
+          version={mockApp.appKey.version}
+          sideload={true}
+          update={false}
+        />,
       );
     });
 
@@ -153,17 +157,14 @@ describe('InstallationStepper Component', () => {
     const mockDeviceContext = createMockDeviceActivationContext(false);
 
     await act(async () => {
-      render(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={mockDeviceContext}>
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={false}
-              update={false}
-            />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+      renderWithProviders(
+        mockDeviceContext,
+        <InstallationStepper
+          app={mockApp}
+          version={mockApp.appKey.version}
+          sideload={false}
+          update={false}
+        />,
       );
     });
 
@@ -176,16 +177,18 @@ describe('InstallationStepper Component', () => {
 
     const { rerender } = await act(async () => {
       return render(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={mockDeviceContext}>
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={false}
-              update={false}
-            />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+        <MarketplaceUserProvider>
+          <ReferenceDataContextProvider>
+            <DeviceActivationContext.Provider value={mockDeviceContext}>
+              <InstallationStepper
+                app={mockApp}
+                version={mockApp.appKey.version}
+                sideload={false}
+                update={false}
+              />
+            </DeviceActivationContext.Provider>
+          </ReferenceDataContextProvider>
+        </MarketplaceUserProvider>,
       );
     });
 
@@ -197,16 +200,18 @@ describe('InstallationStepper Component', () => {
 
     await act(async () => {
       rerender(
-        <ReferenceDataContextProvider>
-          <DeviceActivationContext.Provider value={activatedContext}>
-            <InstallationStepper
-              app={mockApp}
-              version={mockApp.appKey.version}
-              sideload={false}
-              update={false}
-            />
-          </DeviceActivationContext.Provider>
-        </ReferenceDataContextProvider>,
+        <MarketplaceUserProvider>
+          <ReferenceDataContextProvider>
+            <DeviceActivationContext.Provider value={activatedContext}>
+              <InstallationStepper
+                app={mockApp}
+                version={mockApp.appKey.version}
+                sideload={false}
+                update={false}
+              />
+            </DeviceActivationContext.Provider>
+          </ReferenceDataContextProvider>
+        </MarketplaceUserProvider>,
       );
     });
 

@@ -25,7 +25,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { CoreVersion, Distro, Kernel } from './VersionInterfaces';
+import { CoreVersion, Distro, Kernel } from '../../../models/VersionInterfaces';
 import { OpenInNew } from '@mui/icons-material';
 const sbomHref = new URL('../../../assets/sbom.json', import.meta.url).href;
 

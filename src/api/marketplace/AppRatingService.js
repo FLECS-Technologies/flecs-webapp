@@ -18,9 +18,8 @@
 
 import { MarketplaceAPIConfiguration } from '../api-config';
 import axios from 'axios';
-import { authorizationHeaderUseBearer } from '../auth-header';
 
-function createAppRating(product_id, reviewer, reviewer_email, rating, token) {
+function createAppRating(product_id, reviewer, reviewer_email, rating, marketplaceUserContext) {
   const data = {
     product_id,
     review: 'This is an in-app rating without review.',
@@ -28,7 +27,7 @@ function createAppRating(product_id, reviewer, reviewer_email, rating, token) {
     reviewer_email,
     rating,
   };
-  const authHeader = authorizationHeaderUseBearer();
+  const authHeader = marketplaceUserContext.authorizationHeaderUseBearer();
   return axios
     .post(
       MarketplaceAPIConfiguration.MP_PROXY_URL +

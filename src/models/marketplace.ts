@@ -3,6 +3,11 @@ export interface MarketplaceJWT {
   token_expires: number;
 }
 
+export interface MarketplaceFeatureFlags {
+  isVendor: boolean;
+  isWhitelabeled: boolean;
+}
+
 export interface MarketplaceUser {
   ID?: number;
   user_login?: string;
@@ -12,6 +17,7 @@ export interface MarketplaceUser {
   user_email?: string;
   user_registered?: string;
   jwt?: MarketplaceJWT;
+  feature_flags?: MarketplaceFeatureFlags;
 }
 
 export interface MarketplaceValidation {

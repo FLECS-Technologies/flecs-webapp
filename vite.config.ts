@@ -31,6 +31,8 @@ export default defineConfig({
         '**/*.d.ts',
         'src/test/**',
         'src/setupTests.js',
+        'src/models/**',
+        '*.config.js',
       ],
     },
   },

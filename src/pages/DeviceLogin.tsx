@@ -34,7 +34,7 @@ import { useAuth } from 'react-oidc-context';
 import { usePublicApi } from '../components/providers/ApiProvider';
 import { useAuthConfig } from '../components/providers/AuthProvider';
 
-export default function SplashScreen() {
+export default function DeviceLogin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clientId, setClientId] = useState('');

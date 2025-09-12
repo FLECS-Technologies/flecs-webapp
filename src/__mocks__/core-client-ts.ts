@@ -181,6 +181,11 @@ export const createMockApi = (customMocks = {}) => {
         Promise.resolve({ data: 'http://localhost:8080/auth' }),
       ),
     },
+
+    // Console API
+    console: {
+      consoleAuthenticationPut: vi.fn(() => Promise.resolve({ data: {} })),
+    },
   };
 
   // Deep merge custom mocks with defaults

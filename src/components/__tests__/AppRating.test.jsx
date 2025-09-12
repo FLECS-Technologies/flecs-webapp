@@ -17,13 +17,17 @@
  */
 import React from 'react';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi, beforeEach, describe, test } from 'vitest';
 import AppRating from '../AppRating';
+import { useMarketplaceUser } from '../providers/MarketplaceUserProvider';
 
-jest.mock('../../api/marketplace/AppRatingService');
-jest.mock('../../api/auth-header');
+vi.mock('../../api/marketplace/AppRatingService');
+vi.mock('../providers/MarketplaceUserProvider', () => ({
+  useMarketplaceUser: vi.fn(),
+}));
 
 const mockApp = {
   id: 37,
@@ -182,6 +186,21 @@ const mockApp = {
 };
 
 describe('AppRating', () => {
+  beforeEach(() => {
+    useMarketplaceUser.mockReturnValue({
+      user: {
+        display_name: 'Test User',
+        user_email: 'test@example.com',
+      },
+      setUser: vi.fn(),
+      userChanged: false,
+      authHeaderUseBearer: vi.fn(() => ({})),
+      authorizationHeaderUseBearer: vi.fn(() => ({})),
+      authHeaderUseXAccess: vi.fn(() => ({})),
+      jwt: vi.fn(() => 'mock-token'),
+    });
+  });
+
   test('renders AppRating component', async () => {
     await act(async () => {
       render(<AppRating></AppRating>);

@@ -23,6 +23,7 @@ import Card from '../Card';
 import { SystemContextProvider } from '../../data/SystemProvider';
 import { SystemData } from '../../data/SystemData';
 import { createMockApi } from '../../__mocks__/core-client-ts';
+import { useMarketplaceUser } from '../providers/MarketplaceUserProvider';
 
 // Mock the API provider and Quest context
 const mockUseProtectedApi = vi.fn();
@@ -50,6 +51,11 @@ vi.mock('../../data/SystemData', () => ({
   SystemData: ({ children }) => children,
 }));
 
+// Mock MarketplaceUserProvider
+vi.mock('../providers/MarketplaceUserProvider', () => ({
+  useMarketplaceUser: vi.fn(),
+}));
+
 describe('Card', () => {
   let mockApi;
   let mockQuestContext;
@@ -65,6 +71,17 @@ describe('Card', () => {
 
     mockUseProtectedApi.mockReturnValue(mockApi);
     mockUseQuestContext.mockReturnValue(mockQuestContext);
+
+    // Mock MarketplaceUserProvider
+    useMarketplaceUser.mockReturnValue({
+      user: null,
+      setUser: vi.fn(),
+      userChanged: false,
+      authHeaderUseBearer: vi.fn(() => ({})),
+      authorizationHeaderUseBearer: vi.fn(() => ({})),
+      authHeaderUseXAccess: vi.fn(() => ({})),
+      jwt: vi.fn(() => ''),
+    });
   });
 
   it('renders Card component', async () => {

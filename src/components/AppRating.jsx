@@ -21,11 +21,12 @@ import { IconButton, Rating, Typography } from '@mui/material';
 import { createAppRating } from '../api/marketplace/AppRatingService';
 import { Cancel, CheckCircle } from '@mui/icons-material';
 import ActionSnackbar from './ActionSnackbar';
-import { jwt } from '../api/auth-header';
+import { useMarketplaceUser } from './providers/MarketplaceUserProvider';
 
 export default function AppRating(props) {
   const { app } = props;
-  const user = null;
+  const marketplaceUserContext = useMarketplaceUser();
+  const { user } = marketplaceUserContext;
   const [value, setValue] = React.useState(Number(app?.average_rating));
   const [rated, setRated] = React.useState(false);
   const [save, setSave] = React.useState(false);
@@ -47,13 +48,7 @@ export default function AppRating(props) {
   const saveAppRating = async (props) => {
     setSavingAppRating(true);
 
-    createAppRating(
-      app?.id,
-      user?.user?.user?.display_name,
-      user?.user?.user?.user_email,
-      value,
-      jwt(),
-    )
+    createAppRating(app?.id, user?.display_name, user?.user_email, value, marketplaceUserContext)
       .then((response) => {
         setSnackbarState({
           alertSeverity: 'success',

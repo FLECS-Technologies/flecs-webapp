@@ -16,15 +16,6 @@
  * limitations under the License.
  */
 
-import { Component } from 'react';
-
-const DEVICE_BASE_ROUTE = '../api/v2';
-const DEVICE_BASE_ROUTE_TEST = '/api/v2';
-const CONSOLE_ROUTE = '/console';
-
-const PUT_CONSOLE_AUTH_URL = '/authentication';
-const DELETE_CONSOLE_AUTH_URL = '/authentication';
-
 const MP_BASE_URL = 'https://console.flecs.tech';
 const MP_BETA_BASE_URL = 'https://console-dev.flecs.tech';
 const MP_CART_ROUTE = '/cart?cocart-load-cart=';
@@ -44,41 +35,6 @@ const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta';
 const GET_PRODUCTS_URL = '/api/v2/products/apps';
 const GET_LATEST_VERSION_URL = '/api/v1/core/version/latest';
 const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews';
-
-class DeviceAPIConfiguration extends Component {
-  static get TARGET() {
-    let target = '';
-    if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-      target = import.meta.env.VITE_APP_DEV_CORE_URL;
-    }
-    return target;
-  }
-
-  static get DEVICE_BASE_ROUTE() {
-    if (
-      import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
-      import.meta.env.VITE_APP_ENVIRONMENT === 'development'
-    ) {
-      return DEVICE_BASE_ROUTE_TEST;
-    }
-    return DEVICE_BASE_ROUTE;
-  }
-
-  static get CONSOLE_ROUTE() {
-    return CONSOLE_ROUTE;
-  }
-
-  // post requests
-
-  static get PUT_CONSOLE_AUTH_URL() {
-    return PUT_CONSOLE_AUTH_URL;
-  }
-
-  // delete requests
-  static get DELETE_CONSOLE_AUTH_URL() {
-    return DELETE_CONSOLE_AUTH_URL;
-  }
-}
 
 class MarketplaceAPIConfiguration {
   static get MP_PROXY_URL() {

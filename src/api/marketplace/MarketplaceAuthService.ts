@@ -18,62 +18,55 @@
 import axios from 'axios';
 import { MarketplaceAPIConfiguration } from '../api-config';
 import { postMPLogout } from '../device/DeviceAuthAPI';
+import { MarketplaceJWT, MarketplaceUser, MarketplaceValidation } from '../../models/marketplace';
 
 class MarketplaceAuthService {
-  login(username, password) {
+  async login(username: string, password: string): Promise<MarketplaceUser> {
     const issueJWT = true;
     const url =
       MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_AUTHENTICATE_URL;
-    return axios
-      .post(url, {
+    try {
+      const response = await axios.post(url, {
         username,
         password,
         issueJWT,
-      })
-      .then((response) => {
-        if (response.data.statusCode === 200 && response.data.data?.jwt?.token) {
-          // Do not store user in localStorage
-          return response.data.data;
-        }
-        return Promise.reject(new Error('Invalid login response'));
-      })
-      .catch((error) => {
-        return Promise.reject(error);
       });
+      if (response.data.statusCode === 200 && response.data.data?.jwt?.token) {
+        return response.data.data as MarketplaceUser;
+      }
+      throw new Error('Invalid login response');
+    } catch (error: any) {
+      throw error;
+    }
   }
 
-  validate(token) {
+  async validate(token: string): Promise<MarketplaceValidation> {
     const jwt = { token };
     const url =
       MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.POST_VALIDATE_URL;
-    return axios
-      .post(url, {
-        jwt,
-      })
-      .then((response) => {
-        if (response.data.statusCode === 200 && response.data.data.isValid) {
-          return response.data.data;
-        }
-      })
-      .catch((error) => {
-        this.logout();
-        return Promise.reject(error);
-      });
+    try {
+      const response = await axios.post(url, { jwt });
+      if (response.data.statusCode === 200 && response.data.data.isValid) {
+        return response.data.data as MarketplaceValidation;
+      }
+      throw new Error('Invalid validation response');
+    } catch (error: any) {
+      this.logout();
+      throw error;
+    }
   }
 
-  logout() {
+  logout(): void {
     postMPLogout()
       .then(
         () => {
           /* successfully logged out from the device */
         },
-        (error) => {
+        (error: any) => {
           console.log(error.message);
         },
       );
   }
-
-  // getCurrentUser removed; use MarketplaceUserProvider context instead
 }
 
 export default new MarketplaceAuthService();

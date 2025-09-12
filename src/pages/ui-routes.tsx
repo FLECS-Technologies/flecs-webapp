@@ -5,9 +5,8 @@ import Marketplace from './Marketplace';
 import ServiceMesh from './ServiceMesh';
 import System from './System';
 import NotFound from './NotFound';
-import Login from './Login';
 import OpenSource from './OpenSource';
-import SplashScreen from './SplashScreen';
+import DeviceLogin from './DeviceLogin';
 import Profile from './Profile';
 
 const UIRoutes: React.FC = () => {
@@ -16,10 +15,9 @@ const UIRoutes: React.FC = () => {
     { path: '/marketplace', element: <Marketplace /> },
     { path: 'service-mesh', element: <ServiceMesh /> },
     { path: '/system', element: <System /> },
-    { path: '/login', element: <Login /> },
     { path: '/open-source', element: <OpenSource /> },
     { path: '/profile', element: <Profile /> },
-    { path: '/splash-screen', element: <SplashScreen /> },
+    { path: '/device-login', element: <DeviceLogin /> },
     { path: '*', element: <NotFound /> },
   ]);
 };

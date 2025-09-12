@@ -17,8 +17,7 @@
  */
 import axios from 'axios';
 import { MarketplaceAPIConfiguration } from '../api-config';
-import { postMPLogout } from '../device/DeviceAuthAPI';
-import { MarketplaceJWT, MarketplaceUser, MarketplaceValidation } from '../../models/marketplace';
+import { MarketplaceUser, MarketplaceValidation } from '../../models/marketplace';
 
 class MarketplaceAuthService {
   async login(username: string, password: string): Promise<MarketplaceUser> {
@@ -51,21 +50,8 @@ class MarketplaceAuthService {
       }
       throw new Error('Invalid validation response');
     } catch (error: any) {
-      this.logout();
       throw error;
     }
-  }
-
-  logout(): void {
-    postMPLogout()
-      .then(
-        () => {
-          /* successfully logged out from the device */
-        },
-        (error: any) => {
-          console.log(error.message);
-        },
-      );
   }
 }
 

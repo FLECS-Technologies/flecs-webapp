@@ -21,6 +21,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import System from '../System';
+import { MarketplaceUserProvider } from '../../components/providers/MarketplaceUserProvider';
 import { createMockApi } from '../../__mocks__/core-client-ts';
 
 // Mock the API provider
@@ -44,9 +45,11 @@ describe('System', () => {
 
   it('renders System page', async () => {
     render(
-      <Router>
-        <System />
-      </Router>,
+      <MarketplaceUserProvider>
+        <Router>
+          <System />
+        </Router>
+      </MarketplaceUserProvider>,
     );
 
     await waitFor(() => {

@@ -474,13 +474,21 @@ describe('DeviceActivationProvider', () => {
         );
       };
 
-      const { getByTestId } = render(
-        <DeviceActivationProvider>
-          <TestComponent />
-        </DeviceActivationProvider>,
-      );
+      let getByTestId: any;
+      await act(async () => {
+        const result = render(
+          <DeviceActivationProvider>
+            <TestComponent />
+          </DeviceActivationProvider>,
+        );
+        getByTestId = result.getByTestId;
+      });
 
-      expect(getByTestId('has-validate')).toHaveTextContent('true');
+      // Wait for the useEffect validation to complete
+      await waitFor(() => {
+        expect(getByTestId('has-validate')).toHaveTextContent('true');
+      });
+
       expect(getByTestId('has-activate')).toHaveTextContent('true');
       expect(getByTestId('has-validating')).toHaveTextContent('true');
       expect(getByTestId('has-activating')).toHaveTextContent('true');

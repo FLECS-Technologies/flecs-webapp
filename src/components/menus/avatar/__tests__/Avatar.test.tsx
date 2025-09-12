@@ -80,7 +80,7 @@ describe('Avatar', () => {
       });
     });
 
-    it('navigates to splash-screen when login icon is clicked', async () => {
+    it('navigates to device-login when login icon is clicked', async () => {
       const user = userEvent.setup();
 
       const { getByLabelText } = render(
@@ -93,7 +93,7 @@ describe('Avatar', () => {
       await user.click(avatarButton);
 
       await waitFor(() => {
-        expect(mockedUsedNavigate).toHaveBeenCalledWith('/splash-screen');
+        expect(mockedUsedNavigate).toHaveBeenCalledWith('/device-login');
       });
     });
   });

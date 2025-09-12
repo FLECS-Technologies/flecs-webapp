@@ -17,7 +17,7 @@
  */
 import '@testing-library/dom';
 import { waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import axios from 'axios';
 import { createAppRating } from '../AppRatingService';
 import { vitest } from 'vitest';
@@ -39,17 +39,23 @@ describe('AppRatingService', () => {
     jest.clearAllMocks();
   });
 
+  const mockMarketplaceUserContext = {
+    authorizationHeaderUseBearer: jest.fn(() => ({ Authorization: 'Bearer mock-token' })),
+  };
+
   test('calls successful createAppRating', async () => {
     axios.post.mockResolvedValueOnce(mockRating);
-    await waitFor(() => createAppRating(37));
+    await waitFor(() =>
+      createAppRating(37, 'reviewer', 'test@example.com', 5, mockMarketplaceUserContext),
+    );
 
     // expect(rating).toBe(mockRating.data.rating)
   });
 
   test('calls unsuccessful createAppRating', async () => {
     axios.post.mockRejectedValueOnce(new Error('Failed to create app rating'));
-    await act(async () => {
-      expect(createAppRating(37)).rejects.toThrowError();
-    });
+    await expect(
+      createAppRating(37, 'reviewer', 'test@example.com', 5, mockMarketplaceUserContext),
+    ).rejects.toThrowError();
   });
 });

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-function createAppRating(product_id, reviewer, reviewer_email, rating, jwt) {
+function createAppRating(product_id, reviewer, reviewer_email, rating, marketplaceUserContext) {
   return new Promise((resolve, reject) => {
     resolve({});
   });

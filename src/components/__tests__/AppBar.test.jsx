@@ -121,7 +121,7 @@ describe('AppBar', () => {
     await user.click(loginButton);
 
     await waitFor(() => {
-      expect(mockedUsedNavigate).toHaveBeenCalledWith('/splash-screen');
+      expect(mockedUsedNavigate).toHaveBeenCalledWith('/device-login');
     });
   });
 

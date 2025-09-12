@@ -22,19 +22,22 @@ import { QuestContextProvider } from '../../components/quests/QuestContext';
 import { FilterContextProvider } from '../../data/FilterContext';
 import { SystemContextProvider } from '../../data/SystemProvider';
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext';
+import { MarketplaceUserProvider } from './MarketplaceUserProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PublicApiProvider>
       <AuthProvider>
         <ProtectedApiProvider>
-          <QuestContextProvider>
-            <FilterContextProvider>
-              <SystemContextProvider>
-                <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
-              </SystemContextProvider>
-            </FilterContextProvider>
-          </QuestContextProvider>
+          <MarketplaceUserProvider>
+            <QuestContextProvider>
+              <FilterContextProvider>
+                <SystemContextProvider>
+                  <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
+                </SystemContextProvider>
+              </FilterContextProvider>
+            </QuestContextProvider>
+          </MarketplaceUserProvider>
         </ProtectedApiProvider>
       </AuthProvider>
     </PublicApiProvider>

@@ -18,7 +18,7 @@
 import * as React from 'react';
 import { AuthProvider as OidcAuthProvider, useAuth } from 'react-oidc-context';
 import { CircularProgress, Box, Typography } from '@mui/material';
-import SplashScreen from '../../pages/SplashScreen';
+import DeviceLogin from '../../pages/DeviceLogin';
 import { WebStorageStateStore } from 'oidc-client-ts';
 import { usePublicApi } from './ApiProvider';
 
@@ -124,7 +124,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   if (!auth.isAuthenticated) {
-    return <SplashScreen />;
+    return <DeviceLogin />;
   }
 
   return <AuthActionsContext.Provider value={authActions}>{children}</AuthActionsContext.Provider>;

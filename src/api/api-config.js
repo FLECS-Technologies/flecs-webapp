@@ -134,4 +134,4 @@ class MarketplaceAPIConfiguration {
   }
 }
 
-export { DeviceAPIConfiguration, MarketplaceAPIConfiguration };
+export { MarketplaceAPIConfiguration };

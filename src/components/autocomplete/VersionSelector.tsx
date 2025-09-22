@@ -22,7 +22,6 @@ import {
   Autocomplete,
   Badge,
   Button,
-  ListItemSecondaryAction,
   ListItemText,
   MenuItem,
   TextField,
@@ -87,18 +86,24 @@ export const VersionSelector: React.FC<VersionSelectorProps> = ({
             options={availableVersions}
             getOptionLabel={(option) => option.version}
             isOptionEqualToValue={(option, value) => option.version === value.version}
-            renderOption={(props, option) => (
-              <MenuItem {...props} key={option.version}>
-                <ListItemText primary={option.version} />
-                {option.installed && (
-                  <ListItemSecondaryAction>
-                    <Typography variant="caption" color="textSecondary">
+            renderOption={(props, option) => {
+              // Destructure to exclude non-DOM props that might cause warnings
+              const { key, showLabel, ...menuItemProps } = props as any;
+              return (
+                <MenuItem
+                  {...menuItemProps}
+                  key={option.version}
+                  sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <ListItemText primary={option.version} />
+                  {option.installed && (
+                    <Typography variant="caption" color="textSecondary" sx={{ ml: 'auto', pl: 2 }}>
                       installed
                     </Typography>
-                  </ListItemSecondaryAction>
-                )}
-              </MenuItem>
-            )}
+                  )}
+                </MenuItem>
+              );
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}

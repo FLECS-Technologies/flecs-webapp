@@ -105,6 +105,7 @@ export default function Version() {
             <VersionSelector
               availableVersions={[latestVersion]}
               selectedVersion={latestVersion}
+              setSelectedVersion={() => {}} // No-op since this is just for display
             ></VersionSelector>
             <Typography variant="body2">
               Install this update by running <i>curl -fsSL install.flecs.tech | bash</i> in the

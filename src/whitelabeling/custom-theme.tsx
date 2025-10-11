@@ -21,13 +21,81 @@ import {
   darkTheme as flecsDarkTheme,
   lightTheme as flecsLightTheme
 } from '../styles/theme'
+import { colors } from './custom-tokens'
+
+const baseTheme = createTheme({
+  typography: {
+    fontFamily: "'Encode Sans', sans-serif"
+  },
+  palette: {
+    primary: {
+      main: colors.primary
+    },
+    secondary: {
+      main: colors.secondary
+    }
+  }
+})
 
 const darkTheme = createTheme({
-  ...flecsDarkTheme
+  ...baseTheme,
+  palette: {
+    ...baseTheme.palette,
+    ...flecsDarkTheme.palette,
+    primary: {
+      main: colors.primary
+    },
+    secondary: {
+      main: colors.secondary
+    }
+  },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: colors.secondary,
+            '& .MuiListItemIcon-root': {
+              color: colors.accent
+            }
+          },
+          '&$selected:hover': {
+            color: colors.accent,
+            '& .MuiListItemIcon-root': {
+              color: colors.accent
+            }
+          },
+          '&:hover': {
+            color: colors.secondary,
+            '& .MuiListItemIcon-root': {
+              color: colors.secondary
+            }
+          }
+        },
+        selected: {}
+      }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: colors.accent
+        }
+      }
+    }
+  }
 } as ThemeOptions)
 
 const lightTheme = createTheme({
-  ...flecsLightTheme
+  ...baseTheme,
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: colors.accent
+        }
+      }
+    }
+  }
 } as ThemeOptions)
 
 export { darkTheme, lightTheme }

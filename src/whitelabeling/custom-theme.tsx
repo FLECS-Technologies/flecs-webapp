@@ -17,15 +17,12 @@
  */
 import { createTheme, ThemeOptions } from '@mui/material/styles'
 import './custom-fonts.css'
-import {
-  darkTheme as flecsDarkTheme,
-  lightTheme as flecsLightTheme
-} from '../styles/theme'
+import { darkTheme as flecsDarkTheme } from '../styles/theme'
 import { colors } from './custom-tokens'
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: "'Encode Sans', sans-serif"
+    fontFamily: "'E+H Font', sans-serif"
   },
   palette: {
     primary: {

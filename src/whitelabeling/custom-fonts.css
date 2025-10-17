@@ -17,3 +17,10 @@
  */
 
 /* @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&display=swap"); */
+
+@font-face {
+  font-family: 'EH-Font';
+  src: url('../assets/fonts/E+H_SansReg.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}

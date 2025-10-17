@@ -30,7 +30,7 @@ export default function WhiteLabelLogo({ logoColor }) {
   // Customize the whitelabel logo here
   return (
     <Logo
-      width='164'
+      width='150'
       height='48'
       style={{ color: logoColor || theme.palette.primary.main }} // Set the "color" property for currentColor
     />

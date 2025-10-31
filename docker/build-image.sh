@@ -18,6 +18,7 @@ arch_to_platform() {
 
 DOCKER_TAG=${1}
 ARCH=${2}
+shift 2
 PLATFORM=$(arch_to_platform ${ARCH})
 
 echo "Building tag ${DOCKER_TAG} for arch ${ARCH} (${PLATFORM})"
@@ -28,4 +29,5 @@ docker buildx build \
   --platform ${PLATFORM} \
   --tag flecspublic.azurecr.io/webapp:${DOCKER_TAG}-${ARCH} \
   --file docker/Dockerfile \
+  "$@" \
   .

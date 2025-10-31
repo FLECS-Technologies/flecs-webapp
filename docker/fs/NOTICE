@@ -1,0 +1,35 @@
+FLECS WebApp (nginx static build)
+
+Copyright (C) 2025 FLECS Technologies GmbH
+All rights reserved.
+
+This container image includes the following open-source components:
+
+  • busybox - GPL-2.0-only
+    Copyright (C) 1999-2005 Erik Andersen
+    https://busybox.net/
+
+  • musl libc - MIT
+    Copyright (C) 2005-2025 Rich Felker et al.
+    https://musl.libc.org/
+
+  • nginx - BSD-2-Clause
+    Copyright (C) 2002-2025 Igor Sysoev, NGINX, Inc.
+    https://nginx.org/
+
+  • OpenSSL - Apache-2.0
+    Copyright (C) 1998-2025 The OpenSSL Project Authors
+    https://www.openssl.org/
+
+  • PCRE2 - BSD-3-Clause-PCRE
+    Copyright (C) 1997-2025 University of Cambridge
+    https://www.pcre.org/
+
+  • zlib - Zlib License
+    Copyright (C) 1995-2025 Jean-loup Gailly and Mark Adler
+    https://zlib.net/
+
+The complete license texts for all included components are provided in the directory:
+/usr/share/doc/${PACKAGE_NAME}
+
+SPDX-License-Identifier: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause-PCRE AND GPL-2.0-only AND Zlib AND MIT

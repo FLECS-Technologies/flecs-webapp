@@ -21,7 +21,7 @@ special_%:
 	@./special/$*.sh
 
 docker_%:
-	./docker/build-image.sh $(DOCKER_TAG) $*
+	./docker/build-image.sh $(DOCKER_TAG) $* $(ARGS)
 
 .PHONY: deb-pkg_%
 deb-pkg_%:

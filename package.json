@@ -79,7 +79,7 @@
     "dependencies": "npm run generate-license-file && npm run sbom",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "sbom": "npm sbom --sbom-format cyclonedx > ./src/assets/sbom.json"
+    "sbom": "npm sbom --sbom-format spdx --omit dev > ./src/assets/sbom.json"
   },
   "browserslist": [
     ">0.2%",

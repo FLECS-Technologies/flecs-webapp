@@ -17,29 +17,32 @@
  */
 import React from 'react';
 import { ProtectedApiProvider, PublicApiProvider } from './ApiProvider';
-import { AuthProvider } from './AuthProvider';
+import { OAuth4WebApiAuthProvider } from './OAuth4WebApiAuthProvider';
 import { QuestContextProvider } from '../../components/quests/QuestContext';
 import { FilterContextProvider } from '../../data/FilterContext';
 import { SystemContextProvider } from '../../data/SystemProvider';
 import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext';
 import { MarketplaceUserProvider } from './MarketplaceUserProvider';
+import { PublicAuthProviderApiProvider } from './AuthProviderApiProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PublicApiProvider>
-      <AuthProvider>
-        <ProtectedApiProvider>
-          <MarketplaceUserProvider>
-            <QuestContextProvider>
-              <FilterContextProvider>
-                <SystemContextProvider>
-                  <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
-                </SystemContextProvider>
-              </FilterContextProvider>
-            </QuestContextProvider>
-          </MarketplaceUserProvider>
-        </ProtectedApiProvider>
-      </AuthProvider>
+      <PublicAuthProviderApiProvider>
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <MarketplaceUserProvider>
+              <QuestContextProvider>
+                <FilterContextProvider>
+                  <SystemContextProvider>
+                    <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
+                  </SystemContextProvider>
+                </FilterContextProvider>
+              </QuestContextProvider>
+            </MarketplaceUserProvider>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>
+      </PublicAuthProviderApiProvider>
     </PublicApiProvider>
   );
 }

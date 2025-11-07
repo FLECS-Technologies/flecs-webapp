@@ -16,37 +16,17 @@
  * limitations under the License.
  */
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-  Alert,
-  Paper,
-  Container,
-  TextField,
-  InputAdornment,
-  IconButton,
-} from '@mui/material';
-import { Check } from '@mui/icons-material';
+import { Box, Button, CircularProgress, Typography, Alert, Paper, Container } from '@mui/material';
 import WhiteLabelLogo from '../whitelabeling/WhiteLabelLogo';
-import { useAuth } from 'react-oidc-context';
+import { useOAuth4WebApiAuth } from '../components/providers/OAuth4WebApiAuthProvider';
 import { usePublicApi } from '../components/providers/ApiProvider';
-import { useAuthConfig } from '../components/providers/AuthProvider';
 
 export default function DeviceLogin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [clientId, setClientId] = useState('');
 
-  const auth = useAuth();
+  const auth = useOAuth4WebApiAuth();
   const api = usePublicApi();
-  const { oidcConfig, updateClientId } = useAuthConfig();
-
-  useEffect(() => {
-    // Initialize clientId from current config
-    setClientId(oidcConfig.client_id);
-  }, [oidcConfig.client_id]);
 
   useEffect(() => {
     checkBackendAvailability();
@@ -67,27 +47,15 @@ export default function DeviceLogin() {
       });
   };
 
-  const handleClientIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newClientId = event.target.value;
-    setClientId(newClientId); // Only update local state
-  };
-
-  const handleApplyClientId = () => {
-    updateClientId(clientId);
-  };
-
   const handleLoginClick = () => {
     if (!error) {
-      auth.signinRedirect();
+      auth.signIn();
     }
   };
 
   const handleRetry = () => {
     checkBackendAvailability();
   };
-
-  // Check if clientId has changed from the current config
-  const hasClientIdChanged = clientId !== oidcConfig.client_id;
 
   return (
     <Container maxWidth="sm">
@@ -141,29 +109,6 @@ export default function DeviceLogin() {
 
           {!loading && !error && (
             <Box display="flex" flexDirection="column" gap={2} width="100%">
-              <TextField
-                label="Client ID"
-                value={clientId}
-                onChange={handleClientIdChange}
-                variant="outlined"
-                fullWidth
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={handleApplyClientId}
-                          disabled={!hasClientIdChanged}
-                          color="primary"
-                          title="Apply Client ID"
-                        >
-                          <Check />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
               <Button
                 variant="contained"
                 onClick={handleLoginClick}

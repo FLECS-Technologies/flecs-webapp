@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed Apr 16 2025
+ * Created on Fri Nov 07 2025
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  AppsApi,
-  ConsoleApi,
-  DeploymentsApi,
-  DeviceApi,
-  FlecsportApi,
-  InstancesApi,
-  JobsApi,
-  QuestsApi,
-  Configuration,
-  SystemApi,
-  ExperimentalApi,
-} from '@flecs/core-client-ts';
+import { Configuration, ExperimentalApi } from '@flecs/auth-provider-client-ts';
 
 export function createApi(config: Configuration) {
   return {
-    app: new AppsApi(config),
-    device: new DeviceApi(config),
-    console: new ConsoleApi(config),
-    deployments: new DeploymentsApi(config),
-    export: new FlecsportApi(config),
-    instances: new InstancesApi(config),
-    jobs: new JobsApi(config),
-    system: new SystemApi(config),
-    quests: new QuestsApi(config),
-    providers: new ExperimentalApi(config),
+    AuthApi: new ExperimentalApi(config),
   };
 }

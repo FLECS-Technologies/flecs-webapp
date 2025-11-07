@@ -18,15 +18,14 @@
 import { Login, Person } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import React from 'react';
-import { useAuth } from 'react-oidc-context';
 import { useNavigate } from 'react-router-dom';
 import { appBarIconColors } from '../../../styles/tokens';
-import { useAuthActions } from '../../../components/providers/AuthProvider';
+import { useOAuth4WebApiAuth } from '../../../components/providers/OAuth4WebApiAuthProvider';
 
 export default function Avatar() {
   const [anchorElMenu, setAnchorElMenu] = React.useState<HTMLElement | null>(null);
-  const user = useAuth();
-  const { signOut } = useAuthActions();
+  const user = useOAuth4WebApiAuth();
+  const { signOut } = user;
   const navigate = useNavigate();
 
   interface MenuEventHandler {

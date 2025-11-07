@@ -15,22 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { createContext } from 'react';
+import React, { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import DeviceActivationProvider from '../components/providers/DeviceActivationProvider';
+import { OnboardingDialog, useOnboardingStatus } from '../components/onboarding';
 
-const SystemContext = createContext([]);
+const SystemContext = createContext({});
+
+const SystemContent = ({ children }) => {
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const { isRequired: onboardingRequired, isLoading } = useOnboardingStatus();
+
+  const handleOnboardingComplete = () => {
+    setOnboardingCompleted(true);
+  };
+
+  // Only show onboarding if:
+  // 1. The system determines it's required AND
+  // 2. The user hasn't completed it in this session AND
+  // 3. We're not still loading the status
+  const showOnboarding = onboardingRequired && !onboardingCompleted && !isLoading;
+
+  return (
+    <>
+      <DeviceActivationProvider>{children}</DeviceActivationProvider>
+
+      {/* Onboarding Dialog - only shows when required and not completed */}
+      <OnboardingDialog open={showOnboarding} onClose={handleOnboardingComplete} />
+    </>
+  );
+};
 
 const SystemContextProvider = ({ children }) => {
   // ping === TRUE: Deamon is available. ping === FALSE: Deamon is currently not available
   const [ping, setPing] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [systemInfo, setSystemInfo] = React.useState();
+
   return (
     <SystemContext.Provider
       value={{ ping, setPing, loading, setLoading, systemInfo, setSystemInfo }}
     >
-      <DeviceActivationProvider>{children}</DeviceActivationProvider>
+      <SystemContent>{children}</SystemContent>
     </SystemContext.Provider>
   );
 };
@@ -42,5 +68,9 @@ function useSystemContext() {
 export { SystemContext, SystemContextProvider, useSystemContext };
 
 SystemContextProvider.propTypes = {
+  children: PropTypes.any,
+};
+
+SystemContent.propTypes = {
   children: PropTypes.any,
 };

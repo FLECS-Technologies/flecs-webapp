@@ -21,23 +21,33 @@ import { useSystemContext } from './SystemProvider';
 import { useProtectedApi } from '../components/providers/ApiProvider';
 
 function SystemData(props) {
-  const { setPing, loading, setLoading, setSystemInfo } = useSystemContext();
+  const context = useSystemContext();
+  const { setPing, loading, setLoading, setSystemInfo } = context || {};
   const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false);
   const api = useProtectedApi();
 
   React.useEffect(() => {
-    if (!loading) {
-      fetchPing();
-    }
-  }, []);
+    // Only proceed if context functions are available
+    if (!setPing || !setLoading) return;
+
+    // Only fetch once when component mounts
+    if (!loading) fetchPing();
+  }, [setPing]); // Remove loading from dependencies
 
   React.useEffect(() => {
-    if (!loadingSystemInfo) {
-      fetchSystemInfo();
-    }
-  }, []);
+    // Only proceed if context functions are available
+    if (!setSystemInfo) return;
 
-  const fetchPing = async (props) => {
+    // Only fetch once when component mounts
+    if (!loadingSystemInfo) fetchSystemInfo();
+  }, [setSystemInfo]);
+
+  // Add defensive check - don't run effects if context functions are not available
+  if (!setPing || !setLoading || !setSystemInfo) {
+    return <>{props.children}</>;
+  }
+
+  const fetchPing = async () => {
     setLoading(true);
     api.system
       .systemPingGet()
@@ -52,7 +62,7 @@ function SystemData(props) {
       });
   };
 
-  const fetchSystemInfo = async (props) => {
+  const fetchSystemInfo = async () => {
     setLoadingSystemInfo(true);
     api.system
       .systemInfoGet()

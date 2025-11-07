@@ -1,0 +1,77 @@
+/*
+ * Copyright (c) 2025 FLECS Technologies GmbH
+ *
+ * Created on Nov 03 2025
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { useState, useEffect } from 'react';
+import { usePublicApi } from '../../providers/ApiProvider';
+import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
+import { checkAuthProviderConfigured, checkSuperAdminExists } from '../utils/onboardingHelpers';
+
+interface OnboardingStatus {
+  isRequired: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+/**
+ * Hook to determine if onboarding is required for the current device
+ * Checks if essential configuration steps are completed
+ */
+export const useOnboardingStatus = (): OnboardingStatus => {
+  const [status, setStatus] = useState<OnboardingStatus>({
+    isRequired: false,
+    isLoading: true,
+    error: null,
+  });
+
+  const api = usePublicApi();
+  const authProviderApi = usePublicAuthProviderApi();
+
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        setStatus((prev) => ({ ...prev, isLoading: true, error: null }));
+
+        // Check if authentication provider is configured
+        const authConfigured = await checkAuthProviderConfigured(api);
+
+        const superAdminExists = await checkSuperAdminExists(authProviderApi);
+        // Add more checks here as needed
+
+        const onboardingRequired = !authConfigured || !superAdminExists;
+
+        setStatus({
+          isRequired: onboardingRequired,
+          isLoading: false,
+          error: null,
+        });
+      } catch (error: any) {
+        setStatus({
+          isRequired: false,
+          isLoading: false,
+          error: error.message || 'Failed to check onboarding status',
+        });
+      }
+    };
+
+    if (api && authProviderApi) {
+      checkOnboardingStatus();
+    }
+  }, [api, authProviderApi]);
+
+  return status;
+};

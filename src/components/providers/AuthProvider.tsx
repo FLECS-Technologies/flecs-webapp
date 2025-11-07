@@ -123,9 +123,10 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
+  /*
   if (!auth.isAuthenticated) {
     return <DeviceLogin />;
-  }
+  }*/
 
   return <AuthActionsContext.Provider value={authActions}>{children}</AuthActionsContext.Provider>;
 }
@@ -156,7 +157,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     const initializeConfig = async () => {
       try {
         setIsConfigLoading(true);
-
+        /*
         // Check if the default auth provider protocol is OIDC
         const protocolResponse = await api.authentication.authProvidersDefaultProtocolGet();
 
@@ -173,6 +174,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             setProviderKey((prev) => prev + 1);
           }
         }
+          */
       } catch (error) {
         console.error('Failed to initialize OIDC config from API:', error);
         // Keep using default config on error

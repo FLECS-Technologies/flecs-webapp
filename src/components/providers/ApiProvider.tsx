@@ -16,17 +16,17 @@
  * limitations under the License.
  */
 import React, { createContext, useContext, useMemo } from 'react';
-import { useAuth } from 'react-oidc-context';
+import { useOAuth4WebApiAuth } from './OAuth4WebApiAuthProvider';
 
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '../../api/flecs-core/api-client';
 
 // Remove the global api export from api-client.ts
-function getBaseURL(): string {
+export function getBaseURL(): string {
   return host() + baseURL();
 }
 
-function host() {
+export function host() {
   let target = '';
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
     target = import.meta.env.VITE_APP_DEV_CORE_URL || '';
@@ -34,7 +34,7 @@ function host() {
   return target;
 }
 
-function baseURL() {
+export function baseURL() {
   if (
     import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
     import.meta.env.VITE_APP_ENVIRONMENT === 'development'
@@ -83,7 +83,7 @@ export function PublicApiProvider({ children }: ApiProviderProps) {
 }
 
 export function ProtectedApiProvider({ children }: ApiProviderProps) {
-  const auth = useAuth();
+  const auth = useOAuth4WebApiAuth();
 
   const api = useMemo(() => {
     const config = new Configuration({

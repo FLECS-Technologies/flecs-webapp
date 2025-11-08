@@ -34,6 +34,8 @@ interface AuthContextValue extends AuthState {
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
+  handleOAuthCallback: () => Promise<void>;
+  isConfigReady: boolean;
 }
 
 const OAuth4WebApiAuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -52,6 +54,14 @@ interface OAuth4WebApiAuthProviderProps {
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const auth = useOAuth4WebApiAuth();
+
+  // Don't guard the OAuth callback route
+  // Check for both /oauth/callback and /ui/oauth/callback
+  const isCallbackRoute = window.location.pathname.endsWith('/oauth/callback');
+  
+  if (isCallbackRoute) {
+    return <>{children}</>;
+  }
 
   // Handle authentication errors
   if (auth.error) {
@@ -178,7 +188,9 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
       };
 
       // Use current page location as redirect URI to handle base paths correctly
-      const redirectUri = props.redirect_uri || window.location.origin;
+      // Get the base path from the current pathname (e.g., /ui)
+      const basePath = import.meta.env.BASE_URL || '/';
+      const redirectUri = props.redirect_uri || `${window.location.origin}${basePath}oauth/callback`;
 
       setConfig({
         ...providerConfig,
@@ -202,13 +214,29 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
 
   // Handle OAuth callback - stateless approach
   const handleCallback = useCallback(async () => {
-    if (!authServer || !client || !config) return;
+    console.log('handleCallback: Starting', { hasAuthServer: !!authServer, hasClient: !!client, hasConfig: !!config });
+    
+    // Initialize config if not already done (needed for direct callback URL access)
+    if (!authServer || !client || !config) {
+      console.log('handleCallback: Config not ready, initializing...');
+      await initializeConfig();
+      // Config will be set, but we need to wait for the next render cycle
+      // The callback will be retriggered when config is ready
+      console.log('handleCallback: Config initialized, waiting for re-render');
+      return;
+    }
 
     try {
       const currentUrl = new URL(window.location.href);
+      console.log('handleCallback: Processing URL', currentUrl.href);
 
       const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
       const nonce = sessionStorage.getItem('oauth_nonce');
+
+      console.log('handleCallback: Session data', { 
+        hasCodeVerifier: !!codeVerifier, 
+        hasNonce: !!nonce 
+      });
 
       if (!codeVerifier) {
         throw new Error('Missing code verifier');
@@ -319,8 +347,9 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
         error: error as Error,
         isLoading: false,
       }));
+      throw error; // Re-throw so the callback component can handle it
     }
-  }, [authServer, client, config, checkAuthentication]);
+  }, [authServer, client, config, checkAuthentication, initializeConfig]);
 
   // Start OAuth flow
   const signIn = useCallback(async () => {
@@ -393,39 +422,26 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
   // Initialize on mount
   useEffect(() => {
     const initialize = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isCallback = urlParams.has('code');
-
-      if (isCallback) {
-        // Initialize config then handle callback
+      // Check if already authenticated
+      const isAuth = await checkAuthentication();
+      if (!isAuth) {
         await initializeConfig();
-      } else {
-        // Check if already authenticated
-        const isAuth = await checkAuthentication();
-        if (!isAuth) {
-          await initializeConfig();
-        }
       }
     };
 
     initialize();
   }, [initializeConfig, checkAuthentication]);
 
-  // Handle callback when ready
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isCallback = urlParams.has('code');
-
-    if (isCallback && authServer && client && config) {
-      handleCallback();
-    }
-  }, [authServer, client, config, handleCallback]);
+  // Remove the automatic callback handling - now handled by dedicated route
+  // The callback will be handled by the OAuthCallback component
 
   const contextValue: AuthContextValue = {
     ...authState,
     signIn,
     signOut,
     clearError,
+    handleOAuthCallback: handleCallback,
+    isConfigReady: !!(authServer && client && config),
   };
 
   return (

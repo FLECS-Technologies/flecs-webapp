@@ -8,6 +8,7 @@ import NotFound from './NotFound';
 import OpenSource from './OpenSource';
 import DeviceLogin from './DeviceLogin';
 import Profile from './Profile';
+import OAuthCallback from './OAuthCallback';
 
 const UIRoutes: React.FC = () => {
   return useRoutes([
@@ -18,6 +19,7 @@ const UIRoutes: React.FC = () => {
     { path: '/open-source', element: <OpenSource /> },
     { path: '/profile', element: <Profile /> },
     { path: '/device-login', element: <DeviceLogin /> },
+    { path: '/oauth/callback', element: <OAuthCallback /> },
     { path: '*', element: <NotFound /> },
   ]);
 };

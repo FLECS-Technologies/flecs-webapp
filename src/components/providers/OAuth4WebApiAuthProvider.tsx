@@ -227,6 +227,9 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
         params,
         config.redirect_uri,
         codeVerifier,
+        {
+          [oauth.allowInsecureRequests]: true
+        },
       );
 
       const result =

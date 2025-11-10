@@ -16,11 +16,12 @@
  * limitations under the License.
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import * as oauth from 'oauth4webapi';
 import { CircularProgress, Box, Typography } from '@mui/material';
 import DeviceLogin from '../../pages/DeviceLogin';
 import { usePublicApi } from './ApiProvider';
+import { useDeviceState } from './DeviceStateProvider';
 import { AuthProvidersAndDefaults, AuthProvider } from '@flecs/core-client-ts';
 
 interface AuthState {
@@ -58,7 +59,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   // Don't guard the OAuth callback route
   // Check for both /oauth/callback and /ui/oauth/callback
   const isCallbackRoute = window.location.pathname.endsWith('/oauth/callback');
-  
+
   if (isCallbackRoute) {
     return <>{children}</>;
   }
@@ -97,6 +98,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> = ({ children }) => {
   const api = usePublicApi();
+  const deviceState = useDeviceState();
 
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
@@ -108,13 +110,16 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
   const [config, setConfig] = useState<any>(null);
   const [authServer, setAuthServer] = useState<oauth.AuthorizationServer | null>(null);
   const [client, setClient] = useState<oauth.Client | null>(null);
+  const [shouldRenderAuthGuard, setShouldRenderAuthGuard] = useState(false);
+  const initializingRef = useRef(false);
+  const callbackProcessingRef = useRef(false);
 
   // Check if user is authenticated by looking for valid tokens
   const checkAuthentication = useCallback(async () => {
     try {
-      // Check for stored access token (following oauth4webapi stateless pattern)
-      const accessToken = localStorage.getItem('oauth4webapi_access_token');
-      const user = localStorage.getItem('oauth4webapi_user');
+      // Check for stored access token (using sessionStorage for better security)
+      const accessToken = sessionStorage.getItem('oauth4webapi_access_token');
+      const user = sessionStorage.getItem('oauth4webapi_user');
 
       if (accessToken && user) {
         // We have tokens, assume authenticated (oauth4webapi doesn't validate by default)
@@ -124,21 +129,30 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
           user: JSON.parse(user),
           error: null,
         });
+        // Update device state
+        deviceState.setAuthenticated(true);
         return true;
       }
     } catch (error) {
-      console.warn('Error checking stored authentication:', error);
       // Clear potentially corrupted data
-      localStorage.removeItem('oauth4webapi_access_token');
-      localStorage.removeItem('oauth4webapi_user');
+      sessionStorage.removeItem('oauth4webapi_access_token');
+      sessionStorage.removeItem('oauth4webapi_user');
     }
 
     setAuthState((prev) => ({ ...prev, isLoading: false }));
+    // Update device state
+    deviceState.setAuthenticated(false);
     return false;
-  }, []);
+  }, [deviceState]);
 
   // Initialize OAuth configuration
   const initializeConfig = useCallback(async () => {
+    // Prevent multiple initialization calls in dev mode
+    if (initializingRef.current) {
+      return;
+    }
+    initializingRef.current = true;
+
     try {
       // Get auth provider configuration from /providers/auth endpoint
       const response = await api.providers.getProvidersAuth();
@@ -190,7 +204,8 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
       // Use current page location as redirect URI to handle base paths correctly
       // Get the base path from the current pathname (e.g., /ui)
       const basePath = import.meta.env.BASE_URL || '/';
-      const redirectUri = props.redirect_uri || `${window.location.origin}${basePath}oauth/callback`;
+      const redirectUri =
+        props.redirect_uri || `${window.location.origin}${basePath}oauth/callback`;
 
       setConfig({
         ...providerConfig,
@@ -209,34 +224,31 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
         error: error as Error,
         isLoading: false,
       }));
+    } finally {
+      initializingRef.current = false;
     }
   }, [api]);
 
   // Handle OAuth callback - stateless approach
   const handleCallback = useCallback(async () => {
-    console.log('handleCallback: Starting', { hasAuthServer: !!authServer, hasClient: !!client, hasConfig: !!config });
-    
-    // Initialize config if not already done (needed for direct callback URL access)
-    if (!authServer || !client || !config) {
-      console.log('handleCallback: Config not ready, initializing...');
-      await initializeConfig();
-      // Config will be set, but we need to wait for the next render cycle
-      // The callback will be retriggered when config is ready
-      console.log('handleCallback: Config initialized, waiting for re-render');
+    // Prevent multiple callback processing in dev mode
+    if (callbackProcessingRef.current) {
       return;
     }
+    callbackProcessingRef.current = true;
 
     try {
+      // Initialize config if not already done (needed for direct callback URL access)
+      if (!authServer || !client || !config) {
+        await initializeConfig();
+        // Config will be set, but we need to wait for the next render cycle
+        // The callback will be retriggered when config is ready
+        return;
+      }
       const currentUrl = new URL(window.location.href);
-      console.log('handleCallback: Processing URL', currentUrl.href);
 
       const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
       const nonce = sessionStorage.getItem('oauth_nonce');
-
-      console.log('handleCallback: Session data', { 
-        hasCodeVerifier: !!codeVerifier, 
-        hasNonce: !!nonce 
-      });
 
       if (!codeVerifier) {
         throw new Error('Missing code verifier');
@@ -256,7 +268,7 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
         config.redirect_uri,
         codeVerifier,
         {
-          [oauth.allowInsecureRequests]: true
+          [oauth.allowInsecureRequests]: true,
         },
       );
 
@@ -268,13 +280,13 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
             })
           : await oauth.processAuthorizationCodeResponse(authServer, client, response);
 
-      // Store tokens following oauth4webapi pattern
+      // Store tokens securely in sessionStorage (better than localStorage)
       if (result.access_token) {
-        localStorage.setItem('oauth4webapi_access_token', result.access_token);
+        sessionStorage.setItem('oauth4webapi_access_token', result.access_token);
       }
 
       if (result.id_token && config.kind === 'oidc') {
-        localStorage.setItem('oauth4webapi_id_token', result.id_token);
+        sessionStorage.setItem('oauth4webapi_id_token', result.id_token);
 
         // For OIDC, parse user info from ID token
         try {
@@ -286,17 +298,16 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
               name: claims.name || undefined,
               access_token: result.access_token,
             };
-            localStorage.setItem('oauth4webapi_user', JSON.stringify(user));
+            sessionStorage.setItem('oauth4webapi_user', JSON.stringify(user));
           } else {
             throw new Error('No claims found in ID token');
           }
         } catch (error) {
-          console.warn('Failed to parse ID token claims, using minimal user object:', error);
           const user = {
             sub: 'authenticated',
             access_token: result.access_token,
           };
-          localStorage.setItem('oauth4webapi_user', JSON.stringify(user));
+          sessionStorage.setItem('oauth4webapi_user', JSON.stringify(user));
         }
       } else if (config.kind === 'oauth') {
         // For OAuth, get user info from userinfo endpoint
@@ -320,14 +331,13 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
             name: userInfo.name || undefined,
             access_token: result.access_token,
           };
-          localStorage.setItem('oauth4webapi_user', JSON.stringify(user));
+          sessionStorage.setItem('oauth4webapi_user', JSON.stringify(user));
         } catch (error) {
-          console.warn('Failed to get user info, using minimal user object:', error);
           const user = {
             sub: result.sub || 'authenticated',
             access_token: result.access_token,
           };
-          localStorage.setItem('oauth4webapi_user', JSON.stringify(user));
+          sessionStorage.setItem('oauth4webapi_user', JSON.stringify(user));
         }
       }
 
@@ -348,6 +358,8 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
         isLoading: false,
       }));
       throw error; // Re-throw so the callback component can handle it
+    } finally {
+      callbackProcessingRef.current = false;
     }
   }, [authServer, client, config, checkAuthentication, initializeConfig]);
 
@@ -397,9 +409,9 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
     });
 
     // Clean up stored tokens
-    localStorage.removeItem('oauth4webapi_access_token');
-    localStorage.removeItem('oauth4webapi_id_token');
-    localStorage.removeItem('oauth4webapi_user');
+    sessionStorage.removeItem('oauth4webapi_access_token');
+    sessionStorage.removeItem('oauth4webapi_id_token');
+    sessionStorage.removeItem('oauth4webapi_user');
 
     // Clean up any session data
     sessionStorage.removeItem('oauth_code_verifier');
@@ -430,7 +442,17 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
     };
 
     initialize();
-  }, [initializeConfig, checkAuthentication]);
+  }, []);
+
+  // Monitor deviceState.onboarded to determine when to render AuthGuard
+  useEffect(() => {
+    if (deviceState.onboarded) {
+      initializeConfig();
+      setShouldRenderAuthGuard(true);
+    } else {
+      setShouldRenderAuthGuard(false);
+    }
+  }, [deviceState.onboarded, initializeConfig]);
 
   // Remove the automatic callback handling - now handled by dedicated route
   // The callback will be handled by the OAuthCallback component
@@ -446,7 +468,7 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
 
   return (
     <OAuth4WebApiAuthContext.Provider value={contextValue}>
-      <AuthGuard>{children}</AuthGuard>
+      {shouldRenderAuthGuard ? <AuthGuard>{children}</AuthGuard> : children}
     </OAuth4WebApiAuthContext.Provider>
   );
 };

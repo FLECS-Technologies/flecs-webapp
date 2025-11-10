@@ -35,17 +35,14 @@ const OAuthCallback: React.FC = () => {
     const processCallback = async () => {
       // Wait for config to be ready
       if (!isConfigReady) {
-        console.log('OAuthCallback: Waiting for config to be ready...');
         return;
       }
 
       // Prevent multiple executions
       if (hasProcessed) {
-        console.log('Already processed callback, skipping...');
         return;
       }
 
-      console.log('OAuthCallback: Starting callback processing');
       setHasProcessed(true);
 
       try {
@@ -54,9 +51,7 @@ const OAuthCallback: React.FC = () => {
         const errorParam = urlParams.get('error');
         const errorDescription = urlParams.get('error_description');
         const code = urlParams.get('code');
-        
-        console.log('OAuthCallback: URL params', { errorParam, errorDescription, code: code ? 'present' : 'missing' });
-        
+
         if (errorParam) {
           setLocalError(errorDescription || errorParam);
           return;
@@ -67,11 +62,9 @@ const OAuthCallback: React.FC = () => {
           return;
         }
 
-        console.log('OAuthCallback: Calling handleOAuthCallback');
         // Process the OAuth callback
         await handleOAuthCallback();
-        
-        console.log('OAuthCallback: Success, redirecting to home');
+
         // Redirect to home page after successful authentication
         navigate('/', { replace: true });
       } catch (err) {

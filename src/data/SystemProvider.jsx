@@ -15,32 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { createContext, useState } from 'react';
+import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
 import DeviceActivationProvider from '../components/providers/DeviceActivationProvider';
 import { OnboardingDialog, useOnboardingStatus } from '../components/onboarding';
+import { useDeviceState } from '../components/providers/DeviceStateProvider';
 
 const SystemContext = createContext({});
 
 const SystemContent = ({ children }) => {
-  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = React.useState(false);
+  const deviceState = useDeviceState();
   const { isRequired: onboardingRequired, isLoading } = useOnboardingStatus();
 
   const handleOnboardingComplete = () => {
     setOnboardingCompleted(true);
+    // Mark device as onboarded when onboarding is completed
+    deviceState.setOnboarded(true);
   };
 
-  // Only show onboarding if:
-  // 1. The system determines it's required AND
-  // 2. The user hasn't completed it in this session AND
-  // 3. We're not still loading the status
-  const showOnboarding = onboardingRequired && !onboardingCompleted && !isLoading;
+  // Show onboarding when all conditions are met:
+  // 1. Device is loaded, 2. Device is not onboarded, 3. Onboarding is required
+  const showOnboarding =
+    deviceState.loaded &&
+    !deviceState.onboarded &&
+    onboardingRequired &&
+    !isLoading &&
+    !onboardingCompleted;
 
   return (
     <>
       <DeviceActivationProvider>{children}</DeviceActivationProvider>
 
-      {/* Onboarding Dialog - only shows when required and not completed */}
+      {/* Onboarding Dialog - only shows when device is loaded but not onboarded */}
       <OnboardingDialog open={showOnboarding} onClose={handleOnboardingComplete} />
     </>
   );

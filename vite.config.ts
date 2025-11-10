@@ -1,5 +1,5 @@
 // vite.config.ts
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
@@ -9,6 +9,9 @@ export default defineConfig({
   plugins: [react(), svgr()],
   server: {
     open: true,
+  },
+  build: {
+    sourcemap: 'inline',
   },
   define: {
     global: 'globalThis', // <–– fixes fbjs / draft-js issues

@@ -17,17 +17,21 @@
  */
 
 import React, { useEffect } from 'react';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Button, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { WizardStep, WizardStepProps } from '../../steppers';
 
 // Track if this step has been rendered
 let hasBeenRendered = false;
 
 const CompletionStepComponent: React.FC<WizardStepProps> = ({ onComplete }) => {
+  const navigate = useNavigate();
+
   // Call onComplete when this component gets rendered
   useEffect(() => {
     if (!hasBeenRendered) {
       hasBeenRendered = true;
+      navigate('/device-login');
       onComplete();
     }
   }, [onComplete]);

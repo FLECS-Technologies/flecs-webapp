@@ -19,6 +19,7 @@
 import { useState, useEffect } from 'react';
 import { usePublicApi } from '../../providers/ApiProvider';
 import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
+import { useDeviceState } from '../../providers/DeviceStateProvider';
 import { checkAuthProviderConfigured, checkSuperAdminExists } from '../utils/onboardingHelpers';
 
 interface OnboardingStatus {
@@ -40,6 +41,7 @@ export const useOnboardingStatus = (): OnboardingStatus => {
 
   const api = usePublicApi();
   const authProviderApi = usePublicAuthProviderApi();
+  const deviceState = useDeviceState();
 
   useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -59,12 +61,20 @@ export const useOnboardingStatus = (): OnboardingStatus => {
           isLoading: false,
           error: null,
         });
+
+        // Update device state: loaded = true, onboarded = !onboardingRequired
+        deviceState.setLoaded(true);
+        deviceState.setOnboarded(!onboardingRequired);
       } catch (error: any) {
         setStatus({
           isRequired: false,
           isLoading: false,
           error: error.message || 'Failed to check onboarding status',
         });
+
+        // In case of error, assume device is loaded but might need onboarding
+        deviceState.setLoaded(true);
+        deviceState.setOnboarded(false);
       }
     };
 

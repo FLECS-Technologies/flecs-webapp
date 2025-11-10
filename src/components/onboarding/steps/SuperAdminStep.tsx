@@ -15,10 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Alert, LinearProgress, Stack } from '@mui/material';
-import { CheckCircle, ErrorSharp, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
 import { WizardStep, WizardStepProps } from '../../steppers';
 import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
@@ -79,6 +78,7 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
     if (validateForm()) {
       try {
         await api.AuthApi.postSuperAdmin({ full_name: username, name: username, password });
+
         await onComplete();
         onNext();
       } catch (error: any) {

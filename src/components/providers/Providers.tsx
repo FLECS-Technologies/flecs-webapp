@@ -18,6 +18,7 @@
 import React from 'react';
 import { ProtectedApiProvider, PublicApiProvider } from './ApiProvider';
 import { OAuth4WebApiAuthProvider } from './OAuth4WebApiAuthProvider';
+import { DeviceStateProvider } from './DeviceStateProvider';
 import { QuestContextProvider } from '../../components/quests/QuestContext';
 import { FilterContextProvider } from '../../data/FilterContext';
 import { SystemContextProvider } from '../../data/SystemProvider';
@@ -29,19 +30,21 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PublicApiProvider>
       <PublicAuthProviderApiProvider>
-        <OAuth4WebApiAuthProvider>
-          <ProtectedApiProvider>
-            <MarketplaceUserProvider>
-              <QuestContextProvider>
-                <FilterContextProvider>
-                  <SystemContextProvider>
-                    <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
-                  </SystemContextProvider>
-                </FilterContextProvider>
-              </QuestContextProvider>
-            </MarketplaceUserProvider>
-          </ProtectedApiProvider>
-        </OAuth4WebApiAuthProvider>
+        <DeviceStateProvider>
+          <OAuth4WebApiAuthProvider>
+            <ProtectedApiProvider>
+              <MarketplaceUserProvider>
+                <QuestContextProvider>
+                  <FilterContextProvider>
+                    <SystemContextProvider>
+                      <ReferenceDataContextProvider>{children}</ReferenceDataContextProvider>
+                    </SystemContextProvider>
+                  </FilterContextProvider>
+                </QuestContextProvider>
+              </MarketplaceUserProvider>
+            </ProtectedApiProvider>
+          </OAuth4WebApiAuthProvider>
+        </DeviceStateProvider>
       </PublicAuthProviderApiProvider>
     </PublicApiProvider>
   );

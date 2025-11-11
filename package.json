@@ -12,7 +12,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@flecs/auth-provider-client-ts": "github:FLECS-Technologies/auth-provider-client",
-    "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts#FLX-1085-rbac",
+    "@flecs/core-client-ts": "github:FLECS-Technologies/core-client-ts",
     "@mui/icons-material": "^7.3.4",
     "@mui/lab": "^7.0.0-beta.14",
     "@mui/material": "^7.3.4",

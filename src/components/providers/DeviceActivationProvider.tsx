@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { DeviceActivationContext } from './DeviceActivationContext';
 import { useProtectedApi } from './ApiProvider';
 
@@ -28,7 +28,7 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
   const [statusText, setStatusText] = React.useState('');
   const api = useProtectedApi();
 
-  const validate = async () => {
+  const validate = useCallback(async () => {
     setValidating(true);
     setStatusText('Checking the device activation status...');
     await api.device
@@ -52,9 +52,9 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
         setValidated(false);
       });
     setValidating(false);
-  };
+  }, [api]);
 
-  const activate = async () => {
+  const activate = useCallback(async () => {
     setActivating(true);
     setStatusText('Activating the device...');
     await api.device
@@ -75,7 +75,7 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
         );
       });
     setActivating(false);
-  };
+  }, [api]);
 
   const value = {
     validated,
@@ -90,7 +90,7 @@ const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) =
 
   React.useEffect(() => {
     validate();
-  }, []);
+  }, [validate]);
 
   return (
     <DeviceActivationContext.Provider value={value}>{children}</DeviceActivationContext.Provider>

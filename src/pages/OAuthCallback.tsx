@@ -27,23 +27,19 @@ import { useOAuth4WebApiAuth } from '../components/providers/OAuth4WebApiAuthPro
  */
 const OAuthCallback: React.FC = () => {
   const navigate = useNavigate();
-  const { handleOAuthCallback, error, isConfigReady } = useOAuth4WebApiAuth();
+  const { handleOAuthCallback, refreshAuthState, error, isConfigReady } = useOAuth4WebApiAuth();
   const [localError, setLocalError] = useState<string | null>(null);
-  const [hasProcessed, setHasProcessed] = useState(false);
+  const executedRef = React.useRef(false);
 
   useEffect(() => {
+    if (executedRef.current) {
+      return;
+    }
     const processCallback = async () => {
       // Wait for config to be ready
       if (!isConfigReady) {
         return;
       }
-
-      // Prevent multiple executions
-      if (hasProcessed) {
-        return;
-      }
-
-      setHasProcessed(true);
 
       try {
         // Check for error in URL params
@@ -65,16 +61,19 @@ const OAuthCallback: React.FC = () => {
         // Process the OAuth callback
         await handleOAuthCallback();
 
+        // Refresh the auth state to ensure the context is updated
+        await refreshAuthState();
+
         // Redirect to home page after successful authentication
         navigate('/', { replace: true });
       } catch (err) {
-        console.error('OAuth callback processing failed:', err);
         setLocalError(err instanceof Error ? err.message : 'Authentication failed');
       }
     };
 
     processCallback();
-  }, [handleOAuthCallback, navigate, isConfigReady, hasProcessed]);
+    executedRef.current = true;
+  }, [isConfigReady]);
 
   const displayError = localError || error?.message;
 

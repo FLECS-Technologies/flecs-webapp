@@ -261,14 +261,3 @@ export const setupQuestFailure = (api: any, method: any, error = 'Mock error') =
 };
 
 export default mockCoreClientTs;
-
-// Re-export auth mocking utilities for convenience
-export {
-  createMockAuthContext,
-  createUnauthenticatedAuthContext,
-  createLoadingAuthContext,
-  createErrorAuthContext,
-  createMockUser,
-  createMockOidcConfig,
-  resetAllAuthMocks,
-} from './AuthProvider';

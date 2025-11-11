@@ -17,7 +17,19 @@
  */
 
 import { useCallback } from 'react';
-import { AuthState } from './types';
+import { AuthState, User } from './types';
+
+// Utility function to decode JWT token
+const decodeJwt = (token: string): Partial<User> | null => {
+  try {
+    const [, payload] = token.split('.');
+    const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decodedPayload);
+  } catch (error) {
+    console.error('Failed to decode JWT token:', error);
+    return null;
+  }
+};
 
 // Session storage keys
 export const SESSION_KEYS = {
@@ -64,10 +76,46 @@ export const useAuthSession = () => {
       const user = sessionStorage.getItem(SESSION_KEYS.USER);
 
       if (accessToken && user) {
+        const parsedUser: User = JSON.parse(user);
+
+        // if the user contains at least a preferred_username, consider it valid
+        if (parsedUser.preferred_username) {
+          return {
+            isAuthenticated: true,
+            isLoading: false,
+            user: parsedUser,
+            error: null,
+          };
+        }
+
+        // Fallback: decode access token to extract user information
+        const tokenClaims = decodeJwt(accessToken);
+        if (tokenClaims) {
+          const enhancedUser: User = {
+            ...parsedUser,
+            sub: tokenClaims.sub || parsedUser.sub,
+            email: tokenClaims.email || parsedUser.email,
+            preferred_username: tokenClaims.preferred_username || parsedUser.preferred_username,
+            exp: tokenClaims.exp || parsedUser.exp,
+            realm_access: tokenClaims.realm_access || parsedUser.realm_access,
+            resource_access: tokenClaims.resource_access || parsedUser.resource_access,
+            // Keep existing properties and add token-derived ones
+            access_token: parsedUser.access_token || accessToken,
+          };
+
+          return {
+            isAuthenticated: true,
+            isLoading: false,
+            user: enhancedUser,
+            error: null,
+          };
+        }
+
+        // Still return the original user even if token decoding failed
         return {
           isAuthenticated: true,
           isLoading: false,
-          user: JSON.parse(user),
+          user: parsedUser,
           error: null,
         };
       }

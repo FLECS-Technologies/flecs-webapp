@@ -83,8 +83,7 @@ export default function Avatar() {
           <Stack>
             <Typography variant="caption">Signed in as</Typography>
             <Typography variant="caption" style={{ fontWeight: 600 }}>
-              {/*{user?.user?.profile.preferred_username} */}
-              placeholder name
+              {user.user?.preferred_username || 'anonymous'}
             </Typography>
           </Stack>
         </MenuItem>

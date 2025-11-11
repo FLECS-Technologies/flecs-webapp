@@ -18,10 +18,32 @@
 
 import * as oauth from 'oauth4webapi';
 
+export interface RealmAccess {
+  roles: string[];
+}
+
+export interface ResourceAccess {
+  [resource: string]: {
+    roles: string[];
+  };
+}
+
+export interface User {
+  sub: string;
+  email?: string;
+  name?: string;
+  preferred_username?: string;
+  exp?: number;
+  realm_access?: RealmAccess;
+  resource_access?: ResourceAccess;
+  access_token?: string;
+  [key: string]: any; // Allow additional properties
+}
+
 export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: any | null;
+  user: User | null;
   error: Error | null;
 }
 

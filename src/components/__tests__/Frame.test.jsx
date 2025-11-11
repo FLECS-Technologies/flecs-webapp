@@ -43,15 +43,6 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// Mock AuthProvider to avoid dependency issues
-vi.mock('../providers/AuthProvider', () => ({
-  useAuth: vi.fn(() => null),
-  useAuthActions: vi.fn(() => ({
-    signOut: vi.fn(),
-  })),
-  useAuthConfig: vi.fn(() => ({})),
-}));
-
 // Mock react-oidc-context
 vi.mock('react-oidc-context', () => ({
   useAuth: vi.fn(() => ({

@@ -47,8 +47,8 @@ const SystemContent = ({ children }) => {
     <>
       <DeviceActivationProvider>{children}</DeviceActivationProvider>
 
-      {/* Onboarding Dialog - only shows when device is loaded but not onboarded */}
-      <OnboardingDialog open={showOnboarding} onClose={handleOnboardingComplete} />
+      {/* Onboarding Dialog - only render when actually needed */}
+      {showOnboarding && <OnboardingDialog open={true} onClose={handleOnboardingComplete} />}
     </>
   );
 };

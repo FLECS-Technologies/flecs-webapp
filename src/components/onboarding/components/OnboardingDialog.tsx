@@ -53,7 +53,7 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ open, onClos
 
         <DialogContent>
           <Box sx={{ minWidth: 800, minHeight: 600 }}>
-            <MultiStepWizard title="Device Onboarding" />
+            {open && <MultiStepWizard title="Device Onboarding" />}
           </Box>
         </DialogContent>
         <DialogActions>

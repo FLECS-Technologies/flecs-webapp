@@ -1,5 +1,5 @@
 // vite.config.ts
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
@@ -9,9 +9,6 @@ export default defineConfig({
   plugins: [react(), svgr()],
   server: {
     open: true,
-  },
-  build: {
-    sourcemap: 'inline',
   },
   define: {
     global: 'globalThis', // <–– fixes fbjs / draft-js issues
@@ -25,6 +22,12 @@ export default defineConfig({
       reporter: ['text', 'html', 'lcov'], // output formats
       all: true, // include files not directly imported in tests
       reportsDirectory: './coverage', // optional
+      coverage: {
+        provider: 'v8', // or 'istanbul' for Node < 16
+        reporter: ['text', 'html', 'lcov'], // output formats
+        all: true, // include files not directly imported in tests
+        reportsDirectory: './coverage', // optional
+      },
       exclude: [
         'node_modules/**',
         'dist/**',

@@ -35,7 +35,7 @@ interface OnboardingStatus {
 export const useOnboardingStatus = (): OnboardingStatus => {
   const [status, setStatus] = useState<OnboardingStatus>({
     isRequired: false,
-    isLoading: true,
+    isLoading: false,
     error: null,
   });
 
@@ -78,7 +78,7 @@ export const useOnboardingStatus = (): OnboardingStatus => {
       }
     };
 
-    if (api && authProviderApi) {
+    if (api && authProviderApi && !status.isLoading) {
       checkOnboardingStatus();
     }
   }, [api, authProviderApi]);

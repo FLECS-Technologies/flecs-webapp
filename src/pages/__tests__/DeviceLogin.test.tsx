@@ -35,10 +35,6 @@ vi.mock('../../components/providers/ApiProvider', () => ({
   usePublicApi: vi.fn(),
 }));
 
-vi.mock('../../components/providers/AuthProvider', () => ({
-  useAuthConfig: vi.fn(),
-}));
-
 vi.mock('../../whitelabeling/WhiteLabelLogo', () => ({
   __esModule: true,
   default: () => <div data-testid="white-label-logo">Logo</div>,
@@ -47,16 +43,13 @@ vi.mock('../../whitelabeling/WhiteLabelLogo', () => ({
 // Import the mocked modules
 import { useAuth } from 'react-oidc-context';
 import { usePublicApi } from '../../components/providers/ApiProvider';
-import { useAuthConfig } from '../../components/providers/AuthProvider';
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedUsePublicApi = vi.mocked(usePublicApi);
-const mockedUseAuthConfig = vi.mocked(useAuthConfig);
 
 describe('DeviceLogin', () => {
   let mockApi: any;
   let mockAuth: any;
-  let mockAuthConfig: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -71,14 +64,8 @@ describe('DeviceLogin', () => {
       signinRedirect: mockSigninRedirect,
     };
 
-    mockAuthConfig = {
-      oidcConfig: { client_id: 'test-client-id' },
-      updateClientId: mockUpdateClientId,
-    };
-
     mockedUsePublicApi.mockReturnValue(mockApi);
     mockedUseAuth.mockReturnValue(mockAuth);
-    mockedUseAuthConfig.mockReturnValue(mockAuthConfig);
 
     // Default successful ping response - use resolved promise to avoid async issues
     mockSystemPingGet.mockImplementation(() => Promise.resolve({}));
@@ -358,26 +345,6 @@ describe('DeviceLogin', () => {
   });
 
   describe('Component Integration', () => {
-    it('updates client ID field when config changes', async () => {
-      const { rerender } = render(<DeviceLogin />);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toHaveValue('test-client-id');
-      });
-
-      // Update mock to return different client ID
-      mockAuthConfig.oidcConfig.client_id = 'updated-client-id';
-      mockedUseAuthConfig.mockReturnValue(mockAuthConfig);
-
-      act(() => {
-        rerender(<DeviceLogin />);
-      });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toHaveValue('updated-client-id');
-      });
-    });
-
     it('renders WhiteLabelLogo component', async () => {
       // Make ping promise never resolve to avoid state updates
       mockSystemPingGet.mockImplementation(() => new Promise(() => {}));
@@ -427,38 +394,6 @@ describe('DeviceLogin', () => {
   });
 
   describe('Edge Cases', () => {
-    it('handles empty client ID input', async () => {
-      const user = userEvent.setup();
-      render(<DeviceLogin />);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
-      });
-
-      const clientIdField = screen.getByLabelText(/client id/i);
-      const applyButton = screen.getByTitle('Apply Client ID');
-
-      await user.clear(clientIdField);
-
-      expect(clientIdField).toHaveValue('');
-      expect(applyButton).not.toBeDisabled(); // Should be enabled since it's different from config
-
-      await user.click(applyButton);
-      expect(mockUpdateClientId).toHaveBeenCalledWith('');
-    });
-
-    it('handles undefined client_id in config', async () => {
-      mockAuthConfig.oidcConfig.client_id = undefined;
-      mockedUseAuthConfig.mockReturnValue(mockAuthConfig);
-
-      render(<DeviceLogin />);
-
-      await waitFor(() => {
-        const clientIdField = screen.getByLabelText(/client id/i);
-        expect(clientIdField).toHaveValue('');
-      });
-    });
-
     it('handles multiple rapid clicks on retry button', async () => {
       mockSystemPingGet.mockRejectedValue(new Error('Backend unavailable'));
 

@@ -23,6 +23,8 @@ import openSourceTxt from '../assets/third-party-licenses.txt';
 export default function OpenSource() {
   const [content, setContent] = useState('');
   useEffect(() => {
+    let isMounted = true;
+
     fetch(openSourceTxt)
       .then((response) => {
         if (!response.ok) {
@@ -30,8 +32,20 @@ export default function OpenSource() {
         }
         return response.text();
       })
-      .then(setContent)
-      .catch(() => setContent('Could not load open source licenses.'));
+      .then((text) => {
+        if (isMounted) {
+          setContent(text);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setContent('Could not load open source licenses.');
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

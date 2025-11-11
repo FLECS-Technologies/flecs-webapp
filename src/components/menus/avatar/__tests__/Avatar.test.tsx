@@ -34,20 +34,12 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// Mock AuthProvider
+// Mock OAuth4WebApiAuth provider
 const mockSignOut = vi.fn();
+const mockUseOAuth4WebApiAuth = vi.fn();
 
-vi.mock('../../../providers/AuthProvider', () => ({
-  useAuthActions: vi.fn(() => ({
-    signOut: mockSignOut,
-  })),
-}));
-
-// Mock react-oidc-context
-const mockUseAuth = vi.fn();
-
-vi.mock('react-oidc-context', () => ({
-  useAuth: () => mockUseAuth(),
+vi.mock('../../../components/providers/OAuth4WebApiAuthProvider', () => ({
+  useOAuth4WebApiAuth: () => mockUseOAuth4WebApiAuth(),
 }));
 
 describe('Avatar', () => {
@@ -57,11 +49,12 @@ describe('Avatar', () => {
 
   describe('when user is not authenticated', () => {
     beforeEach(() => {
-      mockUseAuth.mockReturnValue({
+      mockUseOAuth4WebApiAuth.mockReturnValue({
         user: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
+        signOut: mockSignOut,
       });
     });
 
@@ -113,11 +106,12 @@ describe('Avatar', () => {
     };
 
     beforeEach(() => {
-      mockUseAuth.mockReturnValue({
+      mockUseOAuth4WebApiAuth.mockReturnValue({
         user: mockUser,
         isAuthenticated: true,
         isLoading: false,
         error: null,
+        signOut: mockSignOut,
       });
     });
 

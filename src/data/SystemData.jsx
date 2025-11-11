@@ -19,12 +19,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSystemContext } from './SystemProvider';
 import { useProtectedApi } from '../components/providers/ApiProvider';
+import { useDeviceState } from '../components/providers/DeviceStateProvider';
 
 function SystemData(props) {
   const context = useSystemContext();
   const { setPing, loading, setLoading, setSystemInfo } = context || {};
   const [loadingSystemInfo, setLoadingSystemInfo] = React.useState(false);
   const api = useProtectedApi();
+  const { authenticated } = useDeviceState();
 
   React.useEffect(() => {
     // Only proceed if context functions are available
@@ -40,7 +42,7 @@ function SystemData(props) {
 
     // Only fetch once when component mounts
     if (!loadingSystemInfo) fetchSystemInfo();
-  }, [setSystemInfo]);
+  }, [setSystemInfo, authenticated]);
 
   // Add defensive check - don't run effects if context functions are not available
   if (!setPing || !setLoading || !setSystemInfo) {

@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -113,10 +112,7 @@ export default function ElevateAppBar(props) {
           </AppBar>
         </ElevationScroll>
       )}
-      {ReactDOM.createPortal(
-        <QuestLogDialog open={questLogOpen} onClose={() => setQuestLogOpen(false)} />,
-        document.body,
-      )}
+      <QuestLogDialog open={questLogOpen} onClose={() => setQuestLogOpen(false)} />
     </React.Fragment>
   );
 }

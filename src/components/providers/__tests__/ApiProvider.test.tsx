@@ -30,15 +30,12 @@ vi.mock('@flecs/core-client-ts', () => ({
   Configuration: vi.fn(),
 }));
 
-// Mock react-oidc-context
-vi.mock('react-oidc-context', () => ({
-  useAuth: vi.fn(),
-}));
+// Mock the OAuth4WebApiAuthProvider
+vi.mock('../OAuth4WebApiAuthProvider');
 
 // Import the modules after mocking
 import { createApi } from '../../../api/flecs-core/api-client';
 import { Configuration } from '@flecs/core-client-ts';
-import { useAuth } from 'react-oidc-context';
 import {
   PublicApiProvider,
   ProtectedApiProvider,
@@ -47,11 +44,15 @@ import {
   useProtectedApi,
   useApi,
 } from '../ApiProvider';
+import {
+  OAuth4WebApiAuthProvider,
+  mockOAuth4WebApiAuth,
+  mockScenarios,
+} from '../__mocks__/OAuth4WebApiAuthProvider';
 
 // Type the mocked functions
 const mockCreateApi = createApi as any;
 const mockConfiguration = Configuration as any;
-const mockUseAuth = useAuth as any;
 
 // Mock environment variables
 const mockEnv = {
@@ -165,12 +166,7 @@ describe('ApiProvider', () => {
 
   describe('ProtectedApiProvider', () => {
     it('provides protected API context with authentication token', () => {
-      const mockAuth = {
-        user: {
-          access_token: 'test-access-token',
-        },
-      } as any;
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockScenarios.authenticatedUser();
 
       const TestComponent = () => {
         const api = useProtectedApi();
@@ -178,23 +174,22 @@ describe('ApiProvider', () => {
       };
 
       const { getByTestId } = render(
-        <ProtectedApiProvider>
-          <TestComponent />
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <TestComponent />
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expect.any(String),
-        accessToken: 'test-access-token',
+        accessToken: 'mock-access-token',
       });
     });
 
     it('provides protected API context without token when user is not authenticated', () => {
-      const mockAuth = {
-        user: null,
-      } as any;
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockScenarios.unauthenticatedUser();
 
       const TestComponent = () => {
         const api = useProtectedApi();
@@ -202,9 +197,11 @@ describe('ApiProvider', () => {
       };
 
       const { getByTestId } = render(
-        <ProtectedApiProvider>
-          <TestComponent />
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <TestComponent />
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
@@ -215,32 +212,34 @@ describe('ApiProvider', () => {
     });
 
     it('recreates API when access token changes', () => {
-      const mockAuth = {
-        user: {
-          access_token: 'initial-token',
-        },
-      } as any;
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockScenarios.authenticatedUser();
 
       const { rerender } = render(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expect.any(String),
-        accessToken: 'initial-token',
+        accessToken: 'mock-access-token',
       });
 
       // Change the access token
-      mockAuth.user.access_token = 'new-token';
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockOAuth4WebApiAuth.setAuthenticated(true, {
+        sub: 'test-user',
+        email: 'test@example.com',
+        access_token: 'new-token',
+      });
 
       rerender(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       expect(mockConfiguration).toHaveBeenCalledWith({
@@ -280,12 +279,12 @@ describe('ApiProvider', () => {
     });
 
     it('useProtectedApi hook returns the protected API instance', () => {
-      mockUseAuth.mockReturnValue({
-        user: { access_token: 'test-token' },
-      } as any);
+      mockScenarios.authenticatedUser();
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
-        <ProtectedApiProvider>{children}</ProtectedApiProvider>
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>{children}</ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>
       );
 
       const { result } = renderHook(() => useProtectedApi(), { wrapper });
@@ -295,12 +294,12 @@ describe('ApiProvider', () => {
     });
 
     it('useApi hook is an alias for useProtectedApi', () => {
-      mockUseAuth.mockReturnValue({
-        user: { access_token: 'test-token' },
-      } as any);
+      mockScenarios.authenticatedUser();
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
-        <ProtectedApiProvider>{children}</ProtectedApiProvider>
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>{children}</ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>
       );
 
       const { result: protectedResult } = renderHook(() => useProtectedApi(), { wrapper });
@@ -313,9 +312,7 @@ describe('ApiProvider', () => {
 
   describe('Backward Compatibility', () => {
     it('ApiProvider is an alias for ProtectedApiProvider', () => {
-      mockUseAuth.mockReturnValue({
-        user: { access_token: 'test-token' },
-      } as any);
+      mockScenarios.authenticatedUser();
 
       const TestComponent = () => {
         const api = useProtectedApi();
@@ -323,41 +320,42 @@ describe('ApiProvider', () => {
       };
 
       const { getByTestId } = render(
-        <ApiProvider>
-          <TestComponent />
-        </ApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ApiProvider>
+            <TestComponent />
+          </ApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expect.any(String),
-        accessToken: 'test-token',
+        accessToken: 'mock-access-token',
       });
     });
   });
 
   describe('Memoization', () => {
     it('memoizes API instance when dependencies do not change', () => {
-      const mockAuth = {
-        user: {
-          access_token: 'stable-token',
-        },
-      } as any;
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockScenarios.authenticatedUser();
 
       const { rerender } = render(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       const firstCallCount = mockCreateApi.mock.calls.length;
 
       // Rerender with same token
       rerender(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       // Should not create a new API instance
@@ -365,29 +363,31 @@ describe('ApiProvider', () => {
     });
 
     it('creates new API instance when access token changes', () => {
-      const mockAuth = {
-        user: {
-          access_token: 'initial-token',
-        },
-      } as any;
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockScenarios.authenticatedUser();
 
       const { rerender } = render(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       const firstCallCount = mockCreateApi.mock.calls.length;
 
       // Change the token
-      mockAuth.user.access_token = 'changed-token';
-      mockUseAuth.mockReturnValue(mockAuth);
+      mockOAuth4WebApiAuth.setAuthenticated(true, {
+        sub: 'test-user',
+        email: 'test@example.com',
+        access_token: 'changed-token',
+      });
 
       rerender(
-        <ProtectedApiProvider>
-          <div>test</div>
-        </ProtectedApiProvider>,
+        <OAuth4WebApiAuthProvider>
+          <ProtectedApiProvider>
+            <div>test</div>
+          </ProtectedApiProvider>
+        </OAuth4WebApiAuthProvider>,
       );
 
       // Should create a new API instance

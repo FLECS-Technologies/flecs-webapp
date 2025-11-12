@@ -108,6 +108,12 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
         </Alert>
       )}
 
+      {validationErrors.general && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {validationErrors.general}
+        </Alert>
+      )}
+
       <Stack spacing={3}>
         <TextField
           fullWidth
@@ -188,11 +194,7 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
       </Stack>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={isLoading || !password || !confirmPassword || password !== confirmPassword}
-        >
+        <Button variant="contained" onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? 'Creating Admin...' : 'Create Administrator'}
         </Button>
       </Box>

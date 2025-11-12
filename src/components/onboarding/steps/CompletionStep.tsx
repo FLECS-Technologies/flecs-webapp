@@ -24,6 +24,11 @@ import { WizardStep, WizardStepProps } from '../../steppers';
 // Track if this step has been rendered
 let hasBeenRendered = false;
 
+// For testing: reset the module state
+export const resetCompletionStepState = () => {
+  hasBeenRendered = false;
+};
+
 const CompletionStepComponent: React.FC<WizardStepProps> = ({ onComplete }) => {
   const navigate = useNavigate();
 

@@ -31,6 +31,12 @@ vi.mock('../../components/providers/ApiProvider', () => ({
 
 vi.mock('../SystemProvider', () => ({ useSystemContext: vi.fn() }));
 
+// Mock the DeviceState provider using the centralized mock
+vi.mock('../../components/providers/DeviceStateProvider');
+
+// Import the mock helpers
+import { resetMockDeviceState } from '../../components/providers/__mocks__/DeviceStateProvider';
+
 const mockSystem = {
   ping: true,
   setPing: vi.fn(),
@@ -48,6 +54,7 @@ describe('SystemData', () => {
     mockApi = createMockApi();
     mockUseProtectedApi.mockReturnValue(mockApi);
     useSystemContext.mockReturnValue(mockSystem);
+    resetMockDeviceState(); // Reset the device state mock
   });
 
   it('renders SystemData component', async () => {

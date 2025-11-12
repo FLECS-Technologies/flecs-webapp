@@ -22,12 +22,6 @@ export default defineConfig({
       reporter: ['text', 'html', 'lcov'], // output formats
       all: true, // include files not directly imported in tests
       reportsDirectory: './coverage', // optional
-      coverage: {
-        provider: 'v8', // or 'istanbul' for Node < 16
-        reporter: ['text', 'html', 'lcov'], // output formats
-        all: true, // include files not directly imported in tests
-        reportsDirectory: './coverage', // optional
-      },
       exclude: [
         'node_modules/**',
         'dist/**',
@@ -39,6 +33,8 @@ export default defineConfig({
         'src/setupTests.js',
         'src/models/**',
         '*.config.js',
+        'index.ts',
+        'types.ts',
       ],
     },
   },

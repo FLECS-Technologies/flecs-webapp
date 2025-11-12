@@ -21,15 +21,13 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import DeviceLogin from '../DeviceLogin';
+import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
 
 // Mock the external dependencies
-const mockSigninRedirect = vi.fn();
 const mockSystemPingGet = vi.fn();
-const mockUpdateClientId = vi.fn();
 
-vi.mock('react-oidc-context', () => ({
-  useAuth: vi.fn(),
-}));
+// Mock OAuth4WebApiAuthProvider
+vi.mock('../../components/providers/OAuth4WebApiAuthProvider');
 
 vi.mock('../../components/providers/ApiProvider', () => ({
   usePublicApi: vi.fn(),
@@ -41,15 +39,12 @@ vi.mock('../../whitelabeling/WhiteLabelLogo', () => ({
 }));
 
 // Import the mocked modules
-import { useAuth } from 'react-oidc-context';
 import { usePublicApi } from '../../components/providers/ApiProvider';
 
-const mockedUseAuth = vi.mocked(useAuth);
 const mockedUsePublicApi = vi.mocked(usePublicApi);
 
 describe('DeviceLogin', () => {
   let mockApi: any;
-  let mockAuth: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -60,12 +55,11 @@ describe('DeviceLogin', () => {
       },
     };
 
-    mockAuth = {
-      signinRedirect: mockSigninRedirect,
-    };
-
     mockedUsePublicApi.mockReturnValue(mockApi);
-    mockedUseAuth.mockReturnValue(mockAuth);
+
+    // Reset OAuth mock to default unauthenticated state (appropriate for login page)
+    mockOAuth4WebApiAuth.reset();
+    mockScenarios.unauthenticatedUser();
 
     // Default successful ping response - use resolved promise to avoid async issues
     mockSystemPingGet.mockImplementation(() => Promise.resolve({}));
@@ -80,7 +74,6 @@ describe('DeviceLogin', () => {
       expect(screen.getByText('Please authenticate to continue')).toBeInTheDocument();
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
     });
@@ -95,12 +88,11 @@ describe('DeviceLogin', () => {
       expect(screen.getByText('Checking system availability...')).toBeInTheDocument();
     });
 
-    it('initializes client ID from config', async () => {
+    it('shows login button when system is available', async () => {
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        const clientIdField = screen.getByLabelText(/client id/i);
-        expect(clientIdField).toHaveValue('test-client-id');
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
     });
   });
@@ -112,7 +104,6 @@ describe('DeviceLogin', () => {
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
@@ -152,7 +143,6 @@ describe('DeviceLogin', () => {
       fireEvent.click(retryButton);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
@@ -160,85 +150,58 @@ describe('DeviceLogin', () => {
     });
   });
 
-  describe('Client ID Management', () => {
-    it('allows editing client ID', async () => {
-      const user = userEvent.setup();
+  describe('OAuth Authentication', () => {
+    it('uses OAuth4WebApiAuth provider for authentication', async () => {
+      // Mock the signIn function to track calls
+      const mockSignIn = vi.fn().mockResolvedValue(undefined);
+      mockOAuth4WebApiAuth.mockSignIn(mockSignIn);
+
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
-      const clientIdField = screen.getByLabelText(/client id/i);
-      await user.clear(clientIdField);
-      await user.type(clientIdField, 'new-client-id');
+      const loginButton = screen.getByRole('button', { name: /login/i });
+      fireEvent.click(loginButton);
 
-      expect(clientIdField).toHaveValue('new-client-id');
+      expect(mockSignIn).toHaveBeenCalled();
     });
 
-    it('enables apply button when client ID changes', async () => {
-      const user = userEvent.setup();
+    it('handles OAuth authentication errors gracefully', async () => {
+      // Mock OAuth error state
+      mockScenarios.error('OAuth authentication failed');
+
       render(<DeviceLogin />);
 
+      // Should still show login form even with OAuth error
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
-
-      const clientIdField = screen.getByLabelText(/client id/i);
-      const applyButton = screen.getByTitle('Apply Client ID');
-
-      // Initially disabled
-      expect(applyButton).toBeDisabled();
-
-      // Enable after changing value
-      await user.clear(clientIdField);
-      await user.type(clientIdField, 'new-client-id');
-
-      expect(applyButton).not.toBeDisabled();
     });
 
-    it('applies client ID when apply button is clicked', async () => {
-      const user = userEvent.setup();
+    it('works with different OAuth states', async () => {
+      // Test with loading state
+      mockScenarios.loading();
+
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
-      const clientIdField = screen.getByLabelText(/client id/i);
-      const applyButton = screen.getByTitle('Apply Client ID');
+      // Change to authenticated state
+      mockScenarios.authenticatedUser();
 
-      await user.clear(clientIdField);
-      await user.type(clientIdField, 'new-client-id');
-      await user.click(applyButton);
-
-      expect(mockUpdateClientId).toHaveBeenCalledWith('new-client-id');
-    });
-
-    it('disables apply button when client ID matches config', async () => {
-      const user = userEvent.setup();
-      render(<DeviceLogin />);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
-      });
-
-      const clientIdField = screen.getByLabelText(/client id/i);
-      const applyButton = screen.getByTitle('Apply Client ID');
-
-      // Change and then revert to original value
-      await user.clear(clientIdField);
-      await user.type(clientIdField, 'new-client-id');
-      expect(applyButton).not.toBeDisabled();
-
-      await user.clear(clientIdField);
-      await user.type(clientIdField, 'test-client-id');
-      expect(applyButton).toBeDisabled();
+      // Component should still render (DeviceLogin is accessible regardless of auth state)
+      expect(screen.getByText('Welcome')).toBeInTheDocument();
     });
   });
 
   describe('Login Functionality', () => {
-    it('calls signinRedirect when login button is clicked and no error', async () => {
+    it('calls OAuth signIn when login button is clicked and no error', async () => {
+      const mockSignIn = vi.fn().mockResolvedValue(undefined);
+      mockOAuth4WebApiAuth.mockSignIn(mockSignIn);
       mockSystemPingGet.mockResolvedValue({});
 
       render(<DeviceLogin />);
@@ -250,10 +213,10 @@ describe('DeviceLogin', () => {
       const loginButton = screen.getByRole('button', { name: /login/i });
       fireEvent.click(loginButton);
 
-      expect(mockSigninRedirect).toHaveBeenCalled();
+      expect(mockSignIn).toHaveBeenCalled();
     });
 
-    it('does not call signinRedirect when there is an error', async () => {
+    it('does not show login button when there is a backend error', async () => {
       mockSystemPingGet.mockRejectedValue(new Error('Backend unavailable'));
 
       render(<DeviceLogin />);
@@ -266,7 +229,23 @@ describe('DeviceLogin', () => {
 
       // Login button should not be visible when there's an error
       expect(screen.queryByRole('button', { name: /login/i })).not.toBeInTheDocument();
-      expect(mockSigninRedirect).not.toHaveBeenCalled();
+    });
+
+    it('handles OAuth signIn errors', async () => {
+      const mockSignIn = vi.fn().mockRejectedValue(new Error('OAuth sign in failed'));
+      mockOAuth4WebApiAuth.mockSignIn(mockSignIn);
+
+      render(<DeviceLogin />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+
+      const loginButton = screen.getByRole('button', { name: /login/i });
+      fireEvent.click(loginButton);
+
+      expect(mockSignIn).toHaveBeenCalled();
+      // Component should handle OAuth errors gracefully
     });
   });
 
@@ -339,7 +318,7 @@ describe('DeviceLogin', () => {
         expect(
           screen.queryByText('Backend is not available. Please try again later.'),
         ).not.toBeInTheDocument();
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
     });
   });
@@ -356,20 +335,16 @@ describe('DeviceLogin', () => {
   });
 
   describe('Accessibility', () => {
-    it('has proper form labels and structure', async () => {
+    it('has proper form structure and buttons', async () => {
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/client id/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
-      const clientIdField = screen.getByLabelText(/client id/i);
       const loginButton = screen.getByRole('button', { name: /login/i });
-      const applyButton = screen.getByTitle('Apply Client ID');
-
-      expect(clientIdField).toBeInTheDocument();
       expect(loginButton).toBeInTheDocument();
-      expect(applyButton).toBeInTheDocument();
+      expect(loginButton).toBeEnabled();
     });
 
     it('has proper heading structure', async () => {
@@ -382,14 +357,21 @@ describe('DeviceLogin', () => {
       expect(heading).toHaveTextContent('Welcome');
     });
 
-    it('provides appropriate button titles and labels', async () => {
+    it('provides appropriate button labels', async () => {
       render(<DeviceLogin />);
 
       await waitFor(() => {
-        expect(screen.getByTitle('Apply Client ID')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
 
-      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      // Check retry button when there's an error
+      mockSystemPingGet.mockRejectedValue(new Error('Backend unavailable'));
+
+      const { rerender } = render(<DeviceLogin />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+      });
     });
   });
 
@@ -414,6 +396,99 @@ describe('DeviceLogin', () => {
       // The subsequent clicks should be ignored while loading
       await waitFor(() => {
         expect(mockSystemPingGet).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  // New OAuth-specific tests demonstrating the mock system
+  describe('OAuth Mock Integration', () => {
+    it('works with unauthenticated user state', async () => {
+      mockScenarios.unauthenticatedUser();
+
+      render(<DeviceLogin />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+
+      // Should show login interface for unauthenticated users
+      expect(screen.getByText('Please authenticate to continue')).toBeInTheDocument();
+    });
+
+    it('works with authenticated user state', async () => {
+      mockScenarios.authenticatedUser();
+
+      render(<DeviceLogin />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+
+      // DeviceLogin page should still be accessible even when authenticated
+      expect(screen.getByText('Welcome')).toBeInTheDocument();
+    });
+
+    it('handles OAuth loading state', async () => {
+      mockScenarios.loading();
+
+      render(<DeviceLogin />);
+
+      // Should still render the component
+      expect(screen.getByText('Welcome')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+    });
+
+    it('handles OAuth error state', async () => {
+      mockScenarios.error('OAuth configuration error');
+
+      render(<DeviceLogin />);
+
+      // Should still show the login page
+      expect(screen.getByText('Welcome')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+    });
+
+    it('tracks OAuth signIn function calls', async () => {
+      const mockSignIn = vi.fn().mockResolvedValue(undefined);
+      mockOAuth4WebApiAuth.mockSignIn(mockSignIn);
+
+      render(<DeviceLogin />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      });
+
+      const loginButton = screen.getByRole('button', { name: /login/i });
+
+      // Click multiple times to test call tracking
+      fireEvent.click(loginButton);
+      fireEvent.click(loginButton);
+
+      expect(mockSignIn).toHaveBeenCalledTimes(2);
+    });
+
+    it('works with custom OAuth configuration', async () => {
+      // Test with config not ready
+      mockScenarios.configNotReady();
+
+      render(<DeviceLogin />);
+
+      // Should still render
+      expect(screen.getByText('Welcome')).toBeInTheDocument();
+
+      // Now make config ready
+      mockOAuth4WebApiAuth.setConfigReady(true);
+      mockOAuth4WebApiAuth.setAuthenticated(false);
+
+      // Should still work
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
       });
     });
   });

@@ -24,6 +24,7 @@ import Frame from '../Frame';
 import { DarkModeState } from '../../styles/ThemeHandler';
 import { QuestContextProvider } from '../quests/QuestContext';
 import { createMockApi } from '../../__mocks__/core-client-ts';
+import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
@@ -43,16 +44,8 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// Mock react-oidc-context
-vi.mock('react-oidc-context', () => ({
-  useAuth: vi.fn(() => ({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    error: null,
-  })),
-  AuthProvider: ({ children }) => children,
-}));
+// Mock OAuth4WebApiAuthProvider
+vi.mock('../providers/OAuth4WebApiAuthProvider');
 
 // Mock window.matchMedia for theme handler
 Object.defineProperty(window, 'matchMedia', {
@@ -76,6 +69,10 @@ describe('Frame', () => {
     vi.clearAllMocks();
     mockApi = createMockApi();
     mockUseProtectedApi.mockReturnValue(mockApi);
+
+    // Reset OAuth mock to default authenticated state
+    mockOAuth4WebApiAuth.reset();
+    mockScenarios.authenticatedUser();
   });
 
   test('renders Frame component', async () => {
@@ -114,6 +111,191 @@ describe('Frame', () => {
       expect(getByLabelText('Header-Placeholder')).toBeVisible();
       expect(getByTestId('test-child')).toBeVisible();
       expect(getByTestId('test-child')).toHaveTextContent('Test Content');
+    });
+  });
+
+  // OAuth-specific tests demonstrating the mock functionality
+  describe('OAuth Integration', () => {
+    test('renders with authenticated user', async () => {
+      mockScenarios.authenticatedUser();
+
+      const { getByLabelText, getByLabelText: getByAriaLabel } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        // AppBar should show user menu button for authenticated users
+        expect(getByAriaLabel('user-menu-button')).toBeVisible();
+      });
+    });
+
+    test('renders with unauthenticated user', async () => {
+      mockScenarios.unauthenticatedUser();
+
+      const { getByLabelText, getByLabelText: getByAriaLabel } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        // AppBar should show login button for unauthenticated users
+        expect(getByAriaLabel('login-button')).toBeVisible();
+      });
+    });
+
+    test('renders with OAuth loading state', async () => {
+      mockScenarios.loading();
+
+      const { getByLabelText } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        // Frame should still render during OAuth loading
+      });
+    });
+
+    test('renders with OAuth error state', async () => {
+      mockScenarios.error('Authentication failed');
+
+      const { getByLabelText } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        // Frame should still render with OAuth errors
+      });
+    });
+
+    test('renders with admin user', async () => {
+      mockScenarios.adminUser();
+
+      const { getByLabelText, getByLabelText: getByAriaLabel } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        expect(getByAriaLabel('user-menu-button')).toBeVisible();
+      });
+    });
+
+    test('handles custom user configuration', async () => {
+      const customUser = {
+        sub: 'frame-test-user-456',
+        preferred_username: 'frameuser',
+        email: 'frame@test.com',
+        realm_access: { roles: ['frame-user'] },
+      };
+
+      mockOAuth4WebApiAuth.setAuthenticated(true, customUser);
+
+      const { getByLabelText, getByLabelText: getByAriaLabel } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        expect(getByAriaLabel('user-menu-button')).toBeVisible();
+      });
+    });
+
+    test('handles OAuth config not ready state', async () => {
+      mockScenarios.configNotReady();
+
+      const { getByLabelText } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        // Frame should render even when OAuth config is not ready
+      });
+    });
+  });
+
+  describe('OAuth State Transitions', () => {
+    test('handles authentication state changes', async () => {
+      // Start with unauthenticated
+      mockScenarios.unauthenticatedUser();
+
+      const { getByLabelText, rerender } = render(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        expect(getByLabelText('login-button')).toBeVisible();
+      });
+
+      // Change to authenticated
+      mockScenarios.authenticatedUser();
+
+      rerender(
+        <Router>
+          <DarkModeState>
+            <QuestContextProvider>
+              <Frame />
+            </QuestContextProvider>
+          </DarkModeState>
+        </Router>,
+      );
+
+      await waitFor(() => {
+        expect(getByLabelText('Header-Placeholder')).toBeVisible();
+        expect(getByLabelText('user-menu-button')).toBeVisible();
+      });
     });
   });
 });

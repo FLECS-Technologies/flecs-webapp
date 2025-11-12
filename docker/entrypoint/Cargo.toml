@@ -1,0 +1,17 @@
+[package]
+name = "entrypoint"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+askama = "0.14.0"
+libc = "0.2.177"
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
+lto = true
+codegen-units = 1
+strip = true
+debug = false
+incremental = false

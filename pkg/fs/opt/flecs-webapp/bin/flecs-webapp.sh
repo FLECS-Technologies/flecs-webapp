@@ -120,6 +120,7 @@ case ${1} in
       --ip ${IP} \
       --add-host flecs-floxy:${GATEWAY} \
       --publish ${PORTS[$i]}:80 \
+      --volume flecs-webapp_certs:/etc/nginx/certs \
       --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
     exit $?
     ;;

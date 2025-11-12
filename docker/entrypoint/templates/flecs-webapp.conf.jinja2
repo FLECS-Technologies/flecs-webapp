@@ -1,6 +1,25 @@
 server {
-    listen       80;
-    server_name  localhost;
+    listen 80;
+    server_name localhost;
+
+    location = /health {
+        access_log off;
+        return 204;
+    }
+
+    location / {
+        return 308 https://$host{{ https_port }}$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name localhost;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_certificate /etc/nginx/certs/cert.pem;
+    ssl_certificate_key /etc/nginx/certs/key.pem;
 
     location = /api/v2/imports {
         client_max_body_size 8G;
@@ -21,7 +40,6 @@ server {
         root /usr/share/nginx/html/;
         try_files $uri$args $uri$args/ /ui/index.html;
     }
-    
 
     location / {
         return 301 $scheme://$http_host/ui$request_uri;

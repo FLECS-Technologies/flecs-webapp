@@ -261,6 +261,35 @@ RUN printf '%s\n'\
     > /var/lib/dpkg/status.d/zlib-static
 
 # ==============================================================================
+# entrypoint: As we go distroless, we no longer have a shell to execute custom
+#   entrypoints. Add a small Rust helper that takes care of container
+#   initialization and starts our actual binary.
+# ==============================================================================
+FROM rust:alpine AS entrypoint
+
+ARG TARGETPLATFORM
+
+RUN apk add musl-dev
+
+ADD docker/entrypoint/ /usr/src/entrypoint
+
+WORKDIR /usr/src/entrypoint
+
+ENV RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-static"
+
+RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
+        CARGO_BUILD_TARGET="x86_64-unknown-linux-musl"; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
+        CARGO_BUILD_TARGET="aarch64-unknown-linux-musl"; \
+    else \
+        echo "Unsupported platform ${TARGETPLATFORM}"; \
+        exit 1; \
+    fi \
+    && rustup target add ${CARGO_BUILD_TARGET} \
+    && cargo build --profile release --target ${CARGO_BUILD_TARGET} \
+    && cp ./target/${CARGO_BUILD_TARGET}/release/entrypoint /entrypoint
+
+# ==============================================================================
 # intermediate: Layer that combines all previous artifacts into a 'distroless'
 #   image. See 'final' on why this is not yet the final image.
 # ==============================================================================
@@ -272,6 +301,7 @@ COPY --from=nginx-builder /opt/nginx/conf/ /etc/nginx/
 COPY --from=openssl-builder /openssl /bin/openssl
 COPY --from=license-info /usr/local/share/doc/ /usr/share/doc/
 COPY --from=sbom-info /var/lib/dpkg/status.d/ /var/lib/dpkg/status.d/
+COPY --from=entrypoint /entrypoint /entrypoint
 COPY docker/fs/ /
 COPY dist/ /usr/share/nginx/html/ui/
 
@@ -290,14 +320,6 @@ LABEL org.opencontainers.image.source="https://github.com/FLECS-Technologies/fle
 LABEL org.opencontainers.image.title="FLECS WebApp based on nginx (static, musl)"
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD ["/usr/bin/wget", "-q", "--tries=1", "--spider", "http://localhost/"]
+    CMD ["/usr/bin/wget", "-q", "--tries=1", "--spider", "http://localhost/health"]
 
-ENTRYPOINT [ \
-    "/sbin/nginx", \
-    "-g", \
-    "daemon off;", \
-    "-e", \
-    "/dev/stderr", \
-    "-c", \
-    "/etc/nginx/nginx.conf" \
-]
+ENTRYPOINT ["/entrypoint"]

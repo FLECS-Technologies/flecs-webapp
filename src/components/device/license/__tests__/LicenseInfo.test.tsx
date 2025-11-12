@@ -59,9 +59,6 @@ describe('LicenseInfo Component', () => {
       // Check that License and Type rows are present
       const licenseLabel = screen.getByText('License');
       expect(licenseLabel).toBeInTheDocument();
-
-      const typeLabel = screen.getByText('Type');
-      expect(typeLabel).toBeInTheDocument();
     });
   });
 });

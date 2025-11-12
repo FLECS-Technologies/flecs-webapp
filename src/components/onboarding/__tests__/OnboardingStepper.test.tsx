@@ -20,6 +20,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { OnboardingStepper } from '../';
+import * as QuestContextModule from '../../quests/QuestContext';
 
 // Mock the API providers
 const mockUseProtectedApi = vi.fn();
@@ -89,23 +90,52 @@ describe('OnboardingStepper', () => {
     mockUsePublicAuthProviderApi.mockReturnValue(mockAuthProviderApi);
   });
 
-  it('renders the onboarding stepper with welcome message', async () => {
-    render(<OnboardingStepper />);
+  // Minimal QuestProvider for tests
+  const MockQuestProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const questContextValue = {
+      quests: { current: new Map() },
+      mainQuestIds: [],
+      fetchQuest: vi.fn(),
+      fetchQuests: vi.fn(),
+      setFetching: vi.fn(),
+      fetching: false,
+      clearQuests: vi.fn(),
+      waitForQuest: vi.fn(),
+      waitForQuests: vi.fn(),
+    };
+    return (
+      <QuestContextModule.QuestContext.Provider value={questContextValue}>
+        {children}
+      </QuestContextModule.QuestContext.Provider>
+    );
+  };
 
+  it('renders the onboarding stepper with welcome message', async () => {
+    render(
+      <MockQuestProvider>
+        <OnboardingStepper />
+      </MockQuestProvider>,
+    );
     expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
   });
 
   it('shows setup progress', async () => {
-    render(<OnboardingStepper />);
-
+    render(
+      <MockQuestProvider>
+        <OnboardingStepper />
+      </MockQuestProvider>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });
   });
 
   it('renders setup steps', async () => {
-    render(<OnboardingStepper />);
-
+    render(
+      <MockQuestProvider>
+        <OnboardingStepper />
+      </MockQuestProvider>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Setup Authentication Provider')).toBeInTheDocument();
       expect(screen.getByText('Create Super Admin')).toBeInTheDocument();
@@ -115,11 +145,11 @@ describe('OnboardingStepper', () => {
   it('does not render when onboarding is completed', async () => {
     // Mock completed onboarding status
     mockApi.providers.getProvidersAuthDefault.mockResolvedValue({ data: { id: 'default' } });
-
-    render(<OnboardingStepper />);
-
-    // Since we can't easily mock the super admin check, this test is simplified
-    // In a real implementation, you would mock both checks to return completed status
+    render(
+      <MockQuestProvider>
+        <OnboardingStepper />
+      </MockQuestProvider>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });
@@ -127,9 +157,11 @@ describe('OnboardingStepper', () => {
 
   it('handles API errors gracefully', async () => {
     mockApi.providers.getProvidersAuthDefault.mockRejectedValue(new Error('API Error'));
-
-    render(<OnboardingStepper />);
-
+    render(
+      <MockQuestProvider>
+        <OnboardingStepper />
+      </MockQuestProvider>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });

@@ -186,6 +186,46 @@ export const createMockApi = (customMocks = {}) => {
     console: {
       consoleAuthenticationPut: vi.fn(() => Promise.resolve({ data: {} })),
     },
+
+    // Providers API (ExperimentalApi)
+    providers: {
+      // Auth provider endpoints
+      getProvidersAuth: vi.fn(() =>
+        Promise.resolve({
+          status: 200,
+          data: {
+            providers: {
+              'flecs-auth': { name: 'FLECS Auth', description: 'Built-in FLECS authentication' },
+            },
+            core: null,
+          },
+        }),
+      ),
+      getProvidersAuthCore: vi.fn(() =>
+        Promise.resolve({
+          status: 200,
+          data: { provider: 'flecs-auth' },
+        }),
+      ),
+      putProvidersAuthCore: vi.fn(() =>
+        Promise.resolve({
+          status: 200,
+          data: { provider: 'flecs-auth' },
+        }),
+      ),
+      postProvidersAuthFirstTimeSetupFlecsport: vi.fn(() =>
+        Promise.resolve({
+          status: 200,
+          data: { jobId: 1, message: 'First-time setup initiated' },
+        }),
+      ),
+
+      // Other provider endpoints
+      getProvidersMarketplace: vi.fn(() => Promise.resolve({ status: 200, data: [] })),
+      postProvidersMarketplace: vi.fn(() => Promise.resolve({ status: 201, data: {} })),
+      putProvidersMarketplace: vi.fn(() => Promise.resolve({ status: 200, data: {} })),
+      deleteProvidersMarketplace: vi.fn(() => Promise.resolve({ status: 204 })),
+    },
   };
 
   // Deep merge custom mocks with defaults
@@ -212,13 +252,19 @@ export const mockCoreClientTs = () => ({
   })),
 
   // API Classes
-  AppApi: vi.fn(() => createMockApi().app),
+  AppsApi: vi.fn(() => createMockApi().app),
   InstancesApi: vi.fn(() => createMockApi().instances),
   MarketplaceApi: vi.fn(() => createMockApi().marketplace),
   SystemApi: vi.fn(() => createMockApi().system),
   DeviceApi: vi.fn(() => createMockApi().device),
   UserApi: vi.fn(() => createMockApi().user),
   LicenseApi: vi.fn(() => createMockApi().license),
+  ExperimentalApi: vi.fn(() => createMockApi().providers),
+  ConsoleApi: vi.fn(() => createMockApi().console),
+  DeploymentsApi: vi.fn(() => createMockApi().deployments),
+  FlecsportApi: vi.fn(() => createMockApi().export),
+  JobsApi: vi.fn(() => createMockApi().system), // Jobs are part of system API
+  QuestsApi: vi.fn(() => createMockApi().quests),
 
   // Enums and Types
   TransportProtocol: {
@@ -258,6 +304,82 @@ export const setupQuestFailure = (api: any, method: any, error = 'Mock error') =
 
   // You'll need to mock the quest context to return the error result
   return { quest, result };
+};
+
+// Helper to setup auth provider scenarios
+export const setupAuthProviderConfigured = (
+  api: any,
+  isConfigured = true,
+  providerName = 'flecs-auth',
+) => {
+  if (isConfigured) {
+    api.providers.getProvidersAuthCore.mockResolvedValue({
+      status: 200,
+      data: { provider: providerName },
+    });
+    api.providers.getProvidersAuth.mockResolvedValue({
+      status: 200,
+      data: {
+        providers: {
+          [providerName]: { name: 'FLECS Auth', description: 'Built-in FLECS authentication' },
+        },
+        core: providerName,
+      },
+    });
+  } else {
+    api.providers.getProvidersAuthCore.mockRejectedValue({
+      status: 404,
+      message: 'No core provider configured',
+    });
+    api.providers.getProvidersAuth.mockResolvedValue({
+      status: 200,
+      data: {
+        providers: {},
+        core: null,
+      },
+    });
+  }
+};
+
+// Helper to setup auth provider selection scenarios
+export const setupAuthProviderSelection = (
+  api: any,
+  providers: string[] = ['flecs-auth'],
+  selectedProvider?: string,
+) => {
+  const providersData = providers.reduce((acc, provider) => {
+    acc[provider] = { name: provider.replace('-', ' '), description: `${provider} authentication` };
+    return acc;
+  }, {} as any);
+
+  api.providers.getProvidersAuth.mockResolvedValue({
+    status: 200,
+    data: {
+      providers: providersData,
+      core: selectedProvider || null,
+    },
+  });
+
+  if (selectedProvider) {
+    api.providers.putProvidersAuthCore.mockResolvedValue({
+      status: 200,
+      data: { provider: selectedProvider },
+    });
+  }
+};
+
+// Helper to setup first-time setup scenarios
+export const setupFirstTimeSetup = (api: any, shouldSucceed = true) => {
+  if (shouldSucceed) {
+    api.providers.postProvidersAuthFirstTimeSetupFlecsport.mockResolvedValue({
+      status: 200,
+      data: { jobId: 1, message: 'First-time setup initiated' },
+    });
+  } else {
+    api.providers.postProvidersAuthFirstTimeSetupFlecsport.mockRejectedValue(
+      new Error('First-time setup failed'),
+    );
+  }
 };
 
 export default mockCoreClientTs;

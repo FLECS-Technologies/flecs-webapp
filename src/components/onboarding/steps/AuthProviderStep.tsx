@@ -36,12 +36,8 @@ import {
   checkAuthProviderConfigured,
   checkAuthProviderCoreConfigured,
 } from '../utils/onboardingHelpers';
-
-// Constants
-const POLLING_CONFIG = {
-  MAX_ATTEMPTS: 360,
-  INTERVAL_MS: 1000,
-} as const;
+import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 // Types
 type SetupMode = 'loading' | 'select' | 'first-time' | 'polling' | 'completed';
@@ -61,6 +57,7 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
   const executedRef = React.useRef(false);
+  const quests = useQuestContext(QuestContext);
 
   const api = usePublicApi();
 
@@ -91,17 +88,46 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
   };
 
   /**
-   * Handles the scenario when providers are available
-   * @param providerIds - Array of available provider IDs
+   * Configures a provider and completes the step
+   * @param providerId - The provider ID to configure
    */
-  const handleAvailableProviders = async (providerIds: string[]) => {
-    if (providerIds.length === 1) {
-      // Single provider - auto-select and proceed
-      setSelectedProvider(providerIds[0]);
+  const configureProviderAndComplete = async (providerId: string) => {
+    setIsLoading(true);
+    resetError();
+
+    try {
+      await api.providers.putProvidersAuthCore({ provider: providerId });
+      setSetupMode('completed');
+      await completeStepAndProceed();
+    } catch (err: any) {
+      setError(err.message || 'Failed to setup authentication provider');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Processes available providers - either auto-configures single provider or shows selection UI
+   * @param providersData - The providers data from API
+   * @param providerIds - Array of available provider IDs
+   * @param autoConfig - Whether to auto-configure the first provider (true for post-quest, false for initial load)
+   */
+  const processAvailableProviders = async (
+    providersData: AuthProvidersAndDefaults,
+    providerIds: string[],
+    autoConfig: boolean = false,
+  ) => {
+    setAuthProviders(providersData);
+
+    if (providerIds.length === 1 || autoConfig) {
+      // Single provider or auto-config mode - select first provider and configure automatically
+      const providerId = providerIds[0];
+      setSelectedProvider(providerId);
       setSetupMode('select');
-      await handleProviderSelection();
+      await configureProviderAndComplete(providerId);
     } else {
-      // Multiple providers - pre-select first one and show UI
+      // Multiple providers - pre-select first one and show UI for user selection
       setSelectedProvider(providerIds[0]);
       setSetupMode('select');
     }
@@ -112,55 +138,42 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
    */
   const performFirstTimeSetup = async () => {
     setSetupMode('first-time');
-    await api.providers.postProvidersAuthFirstTimeSetupFlecsport();
+
+    const flecsportQuestId = await api.providers.postProvidersAuthFirstTimeSetupFlecsport();
     setSetupMode('polling');
-    await pollForProviders();
+    await quests.fetchQuest(flecsportQuestId.data.jobId);
+    const result = await quests.waitForQuest(flecsportQuestId.data.jobId);
+
+    if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+
+    await checkProvidersAfterFlecsport();
   };
 
   /**
-   * Polls for available providers after first-time setup
-   * @throws Error when polling times out
+   * Checks for available providers after FLECS auth setup completion and handles them appropriately
+   * @throws Error when API fails or no providers are found after FLECS auth setup completion
    */
-  const pollForProviders = async () => {
-    let attempts = 0;
+  const checkProvidersAfterFlecsport = async () => {
+    const response = await api.providers.getProvidersAuth();
+    const providersData = response.data;
 
-    while (attempts < POLLING_CONFIG.MAX_ATTEMPTS) {
-      await new Promise((resolve) => setTimeout(resolve, POLLING_CONFIG.INTERVAL_MS));
-
-      try {
-        const response = await api.providers.getProvidersAuth();
-        const providersData = response.data;
-
-        // Check if already configured during polling
-        if (providersData?.core) {
-          setAuthProviders(providersData);
-          setSetupMode('completed');
-          await completeStepAndProceed();
-          return;
-        }
-
-        // Check if providers became available
-        const providerIds = getProviderIds(providersData);
-        if (providerIds.length > 0) {
-          setAuthProviders(providersData);
-          setSelectedProvider(providerIds[0]);
-
-          // Auto-configure first provider
-          await api.providers.putProvidersAuthCore({ provider: providerIds[0] });
-          setSetupMode('completed');
-          await completeStepAndProceed();
-          return;
-        }
-      } catch {
-        // Continue polling on error
-      }
-
-      attempts++;
+    // Check if already configured during quest execution
+    if (providersData?.core) {
+      setAuthProviders(providersData);
+      setSetupMode('completed');
+      await completeStepAndProceed();
+      return;
     }
 
-    throw new Error(
-      'Timeout waiting for authentication providers to become available after first-time setup',
-    );
+    // Check if providers became available and auto-configure first one
+    const providerIds = getProviderIds(providersData);
+    if (providerIds.length > 0) {
+      await processAvailableProviders(providersData, providerIds, true);
+      return;
+    }
+
+    // No providers found after successful FLECS setup
+    throw new Error('No authentication providers found after FLECS auth setup completion');
   };
 
   // Main initialization logic
@@ -183,7 +196,7 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
       const providerIds = getProviderIds(authProvidersData);
 
       if (providerIds.length > 0) {
-        await handleAvailableProviders(providerIds);
+        await processAvailableProviders(authProvidersData, providerIds, false);
       } else {
         await performFirstTimeSetup();
       }
@@ -202,18 +215,7 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
       return;
     }
 
-    try {
-      setIsLoading(true);
-      resetError();
-
-      await api.providers.putProvidersAuthCore({ provider: selectedProvider });
-      setSetupMode('completed');
-      await completeStepAndProceed();
-    } catch (err: any) {
-      setError(err.message || 'Failed to setup authentication provider');
-    } finally {
-      setIsLoading(false);
-    }
+    await configureProviderAndComplete(selectedProvider);
   };
 
   const handleRetry = () => {

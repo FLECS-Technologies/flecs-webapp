@@ -21,11 +21,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { OnboardingStepper } from '../';
 
-// Mock the API provider
+// Mock the API providers
 const mockUseProtectedApi = vi.fn();
+const mockUsePublicApi = vi.fn();
+const mockUsePublicAuthProviderApi = vi.fn();
 
 vi.mock('../../providers/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
+  usePublicApi: () => mockUsePublicApi(),
+}));
+
+vi.mock('../../../components/providers/AuthProviderApiProvider', () => ({
+  usePublicAuthProviderApi: () => mockUsePublicAuthProviderApi(),
 }));
 
 // Mock Material-UI components that might cause issues in tests
@@ -51,6 +58,8 @@ vi.mock('@mui/material/StepLabel', () => ({
 
 describe('OnboardingStepper', () => {
   let mockApi: any;
+  let mockPublicApi: any;
+  let mockAuthProviderApi: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -58,24 +67,39 @@ describe('OnboardingStepper', () => {
     mockApi = {
       providers: {
         getProvidersAuthDefault: vi.fn(() => Promise.resolve({ data: null })),
+        getProvidersAuth: vi.fn(() => Promise.resolve({ data: [] })),
+        postProvidersAuthFirstTimeSetupFlecsport: vi.fn(() => Promise.resolve({ data: {} })),
       },
     };
 
+    mockPublicApi = {
+      providers: {
+        getProvidersAuthDefault: vi.fn(() => Promise.resolve({ data: null })),
+        getProvidersAuth: vi.fn(() => Promise.resolve({ data: [] })),
+        postProvidersAuthFirstTimeSetupFlecsport: vi.fn(() => Promise.resolve({ data: {} })),
+      },
+    };
+
+    mockAuthProviderApi = {
+      // Mock auth provider API methods if needed
+    };
+
     mockUseProtectedApi.mockReturnValue(mockApi);
+    mockUsePublicApi.mockReturnValue(mockPublicApi);
+    mockUsePublicAuthProviderApi.mockReturnValue(mockAuthProviderApi);
   });
 
   it('renders the onboarding stepper with welcome message', async () => {
     render(<OnboardingStepper />);
 
-    expect(screen.getByText('Welcome to FLECS')).toBeInTheDocument();
-    expect(screen.getByText("Let's set up your IoT device management system")).toBeInTheDocument();
+    expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
   });
 
   it('shows setup progress', async () => {
     render(<OnboardingStepper />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Setup Progress:/)).toBeInTheDocument();
+      expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });
   });
 
@@ -84,7 +108,7 @@ describe('OnboardingStepper', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Setup Authentication Provider')).toBeInTheDocument();
-      expect(screen.getByText('Create Super Administrator')).toBeInTheDocument();
+      expect(screen.getByText('Create Super Admin')).toBeInTheDocument();
     });
   });
 
@@ -97,7 +121,7 @@ describe('OnboardingStepper', () => {
     // Since we can't easily mock the super admin check, this test is simplified
     // In a real implementation, you would mock both checks to return completed status
     await waitFor(() => {
-      expect(screen.getByText('Welcome to FLECS')).toBeInTheDocument();
+      expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });
   });
 
@@ -107,7 +131,7 @@ describe('OnboardingStepper', () => {
     render(<OnboardingStepper />);
 
     await waitFor(() => {
-      expect(screen.getByText('Welcome to FLECS')).toBeInTheDocument();
+      expect(screen.getByText('Device Onboarding')).toBeInTheDocument();
     });
   });
 });

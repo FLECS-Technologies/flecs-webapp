@@ -35,12 +35,14 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 // Mock OAuth4WebApiAuth provider
-const mockSignOut = vi.fn();
-const mockUseOAuth4WebApiAuth = vi.fn();
+vi.mock('../../../providers/OAuth4WebApiAuthProvider');
 
-vi.mock('../../../components/providers/OAuth4WebApiAuthProvider', () => ({
-  useOAuth4WebApiAuth: () => mockUseOAuth4WebApiAuth(),
-}));
+// Import the OAuth mock system
+import {
+  OAuth4WebApiAuthProvider,
+  mockOAuth4WebApiAuth,
+  mockScenarios,
+} from '../../../providers/__mocks__/OAuth4WebApiAuthProvider';
 
 describe('Avatar', () => {
   beforeEach(() => {
@@ -49,20 +51,16 @@ describe('Avatar', () => {
 
   describe('when user is not authenticated', () => {
     beforeEach(() => {
-      mockUseOAuth4WebApiAuth.mockReturnValue({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null,
-        signOut: mockSignOut,
-      });
+      mockScenarios.unauthenticatedUser();
     });
 
     it('renders login icon', async () => {
       const { getByLabelText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       await waitFor(() => {
@@ -77,9 +75,11 @@ describe('Avatar', () => {
       const user = userEvent.setup();
 
       const { getByLabelText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       const avatarButton = getByLabelText('avatar-button');
@@ -92,34 +92,17 @@ describe('Avatar', () => {
   });
 
   describe('when user is authenticated', () => {
-    const mockUser = {
-      profile: {
-        sub: 'test-user-id',
-        name: 'Test User',
-        email: 'test@example.com',
-        preferred_username: 'testuser',
-        given_name: 'Test',
-        family_name: 'User',
-      },
-      access_token: 'mock-access-token',
-      id_token: 'mock-id-token',
-    };
-
     beforeEach(() => {
-      mockUseOAuth4WebApiAuth.mockReturnValue({
-        user: mockUser,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-        signOut: mockSignOut,
-      });
+      mockScenarios.authenticatedUser();
     });
 
     it('renders person icon', async () => {
       const { getByLabelText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       await waitFor(() => {
@@ -134,9 +117,11 @@ describe('Avatar', () => {
       const user = userEvent.setup();
 
       const { getByLabelText, getByText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       const avatarButton = getByLabelText('avatar-button');
@@ -156,9 +141,11 @@ describe('Avatar', () => {
       const user = userEvent.setup();
 
       const { getByLabelText, getByText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       // Open menu
@@ -182,9 +169,11 @@ describe('Avatar', () => {
       const user = userEvent.setup();
 
       const { getByLabelText, getByText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       // Open menu
@@ -200,7 +189,7 @@ describe('Avatar', () => {
       await user.click(signOutMenuItem);
 
       await waitFor(() => {
-        expect(mockSignOut).toHaveBeenCalled();
+        expect(mockOAuth4WebApiAuth.getCurrentValue().signOut).toHaveBeenCalled();
       });
     });
 
@@ -208,9 +197,11 @@ describe('Avatar', () => {
       const user = userEvent.setup();
 
       const { getByLabelText, queryByLabelText } = render(
-        <Router>
-          <Avatar />
-        </Router>,
+        <OAuth4WebApiAuthProvider>
+          <Router>
+            <Avatar />
+          </Router>
+        </OAuth4WebApiAuthProvider>,
       );
 
       // Open menu

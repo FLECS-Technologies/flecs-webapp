@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, it, vi } from 'vitest';
+import { describe, it, beforeEach, vi } from 'vitest';
 import { SystemContextProvider } from '../SystemProvider';
 
 // Mock the DeviceActivationProvider to avoid state update warnings
@@ -26,22 +26,27 @@ vi.mock('../../components/providers/DeviceActivationProvider', () => ({
   default: ({ children }) => children,
 }));
 
-const mockSystem = {
-  ping: true,
-  setPing: vi.fn(),
-  loading: false,
-  setLoading: vi.fn(),
-};
+// Mock the DeviceStateProvider using the centralized mock
+vi.mock('../../components/providers/DeviceStateProvider');
 
-vi.mock('react', async () => {
-  const ActualReact = await vi.importActual('react');
-  return {
-    ...ActualReact,
-    useContext: () => ({ mockSystem }),
-  };
-});
+// Import the mock helpers
+import { resetMockDeviceState } from '../../components/providers/__mocks__/DeviceStateProvider';
+
+// Mock the onboarding components to avoid complex dependencies
+vi.mock('../../components/onboarding', () => ({
+  OnboardingDialog: ({ children }) => <div data-testid="onboarding-dialog">{children}</div>,
+  useOnboardingStatus: () => ({
+    isRequired: false,
+    isLoading: false,
+  }),
+}));
 
 describe('SystemContextProvider', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetMockDeviceState(); // Reset the device state mock
+  });
+
   it('renders SystemContextProvider component', () => {
     render(<SystemContextProvider />);
   });

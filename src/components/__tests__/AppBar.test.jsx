@@ -24,6 +24,7 @@ import AppBar from '../AppBar';
 import { DarkModeState } from '../../styles/ThemeHandler';
 import { QuestContextProvider } from '../quests/QuestContext';
 import { createMockApi } from '../../__mocks__/core-client-ts';
+import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
@@ -43,16 +44,8 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// Mock react-oidc-context
-vi.mock('react-oidc-context', () => ({
-  useAuth: vi.fn(() => ({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    error: null,
-  })),
-  AuthProvider: ({ children }) => children,
-}));
+// Mock OAuth4WebApiAuthProvider
+vi.mock('../providers/OAuth4WebApiAuthProvider');
 
 // Mock window.matchMedia for theme handler
 Object.defineProperty(window, 'matchMedia', {
@@ -76,6 +69,9 @@ describe('AppBar', () => {
     vi.clearAllMocks();
     mockApi = createMockApi();
     mockUseProtectedApi.mockReturnValue(mockApi);
+    // Reset OAuth mock to default authenticated state
+    mockOAuth4WebApiAuth.reset();
+    mockScenarios.authenticatedUser();
   });
 
   it('renders AppBar component', async () => {
@@ -97,6 +93,8 @@ describe('AppBar', () => {
 
   it('Click on login', async () => {
     const user = userEvent.setup();
+    // Set unauthenticated state to show login button
+    mockScenarios.unauthenticatedUser();
 
     const { getByLabelText } = render(
       <DarkModeState>
@@ -143,6 +141,180 @@ describe('AppBar', () => {
 
     await waitFor(() => {
       expect(changeThemeButton).toBeVisible();
+    });
+  });
+
+  // New OAuth-related tests demonstrating the mock functionality
+  it('Shows user avatar when authenticated', async () => {
+    // Use authenticated user scenario
+    mockScenarios.authenticatedUser();
+
+    const { getByLabelText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    await waitFor(() => {
+      expect(getByLabelText('user-menu-button')).toBeVisible();
+    });
+  });
+
+  it('Shows login button when unauthenticated', async () => {
+    // Use unauthenticated user scenario
+    mockScenarios.unauthenticatedUser();
+
+    const { getByLabelText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    await waitFor(() => {
+      expect(getByLabelText('login-button')).toBeVisible();
+    });
+  });
+
+  it('Opens user menu when clicking on avatar (authenticated user)', async () => {
+    const user = userEvent.setup();
+    mockScenarios.authenticatedUser();
+
+    const { getByLabelText, getByText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    const avatarButton = getByLabelText('user-menu-button');
+    await user.click(avatarButton);
+
+    await waitFor(() => {
+      expect(getByText('testuser')).toBeVisible();
+      expect(getByText('Profile')).toBeVisible();
+      expect(getByText('Sign out')).toBeVisible();
+    });
+  });
+
+  it('Handles sign out action', async () => {
+    const user = userEvent.setup();
+    mockScenarios.authenticatedUser();
+
+    // Mock the signOut function to track calls
+    const mockSignOut = vi.fn().mockResolvedValue(undefined);
+    mockOAuth4WebApiAuth.mockSignOut(mockSignOut);
+
+    const { getByLabelText, getByText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    // Open user menu
+    const avatarButton = getByLabelText('user-menu-button');
+    await user.click(avatarButton);
+
+    // Click sign out
+    const signOutButton = getByText('Sign out');
+    await user.click(signOutButton);
+
+    await waitFor(() => {
+      expect(mockSignOut).toHaveBeenCalled();
+    });
+  });
+
+  it('Navigates to profile when clicking Profile menu item', async () => {
+    const user = userEvent.setup();
+    mockScenarios.authenticatedUser();
+
+    const { getByLabelText, getByText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    // Open user menu
+    const avatarButton = getByLabelText('user-menu-button');
+    await user.click(avatarButton);
+
+    // Click profile
+    const profileButton = getByText('Profile');
+    await user.click(profileButton);
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith('/profile');
+    });
+  });
+
+  it('Shows different user information for admin users', async () => {
+    const user = userEvent.setup();
+    mockScenarios.adminUser();
+
+    const { getByLabelText, getByText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    // Open user menu
+    const avatarButton = getByLabelText('user-menu-button');
+    await user.click(avatarButton);
+
+    await waitFor(() => {
+      expect(getByText('adminuser')).toBeVisible();
+    });
+  });
+
+  it('Handles custom user configuration', async () => {
+    const user = userEvent.setup();
+
+    // Set up custom user
+    mockOAuth4WebApiAuth.setAuthenticated(true, {
+      sub: 'custom-user-123',
+      preferred_username: 'customtestuser',
+      email: 'custom@test.com',
+      realm_access: { roles: ['user'] },
+    });
+
+    const { getByLabelText, getByText } = render(
+      <DarkModeState>
+        <Router>
+          <QuestContextProvider>
+            <AppBar />
+          </QuestContextProvider>
+        </Router>
+      </DarkModeState>,
+    );
+
+    // Open user menu
+    const avatarButton = getByLabelText('user-menu-button');
+    await user.click(avatarButton);
+
+    await waitFor(() => {
+      expect(getByText('customtestuser')).toBeVisible();
     });
   });
 });

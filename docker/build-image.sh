@@ -5,9 +5,6 @@ arch_to_platform() {
     amd64)
       echo linux/amd64
       ;;
-    armhf)
-      echo linux/arm/v7
-      ;;
     arm64)
       echo linux/arm64
       ;;

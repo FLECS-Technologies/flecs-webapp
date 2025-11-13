@@ -100,30 +100,46 @@ case ${1} in
       exit 1
     fi
 
-    PORTS=(80 8080 8000 none)
-    PORTS_HEX=(0050 1F90 1F40 none)
-    for i in ${!PORTS_HEX[*]}; do
-      if ! cat /proc/net/tcp /proc/net/tcp6 | grep -E ":${PORTS_HEX[$i]} [0-9A-F]{8}:[0-9A-F]{4} 0A"; then
+    HTTP_PORTS=(80 8080 8000 none)
+    HTTP_PORTS_HEX=(0050 1F90 1F40 none)
+    for i in ${!HTTP_PORTS_HEX[*]}; do
+      if ! cat /proc/net/tcp /proc/net/tcp6 | grep -E ":${HTTP_PORTS_HEX[$i]} [0-9A-F]{8}:[0-9A-F]{4} 0A"; then
         break
       fi
     done
 
-    if [ "${PORTS[$i]}" == "none" ]; then
-      echo "No free port found - exiting"
+    HTTPS_PORTS=(443 8443 4443 none)
+    HTTPS_PORTS_HEX=(01BB 208C 114B none)
+    for j in ${!HTTP_PORTS_HEX[*]}; do
+      if ! cat /proc/net/tcp /proc/net/tcp6 | grep -E ":${HTTPS_PORTS_HEX[$i]} [0-9A-F]{8}:[0-9A-F]{4} 0A"; then
+        break
+      fi
+    done
+
+    if [ "${HTTP_PORTS[$i]}" == "none" ]; then
+      echo "No free http port found in (${HTTP_PORTS}) - exiting"
       exit 1
     fi
-    echo "Binding flecs-webapp to port ${PORTS[$i]}"
+    if [ "${HTTPS_PORTS[$j]}" == "none" ]; then
+      echo "No free https port found in (${HTTPS_PORTS}) - exiting"
+      exit 1
+    fi
+    echo "Binding flecs-webapp to port ${HTTP_PORTS[$i]}/http and ${HTTPS_PORTS[$j]}/https"
 
     docker create \
       --name ${CONTAINER} \
       --network flecs \
       --ip ${IP} \
       --add-host flecs-floxy:${GATEWAY} \
-      --publish ${PORTS[$i]}:80 \
       --volume flecs-webapp_certs:/etc/nginx/certs \
+      --publish ${HTTP_PORTS[$i]}:80 \
+      --publish ${HTTPS_PORTS[$i]}:443 \
+      --env WEBAPP_HTTP_PORT=${HTTP_PORTS[$i]} \
+      --env WEBAPP_HTTPS_PORT=${HTTPS_PORTS[$j]} \
       --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
     exit $?
     ;;
+
   remove)
     docker rm -f ${CONTAINER} >/dev/null 2>&1
     exit $?

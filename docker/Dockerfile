@@ -96,9 +96,12 @@ ENV BASH_ENV="/usr/local/etc/versions.env"
 FROM versions-env AS nginx-downloader
 
 RUN apk add --no-cache \
-    gcc ca-certificates curl gpg gpg-agent linux-headers make musl-dev perl wget
+    gcc ca-certificates ccache curl gpg gpg-agent linux-headers make musl-dev perl wget
 
 WORKDIR /usr/src
+
+ENV CCACHE_DIR=/ccache
+ENV PATH="/usr/lib/ccache:${PATH}"
 
 # Download nginx
 RUN wget -q https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
@@ -164,7 +167,8 @@ RUN cd /usr/src/nginx-${NGINX_VERSION} && ./configure \
     --with-openssl=../openssl-${OPENSSL_VERSION} \
     --with-openssl-opt=no-shared
 
-RUN cd /usr/src/nginx-${NGINX_VERSION} && make -j$(nproc)
+RUN --mount=type=cache,target=/ccache,id=ccache \
+    cd /usr/src/nginx-${NGINX_VERSION} && make -j$(nproc)
 RUN cd /usr/src/nginx-${NGINX_VERSION} && strip --strip-unneeded objs/nginx
 RUN cd /usr/src/nginx-${NGINX_VERSION} && make install
 
@@ -176,7 +180,8 @@ FROM nginx-downloader AS openssl-builder
 RUN cd /usr/src/openssl-${OPENSSL_VERSION} \
     && ./Configure no-shared -static
     
-RUN cd /usr/src/openssl-${OPENSSL_VERSION} \
+RUN --mount=type=cache,target=/ccache,id=ccache \
+    cd /usr/src/openssl-${OPENSSL_VERSION} \
     && make -j$(nproc) build_programs
 
 RUN cd /usr/src/openssl-${OPENSSL_VERSION} \

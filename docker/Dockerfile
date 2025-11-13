@@ -101,13 +101,15 @@ RUN apk add --no-cache \
 WORKDIR /usr/src
 
 # Download nginx
-RUN curl https://nginx.org/keys/arut.key | gpg --batch --import - \
-    && curl https://nginx.org/keys/pluknet.key | gpg --batch --import - \
-    && curl https://nginx.org/keys/sb.key | gpg --batch --import - \
-    && curl https://nginx.org/keys/thresh.key | gpg --batch --import -
 RUN wget -q https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && wget -q https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc
-RUN gpg --verify nginx-${NGINX_VERSION}.tar.gz.asc nginx-${NGINX_VERSION}.tar.gz
+RUN set -e; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    curl https://nginx.org/keys/arut.key | gpg --batch --import - \
+    && curl https://nginx.org/keys/pluknet.key | gpg --batch --import - \
+    && curl https://nginx.org/keys/sb.key | gpg --batch --import - \
+    && curl https://nginx.org/keys/thresh.key | gpg --batch --import - \
+    && gpg --verify nginx-${NGINX_VERSION}.tar.gz.asc nginx-${NGINX_VERSION}.tar.gz
 RUN tar zxf nginx-${NGINX_VERSION}.tar.gz && \
     rm nginx-${NGINX_VERSION}.tar.gz nginx-${NGINX_VERSION}.tar.gz.asc
 
@@ -115,9 +117,10 @@ RUN tar zxf nginx-${NGINX_VERSION}.tar.gz && \
 ENV OPENSSL_DL_URL=https://github.com/openssl/openssl/releases/download/
 RUN wget -q ${OPENSSL_DL_URL}/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
     && wget -q ${OPENSSL_DL_URL}/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz.asc
-RUN gpg --recv-keys BA5473A2B0587B07FB27CF2D216094DFD0CB81EF \
-    && gpg --verify openssl-${OPENSSL_VERSION}.tar.gz.asc \
-        openssl-${OPENSSL_VERSION}.tar.gz
+RUN set -e; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --recv-keys BA5473A2B0587B07FB27CF2D216094DFD0CB81EF \
+    && gpg --verify openssl-${OPENSSL_VERSION}.tar.gz.asc openssl-${OPENSSL_VERSION}.tar.gz
 RUN tar zxf openssl-${OPENSSL_VERSION}.tar.gz \
     && rm openssl-${OPENSSL_VERSION}.tar.gz*
 
@@ -125,7 +128,9 @@ RUN tar zxf openssl-${OPENSSL_VERSION}.tar.gz \
 ENV PCRE2_DL_URL=https://github.com/PCRE2Project/pcre2/releases/download
 RUN wget -q ${PCRE2_DL_URL}/pcre2-${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.tar.gz \
     && wget -q ${PCRE2_DL_URL}/pcre2-${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.tar.gz.sig
-RUN gpg --recv-keys A95536204A3BB489715231282A98E77EB6F24CA8 \
+RUN set -e; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --recv-keys A95536204A3BB489715231282A98E77EB6F24CA8 \
     && gpg --verify pcre2-${PCRE2_VERSION}.tar.gz.sig pcre2-${PCRE2_VERSION}.tar.gz
 RUN tar zxf pcre2-${PCRE2_VERSION}.tar.gz \
     && rm pcre2-${PCRE2_VERSION}.tar.gz*
@@ -133,7 +138,9 @@ RUN tar zxf pcre2-${PCRE2_VERSION}.tar.gz \
 # Download zlib
 RUN wget -q https://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz \
     && wget -q https://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz.asc
-RUN gpg --recv-keys 5ED46A6721D365587791E2AA783FCD8E58BCAFBA \
+RUN set -e; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --recv-keys 5ED46A6721D365587791E2AA783FCD8E58BCAFBA \
     && gpg --verify zlib-${ZLIB_VERSION}.tar.gz.asc zlib-${ZLIB_VERSION}.tar.gz
 RUN tar zxf zlib-${ZLIB_VERSION}.tar.gz \
     && rm zlib-${ZLIB_VERSION}.tar.gz*

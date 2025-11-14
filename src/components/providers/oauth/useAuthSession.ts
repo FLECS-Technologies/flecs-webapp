@@ -18,18 +18,8 @@
 
 import { useCallback } from 'react';
 import { AuthState, User } from './types';
-
-// Utility function to decode JWT token
-const decodeJwt = (token: string): Partial<User> | null => {
-  try {
-    const [, payload] = token.split('.');
-    const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-    return JSON.parse(decodedPayload);
-  } catch (error) {
-    console.error('Failed to decode JWT token:', error);
-    return null;
-  }
-};
+import { usePublicAuthProviderApi } from '../AuthProviderApiProvider';
+import { decodeJwt } from '../../../utils/jwt-utils';
 
 // Session storage keys
 export const SESSION_KEYS = {
@@ -44,11 +34,22 @@ export const SESSION_KEYS = {
  * Hook to manage authentication state and session storage
  */
 export const useAuthSession = () => {
+  const api = usePublicAuthProviderApi();
   const checkAuthentication = useCallback(async (): Promise<boolean> => {
     try {
       // Check for stored access token (using sessionStorage for better security)
       const accessToken = sessionStorage.getItem(SESSION_KEYS.ACCESS_TOKEN);
       const user = sessionStorage.getItem(SESSION_KEYS.USER);
+      if (accessToken) {
+        const { header } = decodeJwt(accessToken);
+        const jwk = await api.AuthApi.getJwk();
+        if (jwk && header.kid !== jwk.data?.kid) {
+          // Token's key ID does not match the expected JWK key ID
+          sessionStorage.removeItem(SESSION_KEYS.ACCESS_TOKEN);
+          sessionStorage.removeItem(SESSION_KEYS.USER);
+          return false;
+        }
+      }
 
       return !!(accessToken && user);
     } catch (error) {
@@ -89,7 +90,7 @@ export const useAuthSession = () => {
         }
 
         // Fallback: decode access token to extract user information
-        const tokenClaims = decodeJwt(accessToken);
+        const { payload: tokenClaims } = decodeJwt(accessToken) || {};
         if (tokenClaims) {
           const enhancedUser: User = {
             ...parsedUser,

@@ -82,7 +82,7 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
       }));
       deviceState.setAuthenticated(false);
     }
-  }, [checkAuthentication, getUserFromSession, deviceState]);
+  }, [deviceState]);
 
   // Initialize only once on mount or when deviceState.onboarded changes
   useEffect(() => {
@@ -126,6 +126,15 @@ export const OAuth4WebApiAuthProvider: React.FC<OAuth4WebApiAuthProviderProps> =
   useEffect(() => {
     setShouldRenderAuthGuard(deviceState.onboarded);
   }, [deviceState.onboarded]);
+
+  // Periodically refresh auth state every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (authState.isAuthenticated) refreshAuthState();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [refreshAuthState]);
 
   const contextValue: AuthContextValue = useMemo(
     () => ({

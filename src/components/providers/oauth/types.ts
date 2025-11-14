@@ -40,6 +40,12 @@ export interface User {
   [key: string]: any; // Allow additional properties
 }
 
+export interface JWTHeader {
+  alg: string;
+  kid?: string;
+  typ?: string;
+}
+
 export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;

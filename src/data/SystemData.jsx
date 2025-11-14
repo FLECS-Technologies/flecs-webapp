@@ -34,7 +34,7 @@ function SystemData(props) {
 
     // Only fetch once when component mounts
     if (!loading) fetchPing();
-  }, [setPing]); // Remove loading from dependencies
+  }, []);
 
   React.useEffect(() => {
     // Fetch after authentication

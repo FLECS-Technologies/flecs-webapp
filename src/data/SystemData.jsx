@@ -37,12 +37,9 @@ function SystemData(props) {
   }, [setPing]); // Remove loading from dependencies
 
   React.useEffect(() => {
-    // Only proceed if context functions are available
-    if (!setSystemInfo) return;
-
-    // Only fetch once when component mounts
-    if (!loadingSystemInfo) fetchSystemInfo();
-  }, [setSystemInfo, authenticated]);
+    // Fetch after authentication
+    if (!loadingSystemInfo && authenticated) fetchSystemInfo();
+  }, [authenticated]);
 
   // Add defensive check - don't run effects if context functions are not available
   if (!setPing || !setLoading || !setSystemInfo) {

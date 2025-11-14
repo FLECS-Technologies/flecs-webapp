@@ -112,7 +112,9 @@ export default function ElevateAppBar(props) {
           </AppBar>
         </ElevationScroll>
       )}
-      <QuestLogDialog open={questLogOpen} onClose={() => setQuestLogOpen(false)} />
+      {questLogOpen && (
+        <QuestLogDialog open={questLogOpen} onClose={() => setQuestLogOpen(false)} />
+      )}
     </React.Fragment>
   );
 }

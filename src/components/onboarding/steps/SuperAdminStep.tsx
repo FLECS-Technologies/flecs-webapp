@@ -107,18 +107,6 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
           access to manage the system.
         </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        {validationErrors.general && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {validationErrors.general}
-          </Alert>
-        )}
-
         <Stack spacing={3}>
           <TextField
             fullWidth
@@ -213,6 +201,17 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
             {isLoading ? 'Creating Admin...' : 'Create Administrator'}
           </Button>
         </Box>
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+
+        {validationErrors.general && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {validationErrors.general}
+          </Alert>
+        )}
       </form>
     </Box>
   );

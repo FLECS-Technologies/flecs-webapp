@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { decodeHtmlEntities } from '../../utils/html-utils';
 import { MarketplaceAPIConfiguration } from '../api-config';
 import axios from 'axios';
 
@@ -48,7 +49,7 @@ function getAppIcon(app) {
 }
 
 function getAuthor(app) {
-  return app?.meta_data.find((o) => o.key === 'port-author-name')?.value;
+  return decodeHtmlEntities(app?.meta_data.find((o) => o.key === 'port-author-name')?.value);
 }
 
 function getVersion(app) {
@@ -84,7 +85,7 @@ function isBlacklisted(systemInfo, blacklist) {
 }
 
 function getShortDescription(app) {
-  let description = app?.short_description || '';
+  let description = decodeHtmlEntities(app?.short_description || '');
   let previous;
   do {
     previous = description;

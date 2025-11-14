@@ -96,7 +96,7 @@ function AppList(props) {
         const mpApp = findApp(app.appKey, loadedProducts);
         if (mpApp) {
           app.avatar = getAppIcon(mpApp);
-          app.title = mpApp?.name;
+          app.title = decodeHtmlEntities(mpApp?.name);
           app.author = getAuthor(mpApp);
           app.relatedLinks = getCustomLinks(mpApp);
           app.price = getPrice(mpApp);

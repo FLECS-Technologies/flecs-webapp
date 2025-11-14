@@ -57,147 +57,163 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
-
     if (!username.trim()) {
       errors.username = 'Username is required';
     }
-
     if (!password) {
       errors.password = 'Password is required';
     }
-
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords do not match';
     }
-
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async () => {
-    if (validateForm()) {
-      try {
-        await api.AuthApi.postSuperAdmin({ full_name: username, name: username, password });
-
-        await onComplete();
-        onNext();
-      } catch (error: any) {
-        const errors: Record<string, string> = {};
-        errors.general = error.message || 'Failed to create super admin. Please try again.';
-        setValidationErrors(errors);
-      }
+    if (!validateForm()) return;
+    setValidationErrors({});
+    try {
+      if (!api || !api.AuthApi || !api.AuthApi.postSuperAdmin) throw new Error('API unavailable');
+      await api.AuthApi.postSuperAdmin({
+        full_name: username,
+        name: username,
+        password,
+      });
+      if (onComplete) onComplete();
+      if (onNext) onNext();
+    } catch (err: any) {
+      let msg = err?.message || 'Failed to create super admin. Please try again.';
+      setValidationErrors((prev) => ({ ...prev, general: msg }));
     }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
   };
 
   const passwordStrength = getPasswordStrength(password);
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-      <Typography variant="h5" gutterBottom>
-        Create Super Administrator
-      </Typography>
+      <form onSubmit={handleFormSubmit}>
+        <Typography variant="h5" gutterBottom>
+          Create Super Administrator
+        </Typography>
 
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Create the initial administrator account for your device. This account will have full access
-        to manage the system.
-      </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Create the initial administrator account for your device. This account will have full
+          access to manage the system.
+        </Typography>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      {validationErrors.general && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {validationErrors.general}
-        </Alert>
-      )}
-
-      <Stack spacing={3}>
-        <TextField
-          fullWidth
-          label="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          error={!!validationErrors.username}
-          helperText={validationErrors.username}
-          disabled={isLoading}
-        />
-
-        <TextField
-          fullWidth
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={!!validationErrors.password}
-          helperText={validationErrors.password}
-          disabled={isLoading}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-
-        {password && (
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              Password Strength: {passwordStrength.label}
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={passwordStrength.score}
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                backgroundColor: 'grey.200',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: passwordStrength.color,
-                },
-              }}
-            />
-          </Box>
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
         )}
 
-        <TextField
-          fullWidth
-          label="Confirm Password"
-          type={showConfirmPassword ? 'text' : 'password'}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          error={!!validationErrors.confirmPassword}
-          helperText={validationErrors.confirmPassword}
-          disabled={isLoading}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                  >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </Stack>
+        {validationErrors.general && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {validationErrors.general}
+          </Alert>
+        )}
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-        <Button variant="contained" onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? 'Creating Admin...' : 'Create Administrator'}
-        </Button>
-      </Box>
+        <Stack spacing={3}>
+          <TextField
+            fullWidth
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            error={!!validationErrors.username}
+            helperText={validationErrors.username}
+            disabled={isLoading}
+            autoFocus
+          />
+
+          <TextField
+            fullWidth
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={!!validationErrors.password}
+            helperText={validationErrors.password}
+            disabled={isLoading}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+
+          {password && (
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                Password Strength: {passwordStrength.label}
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={passwordStrength.score}
+                sx={{
+                  backgroundColor: 'grey.200',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: passwordStrength.color,
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          <TextField
+            fullWidth
+            label="Confirm Password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!validationErrors.confirmPassword}
+            helperText={validationErrors.confirmPassword}
+            disabled={isLoading}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      edge="end"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Stack>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            tabIndex={3}
+            type="submit"
+          >
+            {isLoading ? 'Creating Admin...' : 'Create Administrator'}
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 };

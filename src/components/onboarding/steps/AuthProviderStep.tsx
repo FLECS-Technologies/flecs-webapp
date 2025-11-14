@@ -144,7 +144,8 @@ const AuthProviderStepComponent: React.FC<WizardStepProps> = ({
     await quests.fetchQuest(flecsportQuestId.data.jobId);
     const result = await quests.waitForQuest(flecsportQuestId.data.jobId);
 
-    if (!questStateFinishedOk(result.state)) throw new Error(result.description);
+    if (!questStateFinishedOk(result.state))
+      throw new Error(result.detail || 'Failed to import the authentication provider.');
 
     await checkProvidersAfterFlecsport();
   };

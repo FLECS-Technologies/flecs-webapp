@@ -79,8 +79,8 @@ jobs:
           tags: flecspublic.azurecr.io/webapp:${{ steps.version.outputs.webapp-version }}-${{ matrix.arch }}
           pull: true
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=buildkit-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=buildkit-${{ matrix.arch }}
 
   container-registry:
     needs: docker

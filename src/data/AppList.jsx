@@ -31,6 +31,7 @@ import {
   getReverseDomainName,
 } from '../api/marketplace/ProductService';
 import { useProtectedApi } from '../components/providers/ApiProvider';
+import { decodeHtmlEntities } from '../utils/html-utils';
 
 function AppList(props) {
   const {

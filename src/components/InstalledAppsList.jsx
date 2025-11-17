@@ -43,7 +43,7 @@ import usePagination from '../hooks/usePagination';
 import { CircularProgress } from '@mui/material';
 import { useSystemContext } from '../data/SystemProvider';
 import ContentDialog from './ContentDialog';
-import Export from './Export';
+import Export from './buttons/export/Export';
 import Import from './Import';
 import InstallationStepper from './apps/installation/InstallationStepper';
 import PoweredBy from './navigation/PoweredBy';

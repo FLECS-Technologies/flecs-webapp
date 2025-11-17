@@ -20,17 +20,17 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import Export from '../Export';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider and Quest context
 const mockUseProtectedApi = vi.fn();
 const mockUseQuestContext = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('../../../../components/providers/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../quests/QuestContext', () => ({
+vi.mock('../../../quests/QuestContext', () => ({
   useQuestContext: () => mockUseQuestContext(),
   QuestContext: {},
 }));

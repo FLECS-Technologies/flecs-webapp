@@ -30,10 +30,9 @@ import LoadButton from './LoadButton';
 import RequestAppDialog from './RequestAppDialog';
 import ActionSnackbar from './ActionSnackbar';
 import ContentDialog from './ContentDialog';
-// import InstallAppStepper from './InstallAppStepper'
 import { createVersion, createVersions, getLatestVersion } from '../utils/version-utils';
 import { VersionSelector } from './autocomplete/VersionSelector';
-import AppRating from './AppRating';
+import AppRating from '../components/apps/rating/AppRating';
 import { useSystemContext } from '../data/SystemProvider';
 import { isBlacklisted } from '../api/marketplace/ProductService';
 import InstallationStepper from './apps/installation/InstallationStepper';

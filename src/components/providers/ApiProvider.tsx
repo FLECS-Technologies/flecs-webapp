@@ -16,29 +16,27 @@
  * limitations under the License.
  */
 import React, { createContext, useContext, useMemo } from 'react';
+import normalizeUrl from 'normalize-url';
 import { useOAuth4WebApiAuth } from './OAuth4WebApiAuthProvider';
 
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '../../api/flecs-core/api-client';
+import { BASENAME } from '../../App';
 
 // Remove the global api export from api-client.ts
 export function getBaseURL(): string {
-  return host() + baseURL();
+  return normalizeUrl(host() + '/' + baseURL());
 }
 
 export function host() {
-  let target = '';
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-    target = import.meta.env.VITE_APP_DEV_CORE_URL || '';
+    return import.meta.env.VITE_APP_DEV_CORE_URL || '';
   }
-  return target;
+  return window.location.origin + '/' + BASENAME;
 }
 
 export function baseURL() {
-  if (
-    import.meta.env.VITE_APP_ENVIRONMENT === 'test' ||
-    import.meta.env.VITE_APP_ENVIRONMENT === 'development'
-  ) {
+  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
     return '/api/v2';
   }
   return '../api/v2';

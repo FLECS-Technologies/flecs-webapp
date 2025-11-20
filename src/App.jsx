@@ -24,6 +24,8 @@ import { SystemData } from './data/SystemData';
 import { ThemeHandler } from './styles/ThemeHandler';
 import Providers from './components/providers/Providers';
 
+export const BASENAME = 'ui';
+
 export default function App() {
   return (
     <ThemeHandler>

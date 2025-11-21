@@ -17,6 +17,9 @@ dev-build: ci
 build: ci
 	@npm run build:production --if-present
 
+special_%:
+	@./special/$*.sh
+
 docker_%:
 	./docker/build-image.sh $(DOCKER_TAG) $* $(ARGS)
 

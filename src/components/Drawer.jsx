@@ -110,6 +110,14 @@ const MiniDrawer = (props) => {
     }
   };
 
+  const isMenuItemVisible = (menuItem) => {
+    const visible = searchParams.getAll('menu-items');
+    if (visible.length > 0 && !visible?.includes(menuItem)) {
+      return false; // Hide when visible the menu item is not included in the list
+    }
+    return true; // Show otherwise (including when visible is null or undefined)
+  };
+
   const handleListItemClick = (event, index) => {
     // setSelectedIndex(index)
     switch (index) {
@@ -141,48 +149,56 @@ const MiniDrawer = (props) => {
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
             <Divider />
-            <ListItemButton
-              selected={location.pathname === '/'}
-              onClick={(event) => handleListItemClick(event, 0)}
-              aria-label="Apps"
-            >
-              <ListItemIcon>
-                <WidgetIcon />
-              </ListItemIcon>
-              <ListItemText primary="Apps" />
-            </ListItemButton>
-            <ListItemButton
-              selected={location.pathname === '/marketplace'}
-              onClick={(event) => handleListItemClick(event, 1)}
-              aria-label="/marketplace"
-            >
-              <ListItemIcon>
-                <MarketplaceIcon />
-              </ListItemIcon>
-              <ListItemText primary="Marketplace" />
-            </ListItemButton>
-            <ListItemButton
-              selected={location.pathname === '/service-mesh'}
-              onClick={(event) => handleListItemClick(event, 2)}
-              aria-label="/service-mesh"
-            >
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Service Mesh" />
-            </ListItemButton>
+            {isMenuItemVisible('apps') && (
+              <ListItemButton
+                selected={location.pathname === '/'}
+                onClick={(event) => handleListItemClick(event, 0)}
+                aria-label="Apps"
+              >
+                <ListItemIcon>
+                  <WidgetIcon />
+                </ListItemIcon>
+                <ListItemText primary="Apps" />
+              </ListItemButton>
+            )}
+            {isMenuItemVisible('marketplace') && (
+              <ListItemButton
+                selected={location.pathname === '/marketplace'}
+                onClick={(event) => handleListItemClick(event, 1)}
+                aria-label="/marketplace"
+              >
+                <ListItemIcon>
+                  <MarketplaceIcon />
+                </ListItemIcon>
+                <ListItemText primary="Marketplace" />
+              </ListItemButton>
+            )}
+            {isMenuItemVisible('service-mesh') && (
+              <ListItemButton
+                selected={location.pathname === '/service-mesh'}
+                onClick={(event) => handleListItemClick(event, 2)}
+                aria-label="/service-mesh"
+              >
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Service Mesh" />
+              </ListItemButton>
+            )}
           </List>
           <Divider />
           <List component="nav" aria-label="Drawer-List-System">
-            <ListItemButton
-              selected={location.pathname === '/system'}
-              onClick={(event) => handleListItemClick(event, 3)}
-            >
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="System" />
-            </ListItemButton>
+            {isMenuItemVisible('system') && (
+              <ListItemButton
+                selected={location.pathname === '/system'}
+                onClick={(event) => handleListItemClick(event, 3)}
+              >
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="System" />
+              </ListItemButton>
+            )}
           </List>
         </Drawer>
       )}

@@ -83,10 +83,9 @@ export const useOAuthConfig = () => {
         client_id: props.client_id || 'flecs',
       };
 
-      // Use current page location as redirect URI to handle base paths correctly
-      const basePath = import.meta.env.BASE_URL || '/';
+      // Use complete host and path for redirect. We only have to adjust the fragment as we use hash routing
       const redirectUri =
-        props.redirect_uri || `${window.location.origin}${basePath}oauth/callback`;
+        props.redirect_uri || `${window.location.origin}${window.location.pathname}#/oauth/callback`;
 
       const config: OAuthConfig = {
         ...providerConfig,

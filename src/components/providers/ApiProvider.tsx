@@ -21,7 +21,6 @@ import { useOAuth4WebApiAuth } from './OAuth4WebApiAuthProvider';
 
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '../../api/flecs-core/api-client';
-import { BASENAME } from '../../App';
 
 // Remove the global api export from api-client.ts
 export function getBaseURL(): string {
@@ -32,7 +31,7 @@ export function host() {
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
     return import.meta.env.VITE_APP_DEV_CORE_URL || '';
   }
-  return window.location.origin + '/' + BASENAME;
+  return window.location.origin;
 }
 
 export function baseURL() {

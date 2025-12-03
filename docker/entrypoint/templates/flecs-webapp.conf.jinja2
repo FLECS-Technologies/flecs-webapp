@@ -8,31 +8,6 @@ server {
     }
 
     location / {
-        return 308 https://$host{{ https_port }}$request_uri;
-    }
-}
-
-server {
-    listen 443 ssl;
-    server_name localhost;
-
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_certificate /etc/nginx/certs/cert.pem;
-    ssl_certificate_key /etc/nginx/certs/key.pem;
-
-    location = /api/v2/imports {
-        client_max_body_size 8G;
-        proxy_request_buffering off;
-        proxy_pass http://flecs-floxy:8951/v2/imports;
-    }
-
-    location /api/ {
-        proxy_set_header Host $host;
-        proxy_pass http://flecs-floxy:8951/;
-    }
-
-    location / {
         root /usr/share/nginx/html/;
         try_files $uri$args $uri$args/ /index.html;
     }

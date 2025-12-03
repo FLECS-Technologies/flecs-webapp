@@ -5,7 +5,7 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
-  base: '/ui/',
+  base: './',
   plugins: [react(), svgr()],
   server: {
     open: true,

@@ -8,7 +8,7 @@
       "type": "pwa-chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "url": "http://localhost:5173/ui/",
+      "url": "http://localhost:5173/",
       "webRoot": "${workspaceFolder}",
       "runtimeArgs": ["--disable-web-security"]
     },
@@ -16,7 +16,7 @@
       "type": "firefox",
       "request": "launch",
       "name": "Launch Firefox against localhost",
-      "url": "http://localhost:5137/ui/",
+      "url": "http://localhost:5137/",
       "webRoot": "${workspaceFolder}"
     },
     {

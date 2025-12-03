@@ -32,17 +32,9 @@ server {
         proxy_pass http://flecs-floxy:8951/;
     }
 
-    location /ui {
-        return 301 $scheme://$http_host/ui/$is_args$args;
-    }
-
-    location /ui/ {
-        root /usr/share/nginx/html/;
-        try_files $uri$args $uri$args/ /ui/index.html;
-    }
-
     location / {
-        return 301 $scheme://$http_host/ui$request_uri;
+        root /usr/share/nginx/html/;
+        try_files $uri$args $uri$args/ /index.html;
     }
 
     # redirect server error pages to the static page /50x.html

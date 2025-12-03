@@ -32,7 +32,7 @@ interface AuthGuardProps {
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children, auth }) => {
   // Don't guard the OAuth callback route
   // Check for both /oauth/callback and /ui/oauth/callback
-  const isCallbackRoute = window.location.pathname.endsWith('/oauth/callback');
+  const isCallbackRoute = window.location.hash.endsWith('/oauth/callback');
 
   if (isCallbackRoute) {
     return <>{children}</>;

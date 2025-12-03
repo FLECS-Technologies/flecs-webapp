@@ -315,7 +315,7 @@ COPY --from=license-info /usr/local/share/doc/ /usr/share/doc/
 COPY --from=sbom-info /var/lib/dpkg/status.d/ /var/lib/dpkg/status.d/
 COPY --from=entrypoint /entrypoint /entrypoint
 COPY docker/fs/ /
-COPY dist/ /usr/share/nginx/html/ui/
+COPY dist/ /usr/share/nginx/html/
 
 # ==============================================================================
 # final: A simple copy of 'intermediate' base on 'scratch'. This will completely

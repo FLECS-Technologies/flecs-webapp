@@ -5,10 +5,22 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
-  base: './',
+  base: '',
   plugins: [react(), svgr()],
   server: {
     open: true,
+  },
+  build: {
+    // We want to keep a flat asset structure without chunk/ directory to
+    // keep our webserver config simple ("try_files")
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
   },
   define: {
     global: 'globalThis', // <–– fixes fbjs / draft-js issues

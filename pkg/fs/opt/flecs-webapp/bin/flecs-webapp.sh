@@ -33,51 +33,6 @@ print_usage() {
   echo
 }
 
-create_network() {
-  # check if we have created network 'flecs' before
-  GATEWAY=`docker network inspect --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}" flecs 2>/dev/null`
-
-  # if network 'flecs' does not exist, create it
-  if [ -z "${GATEWAY}" ]; then
-    # list all in-use IP addresses
-    if ifconfig -a >/dev/null 2>&1; then
-      IPS=`ifconfig -a | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
-    elif ip addr >/dev/null 2>&1; then
-      IPS=`ip addr -a | sed -n -E 's/^[[:space:]]+inet ([0-9\.]+).+$/\1/p'`
-    else
-      echo "Warning: Cannot determine in-use IP addresses" 1>&2
-    fi
-    # try subnets 172.21.0.0/16 --> 172.31.0.0/16
-    SUBNETS=(21 22 23 24 25 26 27 28 29 30 31)
-    for SUBNET in ${SUBNETS[*]}; do
-      # skip subnets that overlap with in-use IP addresses
-      SKIP_SUBNET=
-      for IP in ${IPS}; do
-        if [[ ${IP} == 172.${SUBNET}.* ]]; then
-          echo "${IP} collides with subnet 172.${SUBNET}.0.0/16 -- skipping"
-          SKIP_SUBNET="true"
-        fi
-      done
-      if [ ! -z "${SKIP_SUBNET}" ]; then
-        continue
-      fi
-      # try to create flecs network as Docker bridge network
-      if docker network create --driver bridge --subnet 172.${SUBNET}.0.0/16 --gateway 172.${SUBNET}.0.1 flecs >/dev/null 2>&1; then
-        GATEWAY="172.${SUBNET}.0.1"
-        break;
-      fi
-    done
-  fi
-
-  if [ -z "${GATEWAY}" ]; then
-    echo "Network 'flecs' does not exist and could not create it" 2>&1
-    exit 1
-  fi
-
-  IP=`echo ${GATEWAY} | sed -E 's/[0-9]+\.[0-9]+$/255.254/g'`
-  echo "Assigning IP ${IP} to ${CONTAINER}"
-}
-
 case ${1} in
   pull)
     # If pulling fails but an image is already present locally,
@@ -94,48 +49,19 @@ case ${1} in
     fi
     ;;
   create)
-    create_network
+    GATEWAY=`docker network inspect --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}" flecs 2>/dev/null`
+    IP=`echo ${GATEWAY} | sed -E 's/[0-9]+\.[0-9]+$/255.254/g'`
+    echo "Assigning IP ${IP} to ${CONTAINER}"
     if [ -z "${IP}" ]; then
       echo "Could not calculate IP address to assign to ${CONTAINER}"
       exit 1
     fi
-
-    HTTP_PORTS=(80 8080 8000 none)
-    HTTP_PORTS_HEX=(0050 1F90 1F40 none)
-    for i in ${!HTTP_PORTS_HEX[*]}; do
-      if ! cat /proc/net/tcp /proc/net/tcp6 | grep -E ":${HTTP_PORTS_HEX[$i]} [0-9A-F]{8}:[0-9A-F]{4} 0A"; then
-        break
-      fi
-    done
-
-    HTTPS_PORTS=(443 8443 4443 none)
-    HTTPS_PORTS_HEX=(01BB 208C 114B none)
-    for j in ${!HTTP_PORTS_HEX[*]}; do
-      if ! cat /proc/net/tcp /proc/net/tcp6 | grep -E ":${HTTPS_PORTS_HEX[$i]} [0-9A-F]{8}:[0-9A-F]{4} 0A"; then
-        break
-      fi
-    done
-
-    if [ "${HTTP_PORTS[$i]}" == "none" ]; then
-      echo "No free http port found in (${HTTP_PORTS}) - exiting"
-      exit 1
-    fi
-    if [ "${HTTPS_PORTS[$j]}" == "none" ]; then
-      echo "No free https port found in (${HTTPS_PORTS}) - exiting"
-      exit 1
-    fi
-    echo "Binding flecs-webapp to port ${HTTP_PORTS[$i]}/http and ${HTTPS_PORTS[$j]}/https"
 
     docker create \
       --name ${CONTAINER} \
       --network flecs \
       --ip ${IP} \
       --add-host flecs-floxy:${GATEWAY} \
-      --volume flecs-webapp_certs:/etc/nginx/certs \
-      --publish ${HTTP_PORTS[$i]}:80 \
-      --publish ${HTTPS_PORTS[$i]}:443 \
-      --env WEBAPP_HTTP_PORT=${HTTP_PORTS[$i]} \
-      --env WEBAPP_HTTPS_PORT=${HTTPS_PORTS[$j]} \
       --rm ${DOCKER_IMAGE}:${DOCKER_TAG}
     exit $?
     ;;

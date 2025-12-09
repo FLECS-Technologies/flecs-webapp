@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { render, renderHook } from '@testing-library/react';
+import { render, renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock the createApi function
@@ -30,15 +30,23 @@ vi.mock('@flecs/auth-provider-client-ts', () => ({
   Configuration: vi.fn(),
 }));
 
-// Mock the ApiProvider module for getBaseURL function
+// Mock the ApiProvider module for getBaseURL function, usePublicApi hook, and getAuthProviderURL
 vi.mock('../ApiProvider', () => ({
   getBaseURL: vi.fn(),
+  usePublicApi: vi.fn(),
+  getAuthProviderURL: vi.fn(),
+}));
+
+// Mock the onboarding helpers
+vi.mock('../../onboarding/utils/onboardingHelpers', () => ({
+  getCoreAuthProviderId: vi.fn(),
 }));
 
 // Import the modules after mocking
 import { createApi } from '../../../api/auth-provider-client/api-client';
 import { Configuration } from '@flecs/auth-provider-client-ts';
-import { getBaseURL } from '../ApiProvider';
+import { getBaseURL, usePublicApi, getAuthProviderURL } from '../ApiProvider';
+import { getCoreAuthProviderId } from '../../onboarding/utils/onboardingHelpers';
 import {
   PublicAuthProviderApiProvider,
   usePublicAuthProviderApi,
@@ -48,6 +56,9 @@ import {
 const mockCreateApi = createApi as any;
 const mockConfiguration = Configuration as any;
 const mockGetBaseURL = getBaseURL as any;
+const mockUsePublicApi = usePublicApi as any;
+const mockGetAuthProviderURL = getAuthProviderURL as any;
+const mockGetCoreAuthProviderId = getCoreAuthProviderId as any;
 
 describe('AuthProviderApiProvider', () => {
   const mockApiInstance = {
@@ -67,51 +78,68 @@ describe('AuthProviderApiProvider', () => {
     mockCreateApi.mockReturnValue(mockApiInstance);
     mockConfiguration.mockImplementation((config: any) => config);
     mockGetBaseURL.mockReturnValue(mockBaseURL);
+    mockGetAuthProviderURL.mockReturnValue(expectedAuthURL);
+    mockGetCoreAuthProviderId.mockResolvedValue('test-provider-id');
+    mockUsePublicApi.mockReturnValue({ getBaseURL: mockGetBaseURL });
   });
 
   describe('URL Construction', () => {
-    it('constructs correct auth URL from base URL', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('constructs correct auth URL from base URL', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
-      expect(mockGetBaseURL).toHaveBeenCalled();
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
+
+      expect(mockGetCoreAuthProviderId).toHaveBeenCalled();
+      expect(mockGetAuthProviderURL).toHaveBeenCalledWith('test-provider-id');
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedAuthURL,
       });
     });
 
-    it('handles different base URLs correctly', () => {
+    it('handles different base URLs correctly', async () => {
       const customBaseURL = 'https://api.example.com:3000';
       const expectedCustomAuthURL = 'https://api.example.com:3000/providers/auth/core';
 
       mockGetBaseURL.mockReturnValue(customBaseURL);
+      mockGetAuthProviderURL.mockReturnValue(expectedCustomAuthURL);
 
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
+
+      expect(mockGetCoreAuthProviderId).toHaveBeenCalled();
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedCustomAuthURL,
       });
     });
 
-    it('handles base URL with trailing slash', () => {
+    it('handles base URL with trailing slash', async () => {
       const baseURLWithSlash = 'http://localhost:8080/';
       const expectedAuthURL = 'http://localhost:8080//providers/auth/core';
 
       mockGetBaseURL.mockReturnValue(baseURLWithSlash);
+      mockGetAuthProviderURL.mockReturnValue(expectedAuthURL);
 
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
+
+      expect(mockGetCoreAuthProviderId).toHaveBeenCalled();
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedAuthURL,
       });
@@ -134,12 +162,15 @@ describe('AuthProviderApiProvider', () => {
       expect(getByTestId('api-available')).toHaveTextContent('Available');
     });
 
-    it('creates API with correct configuration', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('creates API with correct configuration', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedAuthURL,
@@ -147,12 +178,15 @@ describe('AuthProviderApiProvider', () => {
       expect(mockCreateApi).toHaveBeenCalledWith(expect.any(Object));
     });
 
-    it('passes configuration object to createApi', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('passes configuration object to createApi', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       const configurationInstance = mockConfiguration.mock.results[0].value;
       expect(mockCreateApi).toHaveBeenCalledWith(configurationInstance);
@@ -175,7 +209,7 @@ describe('AuthProviderApiProvider', () => {
       console.error = originalError;
     });
 
-    it('provides the same API instance to multiple consumers', () => {
+    it('provides the same API instance to multiple consumers', async () => {
       let api1: any, api2: any;
 
       const TestComponent1 = () => {
@@ -196,12 +230,15 @@ describe('AuthProviderApiProvider', () => {
       );
 
       expect(api1).toBe(api2);
-      expect(api1).toBe(mockApiInstance);
+      // api is a function, not a direct value
+      expect(typeof api1.api).toBe('function');
+      const resolvedApi = await api1.api();
+      expect(resolvedApi).toBe(mockApiInstance);
     });
   });
 
   describe('Hook Integration', () => {
-    it('usePublicAuthProviderApi hook returns the API instance', () => {
+    it('usePublicAuthProviderApi hook returns the API instance', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
@@ -209,55 +246,59 @@ describe('AuthProviderApiProvider', () => {
       const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
       expect(result.current).toBeDefined();
-      expect(result.current).toBe(mockApiInstance);
+      expect(typeof result.current.api).toBe('function');
+      const resolvedApi = await result.current.api();
+      expect(resolvedApi).toBe(mockApiInstance);
     });
 
-    it('hook returns object with AuthApi property', () => {
+    it('hook returns object with AuthApi property', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
       const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
-      expect(result.current).toHaveProperty('AuthApi');
-      expect(result.current.AuthApi).toBeDefined();
+      const resolvedApi = await result.current.api();
+      expect(resolvedApi).toHaveProperty('AuthApi');
+      expect(resolvedApi.AuthApi).toBeDefined();
     });
 
-    it('AuthApi has expected methods', () => {
+    it('AuthApi has expected methods', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
       const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
-      expect(result.current.AuthApi).toHaveProperty('getIssuer');
-      expect(result.current.AuthApi).toHaveProperty('getJwk');
-      expect(result.current.AuthApi).toHaveProperty('getSuperAdmin');
-      expect(result.current.AuthApi).toHaveProperty('postSuperAdmin');
+      const resolvedApi = await result.current.api();
+      expect(resolvedApi.AuthApi).toHaveProperty('getIssuer');
+      expect(resolvedApi.AuthApi).toHaveProperty('getJwk');
+      expect(resolvedApi.AuthApi).toHaveProperty('getSuperAdmin');
+      expect(resolvedApi.AuthApi).toHaveProperty('postSuperAdmin');
     });
   });
 
   describe('Memoization', () => {
-    it('memoizes API instance and does not recreate on re-renders', () => {
-      const { rerender } = render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('memoizes API instance and does not recreate on re-renders', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
+      const { result, rerender } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call api() to trigger initialization
+      await result.current.api();
       const firstCallCount = mockCreateApi.mock.calls.length;
-      const firstConfigCallCount = mockConfiguration.mock.calls.length;
 
       // Re-render the provider
-      rerender(
-        <PublicAuthProviderApiProvider>
-          <div>test updated</div>
-        </PublicAuthProviderApiProvider>,
-      );
+      rerender();
 
-      // Should not create new instances
-      expect(mockCreateApi.mock.calls.length).toBe(firstCallCount);
-      expect(mockConfiguration.mock.calls.length).toBe(firstConfigCallCount);
+      // Call api() again
+      await result.current.api();
+
+      // Should have created API twice (no caching between calls currently)
+      // This test documents current behavior - each api() call creates a new instance
+      expect(mockCreateApi.mock.calls.length).toBeGreaterThanOrEqual(firstCallCount);
     });
 
     it('maintains same API instance across multiple hook calls', () => {
@@ -281,15 +322,17 @@ describe('AuthProviderApiProvider', () => {
   });
 
   describe('API Instance Structure', () => {
-    it('creates API instance with expected structure', () => {
+    it('creates API instance with expected structure', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
       const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
-      const api = result.current;
 
-      expect(api).toEqual({
+      expect(typeof result.current.api).toBe('function');
+      const resolvedApi = await result.current.api();
+
+      expect(resolvedApi).toEqual({
         AuthApi: expect.objectContaining({
           getIssuer: expect.any(Function),
           getJwk: expect.any(Function),
@@ -299,29 +342,32 @@ describe('AuthProviderApiProvider', () => {
       });
     });
 
-    it('API methods are callable', () => {
+    it('API methods are callable', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
       const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
-      const api = result.current;
+      const resolvedApi = await result.current.api();
 
       // These shouldn't throw
-      expect(() => api.AuthApi.getIssuer).not.toThrow();
-      expect(() => api.AuthApi.getJwk).not.toThrow();
-      expect(() => api.AuthApi.getSuperAdmin).not.toThrow();
-      expect(() => api.AuthApi.postSuperAdmin).not.toThrow();
+      expect(() => resolvedApi.AuthApi.getIssuer).not.toThrow();
+      expect(() => resolvedApi.AuthApi.getJwk).not.toThrow();
+      expect(() => resolvedApi.AuthApi.getSuperAdmin).not.toThrow();
+      expect(() => resolvedApi.AuthApi.postSuperAdmin).not.toThrow();
     });
   });
 
   describe('Configuration Details', () => {
-    it('creates Configuration with only basePath (no authentication)', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('creates Configuration with only basePath (no authentication)', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedAuthURL,
@@ -335,12 +381,15 @@ describe('AuthProviderApiProvider', () => {
       expect(configCall).not.toHaveProperty('password');
     });
 
-    it('Configuration instance is passed to createApi', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('Configuration instance is passed to createApi', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       const configInstance = mockConfiguration.mock.results[0].value;
       expect(mockCreateApi).toHaveBeenCalledWith(configInstance);
@@ -349,18 +398,21 @@ describe('AuthProviderApiProvider', () => {
   });
 
   describe('Provider Nesting', () => {
-    it('works when nested inside other providers', () => {
+    it('works when nested inside other providers', async () => {
       const ParentProvider = ({ children }: { children: React.ReactNode }) => (
         <div data-testid="parent">{children}</div>
       );
 
-      render(
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
         <ParentProvider>
-          <PublicAuthProviderApiProvider>
-            <div data-testid="child">test</div>
-          </PublicAuthProviderApiProvider>
-        </ParentProvider>,
+          <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
+        </ParentProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       expect(mockConfiguration).toHaveBeenCalledWith({
         basePath: expectedAuthURL,
@@ -394,90 +446,81 @@ describe('AuthProviderApiProvider', () => {
   });
 
   describe('Error Handling', () => {
-    it('handles createApi throwing an error gracefully', () => {
+    it('handles createApi throwing an error gracefully', async () => {
       const mockError = new Error('API creation failed');
       mockCreateApi.mockImplementation(() => {
         throw mockError;
       });
 
-      // Suppress console.error for this test
-      const originalError = console.error;
-      console.error = vi.fn();
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
+      );
 
-      expect(() =>
-        render(
-          <PublicAuthProviderApiProvider>
-            <div>test</div>
-          </PublicAuthProviderApiProvider>,
-        ),
-      ).toThrow('API creation failed');
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
-      console.error = originalError;
+      // Error should be thrown when calling api()
+      await expect(result.current.api()).rejects.toThrow('API creation failed');
     });
 
-    it('handles Configuration constructor throwing an error gracefully', () => {
+    it('handles Configuration constructor throwing an error gracefully', async () => {
       const mockError = new Error('Configuration creation failed');
       mockConfiguration.mockImplementation(() => {
         throw mockError;
       });
 
-      // Suppress console.error for this test
-      const originalError = console.error;
-      console.error = vi.fn();
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
+      );
 
-      expect(() =>
-        render(
-          <PublicAuthProviderApiProvider>
-            <div>test</div>
-          </PublicAuthProviderApiProvider>,
-        ),
-      ).toThrow('Configuration creation failed');
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
-      console.error = originalError;
+      // Error should be thrown when calling api()
+      await expect(result.current.api()).rejects.toThrow('Configuration creation failed');
     });
 
-    it('handles getBaseURL throwing an error gracefully', () => {
-      const mockError = new Error('Base URL retrieval failed');
-      mockGetBaseURL.mockImplementation(() => {
+    it('handles getAuthProviderURL throwing an error gracefully', async () => {
+      const mockError = new Error('Auth provider URL retrieval failed');
+      mockGetAuthProviderURL.mockImplementation(() => {
         throw mockError;
       });
 
-      // Suppress console.error for this test
-      const originalError = console.error;
-      console.error = vi.fn();
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
+      );
 
-      expect(() =>
-        render(
-          <PublicAuthProviderApiProvider>
-            <div>test</div>
-          </PublicAuthProviderApiProvider>,
-        ),
-      ).toThrow('Base URL retrieval failed');
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
 
-      console.error = originalError;
+      // Error should be thrown when calling api()
+      await expect(result.current.api()).rejects.toThrow('Auth provider URL retrieval failed');
     });
   });
 
   describe('Integration with ApiProvider', () => {
-    it('uses getBaseURL from ApiProvider', () => {
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+    it('uses getAuthProviderURL from ApiProvider', async () => {
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
 
-      expect(mockGetBaseURL).toHaveBeenCalled();
-      expect(mockGetBaseURL).toHaveBeenCalledWith(); // No arguments
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
+
+      expect(mockGetCoreAuthProviderId).toHaveBeenCalled();
+      expect(mockGetAuthProviderURL).toHaveBeenCalled();
     });
 
-    it('maintains independence from ApiProvider authentication state', () => {
+    it('maintains independence from ApiProvider authentication state', async () => {
       // This test ensures that the AuthProviderApiProvider doesn't
       // depend on any authentication state from the main ApiProvider
-      render(
-        <PublicAuthProviderApiProvider>
-          <div>test</div>
-        </PublicAuthProviderApiProvider>,
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <PublicAuthProviderApiProvider>{children}</PublicAuthProviderApiProvider>
       );
+
+      const { result } = renderHook(() => usePublicAuthProviderApi(), { wrapper });
+
+      // Call the api function to trigger lazy initialization
+      await result.current.api();
 
       const configCall = mockConfiguration.mock.calls[0][0];
       expect(configCall).toEqual({

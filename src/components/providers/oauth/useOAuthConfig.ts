@@ -85,7 +85,8 @@ export const useOAuthConfig = () => {
 
       // Use complete host and path for redirect. We only have to adjust the fragment as we use hash routing
       const redirectUri =
-        props.redirect_uri || `${window.location.origin}${window.location.pathname}#/oauth/callback`;
+        props.redirect_uri ||
+        `${window.location.origin}${window.location.pathname}#/oauth/callback`;
 
       const config: OAuthConfig = {
         ...providerConfig,

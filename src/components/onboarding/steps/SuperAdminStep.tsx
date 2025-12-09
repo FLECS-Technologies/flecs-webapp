@@ -36,7 +36,7 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const api = usePublicAuthProviderApi();
+  const authApi = usePublicAuthProviderApi();
 
   const getPasswordStrength = (
     password: string,
@@ -74,6 +74,7 @@ const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
     if (!validateForm()) return;
     setValidationErrors({});
     try {
+      const api = await authApi.api();
       if (!api || !api.AuthApi || !api.AuthApi.postSuperAdmin) throw new Error('API unavailable');
       await api.AuthApi.postSuperAdmin({
         full_name: username,

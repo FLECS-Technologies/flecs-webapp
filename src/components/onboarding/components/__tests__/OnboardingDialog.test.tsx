@@ -121,7 +121,11 @@ describe('OnboardingDialog', () => {
 
     mockUseProtectedApi.mockReturnValue(mockApi);
     mockUsePublicApi.mockReturnValue(mockPublicApi);
-    mockUsePublicAuthProviderApi.mockReturnValue(mockAuthProviderApi);
+    mockUsePublicAuthProviderApi.mockReturnValue({
+      api: {
+        AuthApi: mockApi,
+      },
+    });
   });
 
   it('renders the dialog when open is true', () => {

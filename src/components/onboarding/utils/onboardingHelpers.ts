@@ -23,8 +23,8 @@
  */
 export const checkAuthProviderConfigured = async (api: any): Promise<boolean> => {
   try {
-    const authResponse = await api.providers.getProvidersAuth();
-    return !!(authResponse.status === 200 && authResponse.data?.core);
+    const coreId = await getCoreAuthProviderId(api);
+    return coreId !== null;
   } catch (error) {
     return false;
   }
@@ -41,6 +41,21 @@ export const checkAuthProviderCoreConfigured = async (api: any): Promise<boolean
     return !!(response.status === 200 && response.data);
   } catch (error) {
     return false;
+  }
+};
+
+/**
+ * Helper function to get the configured auth provider ID
+ * @param api - The public API instance
+ * @returns Promise<string | null> - the provider ID if configured, null otherwise
+ */
+export const getCoreAuthProviderId = async (api: any): Promise<string | null> => {
+  try {
+    const authResponse = await api.providers.getProvidersAuth();
+    if (authResponse.status === 200) return authResponse.data?.core || null;
+    return null;
+  } catch (error) {
+    return null;
   }
 };
 

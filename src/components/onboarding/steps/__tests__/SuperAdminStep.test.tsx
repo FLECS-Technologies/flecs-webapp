@@ -56,8 +56,11 @@ describe('SuperAdminStep', () => {
     // Setup API mock using centralized mock
     mockApi = createMockAuthProviderApi();
     // Create the API structure that matches the actual provider
+    // The actual provider returns { api: () => Promise<{ AuthApi: ... }> }
     mockUsePublicAuthProviderApi.mockReturnValue({
-      AuthApi: mockApi,
+      api: vi.fn().mockResolvedValue({
+        AuthApi: mockApi,
+      }),
     });
 
     // Reset helper mocks

@@ -49,12 +49,13 @@ describe('AuthGuard', () => {
   // Mock window.location properly
   const mockLocation = {
     pathname: '/dashboard',
+    hash: '#/dashboard',
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock window.location.pathname
+    // Mock window.location with hash property
     Object.defineProperty(window, 'location', {
       value: mockLocation,
       writable: true,
@@ -117,7 +118,7 @@ describe('AuthGuard', () => {
   });
 
   it('bypasses auth guard for OAuth callback route', () => {
-    mockLocation.pathname = '/oauth/callback';
+    mockLocation.hash = '#/oauth/callback';
     mockAuth.isAuthenticated = false;
 
     render(<AuthGuard auth={mockAuth}>{mockChildren}</AuthGuard>);
@@ -127,7 +128,7 @@ describe('AuthGuard', () => {
   });
 
   it('bypasses auth guard for UI OAuth callback route', () => {
-    mockLocation.pathname = '/ui/oauth/callback';
+    mockLocation.hash = '#/ui/oauth/callback';
     mockAuth.isAuthenticated = false;
 
     render(<AuthGuard auth={mockAuth}>{mockChildren}</AuthGuard>);
@@ -152,7 +153,7 @@ describe('AuthGuard', () => {
   });
 
   it('prioritizes error state over loading state', () => {
-    mockLocation.pathname = '/dashboard'; // Reset to non-callback route
+    mockLocation.hash = '#/dashboard'; // Reset to non-callback route
     mockAuth.isLoading = true;
     mockAuth.error = new Error('Some error');
 
@@ -164,7 +165,7 @@ describe('AuthGuard', () => {
   });
 
   it('prioritizes error state over unauthenticated state', () => {
-    mockLocation.pathname = '/dashboard'; // Reset to non-callback route
+    mockLocation.hash = '#/dashboard'; // Reset to non-callback route
     mockAuth.isAuthenticated = false;
     mockAuth.error = new Error('Auth error');
 
@@ -176,7 +177,7 @@ describe('AuthGuard', () => {
   });
 
   it('handles callback route with nested path', () => {
-    mockLocation.pathname = '/app/ui/oauth/callback';
+    mockLocation.hash = '#/app/ui/oauth/callback';
     mockAuth.isAuthenticated = false;
 
     render(<AuthGuard auth={mockAuth}>{mockChildren}</AuthGuard>);
@@ -186,7 +187,7 @@ describe('AuthGuard', () => {
   });
 
   it('does not bypass auth for routes that only contain callback in path', () => {
-    mockLocation.pathname = '/dashboard/callback/settings';
+    mockLocation.hash = '#/dashboard/callback/settings';
     mockAuth.isAuthenticated = false;
 
     render(<AuthGuard auth={mockAuth}>{mockChildren}</AuthGuard>);

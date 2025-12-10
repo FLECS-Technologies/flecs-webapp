@@ -87,7 +87,11 @@ describe('OnboardingStepper', () => {
 
     mockUseProtectedApi.mockReturnValue(mockApi);
     mockUsePublicApi.mockReturnValue(mockPublicApi);
-    mockUsePublicAuthProviderApi.mockReturnValue(mockAuthProviderApi);
+    mockUsePublicAuthProviderApi.mockReturnValue({
+      api: {
+        AuthApi: mockApi,
+      },
+    });
   });
 
   // Minimal QuestProvider for tests

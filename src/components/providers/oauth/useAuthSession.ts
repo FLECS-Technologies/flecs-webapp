@@ -42,7 +42,7 @@ export const useAuthSession = () => {
       const user = sessionStorage.getItem(SESSION_KEYS.USER);
       if (accessToken) {
         const { header } = decodeJwt(accessToken);
-        const jwk = await api.AuthApi.getJwk();
+        const jwk = await (await api.api()).AuthApi.getJwk();
         if (jwk && header.kid !== jwk.data?.kid) {
           // Token's key ID does not match the expected JWK key ID
           sessionStorage.removeItem(SESSION_KEYS.ACCESS_TOKEN);

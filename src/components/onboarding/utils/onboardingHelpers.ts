@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 
+import { PublicAuthProviderApiContextValue } from "../../providers/AuthProviderApiProvider";
+
 /**
  * Helper function to check if the authentication provider is configured
  * @param api - The public API instance
@@ -64,9 +66,10 @@ export const getCoreAuthProviderId = async (api: any): Promise<string | null> =>
  * @param authProviderApi - The auth provider API instance
  * @returns Promise<boolean> - true if super admin exists, false otherwise
  */
-export const checkSuperAdminExists = async (authProviderApi: any): Promise<boolean> => {
+export const checkSuperAdminExists = async (authProviderApi: PublicAuthProviderApiContextValue): Promise<boolean> => {
   try {
-    const superAdminResponse = await authProviderApi.AuthApi.getSuperAdmin();
+    const api = (await authProviderApi.api()).AuthApi;
+    const superAdminResponse = await api.getSuperAdmin();
     return superAdminResponse.status === 204;
   } catch (error) {
     return false;

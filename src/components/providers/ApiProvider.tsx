@@ -34,6 +34,10 @@ export function host() {
   return window.location.origin;
 }
 
+export function getAuthProviderURL(providerId: string) {
+  return normalizeUrl(host() + '/flecs/providers/auth/' + providerId);
+}
+
 export function baseURL() {
   if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
     return '/api/v2';

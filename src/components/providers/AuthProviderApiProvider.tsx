@@ -2,19 +2,39 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { Configuration } from '@flecs/auth-provider-client-ts';
 import { createApi } from '../../api/auth-provider-client/api-client';
-import { getBaseURL } from './ApiProvider';
+import { getBaseURL, getAuthProviderURL } from './ApiProvider';
 import { getCoreAuthProviderId } from '../onboarding/utils/onboardingHelpers';
 import { usePublicApi } from './ApiProvider';
+import { ExperimentalApi } from '@flecs/auth-provider-client-ts';
 
 function getAuthURL() {
   return getBaseURL() + '/providers/auth/core';
 }
 
-function getAuthProviderURL(providerId: string) {
-  return getBaseURL() + '/providers/auth/' + providerId;
+async function getProviderId() {
+  const publicApi = usePublicApi();
+  return await getCoreAuthProviderId(publicApi);
 }
 
-const PublicAuthProviderApiContext = createContext<ReturnType<typeof createApi> | undefined>(
+export interface PublicAuthProviderApiContextValue {
+  api: (() => Promise<ReturnType<typeof createApi>>)
+}
+
+async function getApi(providerId: string | null) {
+  if (!providerId) {
+    providerId = await getProviderId();
+  }
+  if (!providerId) {
+    throw "Could not get provider id";
+  }
+  const basePath = getAuthProviderURL(providerId);
+  const config = new Configuration({
+    basePath,
+  });
+  return createApi(config);
+}
+
+const PublicAuthProviderApiContext = createContext<PublicAuthProviderApiContextValue | undefined>(
   undefined,
 );
 
@@ -31,35 +51,13 @@ interface PublicAuthProviderApiProviderProps {
 }
 
 export function PublicAuthProviderApiProvider({ children }: PublicAuthProviderApiProviderProps) {
-  const publicApi = usePublicApi();
   const [providerId, setProviderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProviderId = async () => {
-      try {
-        const id = await getCoreAuthProviderId(publicApi);
-        setProviderId(id);
-      } catch (error) {
-        console.error('Failed to fetch auth provider ID:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProviderId();
-  }, []);
-
-  const api = useMemo(() => {
-    const basePath = providerId ? getAuthProviderURL(providerId) : getAuthURL();
-    const config = new Configuration({
-      basePath,
-    });
-    return createApi(config);
-  }, [providerId]);
+  const contextValue = {api: () => getApi(providerId)};
 
   return (
-    <PublicAuthProviderApiContext.Provider value={api}>
+    <PublicAuthProviderApiContext.Provider value={contextValue}>
       {children}
     </PublicAuthProviderApiContext.Provider>
   );

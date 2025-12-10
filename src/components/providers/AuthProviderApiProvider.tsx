@@ -1,15 +1,10 @@
-// Public API Context (no authentication)
+// Auth provider API context and provider
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { Configuration } from '@flecs/auth-provider-client-ts';
 import { createApi } from '../../api/auth-provider-client/api-client';
-import { getBaseURL, getAuthProviderURL } from './ApiProvider';
+import { getAuthProviderURL } from './ApiProvider';
 import { getCoreAuthProviderId } from '../onboarding/utils/onboardingHelpers';
 import { usePublicApi } from './ApiProvider';
-import { ExperimentalApi } from '@flecs/auth-provider-client-ts';
-
-function getAuthURL () {
-  return getBaseURL() + '/providers/auth/core';
-}
 
 async function getProviderId (api: ReturnType<typeof usePublicApi>) {
   return await getCoreAuthProviderId(api);
@@ -19,6 +14,7 @@ export interface PublicAuthProviderApiContextValue {
   api: (() => Promise<ReturnType<typeof createApi>>)
 }
 
+// Function to lazy load the AuthProvider API and set the provider ID when available
 async function getApi (providerId: string | null, setProviderId: React.Dispatch<React.SetStateAction<string | null>>, api: ReturnType<typeof usePublicApi>) {
   if (!providerId) {
     providerId = await getProviderId(api);
@@ -52,7 +48,6 @@ interface PublicAuthProviderApiProviderProps {
 
 export function PublicAuthProviderApiProvider ({ children }: PublicAuthProviderApiProviderProps) {
   const [providerId, setProviderId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const api = usePublicApi();
   const contextValue = { api: () => getApi(providerId, setProviderId, api) };

@@ -19,13 +19,14 @@ export interface PublicAuthProviderApiContextValue {
   api: (() => Promise<ReturnType<typeof createApi>>)
 }
 
-async function getApi (providerId: string | null, api: ReturnType<typeof usePublicApi>) {
+async function getApi (providerId: string | null, setProviderId: React.Dispatch<React.SetStateAction<string | null>>, api: ReturnType<typeof usePublicApi>) {
   if (!providerId) {
     providerId = await getProviderId(api);
   }
   if (!providerId) {
     throw "Could not get provider id";
   }
+  setProviderId(providerId)
   const basePath = getAuthProviderURL(providerId);
   const config = new Configuration({
     basePath,
@@ -54,7 +55,7 @@ export function PublicAuthProviderApiProvider ({ children }: PublicAuthProviderA
   const [isLoading, setIsLoading] = useState(true);
 
   const api = usePublicApi();
-  const contextValue = { api: () => getApi(providerId, api) };
+  const contextValue = { api: () => getApi(providerId, setProviderId, api) };
 
   return (
     <PublicAuthProviderApiContext.Provider value={contextValue}>

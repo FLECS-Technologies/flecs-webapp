@@ -7,22 +7,21 @@ import { getCoreAuthProviderId } from '../onboarding/utils/onboardingHelpers';
 import { usePublicApi } from './ApiProvider';
 import { ExperimentalApi } from '@flecs/auth-provider-client-ts';
 
-function getAuthURL() {
+function getAuthURL () {
   return getBaseURL() + '/providers/auth/core';
 }
 
-async function getProviderId() {
-  const publicApi = usePublicApi();
-  return await getCoreAuthProviderId(publicApi);
+async function getProviderId (api: ReturnType<typeof usePublicApi>) {
+  return await getCoreAuthProviderId(api);
 }
 
 export interface PublicAuthProviderApiContextValue {
   api: (() => Promise<ReturnType<typeof createApi>>)
 }
 
-async function getApi(providerId: string | null) {
+async function getApi (providerId: string | null, api: ReturnType<typeof usePublicApi>) {
   if (!providerId) {
-    providerId = await getProviderId();
+    providerId = await getProviderId(api);
   }
   if (!providerId) {
     throw "Could not get provider id";
@@ -50,11 +49,12 @@ interface PublicAuthProviderApiProviderProps {
   children: React.ReactNode;
 }
 
-export function PublicAuthProviderApiProvider({ children }: PublicAuthProviderApiProviderProps) {
+export function PublicAuthProviderApiProvider ({ children }: PublicAuthProviderApiProviderProps) {
   const [providerId, setProviderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const contextValue = {api: () => getApi(providerId)};
+  const api = usePublicApi();
+  const contextValue = { api: () => getApi(providerId, api) };
 
   return (
     <PublicAuthProviderApiContext.Provider value={contextValue}>

@@ -21,7 +21,8 @@ import { Delete, Save } from '@mui/icons-material';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
 import { createUrl } from '../../../../components/buttons/editors/EditorButton';
-import { useProtectedApi } from '../../../../components/providers/ApiProvider';
+import { host, useProtectedApi } from '../../../../components/providers/ApiProvider';
+import normalizeUrl from 'normalize-url';
 
 interface EditorConfigCardProps {
   editor: InstanceEditor;
@@ -30,6 +31,10 @@ interface EditorConfigCardProps {
   setSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSnackbarState: React.Dispatch<React.SetStateAction<EditorConfigSnackbar>>;
 }
+
+const createCustomUrl = (editorUrl: string) => {
+  return normalizeUrl(host() + editorUrl);
+};
 
 const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
   editor,
@@ -138,7 +143,7 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
           </Box>
           <Box>
             <ListItemText
-              primary={editor_path_prefix ? createUrl('/' + editor_path_prefix) : ''}
+              primary={editor_path_prefix ? createCustomUrl('/' + editor_path_prefix) : ''}
               secondary="Custom URL created from Path Prefix"
             />
           </Box>

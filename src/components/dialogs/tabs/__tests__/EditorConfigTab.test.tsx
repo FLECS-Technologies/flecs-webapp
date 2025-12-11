@@ -23,9 +23,11 @@ import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
+const mockHost = vi.fn(() => 'http://localhost:8080');
 
 vi.mock('../../../../components/providers/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
+  host: () => mockHost(),
 }));
 
 describe('EditorConfigTab', () => {
@@ -88,7 +90,7 @@ describe('EditorConfigTab', () => {
     const entry = screen.getByDisplayValue('test_prefix');
     fireEvent.change(entry, { target: { value: 'new_test_prefix' } });
 
-    expect(screen.getByText(/\/api\/new_test_prefix$/)).toBeInTheDocument();
+    expect(screen.getByText(/\/new_test_prefix$/)).toBeInTheDocument();
   });
 
   it('no path prefix disables delete', async () => {

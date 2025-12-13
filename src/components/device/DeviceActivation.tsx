@@ -37,7 +37,7 @@ function DeviceActivation(props: InferProps<typeof DeviceActivation.propTypes>) 
     if (user && !activated && !activating && (!error || userChanged)) {
       activate();
     }
-  }, [user, activated, activating, error, userChanged, activate]);
+  }, [user, activated, error, userChanged, activate]);
 
   // Show info box and marketplace login if:
   // - no user is available AND device is not activated, OR

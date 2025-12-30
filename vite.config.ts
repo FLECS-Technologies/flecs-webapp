@@ -3,10 +3,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
+import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig({
   base: '',
-  plugins: [react(), svgr()],
+  plugins: [react(), svgr(), mkcert()],
   server: {
     open: true,
   },

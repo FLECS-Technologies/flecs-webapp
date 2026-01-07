@@ -205,7 +205,11 @@ export default function Row(props) {
                 <Typography sx={{ flex: '0.1 0.1 10%' }} variant="h6" gutterBottom component="div">
                   App instances
                 </Typography>
-                {row.instances.length === 1 && <EditorButtons instance={row.instances[0]} />}
+                {row.instances.length === 1 && (
+                  <div style={{ marginRight: 16 }}>
+                    <EditorButtons instance={row.instances[0]} sx={{ mr: 2 }} />
+                  </div>
+                )}
                 <InstanceStartCreateButtons
                   app={row}
                   startNewInstanceCallback={() => createNewInstance(props, true)}

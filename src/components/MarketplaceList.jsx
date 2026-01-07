@@ -18,7 +18,7 @@
 
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import Card from './Card';
+import Card from './apps/cards/Card';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { Box } from '@mui/material';
@@ -113,6 +113,7 @@ const MarketplaceList = (props) => {
           price={getPrice(app)}
           purchasable={getPurchasable(app)}
           documentationUrl={getDocumentationUrl(app)}
+          instances={appList?.find((o) => o.appKey.name === getReverseDomainName(app))?.instances}
         />
       ));
       return productCards;
@@ -129,6 +130,7 @@ const MarketplaceList = (props) => {
             appList?.find((o) => o.appKey.name === app.props.appKey.name)?.status || 'uninstalled',
           version: appList?.find((o) => o.appKey.name === app.props.appKey.name)?.appKey.version,
           installedVersions: getInstalledVersions(appList, app.props.appKey.name),
+          instances: appList?.find((o) => o.appKey.name === app.props.appKey.name)?.instances,
         },
       }));
       setProducts(updatedProducts);

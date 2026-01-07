@@ -39,14 +39,14 @@ export const createUrl = (editorUrl: string) => {
 export const EditorButton: React.FC<EditorButtonProps> = ({ editor, index }: EditorButtonProps) => {
   return (
     <React.Fragment>
-      <ButtonGroup disableElevation variant="contained" sx={{ m: 1 }}>
-        <Tooltip title={`Open ${editor.name || 'editor'} in a new tab`}>
+      <ButtonGroup disableElevation variant="contained" fullWidth>
+        <Tooltip title={`Open ${editor.name || 'app'} in a new tab`}>
           <Button
             aria-label={`open-editor-button-${index}`}
             onClick={() => window.open(createUrl(editor.url))}
             startIcon={<LaunchIcon />}
           >
-            {`Open ${editor.name || 'editor'}`}
+            {`Open ${editor.name || 'app'}`}
           </Button>
         </Tooltip>
       </ButtonGroup>

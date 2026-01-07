@@ -64,6 +64,11 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
           );
         }
 
+        // 3. uninstall the previous version
+        const uninstallQuest = await api.app.appsAppDelete(app.appKey.name, from);
+        const uninstallQuestId = uninstallQuest.data.jobId;
+        await executeQuestStep(uninstallQuestId);
+
         setInstallationMessage(
           `Congratulations! ${app?.title} was successfully ${
             from < to ? 'updated' : 'downgraded'

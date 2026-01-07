@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { decodeHtmlEntities } from '../../utils/html-utils';
+import { decodeHtmlEntities, sanitizeHtml } from '../../utils/html-utils';
 import { MarketplaceAPIConfiguration } from '../api-config';
 import axios from 'axios';
 
@@ -85,13 +85,13 @@ function isBlacklisted(systemInfo, blacklist) {
 }
 
 function getShortDescription(app) {
-  let description = decodeHtmlEntities(app?.short_description || '');
-  let previous;
-  do {
-    previous = description;
-    description = description.replace(/<[^>]+>/g, '');
-  } while (description !== previous);
-  return description;
+  const description = decodeHtmlEntities(app?.short_description || '');
+  return sanitizeHtml(description);
+}
+
+function getDescription(app) {
+  const description = decodeHtmlEntities(app?.description || '');
+  return sanitizeHtml(description);
 }
 
 function getCustomLinks(app) {
@@ -175,4 +175,5 @@ export {
   getPurchasable,
   getPermalink,
   getPrice,
+  getDescription,
 };

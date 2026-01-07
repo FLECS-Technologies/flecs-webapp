@@ -32,6 +32,7 @@ import { SystemContextType } from '../../../models/system';
 import { EditorButtons } from '../../buttons/editors/EditorButtons';
 import FullCard from './FullCard';
 import { CheckCircle, Download, ErrorOutline, Update } from '@mui/icons-material';
+import { decodeHtmlEntities } from '../../../utils/html-utils';
 
 export default function OutlinedCard(props: App) {
   const { systemInfo } = useSystemContext() as SystemContextType;
@@ -94,6 +95,20 @@ export default function OutlinedCard(props: App) {
           <Typography variant="subtitle2" align="center">
             by {props.author}
           </Typography>
+          <Box
+            sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'center', mt: 0.5 }}
+          >
+            {props.categories
+              ?.filter((cat) => cat.name.toLowerCase() !== 'app')
+              .map((cat, index) => (
+                <Chip
+                  key={index}
+                  label={decodeHtmlEntities(cat.name)}
+                  size="small"
+                  variant="outlined"
+                />
+              ))}
+          </Box>
         </Box>
         {/* card content */}
         <Typography align="center" variant="body2" color="info" sx={{ mt: 1 }}>

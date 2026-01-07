@@ -56,7 +56,7 @@ const mockProducts = {
           featured: false,
           catalog_visibility: 'visible',
           description: '',
-          short_description: '<p>Low code programming</p>\n',
+          short_description: '<p>Low code programming</p>',
           sku: '',
           price: '1',
           regular_price: '1',
@@ -252,7 +252,7 @@ describe('ProductService', () => {
     );
     expect(getAuthor(products[0])).toBe('OpenJS Foundation');
     expect(getVersion(products[0])).toBe('2.1.4');
-    expect(getShortDescription(products[0])).toBe('Low code programming\n');
+    expect(getShortDescription(products[0])).toBe('<p>Low code programming</p>');
     expect(getCustomLinks(products[0])).toHaveLength(2);
     expect(getMultiInstance(products[0])).toBeFalsy();
     expect(getRequirement(products[0])).toStrictEqual(['amd64']);

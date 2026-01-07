@@ -17,6 +17,7 @@
  */
 
 import { useState } from 'react';
+import parse from 'html-react-parser';
 import {
   Dialog,
   DialogContent,
@@ -46,10 +47,12 @@ import {
   Info,
   Code,
   ShoppingCart,
+  OpenInNew,
 } from '@mui/icons-material';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';
 import { useSystemContext } from '../../../data/SystemProvider';
+import { sanitizeHtml } from '../../../utils/html-utils';
 import { isBlacklisted } from '../../../api/marketplace/ProductService';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
 import { Version } from '../../../models/version';
@@ -79,6 +82,8 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
     app.requirement && systemInfo?.arch && app.requirement.includes(systemInfo.arch);
   const updateAvailable =
     !app.installedVersions?.includes(getLatestVersion(versionsArray)?.version || '') && installed;
+  const selectedVersionNotInstalled =
+    installed && !app.installedVersions?.includes(selectedVersion.version);
   const [installAppOpen, setInstallAppOpen] = useState<boolean>(false);
   const [updateAppOpen, setUpdateAppOpen] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
@@ -205,7 +210,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
                 )}
                 {installed && app.instances && <EditorButtons instance={app.instances[0]} />}
 
-                {updateAvailable && (
+                {selectedVersionNotInstalled && (
                   <Button
                     variant="contained"
                     color="info"
@@ -258,12 +263,17 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
                   <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" gutterBottom>
                       About this app
+                      <IconButton href={app.permalink || ''} target="_blank">
+                        <OpenInNew />
+                      </IconButton>
                     </Typography>
 
                     {/* Description */}
                     <Box sx={{ mb: 3 }}>
                       <Typography variant="body1" color="text.secondary">
-                        {app.description || 'No description available.'}
+                        {parse(
+                          app.description || app.short_description || 'No description available.',
+                        )}
                       </Typography>
                     </Box>
 

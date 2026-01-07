@@ -19,6 +19,7 @@ export interface App {
   version?: string;
   versions?: string[];
   description?: string;
+  short_description?: string;
   status?: string;
   availability?: string;
   instances?: any[];

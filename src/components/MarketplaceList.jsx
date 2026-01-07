@@ -25,6 +25,8 @@ import { Box } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import SearchBar from './SearchBar';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {
   getAppIcon,
   getAuthor,
@@ -42,6 +44,7 @@ import {
   getPrice,
   getPurchasable,
   getDocumentationUrl,
+  getDescription,
 } from '../api/marketplace/ProductService';
 import { CircularProgress, Collapse, Typography } from '@mui/material';
 import { AppFilter } from './AppFilter';
@@ -53,6 +56,10 @@ import PoweredByFLECS from './navigation/PoweredBy';
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState();
+  const [expandedGroups, setExpandedGroups] = useState({
+    installed: true,
+    allApps: true,
+  });
   const { appList, loadedProducts, appListError } = useContext(ReferenceDataContext);
   const [loading, setLoading] = useState(true);
   const {
@@ -94,7 +101,8 @@ const MarketplaceList = (props) => {
           avatar={getAppIcon(app)}
           title={app.name}
           author={getAuthor(app)}
-          description={getShortDescription(app)}
+          short_description={getShortDescription(app)}
+          description={getDescription(app)}
           status={
             appList?.find((o) => o.appKey.name === getReverseDomainName(app))?.status ||
             'uninstalled'
@@ -164,6 +172,87 @@ const MarketplaceList = (props) => {
       updateProductCards();
     }
   }, [appList]);
+
+  const toggleGroup = (groupName) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [groupName]: !prev[groupName],
+    }));
+  };
+
+  const renderGroupedProducts = () => {
+    const paginatedProducts = products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    if (!paginatedProducts) return null;
+
+    // Separate installed and all apps
+    const installedApps = paginatedProducts.filter(
+      (product) => product.props.installedVersions?.length > 0,
+    );
+    const allApps = paginatedProducts.filter(
+      (product) => !product.props.installedVersions || product.props.installedVersions.length === 0,
+    );
+
+    return (
+      <>
+        {/* Installed Apps Group */}
+        {installedApps.length > 0 && (
+          <React.Fragment>
+            <Grid size={{ xs: 12 }} sx={{ mt: 3, mb: 1, ml: 2 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  '&:hover': { opacity: 0.7 },
+                }}
+                onClick={() => toggleGroup('installed')}
+              >
+                <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
+                  {expandedGroups.installed ? <ExpandMoreIcon /> : <ChevronRightIcon />}
+                </Box>
+                <Typography variant="h5" component="h2">
+                  Installed
+                </Typography>
+              </Box>
+            </Grid>
+            <Collapse in={expandedGroups.installed} timeout="auto" unmountOnExit>
+              <Grid container size={{ xs: 12 }}>
+                {installedApps}
+              </Grid>
+            </Collapse>
+          </React.Fragment>
+        )}
+
+        {/* All Apps Group */}
+        <React.Fragment>
+          <Grid size={{ xs: 12 }} sx={{ mt: 3, mb: 1, ml: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                '&:hover': { opacity: 0.7 },
+              }}
+              onClick={() => toggleGroup('allApps')}
+            >
+              <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
+                {expandedGroups.allApps ? <ExpandMoreIcon /> : <ChevronRightIcon />}
+              </Box>
+              <Typography variant="h5" component="h2">
+                All Apps
+              </Typography>
+            </Box>
+          </Grid>
+          <Collapse in={expandedGroups.allApps} timeout="auto" unmountOnExit>
+            <Grid container size={{ xs: 12 }}>
+              {allApps}
+            </Grid>
+          </Collapse>
+        </React.Fragment>
+      </>
+    );
+  };
 
   return (
     <Box aria-label="marketplace-apps-list" display="flex">
@@ -264,7 +353,7 @@ const MarketplaceList = (props) => {
             </Typography>
           </Grid>
         )}
-        {products?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+        {renderGroupedProducts()}
         <Grid
           size={{ xs: 12 }}
           sx={{

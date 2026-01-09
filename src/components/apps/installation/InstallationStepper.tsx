@@ -54,6 +54,7 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
               app={app}
               version={version || myApp?.appKey.version}
               handleActiveStep={handleNext}
+              onStateChange={props.onStateChange}
             />
           );
         } else if (sideload) {
@@ -65,6 +66,7 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
               from={myApp?.installedVersions[0]}
               to={version}
               handleActiveStep={handleNext}
+              onStateChange={props.onStateChange}
             />
           );
         } else {
@@ -94,6 +96,7 @@ InstallationStepper.propTypes = {
   version: PropTypes.string,
   sideload: PropTypes.bool,
   update: PropTypes.bool,
+  onStateChange: PropTypes.func,
 };
 
 export default InstallationStepper;

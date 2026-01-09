@@ -21,18 +21,18 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-import { Box, Button, CardActionArea, Chip, Toolbar } from '@mui/material';
-import ContentDialog from '../../ContentDialog';
+import { Box, CardActionArea, Chip, Toolbar } from '@mui/material';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
 import { useSystemContext } from '../../../data/SystemProvider';
-import InstallationStepper from '../installation/InstallationStepper';
 import { Version } from '../../../models/version';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';
 import { EditorButtons } from '../../buttons/editors/EditorButtons';
 import FullCard from './FullCard';
-import { CheckCircle, Download, ErrorOutline, Update } from '@mui/icons-material';
+import { CheckCircle, ErrorOutline, Update } from '@mui/icons-material';
 import { decodeHtmlEntities } from '../../../utils/html-utils';
+import InstallButton from '../../../components/buttons/app/InstallButton';
+import UpdateButton from '../../../components/buttons/app/UpdateButton';
 
 export default function OutlinedCard(props: App) {
   const { systemInfo } = useSystemContext() as SystemContextType;
@@ -44,8 +44,6 @@ export default function OutlinedCard(props: App) {
   const installable =
     props.requirement && systemInfo?.arch && props.requirement.includes(systemInfo.arch);
   const updateAvailable = !props.installedVersions?.includes(latestVersion.version) && installed;
-  const [installAppOpen, setInstallAppOpen] = useState<boolean>(false);
-  const [updateAppOpen, setUpdateAppOpen] = useState<boolean>(false);
   const [fullCardOpen, setFullCardOpen] = useState<boolean>(false);
 
   const handleCardClick = () => {
@@ -118,47 +116,14 @@ export default function OutlinedCard(props: App) {
       {/* card actions */}
       <CardActions>
         {!installed && (
-          <Button
-            startIcon={<Download />}
-            variant="contained"
-            color="success"
-            fullWidth
-            disabled={installed || !installable}
-            onClick={() => setInstallAppOpen(true)}
-            data-testid="install-app-button"
-          >
+          <InstallButton app={props} version={latestVersion} disabled={installed || !installable}>
             Install
-          </Button>
+          </InstallButton>
         )}
         {installed && props.instances && (
           <EditorButtons instance={props.instances[0]}></EditorButtons>
         )}
-        {updateAvailable && (
-          <Button
-            startIcon={<Update />}
-            fullWidth
-            variant="contained"
-            color="info"
-            onClick={() => setUpdateAppOpen(true)}
-          >
-            Update
-          </Button>
-        )}
-
-        <ContentDialog
-          open={installAppOpen}
-          setOpen={setInstallAppOpen}
-          title={'Install ' + props.title}
-        >
-          <InstallationStepper app={props} version={latestVersion.version} />
-        </ContentDialog>
-        <ContentDialog
-          open={updateAppOpen}
-          setOpen={setUpdateAppOpen}
-          title={'Update ' + props.title + ' to ' + latestVersion.version}
-        >
-          <InstallationStepper app={props} version={latestVersion.version} update={true} />
-        </ContentDialog>
+        {updateAvailable && <UpdateButton app={props} to={latestVersion}></UpdateButton>}
       </CardActions>
 
       <FullCard app={props} open={fullCardOpen} onClose={() => setFullCardOpen(false)} />

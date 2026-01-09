@@ -9,7 +9,7 @@ import { QuestContext, useQuestContext } from '../../quests/QuestContext';
 import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
-export default function UpdateApp({ app, from, to, handleActiveStep }) {
+export default function UpdateApp({ app, from, to, handleActiveStep, onStateChange }) {
   const executedRef = useRef(false);
   const { appList, setUpdateAppList } = useContext(ReferenceDataContext);
   const context = useQuestContext(QuestContext);
@@ -25,6 +25,10 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
     async (questId) => {
       await context.fetchQuest(questId);
       setCurrentQuest(questId);
+      onStateChange?.({
+        updating: true,
+        currentQuest: context.quests.current.get(questId),
+      });
       const result = await context.waitForQuest(questId);
       if (!questStateFinishedOk(result.state)) {
         throw new Error(result.description);
@@ -45,6 +49,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
           throw new Error(`${app.appKey.name} is not installed and therefore can't be updated!`);
 
         setUpdating(true);
+        onStateChange?.({ updating: true, currentQuest: null });
 
         // 1. install the requested version
         const installQuest = await api.app.appsInstallPost({
@@ -79,6 +84,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         setSuccess(true);
         setError(false);
         handleActiveStep();
+        onStateChange?.({ updating: false, currentQuest: null });
       } catch (error) {
         setInstallationMessage(
           `Oops... ${
@@ -90,6 +96,7 @@ export default function UpdateApp({ app, from, to, handleActiveStep }) {
         setError(true);
         setSuccess(false);
         setUpdating(false);
+        onStateChange?.({ updating: false, currentQuest: null });
         handleActiveStep(-1);
       }
     },
@@ -153,4 +160,5 @@ UpdateApp.propTypes = {
   from: PropTypes.string,
   to: PropTypes.string,
   handleActiveStep: PropTypes.func,
+  onStateChange: PropTypes.func,
 };

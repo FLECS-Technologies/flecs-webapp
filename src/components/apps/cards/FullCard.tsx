@@ -33,35 +33,22 @@ import {
   Stack,
   Card,
   CardContent,
-  alpha,
   Alert,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import {
-  Close,
-  Download,
-  CheckCircle,
-  Launch,
-  Link as LinkIcon,
-  Update,
-  Info,
-  Code,
-  ShoppingCart,
-  OpenInNew,
-} from '@mui/icons-material';
+
+import { Close, CheckCircle, Launch, Update, ShoppingCart, OpenInNew } from '@mui/icons-material';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';
 import { useSystemContext } from '../../../data/SystemProvider';
-import { sanitizeHtml } from '../../../utils/html-utils';
 import { isBlacklisted } from '../../../api/marketplace/ProductService';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
 import { Version } from '../../../models/version';
-import InstallationStepper from '../installation/InstallationStepper';
-import ContentDialog from '../../ContentDialog';
 import { EditorButtons } from '../../buttons/editors/EditorButtons';
 import { VersionSelector } from '../../autocomplete/VersionSelector';
 import UninstallButton from '../../buttons/app/UninstallButton';
 import ActionSnackbar from '../../ActionSnackbar';
+import InstallButton from '../../../components/buttons/app/InstallButton';
+import UpdateButton from '../../../components/buttons/app/UpdateButton';
 
 interface FullCardProps {
   app: App;
@@ -84,8 +71,6 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
     !app.installedVersions?.includes(getLatestVersion(versionsArray)?.version || '') && installed;
   const selectedVersionNotInstalled =
     installed && !app.installedVersions?.includes(selectedVersion.version);
-  const [installAppOpen, setInstallAppOpen] = useState<boolean>(false);
-  const [updateAppOpen, setUpdateAppOpen] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarState, setSnackbarState] = useState({
     snackbarText: '',
@@ -181,6 +166,9 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
                       ))}
                     </Stack>
                   )}
+                  <Typography variant="overline" component="div">
+                    {parse(app.short_description || '')}
+                  </Typography>
                 </Box>
               </Stack>
             </Box>
@@ -198,29 +186,21 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
 
               <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
                 {!installed && (
-                  <Button
-                    variant="contained"
-                    startIcon={<Download />}
-                    onClick={() => setInstallAppOpen(true)}
+                  <InstallButton
+                    app={app}
+                    version={selectedVersion}
                     disabled={!installable || blackListed}
-                    fullWidth
-                  >
-                    Install {selectedVersion.version}
-                  </Button>
+                    showSelectedVersion={true}
+                  ></InstallButton>
                 )}
                 {installed && app.instances && <EditorButtons instance={app.instances[0]} />}
 
                 {selectedVersionNotInstalled && (
-                  <Button
-                    variant="contained"
-                    color="info"
-                    fullWidth
-                    startIcon={<Update />}
-                    onClick={() => setUpdateAppOpen(true)}
-                    disabled={blackListed}
-                  >
-                    Update to {selectedVersion.version}
-                  </Button>
+                  <UpdateButton
+                    app={app}
+                    to={selectedVersion}
+                    showSelectedVersion={true}
+                  ></UpdateButton>
                 )}
                 {installed && (
                   <UninstallButton
@@ -270,7 +250,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
 
                     {/* Description */}
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="body1" color="text.secondary">
+                      <Typography variant="body1" color="text.secondary" component="div">
                         {parse(
                           app.description || app.short_description || 'No description available.',
                         )}
@@ -328,25 +308,6 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           </Box>
         </DialogContent>
       </Dialog>
-
-      {/* Installation Dialog */}
-      <ContentDialog
-        open={installAppOpen}
-        setOpen={setInstallAppOpen}
-        title={`Install ${app.title} ${selectedVersion.version}`}
-      >
-        <InstallationStepper app={app} version={selectedVersion.version} />
-      </ContentDialog>
-
-      {/* Update Dialog */}
-      <ContentDialog
-        open={updateAppOpen}
-        setOpen={setUpdateAppOpen}
-        title={`Update ${app.title} to ${selectedVersion.version}`}
-      >
-        <InstallationStepper app={app} version={selectedVersion.version} update={true} />
-      </ContentDialog>
-
       {/* Snackbar for notifications */}
       <ActionSnackbar
         text={snackbarState.snackbarText}

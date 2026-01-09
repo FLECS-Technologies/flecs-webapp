@@ -44,6 +44,10 @@ export default function InstallApp(props) {
     async (questId) => {
       await context.fetchQuest(questId);
       setCurrentQuest(questId);
+      props.onStateChange?.({
+        installing: true,
+        currentQuest: context.quests.current.get(questId),
+      });
       const result = await context.waitForQuest(questId);
       if (!questStateFinishedOk(result.state)) {
         throw new Error(result.description);
@@ -60,6 +64,7 @@ export default function InstallApp(props) {
     setInfoMessage(
       'You can close this window. Installation takes place automatically in the background.',
     );
+    props.onStateChange?.({ installing: true, currentQuest: null });
     try {
       //step 1: install app
       const installationQuestId = await api.app.appsInstallPost({
@@ -88,6 +93,7 @@ export default function InstallApp(props) {
       setInfoMessage('Error during the installation of ' + app?.title + '.');
     } finally {
       setInstalling(false);
+      props.onStateChange?.({ installing: false, currentQuest: null });
     }
   });
 
@@ -151,4 +157,5 @@ InstallApp.propTypes = {
   appKey: PropTypes.object,
   version: PropTypes.string,
   handleActiveStep: PropTypes.func,
+  onStateChange: PropTypes.func,
 };

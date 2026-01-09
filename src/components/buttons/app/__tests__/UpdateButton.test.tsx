@@ -45,7 +45,10 @@ vi.mock('../../../apps/installation/InstallationStepper', () => ({
         <button
           data-testid="trigger-updating"
           onClick={() =>
-            onStateChange?.({ updating: true, currentQuest: { description: 'Migrating instances' } })
+            onStateChange?.({
+              updating: true,
+              currentQuest: { description: 'Migrating instances' },
+            })
           }
         >
           Start Update

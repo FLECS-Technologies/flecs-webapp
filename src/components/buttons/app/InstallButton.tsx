@@ -24,6 +24,7 @@ import InstallationStepper from '../../../components/apps/installation/Installat
 import { Button, ButtonProps } from '@mui/material';
 import { Download } from '@mui/icons-material';
 import { Quest } from '@flecs/core-client-ts';
+import MarqueeText from '../../text/MarqueeText';
 
 interface InstallButtonProps extends Omit<ButtonProps, 'onClick'> {
   app: App;
@@ -57,9 +58,11 @@ export default function InstallButton({
         loadingPosition="start"
         {...buttonProps}
       >
-        {state.installing
-          ? state.currentQuest?.description || 'Installing'
-          : `Install${showSelectedVersion ? ` ${version.version}` : ''}`}
+        {state.installing ? (
+          <MarqueeText text={state.currentQuest?.description || 'Installing'} />
+        ) : (
+          `Install${showSelectedVersion ? ` ${version.version}` : ''}`
+        )}
       </Button>
       <ContentDialog
         open={installAppOpen}

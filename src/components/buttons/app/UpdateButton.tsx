@@ -24,6 +24,7 @@ import InstallationStepper from '../../../components/apps/installation/Installat
 import { Button, ButtonProps } from '@mui/material';
 import { Update } from '@mui/icons-material';
 import { Quest } from '@flecs/core-client-ts';
+import MarqueeText from '../../text/MarqueeText';
 
 interface UpdateButtonProps extends Omit<ButtonProps, 'onClick'> {
   app: App;
@@ -59,9 +60,11 @@ export default function UpdateButton({
         loadingPosition="start"
         {...buttonProps}
       >
-        {state.updating
-          ? state.currentQuest?.description || 'Updating'
-          : `Update${showSelectedVersion ? ` to ${to.version}` : ''}`}
+        {state.updating ? (
+          <MarqueeText text={state.currentQuest?.description || 'Updating'} />
+        ) : (
+          `Update${showSelectedVersion ? ` to ${to.version}` : ''}`
+        )}
       </Button>
 
       <ContentDialog

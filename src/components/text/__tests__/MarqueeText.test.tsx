@@ -57,7 +57,7 @@ describe('MarqueeText', () => {
   it('does not animate when text fits in container', () => {
     const { container } = render(<MarqueeText text="Short" />);
     const wrapper = container.querySelector('[style*="display"]');
-    
+
     // Mock dimensions: container wider than content
     if (wrapper && wrapper.parentElement) {
       mockScrollWidth(wrapper as HTMLElement, 200);
@@ -92,7 +92,7 @@ describe('MarqueeText', () => {
   it('applies correct container styles', () => {
     const { container } = render(<MarqueeText text="Test" />);
     const containerDiv = container.firstChild as HTMLElement;
-    
+
     const styles = window.getComputedStyle(containerDiv);
     expect(styles.overflow).toBe('hidden');
     expect(styles.display).toBe('flex');
@@ -102,7 +102,7 @@ describe('MarqueeText', () => {
   it('applies correct wrapper styles', () => {
     const { container } = render(<MarqueeText text="Test" />);
     const wrapper = container.querySelector('[style*="display"]') as HTMLElement;
-    
+
     expect(wrapper).toBeDefined();
     if (wrapper) {
       const styles = window.getComputedStyle(wrapper);

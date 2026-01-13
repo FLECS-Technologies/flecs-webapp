@@ -56,8 +56,12 @@ export default function MarqueeText({ text, speed = 50 }: MarqueeTextProps): Rea
           animation: duration ? `${scroll} ${duration}s linear infinite` : 'none',
         }}
       >
-        <Box component="span" sx={{ pr: 4 }}>{text}</Box>
-        <Box component="span" sx={{ pr: 4 }}>{text}</Box>
+        <Box component="span" sx={{ pr: 4 }}>
+          {text}
+        </Box>
+        <Box component="span" sx={{ pr: 4 }}>
+          {text}
+        </Box>
       </Box>
     </Box>
   );

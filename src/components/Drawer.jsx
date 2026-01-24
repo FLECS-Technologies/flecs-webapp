@@ -88,6 +88,7 @@ const Drawer = styled(MuiDrawer, {
 const MiniDrawer = (props) => {
   const [visible, setIsVisible] = React.useState(true);
   const [open, setOpen] = React.useState(true);
+  const [visibleMenuItems, setVisibleMenuItems] = React.useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleDrawerMove = () => {
@@ -99,6 +100,10 @@ const MiniDrawer = (props) => {
 
   React.useEffect(() => {
     isVisible();
+
+    // Set visible menu items from search params only on initial mount
+    const menuItems = searchParams.getAll('menu-items');
+    setVisibleMenuItems(menuItems);
   }, []);
 
   const isVisible = () => {
@@ -111,11 +116,10 @@ const MiniDrawer = (props) => {
   };
 
   const isMenuItemVisible = (menuItem) => {
-    const visible = searchParams.getAll('menu-items');
-    if (visible.length > 0 && !visible?.includes(menuItem)) {
-      return false; // Hide when visible the menu item is not included in the list
+    if (visibleMenuItems.length > 0 && !visibleMenuItems.includes(menuItem)) {
+      return false; // Hide when the menu item is not included in the list
     }
-    return true; // Show otherwise (including when visible is null or undefined)
+    return true; // Show otherwise (including when visibleMenuItems is empty)
   };
 
   const handleListItemClick = (event, index) => {

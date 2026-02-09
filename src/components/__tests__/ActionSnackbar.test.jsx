@@ -18,7 +18,6 @@
 
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import ActionSnackbar from '../ActionSnackbar';
 import { act } from 'react-dom/test-utils';
 

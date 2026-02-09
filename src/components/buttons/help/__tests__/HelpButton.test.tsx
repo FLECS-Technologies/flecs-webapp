@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HelpButton from '../HelpButton';

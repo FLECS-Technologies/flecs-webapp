@@ -18,7 +18,6 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import Marketplace from '../Marketplace';
 import { FilterContextProvider } from '../../data/FilterContext';
 import { vitest } from 'vitest';

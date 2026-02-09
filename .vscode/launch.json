@@ -20,36 +20,20 @@
       "webRoot": "${workspaceFolder}"
     },
     {
-      "name": "Debug tests single run",
+      "name": "Debug Vitest Tests",
       "type": "node",
       "request": "launch",
-      "env": { "CI": "true" },
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
-      "args": ["test", "--runInBand", "--no-cache"],
-      "cwd": "${workspaceRoot}",
-      "protocol": "inspector",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["test", "--run"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Debug tests watch mode",
+      "name": "Debug Vitest Tests (Watch)",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
-      "args": ["test", "--runInBand", "--no-cache", "--watchAll"],
-      "cwd": "${workspaceRoot}",
-      "protocol": "inspector",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "name": "Debug tests opened file",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
-      "args": ["test", "${fileBasenameNoExtension}", "--runInBand", "--no-cache", "--watchAll"],
-      "cwd": "${workspaceRoot}",
-      "protocol": "inspector",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["test"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }

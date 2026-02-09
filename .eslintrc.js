@@ -2,14 +2,18 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    jest: true,
   },
-  extends: ['plugin:react/recommended', 'standard', 'prettier'],
+  extends: [
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'standard',
+    'prettier'
+  ],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
   plugins: ['react'],
@@ -20,5 +24,12 @@ module.exports = {
     'no-undef': 'off',
     'no-unused-vars': 'off',
     'no-use-before-define': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

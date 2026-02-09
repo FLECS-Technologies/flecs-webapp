@@ -18,7 +18,6 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, within } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import SearchBar from '../SearchBar';
 
 describe('SearchBar', () => {

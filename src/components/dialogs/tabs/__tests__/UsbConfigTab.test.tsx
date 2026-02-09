@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import UsbConfigTab from '../UsbConfigTab';
 import { createMockApi } from '../../../../__mocks__/core-client-ts';
 import { vi } from 'vitest';

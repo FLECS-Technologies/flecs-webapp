@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import PortsConfigTab from '../PortsConfigTab';
 import { createMockApi } from '../../../../__mocks__/core-client-ts';

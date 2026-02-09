@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { render, screen } from '@testing-library/react';
 import VolumesTable from '../VolumesTable';

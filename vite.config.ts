@@ -28,7 +28,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    globals: true, // optional, useful for @testing-library,
+    globals: true,
     setupFiles: './src/test/setup.ts',
     coverage: {
       provider: 'v8', // or 'istanbul' for Node < 16

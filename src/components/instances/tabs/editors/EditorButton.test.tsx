@@ -17,7 +17,7 @@
  */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { EditorButton } from '../EditorButton';
+import { EditorButton } from './EditorButton';
 import { AppInstance } from '../../../../api/device/instances/instance';
 
 const testInstance: AppInstance = {

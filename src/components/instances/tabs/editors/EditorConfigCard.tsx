@@ -20,7 +20,7 @@ import { Card, ListItemText, Box, TextField, Stack, IconButton } from '@mui/mate
 import { Delete, Save } from '@mui/icons-material';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
-import { createUrl } from '../../../../components/buttons/editors/EditorButton';
+import { createUrl } from './EditorButton';
 import { host, useProtectedApi } from '@contexts/api/ApiProvider';
 import normalizeUrl from 'normalize-url';
 

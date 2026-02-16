@@ -22,7 +22,7 @@ import { InstanceEnvironmentVariable } from '@flecs/core-client-ts';
 import ActionSnackbar from '../../ui/ActionSnackbar';
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
 import HelpButton from '../../buttons/help/HelpButton';
-import { instancedeviceconfig } from '../../../components/help/helplinks';
+import { instancedeviceconfig } from '../../help/helplinks';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 interface EnvironmentConfigTabProps {

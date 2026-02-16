@@ -19,7 +19,7 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 import { Delete } from '@mui/icons-material';
-import { QuestLog } from '../../components/quests/QuestLog';
+import { QuestLog } from './QuestLog';
 import { useQuestContext, QuestContext } from '@contexts/quests/QuestContext';
 
 interface QuestLogProps {

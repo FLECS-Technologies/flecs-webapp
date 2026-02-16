@@ -56,7 +56,7 @@ vi.mock('../installation/InstallationStepper', () => ({
   ),
 }));
 
-vi.mock('../../buttons/editors/EditorButtons', () => ({
+vi.mock('../../instances/tabs/editors/EditorButtons', () => ({
   EditorButtons: ({ instance }: any) => <button data-testid="editor-buttons">Open Editor</button>,
 }));
 

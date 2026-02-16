@@ -27,7 +27,7 @@ import { useSystemContext } from '@contexts/data/SystemProvider';
 import { Version } from '../../../models/version';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';
-import { EditorButtons } from '../../buttons/editors/EditorButtons';
+import { EditorButtons } from '../../instances/tabs/editors/EditorButtons';
 import FullCard from './FullCard';
 import { CheckCircle, ErrorOutline, Update } from '@mui/icons-material';
 import { decodeHtmlEntities } from '../../../utils/html-utils';

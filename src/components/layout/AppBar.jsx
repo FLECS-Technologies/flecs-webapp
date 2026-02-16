@@ -32,7 +32,7 @@ import { useSearchParams } from 'react-router-dom';
 import HelpButton from '../buttons/help/HelpButton';
 import { helpdomain } from '../help/helplinks';
 import { appBarIconColors } from '../../whitelabeling/custom-tokens';
-import QuestLogDialog from '../dialogs/QuestLogDialog';
+import QuestLogDialog from '../quests/QuestLogDialog';
 import Avatar from './Avatar';
 
 function ElevationScroll(props) {

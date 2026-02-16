@@ -17,7 +17,7 @@
  */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { InstanceStartCreateButtons } from '../InstanceStartCreateButtons';
+import { InstanceStartCreateButtons } from './InstanceStartCreateButtons';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const mockStart = jest.fn();

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed Mar 02 2022
+ * Created on Fri Apr 08 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import InstanceInfo from '../InstanceInfo';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import InstanceLog from '../InstanceLog';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
-// Mock the API provider for child components
+// Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
 vi.mock('@contexts/api/ApiProvider', () => ({
@@ -31,14 +31,12 @@ vi.mock('@contexts/api/ApiProvider', () => ({
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
-  appKey: {
-    version: '1.0.0',
-  },
+  version: '1.0.0',
   status: 'running',
   desired: 'stopped',
 };
 
-describe('InstanceInfo', () => {
+describe('InstanceLog', () => {
   let mockApi;
 
   beforeEach(() => {
@@ -47,16 +45,23 @@ describe('InstanceInfo', () => {
     mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  it('renders InstanceInfo component', async () => {
-    render(<InstanceInfo instance={testInstance}></InstanceInfo>);
+  it('renders InstanceLog component', async () => {
+    render(<InstanceLog instance={testInstance}></InstanceLog>);
 
-    // Wait for the component and child components to finish loading
     await waitFor(() => {
-      expect(screen.getByText('TestInstance')).toBeVisible();
-      expect(screen.getByText('ABCDE')).toBeVisible();
-      expect(screen.getByText('1.0.0')).toBeVisible();
-      expect(screen.getByText('running')).toBeVisible();
-      expect(screen.getByText('stopped')).toBeVisible();
+      expect(screen.getByTestId('log-editor')).toBeVisible();
+    });
+  });
+
+  it('Click refresh', async () => {
+    render(<InstanceLog instance={testInstance}></InstanceLog>);
+
+    const refreshButton = await waitFor(() => screen.getByTestId('refresh-button'));
+
+    fireEvent.click(refreshButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('log-editor')).toBeVisible();
     });
   });
 });

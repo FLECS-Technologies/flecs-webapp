@@ -2,9 +2,9 @@
 
 **Date Created:** February 9, 2026  
 **Last Updated:** February 16, 2026  
-**Version:** 1.3.0  
+**Version:** 1.4.0  
 **Current Branch:** refactor-project-structure  
-**Status:** Phase 1 Complete ✅ | Phase 2 Step 2.1 Complete ✅ | Step 2.2 Next ⭐
+**Status:** Phase 1 Complete ✅ | Phase 2 Complete ✅ | Phase 3 Next ⭐
 
 ## Executive Summary
 
@@ -13,13 +13,16 @@ This document outlines a comprehensive refactoring plan for the FLECS WebApp pro
 **Phase 1 Status - ✅ COMPLETED:**
 Phase 1 (Legacy Migration Artifacts) has been successfully completed, removing 454 packages (~35% reduction) including all Jest, Babel, and unused dependencies. The project now has a clean, modern testing setup with Vitest, functional VS Code debugging, and reduced technical debt.
 
+**Phase 2 Status - ✅ COMPLETED:**
+Phase 2 (Project Structure Improvements) has been successfully completed. Context/provider files consolidated into `src/contexts/` (Step 2.1). Component structure reorganized into 11 feature-based directories with zero loose files in `src/components/` root (Step 2.2, 6 sub-steps). All 668 tests passing across 97 test files.
+
 **Phase Priority:**
-The project structure reorganization (Phase 2) is now the main focus, providing clear architectural improvements and better maintainability. This comprehensive restructuring will establish a solid foundation for future development.
+Code modernization (Phase 3) is now the main focus, cleaning up React imports and preparing for future TypeScript migration.
 
 **Implementation Phases:**
 
-- Phase 2: **Project Structure Improvements** (MAIN FOCUS - context consolidation, comprehensive reorganization, path aliases)
-- Phase 3: Code Modernization (React imports cleanup)
+- Phase 2: **Project Structure Improvements** ✅ COMPLETED (context consolidation, comprehensive reorganization, path aliases)
+- Phase 3: Code Modernization ⭐ NEXT (React imports cleanup)
 - Phase 4: Final Cleanup (documentation, unused file audit)
 - Phase 5: TypeScript Migration (comprehensive type safety)
 
@@ -31,7 +34,7 @@ The project structure reorganization (Phase 2) is now the main focus, providing 
 2. [Refactoring Goals](#refactoring-goals)
 3. [Implementation Plan](#implementation-plan)
    - [Phase 1: Legacy Migration Artifacts ✅ COMPLETED](#phase-1-remove-legacy-migration-artifacts--completed)
-   - [Phase 2: Project Structure Improvements](#phase-2-project-structure-improvements-medium-risk-high-value) ⭐ **MAIN FOCUS**
+   - [Phase 2: Project Structure Improvements](#phase-2-project-structure-improvements-medium-risk-high-value) ✅ **COMPLETED**
    - [Phase 3: Code Modernization](#phase-3-code-modernization-low-risk-medium-value)
    - [Phase 4: Final Cleanup](#phase-4-final-cleanup-low-risk-low-value)
    - [Phase 5: TypeScript Migration](#phase-5-typescript-migration-medium-risk-high-value)
@@ -677,7 +680,7 @@ pnpm run lint
 
 ---
 
-### Phase 2: Project Structure Improvements ⭐ **MAIN FOCUS** (Medium Risk, High Value)
+### Phase 2: Project Structure Improvements ✅ **COMPLETED** (Medium Risk, High Value)
 
 **Previously Phase 3 - Promoted to Phase 2 as primary initiative**
 
@@ -753,14 +756,14 @@ src/
 "@models/*", "@api/*", "@test/*", "@assets/*", "@styles/*", "@data/*"
 ```
 
-**Validation:** Build passes (12,228 modules), all 419 tests pass
+**Validation:** Build passes (12,228 modules), all 668 tests pass (97 test files)
 
 ---
 
-#### Step 2.2: Reorganize Component Structure
+#### Step 2.2: Reorganize Component Structure ✅ COMPLETED
 
 **Priority:** HIGH  
-**Status:** Not started  
+**Status:** ✅ Completed February 16, 2026  
 **Estimated Effort:** 12-18 hours (across sub-steps)
 
 **Goal:** Reorganize `src/components/` from a flat/mixed structure into a feature-based architecture with clear separation between layout, shared UI, and domain features.
@@ -908,7 +911,7 @@ src/components/
 
 ---
 
-##### Sub-step 2.2a: Create `layout/` and `ui/` directories _(~1 hour)_
+##### Sub-step 2.2a: Create `layout/` and `ui/` directories ✅ _(~1 hour)_
 
 Move shell/chrome components to `layout/` and shared UI components to `ui/`. These have few cross-dependencies, making them low-risk.
 
@@ -939,11 +942,11 @@ UI (11 files + tests):
 - `autocomplete/VersionSelector.tsx` → `ui/VersionSelector.tsx`
 
 **Validation:** Build passes, all tests pass.  
-**Commit:** `refactor: create layout/ and ui/ component groups (Step 2.2a)`
+**Commit:** `ee5f765` — `refactor: create layout/ and ui/ component groups (Step 2.2a)`
 
 ---
 
-##### Sub-step 2.2b: Consolidate `instances/` feature _(~2 hours)_
+##### Sub-step 2.2b: Consolidate `instances/` feature ✅ _(~2 hours)_
 
 Move instance-related components and the instance config dialog into one feature directory.
 
@@ -971,11 +974,11 @@ From `buttons/`:
 **After this step, `dialogs/` is reduced to just `QuestLogDialog.tsx` — move it to `quests/`.**
 
 **Validation:** Build passes, all tests pass.  
-**Commit:** `refactor: consolidate instances/ feature components (Step 2.2b)`
+**Commit:** `544cf4d` — `refactor: consolidate instances/ feature components (Step 2.2b)`
 
 ---
 
-##### Sub-step 2.2c: Expand `apps/` feature and create `export/` _(~1.5 hours)_
+##### Sub-step 2.2c: Expand `apps/` feature and create `export/` ✅ _(~1.5 hours)_
 
 Move app-related root components and buttons into the existing `apps/` directory. Create `export/` feature.
 
@@ -998,11 +1001,11 @@ To `export/` (new):
 - `lists/flecsports/ExportList.tsx` → `export/ExportList.tsx`
 
 **Validation:** Build passes, all tests pass.  
-**Commit:** `refactor: expand apps/ feature and create export/ (Step 2.2c)`
+**Commit:** `65e4af7` — `refactor: expand apps/ feature and create export/ (Step 2.2c)`
 
 ---
 
-##### Sub-step 2.2d: Expand `device/` and move remaining buttons _(~1 hour)_
+##### Sub-step 2.2d: Expand `device/` and move remaining buttons ✅ _(~1 hour)_
 
 Move device-related root components and the license button into `device/`.
 
@@ -1016,11 +1019,11 @@ Move device-related root components and the license button into `device/`.
 **After this step, `buttons/` directory should be empty and can be deleted.**
 
 **Validation:** Build passes, all tests pass.  
-**Commit:** `refactor: expand device/ feature and clean up buttons/ (Step 2.2d)`
+**Commit:** `84000b6` — `refactor: expand device/ feature and clean up buttons/ (Step 2.2d)`
 
 ---
 
-##### Sub-step 2.2e: Move `LocalStorage.js` to `hooks/` _(~30 min)_
+##### Sub-step 2.2e: Move `LocalStorage.js` to `hooks/` ✅ _(~30 min)_
 
 `LocalStorage.js` is a custom hook (`useLocalStorage`), not a component. Move it to `src/hooks/`.
 
@@ -1032,35 +1035,28 @@ Move device-related root components and the license button into `device/`.
 **Note:** Keep the filename as `LocalStorage.js` (no rename to `useLocalStorage.ts`). TypeScript conversion is out of scope for this step.
 
 **Validation:** Build passes, all tests pass.  
-**Commit:** `refactor: move LocalStorage hook to hooks/ (Step 2.2e)`
+**Commit:** `4f7ce64` — `refactor: move LocalStorage hook to hooks/ (Step 2.2e)`
 
 ---
 
-##### Sub-step 2.2f: Move remaining `QuestLogDialog.tsx` and clean up empty dirs _(~30 min)_
+##### Sub-step 2.2f: Move remaining `QuestLogDialog.tsx` and clean up empty dirs ✅ _(~30 min)_
 
-- Move `dialogs/QuestLogDialog.tsx` → `quests/QuestLogDialog.tsx`
-- Delete empty directories: `buttons/`, `dialogs/`, `app_bar/`, `menus/`, `navigation/`, `text/`, `lists/`, `autocomplete/`
-- Verify no orphaned `__mocks__/` directories remain
-
-**After this step, `components/` root should have zero loose files — only feature directories.**
-
-**Validation:** Build passes, all tests pass, `ls src/components/` shows only directories.  
-**Commit:** `refactor: final cleanup of empty component directories (Step 2.2f)`
+**Note:** `QuestLogDialog.tsx` was already moved to `quests/` in Step 2.2b. All empty directories (`buttons/`, `dialogs/`, `app_bar/`, `menus/`, `navigation/`, `text/`, `lists/`, `autocomplete/`, `components/__tests__/`) were cleaned up incrementally during sub-steps 2.2a-2.2e. No separate commit needed — this step was a no-op.
 
 ---
 
 ##### Step 2.2 Summary
 
-| Sub-step | Scope                    | Files moved   | Risk   |
-| -------- | ------------------------ | ------------- | ------ |
-| 2.2a     | layout/ + ui/            | ~18 + tests   | Low    |
-| 2.2b     | instances/               | ~18 + tests   | Medium |
-| 2.2c     | apps/ + export/          | ~10 + tests   | Low    |
-| 2.2d     | device/ + help/          | ~4 + tests    | Low    |
-| 2.2e     | LocalStorage → hooks/    | 2             | Low    |
-| 2.2f     | QuestLogDialog + cleanup | 1 + deletions | Low    |
+| Sub-step | Scope                    | Files moved   | Risk   | Status |
+| -------- | ------------------------ | ------------- | ------ | ------ |
+| 2.2a     | layout/ + ui/            | 18 + 15 tests | Low    | ✅    |
+| 2.2b     | instances/               | 18 + tests    | Medium | ✅    |
+| 2.2c     | apps/ + export/          | 10 + 10 tests | Low    | ✅    |
+| 2.2d     | device/ + help/          | 5 + 2 tests   | Low    | ✅    |
+| 2.2e     | LocalStorage → hooks/    | 1 + 1 test    | Low    | ✅    |
+| 2.2f     | cleanup (no-op)          | 0             | Low    | ✅    |
 
-**Total:** ~53 source files + associated test files across 6 independently committable sub-steps.
+**Total:** ~52 source files + ~28 test files moved across 5 commits (2.2f was a no-op).
 
 **Path alias note:** The `@components/*` alias continues to work throughout since all moves are within `src/components/`. After Step 2.2 is complete, consider adding granular aliases (`@layout/*`, `@ui/*`, `@features/*`) in a follow-up step if desired — but this is optional since `@components/layout/*` and `@components/ui/*` already work.
 
@@ -1285,19 +1281,20 @@ src/pages/System.jsx → src/pages/System.tsx
 **Tier 2 - Data Layer:**
 
 ```
+src/contexts/data/FilterContext.jsx → src/contexts/data/FilterContext.tsx
+src/contexts/data/ReferenceDataContext.jsx → src/contexts/data/ReferenceDataContext.tsx
+src/contexts/data/SystemProvider.jsx → src/contexts/data/SystemProvider.tsx
 src/data/AppList.jsx → src/data/AppList.tsx
-src/data/FilterContext.jsx → src/data/FilterContext.tsx
 src/data/SystemData.jsx → src/data/SystemData.tsx
-src/data/ReferenceDataContext.jsx → src/data/ReferenceDataContext.tsx
 ```
 
 **Tier 3 - Core Components:**
 
 ```
-src/components/Frame.jsx → src/components/Frame.tsx
-src/components/AppInstanceRow.jsx → src/components/AppInstanceRow.tsx
-src/components/InstalledAppsList.jsx → src/components/InstalledAppsList.tsx
-src/components/MarketplaceList.jsx → src/components/MarketplaceList.tsx
+src/components/layout/Frame.jsx → src/components/layout/Frame.tsx
+src/components/apps/AppInstanceRow.jsx → src/components/apps/AppInstanceRow.tsx
+src/components/apps/InstalledAppsList.jsx → src/components/apps/InstalledAppsList.tsx
+src/components/apps/MarketplaceList.jsx → src/components/apps/MarketplaceList.tsx
 ```
 
 **Tier 4 - Supporting Components:** (Remaining ~70 JSX files)
@@ -1376,7 +1373,7 @@ src/api/marketplace/AppRatingService.js → .ts
 
 ```
 src/hooks/usePagination.js → src/hooks/usePagination.ts
-src/components/LocalStorage.js → src/utils/localStorage.ts (also move)
+src/hooks/LocalStorage.js → src/hooks/useLocalStorage.ts (also rename)
 ```
 
 **Mocks:**
@@ -1384,7 +1381,7 @@ src/components/LocalStorage.js → src/utils/localStorage.ts (also move)
 ```
 src/api/__mocks__/auth-header.js → .ts
 src/api/marketplace/__mocks__/*.js → .ts
-src/data/__mocks__/*.js → .ts
+src/contexts/data/__mocks__/*.js → .ts
 ```
 
 **Test Files:**
@@ -1434,9 +1431,8 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 
 ### High-Risk Items
 
-- **Phase 2 (Structure Changes):** Mass file moves can break imports
-  - **Mitigation:** Use IDE refactoring tools, verify builds frequently, implement feature-by-feature
-  - **Rollback Plan:** Multiple smaller PRs for easy isolated reverts
+- ~~**Phase 2 (Structure Changes):** Mass file moves can break imports~~ ✅ **COMPLETED** - All imports verified, 668 tests passing
+  - Result: 52 source files + 28 test files moved across 6 commits with zero regressions
 
 - **Phase 5 (TypeScript Migration):** Breaking changes if types are incorrect
   - **Mitigation:** Migrate incrementally, run tests after each file, tier-based approach
@@ -1470,7 +1466,7 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 
 **Remaining (Phases 2-5):**
 
-- ⚪ **Phase 2:** Project structure reorganization (context consolidation, comprehensive restructuring, path aliases)
+- ✅ **Phase 2:** Project structure reorganization - DONE (context consolidation, component restructuring, path aliases)
 - ⚪ **Phase 3:** React import cleanup and code modernization
 - ⚪ **Phase 4:** Documentation updates and final cleanup
 - ⚪ **Phase 5:** TypeScript migration (~80 JSX → TSX, ~19 JS → TS, PropTypes replacement)
@@ -1483,13 +1479,13 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 - ✅ Faster test execution (Vitest vs Jest)
 - ✅ Cleaner dependency tree
 - ✅ No dual testing configurations
+- ✅ Clearer project structure (Phase 2)
+- ✅ Reduced cognitive load for new developers (Phase 2)
+- ✅ Improved code navigation with path aliases (Phase 2)
+- ✅ Feature-based architecture (Phase 2)
 
 **Remaining:**
 
-- ⚪ Clearer project structure (Phase 2)
-- ⚪ Reduced cognitive load for new developers (Phase 2)
-- ⚪ Improved code navigation with path aliases (Phase 2)
-- ⚪ Feature-based architecture (Phase 2)
 - ⚪ Modern React 19 code practices (Phase 3)
 - ⚪ Full type safety in all components (Phase 5)
 - ⚪ Consistent file naming across project (Phase 5)
@@ -1503,7 +1499,15 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 **✅ Completed:**
 
 - Phase 1: Legacy artifact removal - DONE
-- Phase 2, Step 2.1: Context/provider consolidation - DONE
+- Phase 2: Project Structure Improvements - DONE
+  - Step 2.1: Context/provider consolidation (`7693271`)
+  - Step 2.2a: layout/ and ui/ (`ee5f765`)
+  - Step 2.2b: instances/ feature (`544cf4d`)
+  - Step 2.2c: apps/ and export/ (`65e4af7`)
+  - Step 2.2d: device/ and help/ (`84000b6`)
+  - Step 2.2e: LocalStorage → hooks/ (`4f7ce64`)
+  - Step 2.2f: cleanup (no-op, completed during prior steps)
+  - Step 2.3: Granular path aliases (deferred, optional)
 
 **⏸️ Deferred to Future Initiative:**
 
@@ -1511,19 +1515,7 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 
 **📋 Remaining Phases:**
 
-**Phase 2: Project Structure Improvements** (In Progress)
-
-- ✅ Step 2.1: Consolidate context/provider files - DONE
-- ⭐ Step 2.2: Reorganize component structure - NEXT
-  - Sub-step 2.2a: Create layout/ and ui/ directories
-  - Sub-step 2.2b: Consolidate instances/ feature
-  - Sub-step 2.2c: Expand apps/ feature and create export/
-  - Sub-step 2.2d: Expand device/ and move remaining buttons
-  - Sub-step 2.2e: Move LocalStorage.js to hooks/
-  - Sub-step 2.2f: Move QuestLogDialog + clean up empty dirs
-- Step 2.3: Add granular path aliases (optional, deferred)
-
-**Phase 3: Code Modernization** (Est. 4-6 hours)
+**Phase 3: Code Modernization** ⭐ NEXT (Est. 4-6 hours)
 
 - Fix incorrect React imports in App.jsx and Marketplace.jsx
 - Remove unnecessary React imports where applicable
@@ -1610,23 +1602,25 @@ After each phase:
 
 This refactoring specification provides a comprehensive, phased approach to modernizing the FLECS WebApp codebase.
 
-**Completed Achievements (Phase 1):**
+**Completed Achievements (Phases 1-2):**
 
 1. ✅ **Removed technical debt** - Eliminated 454 obsolete packages (~35% reduction)
 2. ✅ **Improved developer experience** - Working debug tools for Vitest
 3. ✅ **Cleaner configuration** - No dual test runner setup
 4. ✅ **Faster development** - Vitest performance improvements
 5. ✅ **Reduced bundle size** - Lighter dependency footprint
+6. ✅ **Feature-based architecture** - 11 organized component directories, zero loose files
+7. ✅ **Consolidated contexts** - All providers/contexts in `src/contexts/` with 11 path aliases
+8. ✅ **Improved discoverability** - Clear domain boundaries (apps, instances, device, etc.)
 
 **Remaining Work:**
 
-The plan continues with Phases 2-4 focused on code modernization, project structure improvements, and final cleanup. TypeScript migration has been deferred to a dedicated future initiative to allow for focused, comprehensive type coverage without mixing concerns.
+The plan continues with Phases 3-4 focused on code modernization and final cleanup. TypeScript migration has been deferred to a dedicated future initiative to allow for focused, comprehensive type coverage without mixing concerns.
 
-**Current Status:** Phase 1 complete, Phase 2 Step 2.1 complete. Context/provider files consolidated into `src/contexts/` with full path alias support. All 419 tests passing, build successful.
+**Current Status:** Phase 1 complete, Phase 2 complete. All 668 tests passing across 97 test files. Build produces 12,228 modules successfully.
 
 **Next Steps:**
 
-- Phase 2, Step 2.2: Reorganize component structure (6 sub-steps, ~12-18 hours)
 - Phase 3: Code Modernization (fix React imports, remove unnecessary imports)
 - Phase 4: Final Cleanup (documentation updates, unused file audit)
 - Future: TypeScript Migration (separate dedicated initiative)

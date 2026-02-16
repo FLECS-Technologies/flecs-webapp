@@ -17,12 +17,12 @@ The mocking system provides:
 ```
 src/
 ├── __mocks__/
-│   └── core-client-ts.ts       # Main mock definitions (Vitest)
+│   └── core-client-ts.ts       # Main mock definitions
 ├── test/
-│   └── test-utils.ts           # Test utility functions (Vitest)
-├── __tests__/
-│   └── api-mocking-examples.test.tsx  # Example usage (Vitest)
-└── setupTests.js               # Global test setup (Vitest)
+│   ├── setup.ts                # Global test setup
+│   └── test-utils.ts           # Test utility functions
+└── __tests__/
+    └── api-mocking-examples.test.tsx  # Example usage
 ```
 
 ## Basic Usage
@@ -150,7 +150,7 @@ describe('MyComponent', () => {
 
     // Mock the useProtectedApi hook (Vitest style)
     const useProtectedApiSpy = vi.spyOn(
-      await import('../components/providers/ApiProvider'),
+      await import('@contexts/api/ApiProvider'),
       'useProtectedApi'
     ).mockReturnValue(mockApi);
 
@@ -162,7 +162,7 @@ describe('MyComponent', () => {
     };
 
     const useQuestContextSpy = vi.spyOn(
-      await import('../components/quests/QuestContext'),
+      await import('@contexts/quests/QuestContext'),
       'useQuestContext'
     ).mockReturnValue(mockQuestContext);
 
@@ -180,15 +180,6 @@ describe('MyComponent', () => {
   });
 });
 ```
-
-## Key Vitest Differences from Jest
-
-1. **Import syntax**: `import { vi } from 'vitest'` instead of global `jest`
-2. **Mock functions**: `vi.fn()` instead of `jest.fn()`
-3. **Mock modules**: `vi.mock()` instead of `jest.mock()`
-4. **Spy functions**: `vi.spyOn()` instead of `jest.spyOn()`
-5. **Mock checks**: `vi.isMockFunction()` instead of `jest.isMockFunction()`
-6. **Clear mocks**: `vi.clearAllMocks()` instead of `jest.clearAllMocks()`
 
 ## Available Mock APIs
 
@@ -231,16 +222,5 @@ The `createMockApi()` function provides mocks for:
 4. **Use async/await imports** for Vitest module mocking
 5. **Test both success and failure scenarios** for robust test coverage
 6. **Use descriptive error messages** in failure scenarios to make debugging easier
-
-## Migration from Jest to Vitest
-
-If you have existing Jest tests:
-
-1. Replace `jest.fn()` with `vi.fn()`
-2. Replace `jest.mock()` with `vi.mock()`
-3. Replace `jest.spyOn()` with `vi.spyOn()`
-4. Add `import { vi } from 'vitest'` to test files
-5. Update `setupTests.js` to use `vi.mock()` instead of `jest.mock()`
-6. Use async imports for module mocking: `await import('module')`
 
 This system provides comprehensive coverage for all FLECS API interactions while maintaining simplicity and reusability across your Vitest test suite.

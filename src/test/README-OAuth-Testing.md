@@ -10,7 +10,7 @@ The core mock implementation that replaces the real OAuth provider during tests.
 
 ### 2. `oauth-setup.ts`
 
-Global setup utilities for Jest configuration.
+Global setup utilities for Vitest configuration.
 
 ### 3. `oauth-test-utils.tsx`
 
@@ -20,22 +20,13 @@ Helper functions and utilities for writing OAuth-related tests.
 
 ### Option 1: Global Mock Setup (Recommended)
 
-Add to your `jest.config.js` or test setup file:
-
-```javascript
-// jest.config.js
-module.exports = {
-  setupFilesAfterEnv: ['<rootDir>/src/test/oauth-setup.ts'],
-  // ... other config
-};
-```
-
-Or in your test setup file:
+The test setup is configured in `vite.config.ts`:
 
 ```typescript
-// setupTests.js
-import { setupOAuth4WebApiMocks } from './test/oauth-setup';
-setupOAuth4WebApiMocks();
+// vite.config.ts
+test: {
+  setupFiles: ['src/test/setup.ts'],
+}
 ```
 
 ### Option 2: Per-Test File Setup
@@ -46,7 +37,7 @@ import { renderWithOAuthProvider, mockScenarios } from '../test/oauth-test-utils
 import YourComponent from '../YourComponent';
 
 // Mock the provider before importing
-jest.mock('../components/providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 describe('YourComponent', () => {
   test('renders for authenticated user', () => {
@@ -120,7 +111,7 @@ test('custom user configuration', () => {
 import { mockOAuth4WebApiAuth } from '../test/oauth-test-utils';
 
 test('sign out functionality', async () => {
-  const mockSignOut = jest.fn().mockResolvedValue(undefined);
+  const mockSignOut = vi.fn().mockResolvedValue(undefined);
   mockOAuth4WebApiAuth.mockSignOut(mockSignOut);
 
   const { getByText } = renderWithOAuthProvider(<YourComponent />);
@@ -161,7 +152,7 @@ import { mockScenarios, mockOAuth4WebApiAuth, renderWithOAuthProvider } from '..
 import Profile from '../pages/Profile';
 
 // Mock the OAuth provider
-jest.mock('../components/providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 describe('Profile Component', () => {
   beforeEach(() => {
@@ -187,7 +178,7 @@ describe('Profile Component', () => {
 
   test('handles sign out', async () => {
     mockScenarios.authenticatedUser();
-    const mockSignOut = jest.fn().mockResolvedValue(undefined);
+    const mockSignOut = vi.fn().mockResolvedValue(undefined);
     mockOAuth4WebApiAuth.mockSignOut(mockSignOut);
 
     const { getByText } = renderWithOAuthProvider(<Profile />);

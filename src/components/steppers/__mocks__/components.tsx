@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 // Mock MultiStepWizard component
 export const MultiStepWizard = ({ title }: { title: string }) => (
   <div data-testid="multi-step-wizard" data-title={title}>

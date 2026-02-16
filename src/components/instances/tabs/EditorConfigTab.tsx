@@ -20,7 +20,7 @@ import { Box, Typography, List, CircularProgress, Stack } from '@mui/material';
 import ActionSnackbar from '../../ui/ActionSnackbar';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import HelpButton from '../../buttons/help/HelpButton';
-import { instancedeviceconfig } from '../../../components/help/helplinks';
+import { instancedeviceconfig } from '../../help/helplinks';
 import EditorConfigCard from './editors/EditorConfigCard';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 

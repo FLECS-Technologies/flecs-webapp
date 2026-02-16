@@ -18,7 +18,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
-import { getLog } from '../api/device/InstanceLogService';
+import { getLog } from '../../api/device/InstanceLogService';
 import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useProtectedApi } from '@contexts/api/ApiProvider';

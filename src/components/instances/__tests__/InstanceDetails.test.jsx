@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Fri Apr 08 2022
+ * Created on Thu Apr 07 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import InstanceLog from '../InstanceLog';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import InstanceDetails from '../InstanceDetails';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
@@ -36,7 +36,7 @@ const testInstance = {
   desired: 'stopped',
 };
 
-describe('InstanceLog', () => {
+describe('InstanceDetails', () => {
   let mockApi;
 
   beforeEach(() => {
@@ -45,23 +45,12 @@ describe('InstanceLog', () => {
     mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  it('renders InstanceLog component', async () => {
-    render(<InstanceLog instance={testInstance}></InstanceLog>);
+  it('renders InstanceDetails component', async () => {
+    render(<InstanceDetails instance={testInstance}></InstanceDetails>);
 
+    // Wait for the component to finish loading and API calls to complete
     await waitFor(() => {
-      expect(screen.getByTestId('log-editor')).toBeVisible();
-    });
-  });
-
-  it('Click refresh', async () => {
-    render(<InstanceLog instance={testInstance}></InstanceLog>);
-
-    const refreshButton = await waitFor(() => screen.getByTestId('refresh-button'));
-
-    fireEvent.click(refreshButton);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('log-editor')).toBeVisible();
+      expect(screen.getByText('Storage')).toBeVisible();
     });
   });
 });

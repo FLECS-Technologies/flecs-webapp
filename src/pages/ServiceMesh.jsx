@@ -21,7 +21,7 @@ import React from 'react';
 import HelpButton from '../components/buttons/help/HelpButton';
 import { servicemesh } from '../components/help/helplinks';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
-import { EditorButton } from '../components/buttons/editors/EditorButton';
+import { EditorButton } from '../components/instances/tabs/editors/EditorButton';
 
 export default function ServiceMesh() {
   const { appList } = React.useContext(ReferenceDataContext);

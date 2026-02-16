@@ -17,7 +17,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getHostname, getIPAddress } from '../api/device/InstanceDetailsService';
+import { getHostname, getIPAddress } from '../../api/device/InstanceDetailsService';
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import CollapsableRow from './ui/CollapsableRow';
+import CollapsableRow from '../ui/CollapsableRow';
 import VolumesTable from './VolumesTable';
 import HostContainerTable from './HostContainerTable';
 import { useProtectedApi } from '@contexts/api/ApiProvider';

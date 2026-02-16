@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Thu Apr 07 2022
+ * Created on Wed Mar 02 2022
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import InstanceDetails from '../InstanceDetails';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import InstanceInfo from '../InstanceInfo';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
-// Mock the API provider
+// Mock the API provider for child components
 const mockUseProtectedApi = vi.fn();
 
 vi.mock('@contexts/api/ApiProvider', () => ({
@@ -31,12 +31,14 @@ vi.mock('@contexts/api/ApiProvider', () => ({
 const testInstance = {
   instanceName: 'TestInstance',
   instanceId: 'ABCDE',
-  version: '1.0.0',
+  appKey: {
+    version: '1.0.0',
+  },
   status: 'running',
   desired: 'stopped',
 };
 
-describe('InstanceDetails', () => {
+describe('InstanceInfo', () => {
   let mockApi;
 
   beforeEach(() => {
@@ -45,12 +47,16 @@ describe('InstanceDetails', () => {
     mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  it('renders InstanceDetails component', async () => {
-    render(<InstanceDetails instance={testInstance}></InstanceDetails>);
+  it('renders InstanceInfo component', async () => {
+    render(<InstanceInfo instance={testInstance}></InstanceInfo>);
 
-    // Wait for the component to finish loading and API calls to complete
+    // Wait for the component and child components to finish loading
     await waitFor(() => {
-      expect(screen.getByText('Storage')).toBeVisible();
+      expect(screen.getByText('TestInstance')).toBeVisible();
+      expect(screen.getByText('ABCDE')).toBeVisible();
+      expect(screen.getByText('1.0.0')).toBeVisible();
+      expect(screen.getByText('running')).toBeVisible();
+      expect(screen.getByText('stopped')).toBeVisible();
     });
   });
 });

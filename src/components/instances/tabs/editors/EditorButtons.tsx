@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { AppInstance } from '../../../api/device/instances/instance';
+import { AppInstance } from '../../../../api/device/instances/instance';
 import { EditorButton, createUrl } from './EditorButton';
 import {
   Button,

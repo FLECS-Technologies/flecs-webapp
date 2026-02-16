@@ -44,7 +44,7 @@ import { CircularProgress } from '@mui/material';
 import { useSystemContext } from '@contexts/data/SystemProvider';
 import ContentDialog from '../ui/ContentDialog';
 import Export from '../export/Export';
-import Import from '../Import';
+import Import from '../device/Import';
 import InstallationStepper from './installation/InstallationStepper';
 import PoweredBy from '../layout/PoweredBy';
 import { QuestLog } from '../quests/QuestLog';

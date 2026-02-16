@@ -18,7 +18,7 @@
 import React from 'react';
 import PropTypes, { InferProps } from 'prop-types';
 import { Alert, AlertTitle, Box, Typography } from '@mui/material';
-import DeviceActivationButton from '../../components/buttons/license/DeviceActivationButton';
+import DeviceActivationButton from './license/DeviceActivationButton';
 import MarketplaceLogin from '../auth/marketplace/MarketplaceLogin';
 import { useMarketplaceUser } from '@contexts/marketplace/MarketplaceUserProvider';
 import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';

@@ -26,7 +26,7 @@ import {
   NetworkType,
 } from '@flecs/core-client-ts';
 import NetworkConfigCard from './networks/NetworkConfigCard';
-import HelpButton from '../../buttons/help/HelpButton';
+import HelpButton from '../../help/HelpButton';
 import { instancenicconfig } from '../../help/helplinks';
 import ActionSnackbar from '../../ui/ActionSnackbar';
 import { useProtectedApi } from '@contexts/api/ApiProvider';

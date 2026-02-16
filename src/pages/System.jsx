@@ -10,7 +10,7 @@ import {
   BottomNavigation,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Version from '../components/Version';
+import Version from '../components/device/Version';
 import DeviceActivation from '../components/device/DeviceActivation';
 import LicenseInfo from '../components/device/license/LicenseInfo';
 import ExportList from '../components/export/ExportList';

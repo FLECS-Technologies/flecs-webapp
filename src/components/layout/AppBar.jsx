@@ -29,7 +29,7 @@ import PropTypes from 'prop-types';
 import { useDarkMode } from '../../styles/ThemeHandler';
 import Logo from './Logo';
 import { useSearchParams } from 'react-router-dom';
-import HelpButton from '../buttons/help/HelpButton';
+import HelpButton from '../help/HelpButton';
 import { helpdomain } from '../help/helplinks';
 import { appBarIconColors } from '../../whitelabeling/custom-tokens';
 import QuestLogDialog from '../quests/QuestLogDialog';

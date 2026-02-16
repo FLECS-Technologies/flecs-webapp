@@ -22,7 +22,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import DeviceAppsList from '../InstalledAppsList';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 import { QuestContextProvider } from '@contexts/quests/QuestContext';
 
 // Mock the API provider

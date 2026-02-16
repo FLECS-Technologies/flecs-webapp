@@ -45,10 +45,10 @@ import { createVersion, createVersions, getLatestVersion } from '../../../utils/
 import { Version } from '../../../models/version';
 import { EditorButtons } from '../../instances/tabs/editors/EditorButtons';
 import { VersionSelector } from '../../ui/VersionSelector';
-import UninstallButton from '../../buttons/app/UninstallButton';
+import UninstallButton from '../buttons/UninstallButton';
 import ActionSnackbar from '../../ui/ActionSnackbar';
-import InstallButton from '../../../components/buttons/app/InstallButton';
-import UpdateButton from '../../../components/buttons/app/UpdateButton';
+import InstallButton from '../buttons/InstallButton';
+import UpdateButton from '../buttons/UpdateButton';
 
 interface FullCardProps {
   app: App;

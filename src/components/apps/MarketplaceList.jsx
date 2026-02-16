@@ -18,12 +18,12 @@
 
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import Card from './apps/cards/Card';
+import Card from './cards/Card';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { Box } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
-import SearchBar from './ui/SearchBar';
+import SearchBar from '../ui/SearchBar';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -45,14 +45,14 @@ import {
   getPurchasable,
   getDocumentationUrl,
   getDescription,
-} from '../api/marketplace/ProductService';
+} from '../../api/marketplace/ProductService';
 import { CircularProgress, Collapse, Typography } from '@mui/material';
 import { AppFilter } from './AppFilter';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
-import { getInstalledVersions } from '../data/AppList';
+import { getInstalledVersions } from '../../data/AppList';
 import { FilterContext } from '@contexts/data/FilterContext';
-import usePagination from '../hooks/usePagination';
-import PoweredByFLECS from './layout/PoweredBy';
+import usePagination from '../../hooks/usePagination';
+import PoweredByFLECS from '../layout/PoweredBy';
 
 const MarketplaceList = (props) => {
   const [products, setProducts] = useState();

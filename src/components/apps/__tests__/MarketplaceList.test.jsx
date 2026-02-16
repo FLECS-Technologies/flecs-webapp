@@ -23,16 +23,16 @@ import { FilterContext } from '@contexts/data/FilterContext';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 
 // Mock AppList context provider and hook
-vi.mock('../../data/AppList', () => ({
+vi.mock('../../../data/AppList', () => ({
   AppList: ({ children }) => <>{children}</>,
   getInstalledVersions: () => [],
 }));
 
 // Mock child components
-vi.mock('../Card', () => ({
+vi.mock('../cards/Card', () => ({
   default: ({ title }) => <div data-testid="app-card">{title}</div>,
 }));
-vi.mock('../ui/SearchBar', () => ({
+vi.mock('../../ui/SearchBar', () => ({
   default: (props) => (
     <div data-testid="search-bar">
       <input
@@ -47,7 +47,7 @@ vi.mock('../ui/SearchBar', () => ({
 vi.mock('../AppFilter', () => ({
   AppFilter: () => <div data-testid="filter-panel" />,
 }));
-vi.mock('../layout/PoweredBy', () => ({
+vi.mock('../../layout/PoweredBy', () => ({
   default: () => <div data-testid="powered-by" />,
 }));
 

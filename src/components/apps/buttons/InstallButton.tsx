@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 import { App } from '../../../models/app';
 import { Version } from '../../../models/version';
 import ContentDialog from '../../ui/ContentDialog';
-import InstallationStepper from '../../../components/apps/installation/InstallationStepper';
+import InstallationStepper from '../installation/InstallationStepper';
 import { Button, ButtonProps } from '@mui/material';
 import { Download } from '@mui/icons-material';
 import { Quest } from '@flecs/core-client-ts';

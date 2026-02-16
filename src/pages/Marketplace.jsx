@@ -17,7 +17,7 @@
  */
 
 import { React } from 'react';
-import MarketplaceList from '../components/MarketplaceList';
+import MarketplaceList from '../components/apps/MarketplaceList';
 
 export default function Marketplace() {
   return (

@@ -31,8 +31,8 @@ import { EditorButtons } from '../../instances/tabs/editors/EditorButtons';
 import FullCard from './FullCard';
 import { CheckCircle, ErrorOutline, Update } from '@mui/icons-material';
 import { decodeHtmlEntities } from '../../../utils/html-utils';
-import InstallButton from '../../../components/buttons/app/InstallButton';
-import UpdateButton from '../../../components/buttons/app/UpdateButton';
+import InstallButton from '../buttons/InstallButton';
+import UpdateButton from '../buttons/UpdateButton';
 
 export default function OutlinedCard(props: App) {
   const { systemInfo } = useSystemContext() as SystemContextType;

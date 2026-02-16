@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import { useContext, React } from 'react';
-import InstalledAppsList from '../components/InstalledAppsList';
+import InstalledAppsList from '../components/apps/InstalledAppsList';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 
 export default function installedApps() {

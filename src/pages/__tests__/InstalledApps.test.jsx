@@ -36,7 +36,7 @@ vi.mock('@contexts/data/ReferenceDataContext', () => ({
 }));
 
 // Mock the child components that use the API
-vi.mock('../../components/InstalledAppsList', () => ({
+vi.mock('../../components/apps/InstalledAppsList', () => ({
   default: ({ appData }) => <div aria-label="installed-apps-list">Installed Apps List</div>,
 }));
 

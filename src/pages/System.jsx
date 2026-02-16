@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import Version from '../components/Version';
 import DeviceActivation from '../components/device/DeviceActivation';
 import LicenseInfo from '../components/device/license/LicenseInfo';
-import ExportList from '../components/lists/flecsports/ExportList';
+import ExportList from '../components/export/ExportList';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

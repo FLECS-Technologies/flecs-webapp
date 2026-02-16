@@ -3,7 +3,7 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
 import Row from '../InstalledAppsListRow';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
 // Mock the API provider and Quest context
 const mockUseProtectedApi = vi.fn();

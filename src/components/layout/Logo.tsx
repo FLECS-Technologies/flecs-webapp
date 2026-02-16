@@ -22,7 +22,7 @@ import WhiteLabelLogo, {
   useWhiteLabelLogo,
   showPoweredBy,
 } from '../../whitelabeling/WhiteLabelLogo';
-import FLECSLogo from '../navigation/FLECSLogo';
+import FLECSLogo from './FLECSLogo';
 
 const Logo: React.FC = () => {
   const theme = useTheme(); // Access the Material-UI theme

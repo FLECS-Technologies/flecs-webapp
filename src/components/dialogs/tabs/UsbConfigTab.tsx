@@ -20,7 +20,7 @@ import { Box, List, CircularProgress, Typography, Stack } from '@mui/material';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
 import UsbConfigCard from './usb-devices/UsbConfigCard';
-import ActionSnackbar from '../../../components/ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export interface UsbDevice {

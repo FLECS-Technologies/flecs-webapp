@@ -18,8 +18,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
-import ActionSnackbar from './ActionSnackbar';
-import FileOpen from './FileOpen';
+import ActionSnackbar from './ui/ActionSnackbar';
+import FileOpen from './ui/FileOpen';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';

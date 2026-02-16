@@ -27,7 +27,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import CollapsableRow from './CollapsableRow';
+import CollapsableRow from './ui/CollapsableRow';
 import VolumesTable from './VolumesTable';
 import HostContainerTable from './HostContainerTable';
 import { useProtectedApi } from '@contexts/api/ApiProvider';

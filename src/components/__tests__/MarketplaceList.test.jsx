@@ -32,7 +32,7 @@ vi.mock('../../data/AppList', () => ({
 vi.mock('../Card', () => ({
   default: ({ title }) => <div data-testid="app-card">{title}</div>,
 }));
-vi.mock('../SearchBar', () => ({
+vi.mock('../ui/SearchBar', () => ({
   default: (props) => (
     <div data-testid="search-bar">
       <input
@@ -47,7 +47,7 @@ vi.mock('../SearchBar', () => ({
 vi.mock('../AppFilter', () => ({
   AppFilter: () => <div data-testid="filter-panel" />,
 }));
-vi.mock('../navigation/PoweredBy', () => ({
+vi.mock('../layout/PoweredBy', () => ({
   default: () => <div data-testid="powered-by" />,
 }));
 

@@ -44,9 +44,9 @@ import { isBlacklisted } from '../../../api/marketplace/ProductService';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
 import { Version } from '../../../models/version';
 import { EditorButtons } from '../../buttons/editors/EditorButtons';
-import { VersionSelector } from '../../autocomplete/VersionSelector';
+import { VersionSelector } from '../../ui/VersionSelector';
 import UninstallButton from '../../buttons/app/UninstallButton';
-import ActionSnackbar from '../../ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import InstallButton from '../../../components/buttons/app/InstallButton';
 import UpdateButton from '../../../components/buttons/app/UpdateButton';
 

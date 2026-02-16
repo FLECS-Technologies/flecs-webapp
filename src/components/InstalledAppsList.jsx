@@ -36,17 +36,17 @@ import DeveloperModeIcon from '@mui/icons-material/DeveloperMode';
 import { visuallyHidden } from '@mui/utils';
 import Yaml from 'js-yaml';
 import Row from './InstalledAppsListRow';
-import FileOpen from './FileOpen';
+import FileOpen from './ui/FileOpen';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import useStateWithLocalStorage from './LocalStorage';
 import usePagination from '../hooks/usePagination';
 import { CircularProgress } from '@mui/material';
 import { useSystemContext } from '@contexts/data/SystemProvider';
-import ContentDialog from './ContentDialog';
+import ContentDialog from './ui/ContentDialog';
 import Export from './buttons/export/Export';
 import Import from './Import';
 import InstallationStepper from './apps/installation/InstallationStepper';
-import PoweredBy from './navigation/PoweredBy';
+import PoweredBy from './layout/PoweredBy';
 import { QuestLog } from './quests/QuestLog';
 
 const headCells = [

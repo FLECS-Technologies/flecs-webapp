@@ -17,7 +17,7 @@
  */
 
 import { React } from 'react';
-import Frame from './components/Frame';
+import Frame from './components/layout/Frame';
 import { AppList } from './data/AppList';
 import { UIRoutes } from './pages/ui-routes';
 import { SystemData } from './data/SystemData';

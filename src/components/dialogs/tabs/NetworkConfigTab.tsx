@@ -28,7 +28,7 @@ import {
 import NetworkConfigCard from './networks/NetworkConfigCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancenicconfig } from '../../../components/help/helplinks';
-import ActionSnackbar from '../../../components/ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export interface NetworkState {

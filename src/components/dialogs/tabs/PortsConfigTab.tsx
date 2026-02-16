@@ -21,7 +21,7 @@ import SinglePortMapping from './port-mappings/SinglePortMapping';
 import PortRangeMapping from './port-mappings/PortRangeMapping';
 import AddSinglePortMappingButton from './port-mappings/AddSinglePortMappingButton';
 import AddPortRangeMappingButton from './port-mappings/AddPortRangeMappingButton';
-import ActionSnackbar from '../../ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import {
   InstancePortMappingRange,
   InstancePortMappingSingle,

@@ -22,7 +22,7 @@ import Marketplace from '../Marketplace';
 import { FilterContextProvider } from '@contexts/data/FilterContext';
 import { vitest } from 'vitest';
 
-vitest.mock('../../components/navigation/PoweredBy');
+vitest.mock('../../components/layout/PoweredBy');
 vitest.mock('../../api/marketplace/ProductService', () => ({
   getProducts: vitest.fn().mockReturnValue(Promise.resolve()),
 }));

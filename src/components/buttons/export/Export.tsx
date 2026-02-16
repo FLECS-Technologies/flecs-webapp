@@ -20,7 +20,7 @@ import Button from '@mui/material/Button';
 // If you want a loading button, use the following instead:
 // import LoadingButton from '@mui/lab/LoadingButton';
 import UploadIcon from '@mui/icons-material/Upload';
-import ActionSnackbar from '../../ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';

@@ -38,7 +38,7 @@ vi.mock('@contexts/data/SystemProvider', () => ({
   useSystemContext: () => mockSystemContext,
 }));
 
-vi.mock('../../ContentDialog', () => ({
+vi.mock('../../ui/ContentDialog', () => ({
   default: ({ children, open, title }: any) =>
     open ? (
       <div data-testid="content-dialog">

@@ -71,7 +71,7 @@ vi.mock('../installation/InstallationStepper', () => ({
   ),
 }));
 
-vi.mock('../../ContentDialog', () => ({
+vi.mock('../../ui/ContentDialog', () => ({
   default: ({ children, open, title }: any) =>
     open ? (
       <div data-testid="content-dialog">
@@ -81,7 +81,7 @@ vi.mock('../../ContentDialog', () => ({
     ) : null,
 }));
 
-vi.mock('../../ActionSnackbar', () => ({
+vi.mock('../../ui/ActionSnackbar', () => ({
   default: ({ text, open }: any) => (open ? <div data-testid="action-snackbar">{text}</div> : null),
 }));
 

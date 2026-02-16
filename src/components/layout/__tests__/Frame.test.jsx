@@ -21,10 +21,10 @@ import { render, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Frame from '../Frame';
-import { DarkModeState } from '../../styles/ThemeHandler';
+import { DarkModeState } from '../../../styles/ThemeHandler';
 import { QuestContextProvider } from '@contexts/quests/QuestContext';
-import { createMockApi } from '../../__mocks__/core-client-ts';
-import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
+import { mockOAuth4WebApiAuth, mockScenarios } from '../../../test/oauth-test-utils';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();

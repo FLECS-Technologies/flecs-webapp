@@ -17,9 +17,9 @@
  */
 
 import React, { useState, useContext } from 'react';
-import LoadButton from '../../LoadButton';
-import LoadIconButton from '../../LoadIconButton';
-import ConfirmDialog from '../../ConfirmDialog';
+import LoadButton from '../../ui/LoadButton';
+import LoadIconButton from '../../ui/LoadIconButton';
+import ConfirmDialog from '../../ui/ConfirmDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { QuestContext } from '@contexts/quests/QuestContext';

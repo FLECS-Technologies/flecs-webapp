@@ -17,7 +17,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, List, CircularProgress, Stack } from '@mui/material';
-import ActionSnackbar from '../../ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';

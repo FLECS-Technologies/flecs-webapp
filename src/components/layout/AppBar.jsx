@@ -26,14 +26,14 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PropTypes from 'prop-types';
-import { useDarkMode } from '../styles/ThemeHandler';
-import Logo from './app_bar/Logo';
+import { useDarkMode } from '../../styles/ThemeHandler';
+import Logo from './Logo';
 import { useSearchParams } from 'react-router-dom';
-import HelpButton from './buttons/help/HelpButton';
-import { helpdomain } from './help/helplinks';
-import { appBarIconColors } from '../whitelabeling/custom-tokens';
-import QuestLogDialog from './dialogs/QuestLogDialog';
-import Avatar from './menus/avatar/Avatar';
+import HelpButton from '../buttons/help/HelpButton';
+import { helpdomain } from '../help/helplinks';
+import { appBarIconColors } from '../../whitelabeling/custom-tokens';
+import QuestLogDialog from '../dialogs/QuestLogDialog';
+import Avatar from './Avatar';
 
 function ElevationScroll(props) {
   const { children, window } = props;

@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, List, Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { InstanceEnvironmentVariable } from '@flecs/core-client-ts';
-import ActionSnackbar from '../../ActionSnackbar';
+import ActionSnackbar from '../../ui/ActionSnackbar';
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';

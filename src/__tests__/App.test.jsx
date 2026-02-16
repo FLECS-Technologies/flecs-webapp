@@ -22,7 +22,7 @@ import { describe, it, expect, vi } from 'vitest';
 import App from '../App';
 
 // Mock the entire App's complex dependency tree for a basic smoke test
-vi.mock('../components/Frame', () => ({
+vi.mock('../components/layout/Frame', () => ({
   default: ({ children }) => <div data-testid="frame">{children}</div>,
 }));
 

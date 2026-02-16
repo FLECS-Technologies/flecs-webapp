@@ -757,737 +757,344 @@ src/
 
 ---
 
-#### Step 2.2: Reorganize Component and Source Structure
+#### Step 2.2: Reorganize Component Structure
 
-**Priority:** HIGH (Main focus of Phase 2)
+**Priority:** HIGH  
+**Status:** Not started  
+**Estimated Effort:** 12-18 hours (across sub-steps)
 
-**Current Project Structure Analysis:**
+**Goal:** Reorganize `src/components/` from a flat/mixed structure into a feature-based architecture with clear separation between layout, shared UI, and domain features.
 
-```json
-"paths": {
-  "@components/*": ["./src/components/*"],
-  "@contexts/*": ["./src/contexts/*"],
-  "@pages/*": ["./src/pages/*"],
-  "@hooks/*": ["./src/hooks/*"],
-  "@utils/*": ["./src/utils/*"],
-  "@models/*": ["./src/models/*"],
-  "@api/*": ["./src/api/*"],
-  "@test/*": ["./src/test/*"],
-  "@assets/*": ["./src/assets/*"],
-  "@styles/*": ["./src/styles/*"],
-  "@data/*": ["./src/data/*"]
-}
+**Current State (post-2.1):**
+
+```
+src/components/                      # 25 root files + 14 subdirectories
+  ├── 25 flat root files (.jsx/.tsx) # Mix of layout, UI, and domain components
+  ├── apps/          (8 files)       # App cards, installation, rating
+  ├── auth/          (2 files)       # AuthGuard, MarketplaceLogin
+  ├── buttons/       (9 files)       # Mixed domain buttons (app, instance, export, license, help, editors)
+  ├── dialogs/       (16 files)      # Instance config dialog with tabs
+  ├── device/        (3 files)       # DeviceActivation, LicenseInfo, VersionsTable
+  ├── onboarding/    (17 files)      # Well-organized internally (already feature-like)
+  ├── quests/        (6 files)       # Quest components (already feature-like)
+  ├── steppers/      (11 files)      # Generic wizard framework (already well-organized)
+  ├── app_bar/       (1 file)        # Logo.tsx
+  ├── menus/avatar/  (1 file)        # Avatar.tsx
+  ├── navigation/    (2 files)       # FLECSLogo.jsx, PoweredBy.tsx
+  ├── text/          (1 file)        # MarqueeText.tsx
+  ├── lists/         (1 file)        # ExportList.tsx
+  └── autocomplete/  (1 file)        # VersionSelector.tsx
 ```
 
-**Proposed Additions (After Component Reorganization - Step 3.3):**
+**Problems to solve:**
 
-If component structure is reorganized per Step 3.3, add these granular aliases:
+1. 25 flat root files with no grouping — hard to find things
+2. `buttons/` groups by UI type rather than domain — scattered across features
+3. `dialogs/` is entirely instance-config related but named generically
+4. `app_bar/`, `navigation/`, `menus/` are layout fragments in separate dirs
+5. `LocalStorage.js` is a hook, not a component
+6. Domain-specific buttons (`InstallButton`, `DeviceActivationButton`) are far from their feature components
 
-```json
-"paths": {
-  // Top-level folders
-  "@components/*": ["./src/components/*"],
-  "@contexts/*": ["./src/contexts/*"],
-  "@pages/*": ["./src/pages/*"],
-  "@hooks/*": ["./src/hooks/*"],
-  "@utils/*": ["./src/utils/*"],
-  "@models/*": ["./src/models/*"],
-  "@api/*": ["./src/api/*"],
-  "@test/*": ["./src/test/*"],
-  "@assets/*": ["./src/assets/*"],
-  "@styles/*": ["./src/styles/*"],
-  "@data/*": ["./src/data/*"],
+**Target Structure:**
 
-  // Component structure aliases (after reorganization)
-  "@layout/*": ["./src/components/layout/*"],
-  "@ui/*": ["./src/components/ui/*"],
-  "@features/*": ["./src/components/features/*"],
-  "@shared/*": ["./src/components/shared/*"]
-}
+```
+src/components/
+  ├── layout/                        # Shell/chrome components
+  │   ├── AppBar.jsx
+  │   ├── Logo.tsx                   # from app_bar/
+  │   ├── Avatar.tsx                 # from menus/avatar/
+  │   ├── Drawer.jsx
+  │   ├── Frame.jsx
+  │   ├── FLECSLogo.jsx              # from navigation/
+  │   ├── PoweredBy.tsx              # from navigation/
+  │   └── __tests__/
+  │
+  ├── ui/                            # Reusable, domain-agnostic components
+  │   ├── ActionSnackbar.jsx
+  │   ├── ConfirmDialog.jsx
+  │   ├── ContentDialog.jsx
+  │   ├── FileOpen.jsx
+  │   ├── LoadButton.jsx
+  │   ├── LoadIconButton.jsx
+  │   ├── Loading.tsx
+  │   ├── SearchBar.jsx
+  │   ├── MarqueeText.tsx            # from text/
+  │   ├── VersionSelector.tsx        # from autocomplete/
+  │   ├── CollapsableRow.jsx
+  │   └── __tests__/
+  │
+  ├── apps/                          # App management feature (EXISTING, expanded)
+  │   ├── cards/
+  │   ├── installation/
+  │   ├── rating/
+  │   ├── buttons/                   # from buttons/app/ (InstallButton, UninstallButton, UpdateButton)
+  │   ├── AppFilter.jsx              # from root
+  │   ├── AppInstanceRow.jsx         # from root
+  │   ├── InstalledAppsList.jsx      # from root
+  │   ├── InstalledAppsListRow.jsx   # from root
+  │   ├── MarketplaceList.jsx        # from root
+  │   └── __tests__/
+  │
+  ├── instances/                     # Instance management feature (NEW, from dialogs/)
+  │   ├── InstanceInfo.jsx           # from root
+  │   ├── InstanceDetails.jsx        # from root
+  │   ├── InstanceLog.jsx            # from root
+  │   ├── VolumesTable.jsx           # from root
+  │   ├── HostContainerTable.jsx     # from root
+  │   ├── InstanceConfigDialog.tsx   # from dialogs/
+  │   ├── tabs/                      # from dialogs/tabs/
+  │   ├── buttons/                   # from buttons/instance/
+  │   └── __tests__/
+  │
+  ├── device/                        # Device management (EXISTING, expanded)
+  │   ├── DeviceActivation.tsx
+  │   ├── license/
+  │   │   ├── LicenseInfo.tsx
+  │   │   └── DeviceActivationButton.tsx  # from buttons/license/
+  │   ├── version/
+  │   │   └── VersionsTable.tsx
+  │   ├── Version.jsx                # from root
+  │   └── __tests__/
+  │
+  ├── auth/                          # Auth UI (EXISTING)
+  │   ├── AuthGuard.tsx
+  │   ├── marketplace/
+  │   │   └── MarketplaceLogin.tsx
+  │   └── __tests__/
+  │
+  ├── quests/                        # Quest system (EXISTING, no change)
+  │   └── (6 files, already organized)
+  │
+  ├── onboarding/                    # Onboarding wizard (EXISTING, no change)
+  │   └── (17 files, already organized)
+  │
+  ├── steppers/                      # Generic wizard framework (EXISTING, no change)
+  │   └── (11 files, already organized)
+  │
+  ├── export/                        # Export feature (NEW)
+  │   ├── Export.tsx                  # from buttons/export/
+  │   ├── ExportList.tsx             # from lists/flecsports/
+  │   └── __tests__/
+  │
+  └── help/                          # Help feature (EXISTING, expanded)
+      ├── HelpButton.tsx             # from buttons/help/
+      └── __tests__/
 ```
 
-**Actions:**
+**What does NOT move:**
 
-1. **Update `tsconfig.json`** (Basic aliases first):
+- `src/api/` — stays as-is (shared API layer, well-organized by domain)
+- `src/models/` — stays as-is (shared type definitions)
+- `src/contexts/` — stays as-is (consolidated in Step 2.1)
+- `src/hooks/` — stays as-is
+- `src/utils/` — stays as-is
+- `src/pages/` — stays as-is
+- `src/data/` — stays as-is
+- `App.jsx`, `main.tsx` — stay at `src/` root (Vite entry point)
 
-   ```json
-   {
-     "compilerOptions": {
-       "baseUrl": ".",
-       "paths": {
-         "@components/*": ["./src/components/*"],
-         "@contexts/*": ["./src/contexts/*"],
-         "@pages/*": ["./src/pages/*"],
-         "@hooks/*": ["./src/hooks/*"],
-         "@utils/*": ["./src/utils/*"],
-         "@models/*": ["./src/models/*"],
-         "@api/*": ["./src/api/*"],
-         "@test/*": ["./src/test/*"],
-         "@assets/*": ["./src/assets/*"],
-         "@styles/*": ["./src/styles/*"],
-         "@data/*": ["./src/data/*"]
-       }
-     }
-   }
-   ```
+**What does NOT get renamed:**
 
-2. **Update `vite.config.ts`** (add resolve.alias):
+- No file renames in this step (e.g., Card.tsx stays Card.tsx, not AppCard.tsx)
+- No page renames (e.g., InstalledApps.jsx stays as-is, no Page suffix)
+- Renaming can be a separate future step if desired
 
-   ```typescript
-   import path from 'path';
+**Design decisions:**
 
-   export default defineConfig({
-     // ...
-     resolve: {
-       alias: {
-         '@components': path.resolve(__dirname, './src/components'),
-         '@contexts': path.resolve(__dirname, './src/contexts'),
-         '@pages': path.resolve(__dirname, './src/pages'),
-         '@hooks': path.resolve(__dirname, './src/hooks'),
-         '@utils': path.resolve(__dirname, './src/utils'),
-         '@models': path.resolve(__dirname, './src/models'),
-         '@api': path.resolve(__dirname, './src/api'),
-         '@test': path.resolve(__dirname, './src/test'),
-         '@assets': path.resolve(__dirname, './src/assets'),
-         '@styles': path.resolve(__dirname, './src/styles'),
-         '@data': path.resolve(__dirname, './src/data'),
-         // Add after component reorganization:
-         // '@layout': path.resolve(__dirname, './src/components/layout'),
-         // '@ui': path.resolve(__dirname, './src/components/ui'),
-         // '@features': path.resolve(__dirname, './src/components/features'),
-         // '@shared': path.resolve(__dirname, './src/components/shared'),
-       },
-     },
-   });
-   ```
-
-3. **Example usage after basic aliases:**
-
-   ```typescript
-   // Before:
-   import { useProtectedApi } from '../../../components/providers/ApiProvider';
-   import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-   import DeviceLogin from '../../pages/DeviceLogin';
-
-   // After (with basic aliases):
-   import { useProtectedApi } from '@contexts/api/ApiProvider';
-   import { ReferenceDataContext } from '@data/ReferenceDataContext';
-   import DeviceLogin from '@pages/DeviceLogin';
-   ```
-
-4. **Example usage after component reorganization (Step 3.3):**
-
-   ```typescript
-   // Before:
-   import ConfirmDialog from '../../../components/ConfirmDialog';
-   import { EditorButtons } from '../../../components/buttons/editors/EditorButtons';
-   import InstallButton from '../../../components/buttons/app/InstallButton';
-
-   // After (with granular aliases):
-   import ConfirmDialog from '@ui/dialogs/ConfirmDialog';
-   import { EditorButtons } from '@features/instance-config/tabs/editors/EditorButtons';
-   import InstallButton from '@features/apps/buttons/InstallButton';
-
-   // Or even simpler with @features:
-   import InstallButton from '@features/apps/buttons/InstallButton';
-   import { MarketplaceList } from '@features/marketplace/MarketplaceList';
-   import { AppBar } from '@layout/AppBar/AppBar';
-   import { LoadButton } from '@ui/buttons/LoadButton';
-   ```
-
-**Benefits:**
-
-- **Shorter imports:** No more `../../../` chains
-- **Location independent:** Move files without breaking imports
-- **Self-documenting:** Clear where components come from
-- **IDE support:** Better autocomplete and navigation
-- **Refactor-friendly:** Easier to reorganize structure
-
-**Recommendation:**
-
-1. Implement basic aliases (top-level folders) immediately - Low risk, high value
-2. Add granular component aliases only after Step 2.2 completion
-3. Update imports incrementally, file by file, during other refactoring work
-4. Use IDE's "Refactor → Move" feature to automatically update imports when reorganizing
+1. **Keep everything under `src/components/`** — avoids breaking the `@components/*` alias and keeps scope manageable. No new top-level `features/`, `layout/`, `ui/` dirs.
+2. **Move domain buttons to their features** — `buttons/app/` → `apps/buttons/`, `buttons/instance/` → `instances/buttons/`, etc.
+3. **Leave `onboarding/`, `quests/`, `steppers/` alone** — they're already well-organized internally.
+4. **Co-locate tests** — move tests alongside the components they test (from central `__tests__/` to feature `__tests__/`).
+5. **`editors/` buttons stay with instances** — `EditorButton.tsx` and `EditorButtons.tsx` are part of the instance config feature. They move to `instances/tabs/editors/` alongside `EditorConfigTab.tsx`.
 
 ---
 
-#### Step 2.3: Enhance TypeScript Path Aliases
+##### Sub-step 2.2a: Create `layout/` and `ui/` directories _(~1 hour)_
 
-**Priority:** MEDIUM (After Step 2.2 completion)
+Move shell/chrome components to `layout/` and shared UI components to `ui/`. These have few cross-dependencies, making them low-risk.
 
-**Note:** This step should be implemented AFTER the component and source structure reorganization (Step 2.2) to align path aliases with the new folder structure.
+**Files to move:**
 
-**Current Aliases:**
+Layout (7 files + tests):
+
+- `AppBar.jsx` → `layout/AppBar.jsx`
+- `Drawer.jsx` → `layout/Drawer.jsx`
+- `Frame.jsx` → `layout/Frame.jsx`
+- `app_bar/Logo.tsx` → `layout/Logo.tsx`
+- `menus/avatar/Avatar.tsx` → `layout/Avatar.tsx`
+- `navigation/FLECSLogo.jsx` → `layout/FLECSLogo.jsx`
+- `navigation/PoweredBy.tsx` → `layout/PoweredBy.tsx`
+
+UI (11 files + tests):
+
+- `ActionSnackbar.jsx` → `ui/ActionSnackbar.jsx`
+- `ConfirmDialog.jsx` → `ui/ConfirmDialog.jsx`
+- `ContentDialog.jsx` → `ui/ContentDialog.jsx`
+- `FileOpen.jsx` → `ui/FileOpen.jsx`
+- `LoadButton.jsx` → `ui/LoadButton.jsx`
+- `LoadIconButton.jsx` → `ui/LoadIconButton.jsx`
+- `Loading.tsx` → `ui/Loading.tsx`
+- `SearchBar.jsx` → `ui/SearchBar.jsx`
+- `CollapsableRow.jsx` → `ui/CollapsableRow.jsx`
+- `text/MarqueeText.tsx` → `ui/MarqueeText.tsx`
+- `autocomplete/VersionSelector.tsx` → `ui/VersionSelector.tsx`
+
+**Validation:** Build passes, all tests pass.  
+**Commit:** `refactor: create layout/ and ui/ component groups (Step 2.2a)`
+
+---
+
+##### Sub-step 2.2b: Consolidate `instances/` feature _(~2 hours)_
+
+Move instance-related components and the instance config dialog into one feature directory.
+
+**Files to move:**
+
+From root:
+
+- `InstanceInfo.jsx` → `instances/InstanceInfo.jsx`
+- `InstanceDetails.jsx` → `instances/InstanceDetails.jsx`
+- `InstanceLog.jsx` → `instances/InstanceLog.jsx`
+- `VolumesTable.jsx` → `instances/VolumesTable.jsx`
+- `HostContainerTable.jsx` → `instances/HostContainerTable.jsx`
+
+From `dialogs/`:
+
+- `InstanceConfigDialog.tsx` → `instances/InstanceConfigDialog.tsx`
+- `tabs/` (entire directory, 16 files) → `instances/tabs/`
+
+From `buttons/`:
+
+- `buttons/instance/InstanceStartCreateButtons.tsx` → `instances/buttons/InstanceStartCreateButtons.tsx`
+- `buttons/editors/EditorButton.tsx` → `instances/tabs/editors/EditorButton.tsx`
+- `buttons/editors/EditorButtons.tsx` → `instances/tabs/editors/EditorButtons.tsx`
+
+**After this step, `dialogs/` is reduced to just `QuestLogDialog.tsx` — move it to `quests/`.**
+
+**Validation:** Build passes, all tests pass.  
+**Commit:** `refactor: consolidate instances/ feature components (Step 2.2b)`
+
+---
+
+##### Sub-step 2.2c: Expand `apps/` feature and create `export/` _(~1.5 hours)_
+
+Move app-related root components and buttons into the existing `apps/` directory. Create `export/` feature.
+
+**Files to move:**
+
+To `apps/`:
+
+- `AppFilter.jsx` → `apps/AppFilter.jsx`
+- `AppInstanceRow.jsx` → `apps/AppInstanceRow.jsx`
+- `InstalledAppsList.jsx` → `apps/InstalledAppsList.jsx`
+- `InstalledAppsListRow.jsx` → `apps/InstalledAppsListRow.jsx`
+- `MarketplaceList.jsx` → `apps/MarketplaceList.jsx`
+- `buttons/app/InstallButton.tsx` → `apps/buttons/InstallButton.tsx`
+- `buttons/app/UninstallButton.tsx` → `apps/buttons/UninstallButton.tsx`
+- `buttons/app/UpdateButton.tsx` → `apps/buttons/UpdateButton.tsx`
+
+To `export/` (new):
+
+- `buttons/export/Export.tsx` → `export/Export.tsx`
+- `lists/flecsports/ExportList.tsx` → `export/ExportList.tsx`
+
+**Validation:** Build passes, all tests pass.  
+**Commit:** `refactor: expand apps/ feature and create export/ (Step 2.2c)`
+
+---
+
+##### Sub-step 2.2d: Expand `device/` and move remaining buttons _(~1 hour)_
+
+Move device-related root components and the license button into `device/`.
+
+**Files to move:**
+
+- `Version.jsx` → `device/Version.jsx`
+- `Import.jsx` → `device/Import.jsx`
+- `buttons/license/DeviceActivationButton.tsx` → `device/license/DeviceActivationButton.tsx`
+- `buttons/help/HelpButton.tsx` → `help/HelpButton.tsx` (already has `help/` dir with tests)
+
+**After this step, `buttons/` directory should be empty and can be deleted.**
+
+**Validation:** Build passes, all tests pass.  
+**Commit:** `refactor: expand device/ feature and clean up buttons/ (Step 2.2d)`
+
+---
+
+##### Sub-step 2.2e: Move `LocalStorage.js` to `hooks/` _(~30 min)_
+
+`LocalStorage.js` is a custom hook (`useLocalStorage`), not a component. Move it to `src/hooks/`.
+
+**Files to move:**
+
+- `components/LocalStorage.js` → `hooks/LocalStorage.js`
+- `components/__tests__/LocalStorage.test.js` → `hooks/__tests__/LocalStorage.test.js`
+
+**Note:** Keep the filename as `LocalStorage.js` (no rename to `useLocalStorage.ts`). TypeScript conversion is out of scope for this step.
+
+**Validation:** Build passes, all tests pass.  
+**Commit:** `refactor: move LocalStorage hook to hooks/ (Step 2.2e)`
+
+---
+
+##### Sub-step 2.2f: Move remaining `QuestLogDialog.tsx` and clean up empty dirs _(~30 min)_
+
+- Move `dialogs/QuestLogDialog.tsx` → `quests/QuestLogDialog.tsx`
+- Delete empty directories: `buttons/`, `dialogs/`, `app_bar/`, `menus/`, `navigation/`, `text/`, `lists/`, `autocomplete/`
+- Verify no orphaned `__mocks__/` directories remain
+
+**After this step, `components/` root should have zero loose files — only feature directories.**
+
+**Validation:** Build passes, all tests pass, `ls src/components/` shows only directories.  
+**Commit:** `refactor: final cleanup of empty component directories (Step 2.2f)`
+
+---
+
+##### Step 2.2 Summary
+
+| Sub-step | Scope                    | Files moved   | Risk   |
+| -------- | ------------------------ | ------------- | ------ |
+| 2.2a     | layout/ + ui/            | ~18 + tests   | Low    |
+| 2.2b     | instances/               | ~18 + tests   | Medium |
+| 2.2c     | apps/ + export/          | ~10 + tests   | Low    |
+| 2.2d     | device/ + help/          | ~4 + tests    | Low    |
+| 2.2e     | LocalStorage → hooks/    | 2             | Low    |
+| 2.2f     | QuestLogDialog + cleanup | 1 + deletions | Low    |
+
+**Total:** ~53 source files + associated test files across 6 independently committable sub-steps.
+
+**Path alias note:** The `@components/*` alias continues to work throughout since all moves are within `src/components/`. After Step 2.2 is complete, consider adding granular aliases (`@layout/*`, `@ui/*`, `@features/*`) in a follow-up step if desired — but this is optional since `@components/layout/*` and `@components/ui/*` already work.
+
+**Post-reorganization `src/components/` contents:**
 
 ```
-src/
-  ├── App.jsx                    # Main app component
-  ├── main.tsx                   # Entry point
-  ├── __mocks__/ (3 files)       # Root-level mocks
-  ├── __tests__/                 # Root-level tests
-  ├── api/ (29 files)            # API services and clients
-  ├── assets/                    # Static assets
-  ├── components/ (172 files)    # React components
-  ├── data/ (9 files)            # Context providers (mixed with components/providers/)
-  ├── hooks/ (1 file)            # Custom React hooks
-  ├── models/ (8 files)          # TypeScript interfaces/types
-  ├── pages/ (18 files)          # Route/page components
-  ├── styles/ (4 files)          # Theme and styling
-  ├── test/ (6 files)            # Test utilities
-  ├── utils/ (8 files)           # Utility functions
-  └── whitelabeling/ (4 files)  # Custom branding
+src/components/
+  ├── layout/     (7 files)    # Shell: AppBar, Drawer, Frame, Logo, Avatar, etc.
+  ├── ui/         (11 files)   # Shared: buttons, dialogs, feedback, inputs
+  ├── apps/       (16+ files)  # App cards, installation, rating, lists, buttons
+  ├── instances/  (21+ files)  # Instance details, config dialog, tabs, buttons
+  ├── device/     (7+ files)   # DeviceActivation, license, version, Version, Import
+  ├── auth/       (2 files)    # AuthGuard, MarketplaceLogin
+  ├── quests/     (7+ files)   # Quest UI + QuestLogDialog
+  ├── onboarding/ (17 files)   # First-time setup wizard (unchanged)
+  ├── steppers/   (11 files)   # Generic wizard framework (unchanged)
+  ├── export/     (2 files)    # Export + ExportList
+  └── help/       (1 file)     # HelpButton
 ```
 
-**Current Issues:**
+---
 
-**Components folder (172 files):**
+#### Step 2.3: Add Granular Path Aliases (Optional) ✂️ DEFERRED
 
-- Mix of flat and nested structure (25 root-level component files + 10 subdirectories)
-- Inconsistent naming conventions (app_bar uses snake_case)
-- Domain-specific vs UI components not clearly separated
-- Similar components scattered across different locations
+**Priority:** LOW (Optional follow-up after Step 2.2)
 
-**Data folder (9 files):**
+**Note:** After Step 2.2, `@components/layout/AppBar` and `@components/ui/LoadButton` already work via the existing `@components/*` alias. Adding dedicated `@layout/*`, `@ui/*` aliases is purely cosmetic and can be done later if desired. Skipping this step has no functional impact.
 
-- Mix of context providers and data fetchers
-- Some providers in `components/providers/`, others in `data/`
-- No clear distinction between contexts and data services
-
-**API folder (29 files):**
-
-- Well-organized by domain (device/, marketplace/)
-- Could benefit from better separation of concerns
-
-**Other folders:**
-
-- `hooks/` only has 1 file (usePagination.js)
-- `components/LocalStorage.js` is actually a hook, not a component
-- Test utilities scattered between `test/` and `__tests__/`
-- Root level could be cleaner
-
-**Proposed Comprehensive Reorganization:**
-
-```
-src/
-  │
-  ├── app/                                     # Application core (NEW)
-  │   ├── App.tsx                              # Main app component (from root)
-  │   ├── main.tsx                             # Entry point (from root)
-  │   └── routes.tsx                           # Route definitions (from pages/ui-routes.tsx)
-  │
-  ├── pages/                                   # Route components (18 files)
-  │   ├── InstalledAppsPage.tsx                # Renamed for clarity
-  │   ├── MarketplacePage.tsx
-  │   ├── ServiceMeshPage.tsx
-  │   ├── SystemPage.tsx
-  │   ├── ProfilePage.tsx
-  │   ├── DeviceLoginPage.tsx
-  │   ├── OAuthCallbackPage.tsx
-  │   ├── OpenSourcePage.tsx
-  │   ├── NotFoundPage.tsx
-  │   └── __tests__/                           # Co-located tests
-  │
-  ├── features/                                # Feature modules (NEW organization)
-  │   │
-  │   ├── apps/                                # App management (31 files)
-  │   │   ├── components/
-  │   │   │   ├── cards/
-  │   │   │   │   ├── AppCard.tsx              # Renamed from Card.tsx
-  │   │   │   │   └── AppCardFull.tsx          # Renamed from FullCard.tsx
-  │   │   │   ├── installation/
-  │   │   │   │   ├── InstallationStepper.tsx
-  │   │   │   │   ├── InstallApp.tsx
-  │   │   │   │   ├── UpdateApp.tsx
-  │   │   │   │   ├── SideloadApp.tsx
-  │   │   │   │   └── DeviceActivationStep.tsx
-  │   │   │   ├── rating/
-  │   │   │   │   └── AppRating.tsx
-  │   │   │   ├── AppInstanceRow.tsx           # From components root
-  │   │   │   └── AppFilter.tsx                # From components root
-  │   │   ├── buttons/
-  │   │   │   ├── InstallButton.tsx
-  │   │   │   ├── UninstallButton.tsx
-  │   │   │   └── UpdateButton.tsx
-  │   │   ├── api/                             # From src/api/device/apps/
-  │   │   │   └── install.ts
-  │   │   ├── models/
-  │   │   │   └── app.ts                       # From src/models/
-  │   │   └── __tests__/
-  │   │
-  │   ├── marketplace/                         # Marketplace features (5 files)
-  │   │   ├── components/
-  │   │   │   ├── MarketplaceList.tsx          # From components root
-  │   │   │   ├── InstalledAppsList.tsx        # From components root
-  │   │   │   └── InstalledAppsListRow.tsx     # From components root
-  │   │   ├── api/                             # From src/api/marketplace/
-  │   │   │   ├── ProductService.ts
-  │   │   │   ├── VersionService.ts
-  │   │   │   ├── AppRatingService.ts
-  │   │   │   └── MarketplaceAuthService.ts
-  │   │   ├── models/
-  │   │   │   └── marketplace.ts               # From src/models/
-  │   │   └── __tests__/
-  │   │
-  │   ├── instances/                           # Instance management (14 files)
-  │   │   ├── components/
-  │   │   │   ├── InstanceInfo.tsx             # From components root
-  │   │   │   ├── InstanceDetails.tsx          # From components root
-  │   │   │   ├── InstanceLog.tsx              # From components root
-  │   │   │   ├── VolumesTable.tsx             # From components root
-  │   │   │   ├── HostContainerTable.tsx       # From components root
-  │   │   │   └── CollapsableRow.tsx           # From components root
-  │   │   ├── config/                          # Instance configuration dialogs (18 files)
-  │   │   │   ├── InstanceConfigDialog.tsx     # From components/dialogs/
-  │   │   │   └── tabs/
-  │   │   │       ├── PortsConfigTab.tsx
-  │   │   │       ├── NetworkConfigTab.tsx
-  │   │   │       ├── UsbConfigTab.tsx
-  │   │   │       ├── EnvironmentConfigTab.tsx
-  │   │   │       ├── EditorConfigTab.tsx
-  │   │   │       ├── port-mappings/
-  │   │   │       ├── networks/
-  │   │   │       ├── usb-devices/
-  │   │   │       ├── environments/
-  │   │   │       └── editors/
-  │   │   ├── buttons/
-  │   │   │   └── InstanceStartCreateButtons.tsx
-  │   │   ├── api/                             # From src/api/device/
-  │   │   │   ├── instance.ts
-  │   │   │   ├── InstanceDetailsService.ts
-  │   │   │   └── InstanceLogService.ts
-  │   │   └── __tests__/
-  │   │
-  │   ├── device/                              # Device management (11 files)
-  │   │   ├── components/
-  │   │   │   ├── DeviceActivation.tsx
-  │   │   │   └── version/
-  │   │   │       └── VersionsTable.tsx
-  │   │   ├── license/
-  │   │   │   ├── LicenseInfo.tsx
-  │   │   │   └── DeviceActivationButton.tsx   # From components/buttons/license/
-  │   │   ├── api/                             # From src/api/device/
-  │   │   │   ├── license/
-  │   │   │   └── onboarding/
-  │   │   ├── models/
-  │   │   │   └── system.ts                    # From src/models/
-  │   │   └── __tests__/
-  │   │
-  │   ├── auth/                                # Authentication (6 files)
-  │   │   ├── components/
-  │   │   │   ├── AuthGuard.tsx
-  │   │   │   └── MarketplaceLogin.tsx
-  │   │   ├── api/                             # From src/api/auth-provider-client/
-  │   │   │   └── api-client.ts
-  │   │   ├── utils/                           # From src/utils/auth/
-  │   │   │   ├── authprovider-utils.ts
-  │   │   │   └── jwt-utils.ts
-  │   │   └── __tests__/
-  │   │
-  │   ├── quests/                              # Quest system (8 files)
-  │   │   ├── components/
-  │   │   │   ├── QuestLog.tsx
-  │   │   │   ├── QuestLogDialog.tsx           # From components/dialogs/
-  │   │   │   ├── QuestLogEntry.tsx
-  │   │   │   ├── QuestLogEntryBody.tsx
-  │   │   │   ├── QuestIcon.tsx
-  │   │   │   ├── QuestProgressIndicator.tsx
-  │   │   │   └── SubQuestProgressIndicator.tsx
-  │   │   ├── contexts/
-  │   │   │   └── QuestContext.tsx
-  │   │   ├── utils/                           # From src/utils/quests/
-  │   │   │   ├── Quest.ts
-  │   │   │   └── QuestState.ts
-  │   │   └── __tests__/
-  │   │
-  │   ├── onboarding/                          # First-time setup (9 files)
-  │   │   ├── components/
-  │   │   │   ├── OnboardingDialog.tsx
-  │   │   │   └── OnboardingStepper.tsx
-  │   │   ├── steps/
-  │   │   │   ├── AuthProviderStep.tsx
-  │   │   │   ├── SuperAdminStep.tsx
-  │   │   │   └── CompletionStep.tsx
-  │   │   ├── providers/
-  │   │   │   └── OnboardingProvider.tsx
-  │   │   └── __tests__/
-  │   │
-  │   ├── export/                              # Export functionality (2 files)
-  │   │   ├── components/
-  │   │   │   ├── Export.tsx                   # From components/buttons/export/
-  │   │   │   └── ExportList.tsx               # From components/lists/flecsports/
-  │   │   └── __tests__/
-  │   │
-  │   ├── system/                              # System info (3 files)
-  │   │   ├── components/
-  │   │   │   ├── Version.tsx                  # From components root
-  │   │   │   └── Import.tsx                   # From components root
-  │   │   ├── contexts/
-  │   │   │   ├── SystemData.tsx               # From src/data/
-  │   │   │   └── SystemProvider.tsx           # From src/data/
-  │   │   └── __tests__/
-  │   │
-  │   └── help/                                # Help system (1 file)
-  │       ├── components/
-  │       │   └── HelpButton.tsx
-  │       └── __tests__/
-  │
-  ├── layout/                                  # Layout components (8 files)
-  │   ├── AppBar/
-  │   │   ├── AppBar.tsx                       # From components root
-  │   │   ├── Logo.tsx                         # From components/app_bar/
-  │   │   └── Avatar.tsx                       # From components/menus/avatar/
-  │   ├── Drawer/
-  │   │   ├── Drawer.tsx                       # From components root
-  │   │   ├── PoweredBy.tsx                    # From components/navigation/
-  │   │   └── FLECSLogo.tsx                    # From components/navigation/
-  │   ├── Frame/
-  │   │   └── Frame.tsx                        # From components root
-  │   └── __tests__/
-  │
-  ├── ui/                                      # Reusable UI components (27 files)
-  │   ├── buttons/
-  │   │   ├── LoadButton.tsx                   # From components root
-  │   │   └── LoadIconButton.tsx               # From components root
-  │   ├── dialogs/
-  │   │   ├── ConfirmDialog.tsx                # From components root
-  │   │   └── ContentDialog.tsx                # From components root
-  │   ├── feedback/
-  │   │   ├── ActionSnackbar.tsx               # From components root
-  │   │   └── Loading.tsx                      # From components root
-  │   ├── inputs/
-  │   │   ├── SearchBar.tsx                    # From components root
-  │   │   ├── FileOpen.tsx                     # From components root
-  │   │   └── VersionSelector.tsx              # From components/autocomplete/
-  │   ├── text/
-  │   │   └── MarqueeText.tsx                  # From components/text/
-  │   ├── steppers/                            # Generic wizard (4 files)
-  │   │   ├── components/
-  │   │   │   ├── MultiStepWizard.tsx
-  │   │   │   └── HorizontalStepper.tsx
-  │   │   ├── providers/
-  │   │   │   └── WizardProvider.tsx
-  │   │   └── types/
-  │   │       └── types.tsx
-  │   └── __tests__/
-  │
-  ├── contexts/                                # React contexts (NEW, consolidate)
-  │   ├── api/
-  │   │   ├── ApiProvider.tsx                  # From components/providers/
-  │   │   └── AuthProviderApiProvider.tsx      # From components/providers/
-  │   ├── auth/
-  │   │   └── OAuth4WebApiAuthProvider.tsx     # From components/providers/
-  │   ├── data/
-  │   │   ├── AppListContext.tsx               # From data/AppList.jsx
-  │   │   ├── FilterContext.tsx                # From data/FilterContext.jsx
-  │   │   └── ReferenceDataContext.tsx         # From data/ReferenceDataContext.jsx
-  │   ├── device/
-  │   │   ├── DeviceStateProvider.tsx          # From components/providers/
-  │   │   └── DeviceActivationProvider.tsx     # From components/providers/
-  │   ├── marketplace/
-  │   │   └── MarketplaceUserProvider.tsx      # From components/providers/
-  │   ├── Providers.tsx                        # Root provider composition
-  │   ├── index.ts                             # Re-export all
-  │   └── __tests__/
-  │
-  ├── api/                                     # Shared API utilities
-  │   ├── api-config.ts                        # From api-config.js
-  │   ├── flecs-core/
-  │   │   └── api-client.ts
-  │   └── __mocks__/
-  │
-  ├── hooks/                                   # Custom React hooks (2 files)
-  │   ├── usePagination.ts                     # From hooks/usePagination.js
-  │   ├── useLocalStorage.ts                   # From components/LocalStorage.js
-  │   └── __tests__/
-  │
-  ├── models/                                  # TypeScript types/interfaces (5 files)
-  │   ├── shared/                              # Shared models
-  │   │   ├── job.ts                           # From models/job.tsx
-  │   │   └── version.ts                       # From models/version.ts (+ VersionInterfaces.tsx)
-  │   └── __mocks__/
-  │
-  ├── utils/                                   # Utility functions (4 files)
-  │   ├── html-utils.ts
-  │   ├── version-utils.ts
-  │   └── __tests__/
-  │
-  ├── styles/                                  # Theming and styles (4 files)
-  │   ├── ThemeHandler.tsx
-  │   ├── theme.tsx
-  │   ├── tokens.tsx
-  │   └── fonts.css
-  │
-  ├── whitelabeling/                           # Custom branding (4 files)
-  │   ├── WhiteLabelLogo.tsx
-  │   ├── custom-theme.tsx
-  │   ├── custom-tokens.tsx
-  │   └── custom-fonts.css
-  │
-  ├── assets/                                  # Static assets
-  │   ├── fonts/
-  │   ├── images/
-  │   ├── third-party-licenses.txt
-  │   ├── sbom.json
-  │   └── favicon.ico
-  │
-  ├── test/                                    # Test utilities (6 files)
-  │   ├── setup.ts
-  │   ├── test-utils.ts
-  │   ├── oauth-setup.ts
-  │   ├── oauth-test-utils.tsx
-  │   ├── README.md
-  │   └── README-OAuth-Testing.md
-  │
-  └── __mocks__/                               # Root-level mocks (3 files)
-      ├── api.ts
-      ├── core-client-ts.ts
-      └── auth-provider-client-ts.ts
-```
-
-**Key Changes Across Entire Project:**
-
-1. **Feature-Based Organization:**
-   - Each feature (`apps/`, `marketplace/`, `instances/`, etc.) contains its own:
-     - Components
-     - API services
-     - Models
-     - Tests
-     - Utilities
-   - Clear boundaries and reduced coupling
-
-2. **Consolidated Contexts:**
-   - All providers moved from `components/providers/` and `data/` to `contexts/`
-   - Clear separation of concerns
-   - Easy to understand app-wide state
-
-3. **Proper Hook Location:**
-   - `LocalStorage.js` moved from `components/` to `hooks/useLocalStorage.ts`
-   - All hooks in one place
-
-4. **Feature Cohesion:**
-   - Related API services, components, and models grouped together
-   - E.g., `features/apps/` contains app cards, installation, buttons, AND app API
-   - Easier to find everything related to a feature
-
-5. **Cleaner Root:**
-   - `App.tsx` and `main.tsx` moved to `app/` folder
-   - Root level only has high-level folders
-
-6. **Consistent Naming:**
-   - Pages renamed with `Page` suffix for clarity
-   - Components use descriptive names (AppCard instead of just Card)
-   - All folders use kebab-case or PascalCase consistently
-
-7. **Type Consolidation:**
-   - Models grouped by domain or moved to feature folders
-   - Shared models kept in `models/shared/`
-
-**Migration Benefits:**
-
-1. **Feature Autonomy:**
-   - Each feature is self-contained
-   - Easy to understand all parts of a feature
-   - Reduced cross-cutting concerns
-
-2. **Improved Discoverability:**
-   - New developers can navigate by feature
-   - Related code is physically close
-   - Clear hierarchy from high-level to implementation
-
-3. **Better Scalability:**
-   - Add new features without affecting others
-   - Easy to extract features as separate packages
-   - Clear dependencies between features
-
-4. **Reduced Import Complexity:**
-   - With path aliases: `@features/apps/components/AppCard`
-   - Or: `@ui/buttons/LoadButton`
-   - No more `../../../` chains
-
-5. **Easier Maintenance:**
-   - Changes to one feature don't affect others
-   - Easy to find and update related code
-   - Tests co-located with implementation
-
-**Implementation Strategy:**
-
-**Phase 1: Foundation (Low Risk)**
-
-1. Create new folder structure
-2. Move `contexts/` providers (consolidate from components/providers/ and data/)
-3. Move `hooks/` (including LocalStorage → useLocalStorage)
-4. Update path aliases in tsconfig.json and vite.config.ts
-
-**Phase 2: Layout & UI (Medium Risk)**
-
-1. Reorganize `layout/` components
-2. Consolidate `ui/` components
-3. Update imports using IDE refactoring
-
-**Phase 3: Features (High Value, Incremental)**
-
-1. Move one feature at a time (start with smallest: help, export)
-2. For each feature:
-   - Create feature folder structure
-   - Move components
-   - Move related API services
-   - Move related models
-   - Move related utilities
-   - Update all imports
-   - Run tests to verify
-3. Recommended order:
-   - help/ (1 component)
-   - export/ (2 components)
-   - system/ (3 components)
-   - auth/ (6 files)
-   - device/ (11 files)
-   - quests/ (8 files)
-   - onboarding/ (9 files)
-   - instances/ (14 files)
-   - apps/ (31 files)
-   - marketplace/ (5 files + API)
-
-**Phase 4: Final Cleanup**
-
-1. Move `app/` folder items
-2. Clean up old folder structure
-3. Update documentation
-4. Final import cleanup
-
-**Estimated Effort:** 20-30 hours for complete reorganization
-
-#### Step 2.3: Enhance TypeScript Path Aliases
-
-**Priority:** MEDIUM (After Step 2.2 completion)
-
-**Note:** This step should be implemented AFTER the component and source structure reorganization (Step 2.2) to align path aliases with the new folder structure.
-
-**Current Aliases:**
+If desired in the future, add:
 
 ```json
-"paths": {
-  "@components/*": ["./src/components/*"],
-  "@api/*": ["./src/api/*"]
-}
+"@layout/*": ["./src/components/layout/*"],
+"@ui/*": ["./src/components/ui/*"]
 ```
-
-**Proposed Additions (Basic Level - Implement First):**
-
-```json
-"paths": {
-  "@components/*": ["./src/components/*"],
-  "@contexts/*": ["./src/contexts/*"],
-  "@pages/*": ["./src/pages/*"],
-  "@hooks/*": ["./src/hooks/*"],
-  "@utils/*": ["./src/utils/*"],
-  "@models/*": ["./src/models/*"],
-  "@api/*": ["./src/api/*"],
-  "@test/*": ["./src/test/*"],
-  "@assets/*": ["./src/assets/*"],
-  "@styles/*": ["./src/styles/*"],
-  "@data/*": ["./src/data/*"]
-}
-```
-
-**Proposed Additions (After Step 2.2 Reorganization - Granular Aliases):**
-
-Once the component structure is reorganized per Step 2.2, add these feature-based aliases:
-
-```json
-"paths": {
-  // Top-level folders
-  "@app/*": ["./src/app/*"],
-  "@pages/*": ["./src/pages/*"],
-  "@contexts/*": ["./src/contexts/*"],
-  "@hooks/*": ["./src/hooks/*"],
-  "@utils/*": ["./src/utils/*"],
-  "@models/*": ["./src/models/*"],
-  "@api/*": ["./src/api/*"],
-  "@test/*": ["./src/test/*"],
-  "@assets/*": ["./src/assets/*"],
-  "@styles/*": ["./src/styles/*"],
-
-  // Feature-based aliases (after Step 2.2)
-  "@features/*": ["./src/features/*"],
-  "@layout/*": ["./src/layout/*"],
-  "@ui/*": ["./src/ui/*"]
-}
-```
-
-**Actions:**
-
-1. **Update `tsconfig.json`** (Basic aliases immediately, granular after Step 2.2):
-
-   ```json
-   {
-     "compilerOptions": {
-       "baseUrl": ".",
-       "paths": {
-         // ... see proposed additions above
-       }
-     }
-   }
-   ```
-
-2. **Update `vite.config.ts`** (add resolve.alias):
-
-   ```typescript
-   import path from 'path';
-
-   export default defineConfig({
-     // ...
-     resolve: {
-       alias: {
-         '@app': path.resolve(__dirname, './src/app'),
-         '@features': path.resolve(__dirname, './src/features'),
-         '@layout': path.resolve(__dirname, './src/layout'),
-         '@ui': path.resolve(__dirname, './src/ui'),
-         '@contexts': path.resolve(__dirname, './src/contexts'),
-         '@pages': path.resolve(__dirname, './src/pages'),
-         '@hooks': path.resolve(__dirname, './src/hooks'),
-         '@utils': path.resolve(__dirname, './src/utils'),
-         '@models': path.resolve(__dirname, './src/models'),
-         '@api': path.resolve(__dirname, './src/api'),
-         '@test': path.resolve(__dirname, './src/test'),
-         '@assets': path.resolve(__dirname, './src/assets'),
-         '@styles': path.resolve(__dirname, './src/styles'),
-       },
-     },
-   });
-   ```
-
-3. **Example usage after reorganization:**
-
-   ```typescript
-   // Before:
-   import { useProtectedApi } from '../../../components/providers/ApiProvider';
-   import ConfirmDialog from '../../../components/ConfirmDialog';
-   import InstallButton from '../../../components/buttons/app/InstallButton';
-
-   // After (with new aliases):
-   import { useProtectedApi } from '@contexts/api/ApiProvider';
-   import ConfirmDialog from '@ui/dialogs/ConfirmDialog';
-   import InstallButton from '@features/apps/buttons/InstallButton';
-   import { AppBar } from '@layout/AppBar/AppBar';
-   import { LoadButton } from '@ui/buttons/LoadButton';
-   import DeviceLogin from '@pages/DeviceLoginPage';
-   ```
-
-**Benefits:**
-
-- **Shorter imports:** No more `../../../` chains
-- **Location independent:** Move files without breaking imports
-- **Self-documenting:** Clear where components come from
-- **IDE support:** Better autocomplete and navigation
-- **Refactor-friendly:** Easier to reorganize structure
-
-**Implementation Strategy:**
-
-1. Add basic aliases (top-level folders) after Step 2.1 (context consolidation)
-2. Add granular aliases (features, layout, ui) after Step 2.2 (full reorganization)
-3. Update imports incrementally during the reorganization process
-4. Use IDE's "Refactor → Move" feature to automatically update imports
 
 ---
 
@@ -1907,7 +1514,14 @@ src/api/marketplace/__tests__/*.test.js → .test.ts
 **Phase 2: Project Structure Improvements** (In Progress)
 
 - ✅ Step 2.1: Consolidate context/provider files - DONE
-- ⭐ Step 2.2: Reorganize component and source structure - NEXT
+- ⭐ Step 2.2: Reorganize component structure - NEXT
+  - Sub-step 2.2a: Create layout/ and ui/ directories
+  - Sub-step 2.2b: Consolidate instances/ feature
+  - Sub-step 2.2c: Expand apps/ feature and create export/
+  - Sub-step 2.2d: Expand device/ and move remaining buttons
+  - Sub-step 2.2e: Move LocalStorage.js to hooks/
+  - Sub-step 2.2f: Move QuestLogDialog + clean up empty dirs
+- Step 2.3: Add granular path aliases (optional, deferred)
 
 **Phase 3: Code Modernization** (Est. 4-6 hours)
 
@@ -2012,7 +1626,7 @@ The plan continues with Phases 2-4 focused on code modernization, project struct
 
 **Next Steps:**
 
-- Phase 2, Step 2.2: Reorganize component and source structure
+- Phase 2, Step 2.2: Reorganize component structure (6 sub-steps, ~12-18 hours)
 - Phase 3: Code Modernization (fix React imports, remove unnecessary imports)
 - Phase 4: Final Cleanup (documentation updates, unused file audit)
 - Future: TypeScript Migration (separate dedicated initiative)

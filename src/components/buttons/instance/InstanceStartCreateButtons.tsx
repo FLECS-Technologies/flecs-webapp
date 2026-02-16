@@ -29,7 +29,7 @@ import {
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { Loading } from '../../../components/Loading';
+import { Loading } from '../../ui/Loading';
 
 interface App {
   multiInstance: boolean;

@@ -24,7 +24,7 @@ import { mockInstalledApp } from '../../../../models/__mocks__/app';
 import { createVersion } from '../../../../utils/version-utils';
 
 // Mock the dependencies
-vi.mock('../../../ContentDialog', () => ({
+vi.mock('../../../ui/ContentDialog', () => ({
   default: ({ open, children, title }: any) => (
     <div data-testid="content-dialog" data-open={open} data-title={title}>
       {open && children}

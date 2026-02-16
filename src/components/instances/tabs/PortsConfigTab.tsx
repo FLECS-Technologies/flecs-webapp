@@ -27,7 +27,7 @@ import {
   InstancePortMappingSingle,
   TransportProtocol,
 } from '@flecs/core-client-ts';
-import HelpButton from '../../buttons/help/HelpButton';
+import HelpButton from '../../help/HelpButton';
 import { instancedeviceconfig } from '../../help/helplinks';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 

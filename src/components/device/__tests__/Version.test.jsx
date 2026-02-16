@@ -19,7 +19,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Version from '../Version';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
@@ -33,7 +33,7 @@ vi.mock('@contexts/data/SystemProvider', () => ({
   useSystemContext: () => ({ systemInfo: {} }),
 }));
 
-vi.mock('../../api/marketplace/VersionService');
+vi.mock('@api/marketplace/VersionService');
 
 describe('Version', () => {
   let mockApi;

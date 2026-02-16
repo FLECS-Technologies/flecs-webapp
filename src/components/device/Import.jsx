@@ -18,12 +18,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
-import ActionSnackbar from './ui/ActionSnackbar';
-import FileOpen from './ui/FileOpen';
+import ActionSnackbar from '../ui/ActionSnackbar';
+import FileOpen from '../ui/FileOpen';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
-import { questStateFinishedOk } from '../utils/quests/QuestState';
+import { questStateFinishedOk } from '@utils/quests/QuestState';
 
 export default function Import(props) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext);

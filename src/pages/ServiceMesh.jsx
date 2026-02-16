@@ -18,7 +18,7 @@
 import { Alert, AlertTitle, Grid, Paper, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import HelpButton from '../components/buttons/help/HelpButton';
+import HelpButton from '@components/help/HelpButton';
 import { servicemesh } from '../components/help/helplinks';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { EditorButton } from '../components/instances/tabs/editors/EditorButton';

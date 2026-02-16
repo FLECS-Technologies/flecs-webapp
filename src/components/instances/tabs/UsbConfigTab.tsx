@@ -17,7 +17,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Box, List, CircularProgress, Typography, Stack } from '@mui/material';
-import HelpButton from '../../buttons/help/HelpButton';
+import HelpButton from '../../help/HelpButton';
 import { instancedeviceconfig } from '../../help/helplinks';
 import UsbConfigCard from './usb-devices/UsbConfigCard';
 import ActionSnackbar from '../../ui/ActionSnackbar';

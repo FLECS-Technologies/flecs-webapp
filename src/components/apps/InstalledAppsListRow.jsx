@@ -38,7 +38,7 @@ import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import AppInstanceRow from './AppInstanceRow';
 import ActionSnackbar from '../ui/ActionSnackbar';
 import useStateWithLocalStorage from '../LocalStorage';
-import HelpButton from '../buttons/help/HelpButton';
+import HelpButton from '../help/HelpButton';
 import { EditorButtons } from '../instances/tabs/editors/EditorButtons';
 import { InstanceStartCreateButtons } from '../instances/buttons/InstanceStartCreateButtons';
 import { questStateFinishedOk } from '../../utils/quests/QuestState';

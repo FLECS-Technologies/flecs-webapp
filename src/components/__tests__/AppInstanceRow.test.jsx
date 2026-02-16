@@ -26,11 +26,11 @@ import { createMockApi } from '../../__mocks__/core-client-ts';
 const mockUseProtectedApi = vi.fn();
 const mockUseQuestContext = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../quests/QuestContext', () => ({
+vi.mock('@contexts/quests/QuestContext', () => ({
   useQuestContext: () => mockUseQuestContext(),
   QuestContext: {},
 }));

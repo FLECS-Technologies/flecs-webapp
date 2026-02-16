@@ -23,14 +23,14 @@ import { QuestState } from '@flecs/core-client-ts';
 import UninstallButton from '../UninstallButton';
 import { App } from '../../../../models/app';
 import { Version } from '../../../../models/version';
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
-import { QuestContext } from '../../../quests/QuestContext';
+import { ReferenceDataContextProvider } from '@contexts/data/ReferenceDataContext';
+import { QuestContext } from '@contexts/quests/QuestContext';
 import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

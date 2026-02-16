@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function ExportList() {
   const api = useProtectedApi();

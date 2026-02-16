@@ -21,10 +21,10 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { QuestContext, useQuestContext } from '../../quests/QuestContext';
-import { useProtectedApi } from '../../providers/ApiProvider';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
-import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 export default function InstallApp(props) {

@@ -20,7 +20,7 @@ import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi, MockedFunction } from 'vitest';
 import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '../OAuth4WebApiAuthProvider';
-import { DeviceStateProvider } from '../DeviceStateProvider';
+import { DeviceStateProvider } from '../../device/DeviceStateProvider';
 import { AuthState, User } from '../oauth/types';
 
 // Mock all OAuth hooks
@@ -41,7 +41,7 @@ vi.mock('../oauth/useOAuthFlow', () => ({
 }));
 
 // Mock AuthGuard component
-vi.mock('../../auth/AuthGuard', () => ({
+vi.mock('@components/auth/AuthGuard', () => ({
   AuthGuard: vi.fn(({ children, auth }) => (
     <div data-testid="auth-guard" data-auth-ready={auth?.isConfigReady}>
       {children}
@@ -50,16 +50,16 @@ vi.mock('../../auth/AuthGuard', () => ({
 }));
 
 // Mock DeviceStateProvider using existing mock
-vi.mock('../DeviceStateProvider', () => vi.importActual('../__mocks__/DeviceStateProvider.tsx'));
+vi.mock('../../device/DeviceStateProvider', () => vi.importActual('../../device/__mocks__/DeviceStateProvider.tsx'));
 
 // Import mocked modules
 import { useOAuthConfig } from '../oauth/useOAuthConfig';
 import { useAuthSession } from '../oauth/useAuthSession';
 import { useOAuthCallback } from '../oauth/useOAuthCallback';
 import { useOAuthFlow } from '../oauth/useOAuthFlow';
-import { AuthGuard } from '../../auth/AuthGuard';
-import { useDeviceState } from '../DeviceStateProvider';
-import { setMockDeviceState, resetMockDeviceState } from '../__mocks__/DeviceStateProvider';
+import { AuthGuard } from '@components/auth/AuthGuard';
+import { useDeviceState } from '../../device/DeviceStateProvider';
+import { setMockDeviceState, resetMockDeviceState } from '../../device/__mocks__/DeviceStateProvider';
 
 // Type the mocked functions
 const mockUseOAuthConfig = useOAuthConfig as MockedFunction<typeof useOAuthConfig>;

@@ -19,7 +19,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Import from '../Import';
-import { ReferenceDataContext } from '../../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { createMockApi } from '../../__mocks__/core-client-ts';
 import { QuestState } from '@flecs/core-client-ts';
 
@@ -27,11 +27,11 @@ import { QuestState } from '@flecs/core-client-ts';
 const mockUseProtectedApi = vi.fn();
 const mockUseQuestContext = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../quests/QuestContext', () => ({
+vi.mock('@contexts/quests/QuestContext', () => ({
   useQuestContext: () => mockUseQuestContext(),
   QuestContext: {},
 }));

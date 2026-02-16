@@ -42,7 +42,7 @@ vi.mock('../styles/ThemeHandler', () => ({
   ThemeHandler: ({ children }) => <div data-testid="theme-handler">{children}</div>,
 }));
 
-vi.mock('../components/providers/Providers', () => ({
+vi.mock('@contexts/Providers', () => ({
   default: ({ children }) => <div data-testid="providers">{children}</div>,
 }));
 

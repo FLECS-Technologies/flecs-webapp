@@ -23,7 +23,7 @@ import ActionSnackbar from '../../ActionSnackbar';
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 interface EnvironmentConfigTabProps {
   instanceId: string;

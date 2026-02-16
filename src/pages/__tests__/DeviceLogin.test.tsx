@@ -27,9 +27,9 @@ import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils
 const mockSystemPingGet = vi.fn();
 
 // Mock OAuth4WebApiAuthProvider
-vi.mock('../../components/providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   usePublicApi: vi.fn(),
 }));
 
@@ -39,7 +39,7 @@ vi.mock('../../whitelabeling/WhiteLabelLogo', () => ({
 }));
 
 // Import the mocked modules
-import { usePublicApi } from '../../components/providers/ApiProvider';
+import { usePublicApi } from '@contexts/api/ApiProvider';
 
 const mockedUsePublicApi = vi.mocked(usePublicApi);
 

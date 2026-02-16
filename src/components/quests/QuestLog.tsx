@@ -17,7 +17,7 @@
  */
 import React from 'react';
 import { Container, Typography } from '@mui/material';
-import { QuestContext, useQuestContext } from './QuestContext';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { QuestLogEntry } from './QuestLogEntry';
 
 export const QuestLog: React.FC = () => {

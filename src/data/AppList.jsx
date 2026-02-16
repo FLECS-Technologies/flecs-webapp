@@ -18,7 +18,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useReferenceDataContext } from './ReferenceDataContext';
+import { useReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import {
   getAppIcon,
   getAuthor,
@@ -30,7 +30,7 @@ import {
   getPurchasable,
   getReverseDomainName,
 } from '../api/marketplace/ProductService';
-import { useProtectedApi } from '../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { decodeHtmlEntities } from '../utils/html-utils';
 
 function AppList(props) {

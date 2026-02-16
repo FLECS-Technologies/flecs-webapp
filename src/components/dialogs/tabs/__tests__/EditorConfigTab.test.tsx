@@ -25,7 +25,7 @@ import { createMockApi } from '../../../../__mocks__/core-client-ts';
 const mockUseProtectedApi = vi.fn();
 const mockHost = vi.fn(() => 'http://localhost:8080');
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
   host: () => mockHost(),
 }));

@@ -22,10 +22,10 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Profile from '../Profile';
 import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
-import { User } from '../../components/providers/oauth/types';
+import { User } from '@contexts/auth/oauth/types';
 
 // Mock OAuth4WebApiAuthProvider
-vi.mock('../../components/providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 // Mock whitelabeling colors
 vi.mock('../../whitelabeling/custom-tokens', () => ({

@@ -18,8 +18,8 @@
 
 import { useCallback } from 'react';
 import { AuthState, User } from './types';
-import { usePublicAuthProviderApi } from '../AuthProviderApiProvider';
-import { decodeJwt } from '../../../utils/jwt-utils';
+import { usePublicAuthProviderApi } from '../../api/AuthProviderApiProvider';
+import { decodeJwt } from '@utils/jwt-utils';
 
 // Session storage keys
 export const SESSION_KEYS = {

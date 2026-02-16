@@ -17,7 +17,7 @@
  */
 import PropTypes, { InferProps } from 'prop-types';
 import React from 'react';
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 import { Grid } from '@mui/material';
 import DeviceActivation from '../../device/DeviceActivation';
 

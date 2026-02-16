@@ -31,15 +31,15 @@ import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LoadIconButton from './LoadIconButton';
 import ActionSnackbar from './ActionSnackbar';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import ContentDialog from './ContentDialog';
 import InstanceInfo from './InstanceInfo';
 import ConfirmDialog from './ConfirmDialog';
 import InstanceConfigDialog from './dialogs/InstanceConfigDialog';
 import { EditorButtons } from './buttons/editors/EditorButtons';
 import { questStateFinishedOk } from '../utils/quests/QuestState';
-import { QuestContext, useQuestContext } from './quests/QuestContext';
-import { useProtectedApi } from './providers/ApiProvider';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function AppInstanceRow(props) {
   const { appInstance, showEditors } = props;

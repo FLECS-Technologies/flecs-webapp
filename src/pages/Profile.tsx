@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Person, Security, ExitToApp, AdminPanelSettings } from '@mui/icons-material';
 import React, { useState } from 'react';
-import { useOAuth4WebApiAuth } from '../components/providers/OAuth4WebApiAuthProvider';
+import { useOAuth4WebApiAuth } from '@contexts/auth/OAuth4WebApiAuthProvider';
 import { colors } from '../whitelabeling/custom-tokens';
 
 export default function Profile() {

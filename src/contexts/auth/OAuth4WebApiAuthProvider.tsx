@@ -17,13 +17,13 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { useDeviceState } from './DeviceStateProvider';
+import { useDeviceState } from '../device/DeviceStateProvider';
 import { AuthState, AuthContextValue } from './oauth/types';
 import { useOAuthConfig } from './oauth/useOAuthConfig';
 import { useOAuthCallback } from './oauth/useOAuthCallback';
 import { useOAuthFlow } from './oauth/useOAuthFlow';
 import { useAuthSession } from './oauth/useAuthSession';
-import { AuthGuard } from '../auth/AuthGuard';
+import { AuthGuard } from '@components/auth/AuthGuard';
 
 const OAuth4WebApiAuthContext = createContext<AuthContextValue | undefined>(undefined);
 

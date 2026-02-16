@@ -17,7 +17,7 @@
  */
 import React, { createContext, ReactNode } from 'react';
 import { Quest, QuestState } from '@flecs/core-client-ts';
-import { useProtectedApi } from '../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export interface QuestContextType {
   quests: React.RefObject<Map<number, Quest>>;

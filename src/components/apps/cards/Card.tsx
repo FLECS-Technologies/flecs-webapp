@@ -23,7 +23,7 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { Box, CardActionArea, Chip, Toolbar } from '@mui/material';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
-import { useSystemContext } from '../../../data/SystemProvider';
+import { useSystemContext } from '@contexts/data/SystemProvider';
 import { Version } from '../../../models/version';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';

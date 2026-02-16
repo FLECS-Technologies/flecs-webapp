@@ -19,7 +19,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Marketplace from '../Marketplace';
-import { FilterContextProvider } from '../../data/FilterContext';
+import { FilterContextProvider } from '@contexts/data/FilterContext';
 import { vitest } from 'vitest';
 
 vitest.mock('../../components/navigation/PoweredBy');

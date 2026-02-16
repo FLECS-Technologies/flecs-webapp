@@ -20,8 +20,8 @@ import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/materia
 import VersionsTable from '../components/device/version/VersionsTable';
 import { getLatestVersion, isLaterThan } from '../api/marketplace/VersionService';
 import { VersionSelector } from './autocomplete/VersionSelector';
-import { useSystemContext } from '../data/SystemProvider';
-import { useProtectedApi } from './providers/ApiProvider';
+import { useSystemContext } from '@contexts/data/SystemProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function Version() {
   const executedRef = React.useRef(false);

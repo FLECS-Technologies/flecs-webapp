@@ -22,7 +22,7 @@ import { InstanceEditor } from '@flecs/core-client-ts';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
 import EditorConfigCard from './editors/EditorConfigCard';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 interface EditorConfigTabProps {
   instanceId: string;

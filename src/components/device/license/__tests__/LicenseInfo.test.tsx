@@ -25,12 +25,12 @@ import { createMockApi } from '../../../../__mocks__/core-client-ts';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 // Mock the DeviceActivationContext
-vi.mock('../../../providers/DeviceActivationContext', () => ({
+vi.mock('@contexts/device/DeviceActivationContext', () => ({
   DeviceActivationContext: React.createContext({}),
 }));
 

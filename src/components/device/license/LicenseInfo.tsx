@@ -25,8 +25,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
-import { useProtectedApi } from '../../providers/ApiProvider';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { DeviceLicenseInfoGet200Response } from '@flecs/core-client-ts';
 
 function LicenseInfo() {

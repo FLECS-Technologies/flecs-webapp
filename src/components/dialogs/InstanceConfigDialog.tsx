@@ -31,7 +31,7 @@ import UsbConfigTab from './tabs/UsbConfigTab';
 import NetworkConfigTab from './tabs/NetworkConfigTab';
 import PortsConfigTab from './tabs/PortsConfigTab';
 import EditorConfigTab from './tabs/EditorConfigTab';
-import { useProtectedApi } from '../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 interface InstanceConfigDialogProps {
   open: boolean;

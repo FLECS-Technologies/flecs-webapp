@@ -48,9 +48,9 @@ import {
 } from '../api/marketplace/ProductService';
 import { CircularProgress, Collapse, Typography } from '@mui/material';
 import { AppFilter } from './AppFilter';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { getInstalledVersions } from '../data/AppList';
-import { FilterContext } from '../data/FilterContext';
+import { FilterContext } from '@contexts/data/FilterContext';
 import usePagination from '../hooks/usePagination';
 import PoweredByFLECS from './navigation/PoweredBy';
 

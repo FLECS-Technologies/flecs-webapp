@@ -18,8 +18,8 @@
 
 import React from 'react';
 import { WizardProvider, useWizard } from '../../steppers';
-import { usePublicApi, useProtectedApi } from '../../providers/ApiProvider';
-import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
+import { usePublicApi, useProtectedApi } from '@contexts/api/ApiProvider';
+import { usePublicAuthProviderApi } from '@contexts/api/AuthProviderApiProvider';
 import { onboardingRegistry } from '../utils/stepRegistration';
 
 // Re-export the wizard hook with onboarding-specific name for backwards compatibility

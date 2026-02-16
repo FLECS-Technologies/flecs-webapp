@@ -31,7 +31,7 @@ vi.mock('@flecs/core-client-ts', () => ({
 }));
 
 // Mock the OAuth4WebApiAuthProvider
-vi.mock('../OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 // Import the modules after mocking
 import { createApi } from '../../../api/flecs-core/api-client';
@@ -48,7 +48,7 @@ import {
   OAuth4WebApiAuthProvider,
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '../__mocks__/OAuth4WebApiAuthProvider';
+} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';
 
 // Type the mocked functions
 const mockCreateApi = createApi as any;

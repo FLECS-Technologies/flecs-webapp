@@ -21,12 +21,12 @@ import { render, renderHook, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock the API provider
-vi.mock('../ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: vi.fn(),
 }));
 
 // Import the modules after mocking
-import { useProtectedApi } from '../ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import DeviceActivationProvider from '../DeviceActivationProvider';
 import { DeviceActivationContext } from '../DeviceActivationContext';
 

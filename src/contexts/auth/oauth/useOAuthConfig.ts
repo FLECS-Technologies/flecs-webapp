@@ -18,7 +18,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import * as oauth from 'oauth4webapi';
-import { usePublicApi } from '../ApiProvider';
+import { usePublicApi } from '../../api/ApiProvider';
 import { AuthProvidersAndDefaults, AuthProvider } from '@flecs/core-client-ts';
 import { OAuthConfig, OAuthState } from './types';
 

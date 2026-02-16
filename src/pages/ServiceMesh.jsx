@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import HelpButton from '../components/buttons/help/HelpButton';
 import { servicemesh } from '../components/help/helplinks';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { EditorButton } from '../components/buttons/editors/EditorButton';
 
 export default function ServiceMesh() {

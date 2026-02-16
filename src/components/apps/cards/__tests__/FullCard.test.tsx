@@ -51,15 +51,15 @@ const mockSystemContext = {
 const mockUseProtectedApi = vi.fn();
 const mockUseMarketplaceUser = vi.fn();
 
-vi.mock('../../../../data/SystemProvider', () => ({
+vi.mock('@contexts/data/SystemProvider', () => ({
   useSystemContext: () => mockSystemContext,
 }));
 
-vi.mock('../../../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../../../providers/MarketplaceUserProvider', () => ({
+vi.mock('@contexts/marketplace/MarketplaceUserProvider', () => ({
   useMarketplaceUser: () => mockUseMarketplaceUser(),
 }));
 

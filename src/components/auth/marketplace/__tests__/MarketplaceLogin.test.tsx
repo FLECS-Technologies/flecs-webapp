@@ -26,16 +26,16 @@ import type { MarketplaceUser } from '../../../../models/marketplace';
 
 // Mock the services and providers
 vi.mock('../../../../api/marketplace/MarketplaceAuthService');
-vi.mock('../../../providers/MarketplaceUserProvider', () => ({
+vi.mock('@contexts/marketplace/MarketplaceUserProvider', () => ({
   useMarketplaceUser: vi.fn(),
 }));
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: vi.fn(),
 }));
 
 // Import the mocked modules
-import { useMarketplaceUser } from '../../../providers/MarketplaceUserProvider';
-import { useProtectedApi } from '../../../../components/providers/ApiProvider';
+import { useMarketplaceUser } from '@contexts/marketplace/MarketplaceUserProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 const mockedMarketplaceAuthService = vi.mocked(MarketplaceAuthService);
 const mockedUseMarketplaceUser = vi.mocked(useMarketplaceUser);

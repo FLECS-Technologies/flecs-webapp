@@ -22,14 +22,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppBar from '../AppBar';
 import { DarkModeState } from '../../styles/ThemeHandler';
-import { QuestContextProvider } from '../quests/QuestContext';
+import { QuestContextProvider } from '@contexts/quests/QuestContext';
 import { createMockApi } from '../../__mocks__/core-client-ts';
 import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
@@ -45,7 +45,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 // Mock OAuth4WebApiAuthProvider
-vi.mock('../providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 // Mock window.matchMedia for theme handler
 Object.defineProperty(window, 'matchMedia', {

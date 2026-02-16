@@ -21,7 +21,7 @@ import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
 import { getLog } from '../api/device/InstanceLogService';
 import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useProtectedApi } from './providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function InstanceLog(props) {
   const { instance } = props;

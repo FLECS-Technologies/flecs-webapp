@@ -19,7 +19,7 @@
 import React from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import DeviceLogin from '../../pages/DeviceLogin';
-import { AuthContextValue } from '../providers/oauth/types';
+import { AuthContextValue } from '@contexts/auth/oauth/types';
 
 interface AuthGuardProps {
   children: React.ReactNode;

@@ -20,9 +20,9 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import React from 'react';
-import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-import { QuestContext, useQuestContext } from '../../quests/QuestContext';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 

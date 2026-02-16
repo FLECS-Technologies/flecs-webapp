@@ -19,8 +19,8 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { QuestLog } from '../QuestLog';
-import * as ContextModule from '../QuestContext';
-import { QuestContextType } from '../QuestContext';
+import * as ContextModule from '@contexts/quests/QuestContext';
+import { QuestContextType } from '@contexts/quests/QuestContext';
 import { Quest, QuestState } from '@flecs/core-client-ts';
 
 // Mock QuestLogEntry

@@ -34,7 +34,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Avatar from '@mui/material/Avatar';
 import LoadIconButton from './LoadIconButton';
 import UninstallButton from './buttons/app/UninstallButton';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import AppInstanceRow from './AppInstanceRow';
 import ActionSnackbar from './ActionSnackbar';
 import useStateWithLocalStorage from './LocalStorage';
@@ -42,8 +42,8 @@ import HelpButton from './buttons/help/HelpButton';
 import { EditorButtons } from './buttons/editors/EditorButtons';
 import { InstanceStartCreateButtons } from './buttons/instance/InstanceStartCreateButtons';
 import { questStateFinishedOk } from '../utils/quests/QuestState';
-import { QuestContext, useQuestContext } from './quests/QuestContext';
-import { useProtectedApi } from './providers/ApiProvider';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function Row(props) {
   const { setUpdateAppList } = useContext(ReferenceDataContext);

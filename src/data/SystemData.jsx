@@ -17,9 +17,9 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSystemContext } from './SystemProvider';
-import { useProtectedApi } from '../components/providers/ApiProvider';
-import { useDeviceState } from '../components/providers/DeviceStateProvider';
+import { useSystemContext } from '@contexts/data/SystemProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
+import { useDeviceState } from '@contexts/device/DeviceStateProvider';
 
 function SystemData(props) {
   const context = useSystemContext();

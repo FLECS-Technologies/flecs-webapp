@@ -1,4 +1,4 @@
-import { JWTHeader, User } from '../components/providers/oauth/types';
+import { JWTHeader, User } from '@contexts/auth/oauth/types';
 
 // Utility function to decode JWT token
 export const decodeJwt = (

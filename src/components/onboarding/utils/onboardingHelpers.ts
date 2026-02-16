@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { PublicAuthProviderApiContextValue } from '../../providers/AuthProviderApiProvider';
+import { PublicAuthProviderApiContextValue } from '@contexts/api/AuthProviderApiProvider';
 
 /**
  * Helper function to check if the authentication provider is configured

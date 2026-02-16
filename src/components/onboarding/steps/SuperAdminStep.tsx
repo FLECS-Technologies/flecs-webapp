@@ -20,7 +20,7 @@ import { Box, Typography, TextField, Button, Alert, LinearProgress, Stack } from
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
 import { WizardStep, WizardStepProps } from '../../steppers';
-import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
+import { usePublicAuthProviderApi } from '@contexts/api/AuthProviderApiProvider';
 import { checkSuperAdminExists } from '../utils/onboardingHelpers';
 
 const SuperAdminStepComponent: React.FC<WizardStepProps> = ({

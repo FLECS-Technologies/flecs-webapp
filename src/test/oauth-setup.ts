@@ -26,7 +26,7 @@
 import {
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '../components/providers/__mocks__/OAuth4WebApiAuthProvider';
+} from '@contexts/__mocks__/OAuth4WebApiAuthProvider';
 
 // Mock the OAuth4WebApiAuthProvider module globally
 jest.mock('../components/providers/OAuth4WebApiAuthProvider');

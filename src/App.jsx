@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import { React } from 'react';
 import Frame from './components/layout/Frame';
 import { AppList } from './data/AppList';
 import { UIRoutes } from './pages/ui-routes';

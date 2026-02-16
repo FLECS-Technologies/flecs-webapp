@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
 import Row from '../InstalledAppsListRow';

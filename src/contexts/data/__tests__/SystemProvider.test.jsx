@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, beforeEach, vi } from 'vitest';
 import { SystemContextProvider } from '../SystemProvider';

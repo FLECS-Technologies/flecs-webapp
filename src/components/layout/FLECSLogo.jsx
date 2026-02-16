@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react';
 import Logo from '../../assets/images/logo.svg?react'; // Vite-compatible SVG import using vite-plugin-svgr
 import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';

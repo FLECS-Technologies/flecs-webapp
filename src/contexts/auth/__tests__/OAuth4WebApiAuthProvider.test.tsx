@@ -50,7 +50,9 @@ vi.mock('@components/auth/AuthGuard', () => ({
 }));
 
 // Mock DeviceStateProvider using existing mock
-vi.mock('../../device/DeviceStateProvider', () => vi.importActual('../../device/__mocks__/DeviceStateProvider.tsx'));
+vi.mock('../../device/DeviceStateProvider', () =>
+  vi.importActual('../../device/__mocks__/DeviceStateProvider.tsx'),
+);
 
 // Import mocked modules
 import { useOAuthConfig } from '../oauth/useOAuthConfig';
@@ -59,7 +61,10 @@ import { useOAuthCallback } from '../oauth/useOAuthCallback';
 import { useOAuthFlow } from '../oauth/useOAuthFlow';
 import { AuthGuard } from '@components/auth/AuthGuard';
 import { useDeviceState } from '../../device/DeviceStateProvider';
-import { setMockDeviceState, resetMockDeviceState } from '../../device/__mocks__/DeviceStateProvider';
+import {
+  setMockDeviceState,
+  resetMockDeviceState,
+} from '../../device/__mocks__/DeviceStateProvider';
 
 // Type the mocked functions
 const mockUseOAuthConfig = useOAuthConfig as MockedFunction<typeof useOAuthConfig>;

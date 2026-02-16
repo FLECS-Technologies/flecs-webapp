@@ -23,10 +23,7 @@
  * Import this in your test files or configure Jest to use it globally.
  */
 
-import {
-  mockOAuth4WebApiAuth,
-  mockScenarios,
-} from '@contexts/__mocks__/OAuth4WebApiAuthProvider';
+import { mockOAuth4WebApiAuth, mockScenarios } from '@contexts/__mocks__/OAuth4WebApiAuthProvider';
 
 // Mock the OAuth4WebApiAuthProvider module globally
 jest.mock('../components/providers/OAuth4WebApiAuthProvider');

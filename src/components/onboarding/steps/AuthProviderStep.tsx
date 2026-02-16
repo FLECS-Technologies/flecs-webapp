@@ -30,13 +30,13 @@ import {
   Container,
 } from '@mui/material';
 import { WizardStep, WizardStepProps } from '../../steppers';
-import { usePublicApi } from '../../providers/ApiProvider';
+import { usePublicApi } from '@contexts/api/ApiProvider';
 import { AuthProvidersAndDefaults, AuthProvider } from '@flecs/core-client-ts';
 import {
   checkAuthProviderConfigured,
   checkAuthProviderCoreConfigured,
 } from '../utils/onboardingHelpers';
-import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 
 // Types

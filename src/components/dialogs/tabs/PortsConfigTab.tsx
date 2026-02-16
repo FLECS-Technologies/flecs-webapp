@@ -29,7 +29,7 @@ import {
 } from '@flecs/core-client-ts';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancedeviceconfig } from '../../../components/help/helplinks';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 interface PortsConfigTabProps {
   instanceId: string;

@@ -25,7 +25,7 @@ import { vi } from 'vitest';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

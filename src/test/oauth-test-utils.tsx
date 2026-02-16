@@ -29,7 +29,7 @@ import {
   OAuth4WebApiAuthProvider,
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '../components/providers/__mocks__/OAuth4WebApiAuthProvider';
+} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';
 
 /**
  * Custom render function that wraps components with OAuth4WebApiAuthProvider
@@ -233,4 +233,4 @@ export const setupOAuthTests = () => {
 export {
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '../components/providers/__mocks__/OAuth4WebApiAuthProvider';
+} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';

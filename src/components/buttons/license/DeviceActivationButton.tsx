@@ -26,7 +26,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 import { CheckCircle, Error } from '@mui/icons-material';
 import PropTypes, { InferProps } from 'prop-types';
 

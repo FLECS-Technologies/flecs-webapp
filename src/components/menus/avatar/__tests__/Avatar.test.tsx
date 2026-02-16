@@ -35,14 +35,14 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 // Mock OAuth4WebApiAuth provider
-vi.mock('../../../providers/OAuth4WebApiAuthProvider');
+vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
 
 // Import the OAuth mock system
 import {
   OAuth4WebApiAuthProvider,
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '../../../providers/__mocks__/OAuth4WebApiAuthProvider';
+} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';
 
 describe('Avatar', () => {
   beforeEach(() => {

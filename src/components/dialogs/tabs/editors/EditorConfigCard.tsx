@@ -21,7 +21,7 @@ import { Delete, Save } from '@mui/icons-material';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
 import { createUrl } from '../../../../components/buttons/editors/EditorButton';
-import { host, useProtectedApi } from '../../../../components/providers/ApiProvider';
+import { host, useProtectedApi } from '@contexts/api/ApiProvider';
 import normalizeUrl from 'normalize-url';
 
 interface EditorConfigCardProps {

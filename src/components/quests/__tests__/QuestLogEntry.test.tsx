@@ -21,7 +21,7 @@ import { render, screen } from '@testing-library/react';
 import { QuestLogEntry } from '../QuestLogEntry';
 import { QuestState, Quest } from '@flecs/core-client-ts';
 import * as StateUtils from '../../../utils/quests/QuestState';
-import * as ContextModule from '../QuestContext';
+import * as ContextModule from '@contexts/quests/QuestContext';
 
 // Mock QuestLogEntryBody to render test ids based on quest id
 vi.mock('../QuestLogEntryBody', () => ({

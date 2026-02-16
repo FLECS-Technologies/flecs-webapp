@@ -18,16 +18,16 @@
 import React from 'react';
 import { render, act, screen } from '@testing-library/react';
 import DeviceActivation from '../DeviceActivation';
-import { DeviceActivationContext } from '../../providers/DeviceActivationContext';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 import {
   MarketplaceUserProvider,
   MarketplaceUserContext,
-} from '../../providers/MarketplaceUserProvider';
+} from '@contexts/marketplace/MarketplaceUserProvider';
 
 import { vi } from 'vitest';
 
 // Mock the API calls directly to avoid provider complexity
-vi.mock('../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => ({
     console: {
       consoleAuthenticationPut: vi.fn().mockResolvedValue({ data: {} }),

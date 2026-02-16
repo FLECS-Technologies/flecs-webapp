@@ -24,12 +24,12 @@ import { createMockApi } from '../../__mocks__/core-client-ts';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 // Mock the SystemProvider
-vi.mock('../../data/SystemProvider', () => ({
+vi.mock('@contexts/data/SystemProvider', () => ({
   useSystemContext: () => ({ systemInfo: {} }),
 }));
 

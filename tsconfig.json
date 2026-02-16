@@ -18,7 +18,16 @@
     "jsx": "react-jsx",
     "paths": {
       "@components/*": ["./src/components/*"],
-      "@api/*": ["./src/api/*"]
+      "@contexts/*": ["./src/contexts/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@models/*": ["./src/models/*"],
+      "@api/*": ["./src/api/*"],
+      "@test/*": ["./src/test/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@data/*": ["./src/data/*"]
     }
   },
   "include": ["src", "vite-env.d.ts"]

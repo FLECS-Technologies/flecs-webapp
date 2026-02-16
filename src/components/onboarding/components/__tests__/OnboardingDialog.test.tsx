@@ -26,12 +26,12 @@ const mockUseProtectedApi = vi.fn();
 const mockUsePublicApi = vi.fn();
 const mockUsePublicAuthProviderApi = vi.fn();
 
-vi.mock('../../../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
   usePublicApi: () => mockUsePublicApi(),
 }));
 
-vi.mock('../../../../components/providers/AuthProviderApiProvider', () => ({
+vi.mock('@contexts/api/AuthProviderApiProvider', () => ({
   usePublicAuthProviderApi: () => mockUsePublicAuthProviderApi(),
 }));
 

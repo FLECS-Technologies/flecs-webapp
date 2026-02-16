@@ -17,9 +17,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { usePublicApi } from '../../providers/ApiProvider';
-import { usePublicAuthProviderApi } from '../../../components/providers/AuthProviderApiProvider';
-import { useDeviceState } from '../../providers/DeviceStateProvider';
+import { usePublicApi } from '@contexts/api/ApiProvider';
+import { usePublicAuthProviderApi } from '@contexts/api/AuthProviderApiProvider';
+import { useDeviceState } from '@contexts/device/DeviceStateProvider';
 import { checkAuthProviderConfigured, checkSuperAdminExists } from '../utils/onboardingHelpers';
 
 interface OnboardingStatus {

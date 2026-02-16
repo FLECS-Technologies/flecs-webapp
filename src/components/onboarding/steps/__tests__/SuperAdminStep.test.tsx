@@ -30,7 +30,7 @@ import * as onboardingHelpers from '../../utils/onboardingHelpers';
 // Mock API provider
 const mockUsePublicAuthProviderApi = vi.fn();
 
-vi.mock('../../../../components/providers/AuthProviderApiProvider', () => ({
+vi.mock('@contexts/api/AuthProviderApiProvider', () => ({
   usePublicAuthProviderApi: () => mockUsePublicAuthProviderApi(),
 }));
 

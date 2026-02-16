@@ -18,24 +18,24 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { SystemData } from '../SystemData';
+import { SystemData } from '@data/SystemData';
 import { useSystemContext } from '../SystemProvider';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 vi.mock('../SystemProvider', () => ({ useSystemContext: vi.fn() }));
 
 // Mock the DeviceState provider using the centralized mock
-vi.mock('../../components/providers/DeviceStateProvider');
+vi.mock('@contexts/device/DeviceStateProvider');
 
 // Import the mock helpers
-import { resetMockDeviceState } from '../../components/providers/__mocks__/DeviceStateProvider';
+import { resetMockDeviceState } from '../../device/__mocks__/DeviceStateProvider';
 
 const mockSystem = {
   ping: true,

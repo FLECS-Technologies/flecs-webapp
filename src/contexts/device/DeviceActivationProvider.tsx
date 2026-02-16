@@ -17,7 +17,7 @@
  */
 import React, { useCallback } from 'react';
 import { DeviceActivationContext } from './DeviceActivationContext';
-import { useProtectedApi } from './ApiProvider';
+import { useProtectedApi } from '../api/ApiProvider';
 
 const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) => {
   const [validated, setValidated] = React.useState(false);

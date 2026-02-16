@@ -38,7 +38,7 @@ vi.mock('../ApiProvider', () => ({
 }));
 
 // Mock the onboarding helpers
-vi.mock('../../onboarding/utils/onboardingHelpers', () => ({
+vi.mock('@components/onboarding/utils/onboardingHelpers', () => ({
   getCoreAuthProviderId: vi.fn(),
 }));
 
@@ -46,7 +46,7 @@ vi.mock('../../onboarding/utils/onboardingHelpers', () => ({
 import { createApi } from '../../../api/auth-provider-client/api-client';
 import { Configuration } from '@flecs/auth-provider-client-ts';
 import { getBaseURL, usePublicApi, getAuthProviderURL } from '../ApiProvider';
-import { getCoreAuthProviderId } from '../../onboarding/utils/onboardingHelpers';
+import { getCoreAuthProviderId } from '@components/onboarding/utils/onboardingHelpers';
 import {
   PublicAuthProviderApiProvider,
   usePublicAuthProviderApi,

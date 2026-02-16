@@ -18,7 +18,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
-import { QuestContext, QuestContextProvider, useQuestContext } from '../QuestContext';
+import { QuestContext, QuestContextProvider, useQuestContext } from '@contexts/quests/QuestContext';
 import { createMockApi, createMockQuestObject } from '../../../__mocks__/core-client-ts';
 import { QuestState, Quest } from '@flecs/core-client-ts';
 import { AxiosResponse } from 'axios';
@@ -26,7 +26,7 @@ import { AxiosResponse } from 'axios';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

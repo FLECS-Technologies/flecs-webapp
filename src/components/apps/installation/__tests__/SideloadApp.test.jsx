@@ -21,18 +21,18 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { QuestState } from '@flecs/core-client-ts';
 import SideloadApp from '../SideloadApp';
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
+import { ReferenceDataContextProvider } from '@contexts/data/ReferenceDataContext';
 import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider and Quest context
 const mockUseProtectedApi = vi.fn();
 const mockUseQuestContext = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../../../quests/QuestContext', () => ({
+vi.mock('@contexts/quests/QuestContext', () => ({
   useQuestContext: () => mockUseQuestContext(),
   QuestContext: {},
 }));

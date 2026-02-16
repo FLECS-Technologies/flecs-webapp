@@ -19,8 +19,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import MarketplaceList from '../MarketplaceList';
-import { FilterContext } from '../../data/FilterContext';
-import { ReferenceDataContext } from '../../data/ReferenceDataContext';
+import { FilterContext } from '@contexts/data/FilterContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 
 // Mock AppList context provider and hook
 vi.mock('../../data/AppList', () => ({

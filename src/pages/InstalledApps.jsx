@@ -17,7 +17,7 @@
  */
 import { useContext, React } from 'react';
 import InstalledAppsList from '../components/InstalledAppsList';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 
 export default function installedApps() {
   const { appList } = useContext(ReferenceDataContext);

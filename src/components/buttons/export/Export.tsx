@@ -21,10 +21,10 @@ import Button from '@mui/material/Button';
 // import LoadingButton from '@mui/lab/LoadingButton';
 import UploadIcon from '@mui/icons-material/Upload';
 import ActionSnackbar from '../../ActionSnackbar';
-import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
-import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
-import { useProtectedApi } from '../../providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { getAuthCoreProvider } from '../../../utils/auth/authprovider-utils';
 
 interface ReferenceDataContextType {

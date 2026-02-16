@@ -2,10 +2,10 @@ import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Button, Grid, Typography, Alert, AlertTitle } from '@mui/material';
 import { Replay as ReplayIcon } from '@mui/icons-material';
 import PropTypes from 'prop-types';
-import { ReferenceDataContext } from '../../../data/ReferenceDataContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { UpdateInstances } from '../../../api/device/instances/instance';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
-import { QuestContext, useQuestContext } from '../../quests/QuestContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { QuestLogEntry } from '../../../components/quests/QuestLogEntry';
 import { questStateFinishedOk } from '../../../utils/quests/QuestState';
 

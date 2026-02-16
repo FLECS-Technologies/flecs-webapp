@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 import React from 'react';
-import { ProtectedApiProvider, PublicApiProvider } from './ApiProvider';
-import { OAuth4WebApiAuthProvider } from './OAuth4WebApiAuthProvider';
-import { DeviceStateProvider } from './DeviceStateProvider';
-import { QuestContextProvider } from '../../components/quests/QuestContext';
-import { FilterContextProvider } from '../../data/FilterContext';
-import { SystemContextProvider } from '../../data/SystemProvider';
-import { ReferenceDataContextProvider } from '../../data/ReferenceDataContext';
-import { MarketplaceUserProvider } from './MarketplaceUserProvider';
-import { PublicAuthProviderApiProvider } from './AuthProviderApiProvider';
+import { ProtectedApiProvider, PublicApiProvider } from './api/ApiProvider';
+import { OAuth4WebApiAuthProvider } from './auth/OAuth4WebApiAuthProvider';
+import { DeviceStateProvider } from './device/DeviceStateProvider';
+import { QuestContextProvider } from './quests/QuestContext';
+import { FilterContextProvider } from '@contexts/data/FilterContext';
+import { SystemContextProvider } from '@contexts/data/SystemProvider';
+import { ReferenceDataContextProvider } from '@contexts/data/ReferenceDataContext';
+import { MarketplaceUserProvider } from './marketplace/MarketplaceUserProvider';
+import { PublicAuthProviderApiProvider } from './api/AuthProviderApiProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

@@ -22,18 +22,18 @@ import { describe, it, beforeEach, vi } from 'vitest';
 import { SystemContextProvider } from '../SystemProvider';
 
 // Mock the DeviceActivationProvider to avoid state update warnings
-vi.mock('../../components/providers/DeviceActivationProvider', () => ({
+vi.mock('@contexts/device/DeviceActivationProvider', () => ({
   default: ({ children }) => children,
 }));
 
 // Mock the DeviceStateProvider using the centralized mock
-vi.mock('../../components/providers/DeviceStateProvider');
+vi.mock('@contexts/device/DeviceStateProvider');
 
 // Import the mock helpers
-import { resetMockDeviceState } from '../../components/providers/__mocks__/DeviceStateProvider';
+import { resetMockDeviceState } from '../../device/__mocks__/DeviceStateProvider';
 
 // Mock the onboarding components to avoid complex dependencies
-vi.mock('../../components/onboarding', () => ({
+vi.mock('@components/onboarding', () => ({
   OnboardingDialog: ({ children }) => <div data-testid="onboarding-dialog">{children}</div>,
   useOnboardingStatus: () => ({
     isRequired: false,

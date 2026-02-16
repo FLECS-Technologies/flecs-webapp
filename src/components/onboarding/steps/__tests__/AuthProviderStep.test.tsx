@@ -4,11 +4,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthProviderStep } from '../AuthProviderStep';
 
 import { createMockApi, setupAuthProviderConfigured } from '../../../../__mocks__/core-client-ts';
-import * as QuestContextModule from '../../../quests/QuestContext';
+import * as QuestContextModule from '@contexts/quests/QuestContext';
 
 // Mock the ApiProvider hook to use the central mock
 const mockUsePublicApi = vi.fn();
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   usePublicApi: () => mockUsePublicApi(),
 }));
 

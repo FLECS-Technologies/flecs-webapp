@@ -23,12 +23,12 @@ import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
 import DeviceAppsList from '../InstalledAppsList';
 import { createMockApi } from '../../__mocks__/core-client-ts';
-import { QuestContextProvider } from '../quests/QuestContext';
+import { QuestContextProvider } from '@contexts/quests/QuestContext';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

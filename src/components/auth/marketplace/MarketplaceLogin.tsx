@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import MarketplaceAuthService from '../../../api/marketplace/MarketplaceAuthService';
-import { useMarketplaceUser } from '../../providers/MarketplaceUserProvider';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useMarketplaceUser } from '@contexts/marketplace/MarketplaceUserProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 const MarketplaceLogin: React.FC = () => {
   const [username, setUsername] = useState('');

@@ -18,7 +18,7 @@
 import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Paper } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { QuestContext, useQuestContext } from './QuestContext';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { getQuestStateColor } from '../../utils/quests/QuestState';
 import { QuestLogEntryBody } from './QuestLogEntryBody';
 

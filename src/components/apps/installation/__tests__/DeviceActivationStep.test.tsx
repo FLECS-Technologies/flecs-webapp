@@ -19,14 +19,14 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DeviceActivationStep from '../DeviceActivationStep';
-import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
-import { MarketplaceUserProvider } from '../../../providers/MarketplaceUserProvider';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
+import { MarketplaceUserProvider } from '@contexts/marketplace/MarketplaceUserProvider';
 import { createMockApi } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

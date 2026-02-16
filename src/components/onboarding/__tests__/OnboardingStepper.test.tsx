@@ -20,19 +20,19 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { OnboardingStepper } from '../';
-import * as QuestContextModule from '../../quests/QuestContext';
+import * as QuestContextModule from '@contexts/quests/QuestContext';
 
 // Mock the API providers
 const mockUseProtectedApi = vi.fn();
 const mockUsePublicApi = vi.fn();
 const mockUsePublicAuthProviderApi = vi.fn();
 
-vi.mock('../../providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
   usePublicApi: () => mockUsePublicApi(),
 }));
 
-vi.mock('../../../components/providers/AuthProviderApiProvider', () => ({
+vi.mock('@contexts/api/AuthProviderApiProvider', () => ({
   usePublicAuthProviderApi: () => mockUsePublicAuthProviderApi(),
 }));
 

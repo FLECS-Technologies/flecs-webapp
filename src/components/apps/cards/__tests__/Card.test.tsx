@@ -34,7 +34,7 @@ const mockSystemContext = {
   },
 };
 
-vi.mock('../../../../data/SystemProvider', () => ({
+vi.mock('@contexts/data/SystemProvider', () => ({
   useSystemContext: () => mockSystemContext,
 }));
 

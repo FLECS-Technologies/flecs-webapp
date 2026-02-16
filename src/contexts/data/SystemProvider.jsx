@@ -17,9 +17,9 @@
  */
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
-import DeviceActivationProvider from '../components/providers/DeviceActivationProvider';
-import { OnboardingDialog, useOnboardingStatus } from '../components/onboarding';
-import { useDeviceState } from '../components/providers/DeviceStateProvider';
+import DeviceActivationProvider from '@contexts/device/DeviceActivationProvider';
+import { OnboardingDialog, useOnboardingStatus } from '@components/onboarding';
+import { useDeviceState } from '@contexts/device/DeviceStateProvider';
 
 const SystemContext = createContext({});
 

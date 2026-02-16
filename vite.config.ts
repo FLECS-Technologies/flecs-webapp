@@ -8,6 +8,21 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 export default defineConfig({
   base: '',
   plugins: [react(), svgr(), basicSsl()],
+  resolve: {
+    alias: {
+      '@components': path.resolve(__dirname, './src/components'),
+      '@contexts': path.resolve(__dirname, './src/contexts'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@models': path.resolve(__dirname, './src/models'),
+      '@api': path.resolve(__dirname, './src/api'),
+      '@test': path.resolve(__dirname, './src/test'),
+      '@assets': path.resolve(__dirname, './src/assets'),
+      '@styles': path.resolve(__dirname, './src/styles'),
+      '@data': path.resolve(__dirname, './src/data'),
+    },
+  },
   server: {
     open: true,
   },

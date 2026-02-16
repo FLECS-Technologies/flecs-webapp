@@ -29,7 +29,7 @@ import NetworkConfigCard from './networks/NetworkConfigCard';
 import HelpButton from '../../buttons/help/HelpButton';
 import { instancenicconfig } from '../../../components/help/helplinks';
 import ActionSnackbar from '../../../components/ActionSnackbar';
-import { useProtectedApi } from '../../../components/providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export interface NetworkState {
   id: string;

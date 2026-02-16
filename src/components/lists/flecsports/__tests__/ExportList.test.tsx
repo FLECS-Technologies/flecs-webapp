@@ -7,7 +7,7 @@ import { createMockApi } from '../../../../__mocks__/core-client-ts';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

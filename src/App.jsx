@@ -22,7 +22,7 @@ import { AppList } from './data/AppList';
 import { UIRoutes } from './pages/ui-routes';
 import { SystemData } from './data/SystemData';
 import { ThemeHandler } from './styles/ThemeHandler';
-import Providers from './components/providers/Providers';
+import Providers from '@contexts/Providers';
 
 export default function App() {
   return (

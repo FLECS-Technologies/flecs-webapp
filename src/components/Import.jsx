@@ -20,9 +20,9 @@ import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
 import ActionSnackbar from './ActionSnackbar';
 import FileOpen from './FileOpen';
-import { ReferenceDataContext } from '../data/ReferenceDataContext';
-import { useProtectedApi } from './providers/ApiProvider';
-import { QuestContext, useQuestContext } from './quests/QuestContext';
+import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
+import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { questStateFinishedOk } from '../utils/quests/QuestState';
 
 export default function Import(props) {

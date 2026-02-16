@@ -3,7 +3,7 @@ import React, { createContext, useContext, useMemo, useState, useEffect } from '
 import { Configuration } from '@flecs/auth-provider-client-ts';
 import { createApi } from '../../api/auth-provider-client/api-client';
 import { getAuthProviderURL } from './ApiProvider';
-import { getCoreAuthProviderId } from '../onboarding/utils/onboardingHelpers';
+import { getCoreAuthProviderId } from '@components/onboarding/utils/onboardingHelpers';
 import { usePublicApi } from './ApiProvider';
 
 async function getProviderId(api: ReturnType<typeof usePublicApi>) {

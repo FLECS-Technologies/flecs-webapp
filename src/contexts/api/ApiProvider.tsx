@@ -17,7 +17,7 @@
  */
 import React, { createContext, useContext, useMemo } from 'react';
 import normalizeUrl from 'normalize-url';
-import { useOAuth4WebApiAuth } from './OAuth4WebApiAuthProvider';
+import { useOAuth4WebApiAuth } from '../auth/OAuth4WebApiAuthProvider';
 
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '../../api/flecs-core/api-client';

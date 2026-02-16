@@ -20,20 +20,20 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QuestState } from '@flecs/core-client-ts';
 import InstallationStepper from '../InstallationStepper';
-import { DeviceActivationContext } from '../../../providers/DeviceActivationContext';
-import { MarketplaceUserProvider } from '../../../providers/MarketplaceUserProvider';
-import { ReferenceDataContextProvider } from '../../../../data/ReferenceDataContext';
+import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
+import { MarketplaceUserProvider } from '@contexts/marketplace/MarketplaceUserProvider';
+import { ReferenceDataContextProvider } from '@contexts/data/ReferenceDataContext';
 import { createMockApi, createMockQuestResult } from '../../../../__mocks__/core-client-ts';
 
 // Mock the API provider and Quest context
 const mockUseProtectedApi = vi.fn();
 const mockUseQuestContext = vi.fn();
 
-vi.mock('../../../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
-vi.mock('../../../quests/QuestContext', () => ({
+vi.mock('@contexts/quests/QuestContext', () => ({
   useQuestContext: () => mockUseQuestContext(),
   QuestContext: {},
 }));

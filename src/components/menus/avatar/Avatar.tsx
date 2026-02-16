@@ -20,7 +20,7 @@ import { IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { appBarIconColors } from '../../../styles/tokens';
-import { useOAuth4WebApiAuth } from '../../../components/providers/OAuth4WebApiAuthProvider';
+import { useOAuth4WebApiAuth } from '@contexts/auth/OAuth4WebApiAuthProvider';
 
 export default function Avatar() {
   const [anchorElMenu, setAnchorElMenu] = React.useState<HTMLElement | null>(null);

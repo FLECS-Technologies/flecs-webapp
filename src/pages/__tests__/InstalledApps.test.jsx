@@ -26,12 +26,12 @@ import { createMockApi } from '../../__mocks__/core-client-ts';
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 
 // Mock the ReferenceDataContext
-vi.mock('../../data/ReferenceDataContext', () => ({
+vi.mock('@contexts/data/ReferenceDataContext', () => ({
   ReferenceDataContext: React.createContext({ appList: [] }),
 }));
 

@@ -18,14 +18,14 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { AppList } from '../AppList';
+import { AppList } from '@data/AppList';
 import { useReferenceDataContext } from '../ReferenceDataContext';
-import { createMockApi } from '../../__mocks__/core-client-ts';
+import { createMockApi } from '../../../__mocks__/core-client-ts';
 
 // Mock the API provider
 const mockUseProtectedApi = vi.fn();
 
-vi.mock('../../components/providers/ApiProvider', () => ({
+vi.mock('@contexts/api/ApiProvider', () => ({
   useProtectedApi: () => mockUseProtectedApi(),
 }));
 

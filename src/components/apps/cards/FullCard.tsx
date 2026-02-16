@@ -39,7 +39,7 @@ import {
 import { Close, CheckCircle, Launch, Update, ShoppingCart, OpenInNew } from '@mui/icons-material';
 import { App } from '../../../models/app';
 import { SystemContextType } from '../../../models/system';
-import { useSystemContext } from '../../../data/SystemProvider';
+import { useSystemContext } from '@contexts/data/SystemProvider';
 import { isBlacklisted } from '../../../api/marketplace/ProductService';
 import { createVersion, createVersions, getLatestVersion } from '../../../utils/version-utils';
 import { Version } from '../../../models/version';

@@ -30,7 +30,7 @@ import {
 import CollapsableRow from './CollapsableRow';
 import VolumesTable from './VolumesTable';
 import HostContainerTable from './HostContainerTable';
-import { useProtectedApi } from './providers/ApiProvider';
+import { useProtectedApi } from '@contexts/api/ApiProvider';
 
 export default function InstanceDetails(props) {
   const { instance } = props;

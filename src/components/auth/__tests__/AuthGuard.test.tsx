@@ -20,7 +20,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthGuard } from '../AuthGuard';
-import { AuthContextValue } from '../../providers/oauth/types';
+import { AuthContextValue } from '@contexts/auth/oauth/types';
 
 // Mock DeviceLogin component
 vi.mock('../../../pages/DeviceLogin', () => ({

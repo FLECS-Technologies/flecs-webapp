@@ -18,7 +18,7 @@
 
 import React, { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import useStateWithLocalStorage from '@components/LocalStorage';
+import useStateWithLocalStorage from '@hooks/LocalStorage';
 
 const FilterContext = createContext([]);
 

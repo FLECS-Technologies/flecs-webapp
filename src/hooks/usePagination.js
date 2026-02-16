@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import useStateWithLocalStorage from '../components/LocalStorage';
+import useStateWithLocalStorage from './LocalStorage';
 
 const usePagination = (name, initialPage, initialRowsPerPage) => {
   const [page, setPage] = useStateWithLocalStorage(`${name}.paginator.page`, initialPage);

@@ -37,7 +37,7 @@ import UninstallButton from './buttons/UninstallButton';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import AppInstanceRow from './AppInstanceRow';
 import ActionSnackbar from '../ui/ActionSnackbar';
-import useStateWithLocalStorage from '../LocalStorage';
+import useStateWithLocalStorage from '@hooks/LocalStorage';
 import HelpButton from '../help/HelpButton';
 import { EditorButtons } from '../instances/tabs/editors/EditorButtons';
 import { InstanceStartCreateButtons } from '../instances/buttons/InstanceStartCreateButtons';

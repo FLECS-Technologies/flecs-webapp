@@ -38,7 +38,7 @@ import Yaml from 'js-yaml';
 import Row from './InstalledAppsListRow';
 import FileOpen from '../ui/FileOpen';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
-import useStateWithLocalStorage from '../LocalStorage';
+import useStateWithLocalStorage from '@hooks/LocalStorage';
 import usePagination from '../../hooks/usePagination';
 import { CircularProgress } from '@mui/material';
 import { useSystemContext } from '@contexts/data/SystemProvider';

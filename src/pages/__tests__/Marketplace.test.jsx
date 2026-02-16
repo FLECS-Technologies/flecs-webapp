@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Marketplace from '../Marketplace';
 import { FilterContextProvider } from '@contexts/data/FilterContext';

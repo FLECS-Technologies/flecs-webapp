@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Button, Autocomplete, TextField } from '@mui/material';
 import { FilterList, Search } from '@mui/icons-material';

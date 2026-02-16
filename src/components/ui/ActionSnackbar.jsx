@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Snackbar, Alert, IconButton } from '@mui/material';
 import { Close, ContentCopy } from '@mui/icons-material';

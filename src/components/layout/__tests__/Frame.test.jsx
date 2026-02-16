@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';

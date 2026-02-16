@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import PortsConfigTab from '../PortsConfigTab';
 import { createMockApi } from '../../../../__mocks__/core-client-ts';

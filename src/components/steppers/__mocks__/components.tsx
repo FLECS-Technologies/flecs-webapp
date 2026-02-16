@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 
 // Mock MultiStepWizard component
 export const MultiStepWizard = ({ title }: { title: string }) => (

@@ -17,7 +17,6 @@
  */
 import { Box, Button, Divider, Paper, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import React from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 

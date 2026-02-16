@@ -1047,14 +1047,14 @@ Move device-related root components and the license button into `device/`.
 
 ##### Step 2.2 Summary
 
-| Sub-step | Scope                    | Files moved   | Risk   | Status |
-| -------- | ------------------------ | ------------- | ------ | ------ |
-| 2.2a     | layout/ + ui/            | 18 + 15 tests | Low    | ✅    |
-| 2.2b     | instances/               | 18 + tests    | Medium | ✅    |
-| 2.2c     | apps/ + export/          | 10 + 10 tests | Low    | ✅    |
-| 2.2d     | device/ + help/          | 5 + 2 tests   | Low    | ✅    |
-| 2.2e     | LocalStorage → hooks/    | 1 + 1 test    | Low    | ✅    |
-| 2.2f     | cleanup (no-op)          | 0             | Low    | ✅    |
+| Sub-step | Scope                 | Files moved   | Risk   | Status |
+| -------- | --------------------- | ------------- | ------ | ------ |
+| 2.2a     | layout/ + ui/         | 18 + 15 tests | Low    | ✅     |
+| 2.2b     | instances/            | 18 + tests    | Medium | ✅     |
+| 2.2c     | apps/ + export/       | 10 + 10 tests | Low    | ✅     |
+| 2.2d     | device/ + help/       | 5 + 2 tests   | Low    | ✅     |
+| 2.2e     | LocalStorage → hooks/ | 1 + 1 test    | Low    | ✅     |
+| 2.2f     | cleanup (no-op)       | 0             | Low    | ✅     |
 
 **Total:** ~52 source files + ~28 test files moved across 5 commits (2.2f was a no-op).
 

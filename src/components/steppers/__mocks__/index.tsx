@@ -20,7 +20,6 @@
 export * from './components';
 export * from './providers';
 
-import React from 'react';
 
 // Mock MultiStepWizard component
 export const MultiStepWizard = ({ title }: { title: string }) => (

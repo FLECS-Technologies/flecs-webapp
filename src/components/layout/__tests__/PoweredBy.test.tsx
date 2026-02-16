@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PoweredByFLECS from '../PoweredBy';
-import React from 'react';
 
 // Mock FLECSLogo to avoid rendering SVGs or images
 vi.mock('../FLECSLogo', () => ({

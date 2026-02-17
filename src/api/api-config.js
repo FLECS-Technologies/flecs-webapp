@@ -17,7 +17,7 @@
  */
 
 const MP_BASE_URL = 'https://console.flecs.tech';
-const MP_BETA_BASE_URL = 'https://console-aks-dev.flecs.tech';
+const MP_BETA_BASE_URL = 'https://console-dev.flecs.tech';
 const MP_CART_ROUTE = '/cart?cocart-load-cart=';
 
 const MP_PROXY_DEV = 'https://console-dev.flecs.tech';

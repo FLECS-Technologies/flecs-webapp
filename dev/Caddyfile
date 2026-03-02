@@ -1,0 +1,35 @@
+# Local development reverse proxy
+# Bridges Vite dev server + FLECS Core backend on one origin.
+# Usage: ./dev/start.sh
+#
+# Override the backend port:
+#   BACKEND_PORT=9443 ./dev/start.sh
+
+localhost {
+	# API traffic → FLECS Core backend (via SSH tunnel)
+	handle /api/* {
+		reverse_proxy https://localhost:{$BACKEND_PORT:8443} {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# Auth provider + OAuth traffic → FLECS Core backend
+	handle /flecs/* {
+		reverse_proxy https://localhost:{$BACKEND_PORT:8443} {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# Everything else → Vite dev server
+	handle {
+		reverse_proxy https://localhost:5173 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+}

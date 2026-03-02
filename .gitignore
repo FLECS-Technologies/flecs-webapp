@@ -7,4 +7,5 @@ build/index.html
 out/**
 src/assets/third-party-licenses.txt
 src/assets/sbom.json
-.env.development
+.env
+.env.*

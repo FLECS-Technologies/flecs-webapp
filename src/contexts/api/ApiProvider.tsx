@@ -16,15 +16,16 @@
  * limitations under the License.
  */
 import React, { createContext, useContext, useMemo } from 'react';
-import normalizeUrl from 'normalize-url';
 import { useOAuth4WebApiAuth } from '../auth/OAuth4WebApiAuthProvider';
 
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '../../api/flecs-core/api-client';
 
-// Remove the global api export from api-client.ts
 export function getBaseURL(): string {
-  return normalizeUrl(host() + '/' + baseURL());
+  const base = host();
+  const path = baseURL();
+  if (!base) return path;
+  return new URL(path, base).toString();
 }
 
 export function host() {
@@ -35,7 +36,10 @@ export function host() {
 }
 
 export function getAuthProviderURL(providerId: string) {
-  return normalizeUrl(host() + '/flecs/providers/auth/' + providerId);
+  const base = host();
+  const path = '/flecs/providers/auth/' + providerId;
+  if (!base) return path;
+  return new URL(path, base).toString();
 }
 
 export function baseURL() {

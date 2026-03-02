@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
 import { getLog } from '../../api/device/InstanceLogService';
 import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -28,43 +26,20 @@ export default function InstanceLog(props) {
   const executedRef = React.useRef(false);
   const api = useProtectedApi();
   const [loadingLog, setLoadingLog] = React.useState(false);
-  const [reloadLog, setReloadLog] = React.useState(false);
-  const content = ContentState.createFromText('No log available...');
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createWithContent(content),
-  );
+  const [logText, setLogText] = React.useState('No log available...');
 
   React.useEffect(() => {
-    if (executedRef.current) {
-      return;
-    }
-    if (!loadingLog) {
-      fetchLog();
-    }
-    if (reloadLog) {
-      setReloadLog(false);
-    }
+    if (executedRef.current) return;
+    fetchLog();
     executedRef.current = true;
-  }, [reloadLog]);
+  }, []);
 
-  const fetchLog = async (props) => {
+  const fetchLog = async () => {
     setLoadingLog(true);
     api.instances
       .instancesInstanceIdLogsGet(instance.instanceId)
       .then((response) => {
-        const currentContent = editorState.getCurrentContent();
-        const newLog = Modifier.replaceText(
-          currentContent,
-          editorState.getSelection().merge({
-            anchorKey: currentContent.getFirstBlock().getKey(),
-            anchorOffset: 0,
-            focusOffset: currentContent.getLastBlock().getText().length,
-            focusKey: currentContent.getLastBlock().getKey(),
-          }),
-          getLog(response.data),
-        );
-        const newEditorState = EditorState.push(editorState, newLog, 'insert-characters');
-        setEditorState(newEditorState);
+        setLogText(getLog(response.data) || 'No log available...');
       })
       .catch((error) => {
         console.log(error);
@@ -74,9 +49,9 @@ export default function InstanceLog(props) {
       });
   };
 
-  const handleReloadLogClick = (event) => {
-    setReloadLog(true);
+  const handleReloadLogClick = () => {
     executedRef.current = false;
+    fetchLog();
   };
 
   return (
@@ -86,20 +61,28 @@ export default function InstanceLog(props) {
         sx={{ mr: 1, mb: 1 }}
         data-testid="refresh-button"
         disabled={loadingLog}
-        onClick={() => handleReloadLogClick()}
+        onClick={handleReloadLogClick}
       >
         <RefreshIcon sx={{ mr: 1 }} /> Refresh
       </Button>
-      <Editor
-        editorState={editorState}
-        onChange={setEditorState}
-        readOnly={true}
-        placeholder="No log available..."
-      />
+      <Box
+        component="pre"
+        sx={{
+          fontFamily: 'monospace',
+          fontSize: '0.875rem',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+          p: 2,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+          border: 1,
+          borderColor: 'divider',
+          maxHeight: 400,
+          overflow: 'auto',
+        }}
+      >
+        {logText}
+      </Box>
     </Box>
   );
 }
-
-InstanceLog.propTypes = {
-  instance: PropTypes.object,
-};

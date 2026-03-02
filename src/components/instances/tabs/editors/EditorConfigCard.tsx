@@ -22,7 +22,6 @@ import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
 import { createUrl } from './EditorButton';
 import { host, useProtectedApi } from '@contexts/api/ApiProvider';
-import normalizeUrl from 'normalize-url';
 
 interface EditorConfigCardProps {
   editor: InstanceEditor;
@@ -33,7 +32,9 @@ interface EditorConfigCardProps {
 }
 
 const createCustomUrl = (editorUrl: string) => {
-  return normalizeUrl(host() + editorUrl);
+  const base = host();
+  if (!base) return editorUrl;
+  return new URL(editorUrl, base).toString();
 };
 
 const EditorConfigCard: React.FC<EditorConfigCardProps> = ({

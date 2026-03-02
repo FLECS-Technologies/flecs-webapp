@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   define: {
-    global: 'globalThis', // <–– fixes fbjs / draft-js issues
+    global: 'globalThis',
   },
   test: {
     environment: 'jsdom',

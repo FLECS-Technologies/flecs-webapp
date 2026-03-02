@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
@@ -107,13 +106,6 @@ function EnhancedTableHead(props) {
     </TableHead>
   );
 }
-
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number,
-};
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -310,8 +302,3 @@ export default function DeviceAppsList(props) {
     </Box>
   );
 }
-
-DeviceAppsList.propTypes = {
-  length: PropTypes.number,
-  appData: PropTypes.any,
-};

@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -52,11 +51,3 @@ const ConfirmDialog = (props) => {
   );
 };
 export default ConfirmDialog;
-
-ConfirmDialog.propTypes = {
-  title: PropTypes.string,
-  children: PropTypes.any,
-  open: PropTypes.bool,
-  setOpen: PropTypes.func,
-  onConfirm: PropTypes.func,
-};

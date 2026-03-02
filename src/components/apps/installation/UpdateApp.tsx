@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Button, Grid, Typography, Alert, AlertTitle } from '@mui/material';
 import { Replay as ReplayIcon } from '@mui/icons-material';
-import PropTypes from 'prop-types';
 import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import { UpdateInstances } from '../../../api/device/instances/instance';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
@@ -154,11 +153,3 @@ export default function UpdateApp({ app, from, to, handleActiveStep, onStateChan
     </div>
   );
 }
-
-UpdateApp.propTypes = {
-  app: PropTypes.object,
-  from: PropTypes.string,
-  to: PropTypes.string,
-  handleActiveStep: PropTypes.func,
-  onStateChange: PropTypes.func,
-};

@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import PropTypes from 'prop-types';
 import { Snackbar, Alert, IconButton } from '@mui/material';
 import { Close, ContentCopy } from '@mui/icons-material';
 
@@ -81,11 +80,3 @@ export default function ActionSnackbar(props) {
     </Snackbar>
   );
 }
-
-ActionSnackbar.propTypes = {
-  text: PropTypes.string,
-  errorText: PropTypes.string,
-  open: PropTypes.bool,
-  setOpen: PropTypes.func,
-  alertSeverity: PropTypes.string,
-};

@@ -28,10 +28,12 @@ import {
 } from '@mui/material';
 import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 import { CheckCircle, Error } from '@mui/icons-material';
-import PropTypes, { InferProps } from 'prop-types';
 
-function DeviceActivationButton(props: InferProps<typeof DeviceActivationButton.propTypes>) {
-  const { variant } = props;
+interface DeviceActivationButtonProps {
+  variant?: string;
+}
+
+function DeviceActivationButton({ variant }: DeviceActivationButtonProps) {
   const { validate, validating, activated, activate, activating, error, statusText } =
     React.useContext(DeviceActivationContext);
   const [infoText, setInfoText] = React.useState('');
@@ -131,9 +133,5 @@ function DeviceActivationButton(props: InferProps<typeof DeviceActivationButton.
     </React.Fragment>
   );
 }
-
-DeviceActivationButton.propTypes = {
-  variant: PropTypes.string,
-};
 
 export default DeviceActivationButton;

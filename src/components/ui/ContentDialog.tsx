@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import {
   DialogTitle,
   Dialog,
@@ -37,12 +36,4 @@ function ContentDialog(props) {
     </Dialog>
   );
 }
-ContentDialog.propTypes = {
-  children: PropTypes.any,
-  title: PropTypes.string,
-  open: PropTypes.bool,
-  setOpen: PropTypes.func,
-  actions: PropTypes.object,
-};
-
 export default ContentDialog;

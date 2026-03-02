@@ -18,7 +18,6 @@
 
 import { Collapse, IconButton, TableCell, TableRow } from '@mui/material';
 import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -55,8 +54,3 @@ export default function CollapsableRow(props) {
     </Fragment>
   );
 }
-
-CollapsableRow.propTypes = {
-  title: PropTypes.string,
-  children: PropTypes.any,
-};

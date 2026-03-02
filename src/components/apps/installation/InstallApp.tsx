@@ -19,7 +19,6 @@ import { Button, Grid, Typography } from '@mui/material';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
@@ -151,11 +150,3 @@ export default function InstallApp(props) {
     </div>
   );
 }
-
-InstallApp.propTypes = {
-  app: PropTypes.object,
-  appKey: PropTypes.object,
-  version: PropTypes.string,
-  handleActiveStep: PropTypes.func,
-  onStateChange: PropTypes.func,
-};

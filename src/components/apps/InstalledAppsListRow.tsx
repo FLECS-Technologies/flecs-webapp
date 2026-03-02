@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import { React, useContext, useState, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -260,10 +259,3 @@ export default function Row(props) {
     </Fragment>
   );
 }
-
-Row.propTypes = {
-  row: PropTypes.any,
-  appKey: PropTypes.string,
-  instanceId: PropTypes.string,
-  instances: PropTypes.array,
-};

@@ -17,7 +17,6 @@
  */
 
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
 import Card from './cards/Card';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -394,16 +393,3 @@ const MarketplaceList = (props) => {
 };
 
 export default MarketplaceList;
-
-MarketplaceList.propTypes = {
-  app: PropTypes.string,
-  avatar: PropTypes.string,
-  title: PropTypes.string,
-  author: PropTypes.string,
-  version: PropTypes.string,
-  description: PropTypes.string,
-  status: PropTypes.string,
-  availability: PropTypes.string,
-  instances: PropTypes.array,
-  relatedLinks: PropTypes.array,
-};

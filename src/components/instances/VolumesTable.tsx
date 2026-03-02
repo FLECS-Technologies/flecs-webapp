@@ -15,32 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PropTypes from 'prop-types';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
-export default function HostContainerTable(props) {
-  const { data } = props;
+export default function VolumesTable(props) {
+  const { volumes } = props;
   return (
     <Table data-testid="details-table" size="small" aria-label="instances-details">
       <TableHead>
         <TableRow>
-          <TableCell data-testid="table-header-host">Exposed to the host</TableCell>
-          <TableCell data-testid="table-header-container">Inside the container</TableCell>
+          <TableCell data-testid="table-header-name">Name</TableCell>
+          <TableCell data-testid="table-header-path">Path</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {data &&
-          data?.map((mapping) => (
-            <TableRow key={mapping.host} style={{ borderBottom: 'none' }}>
-              <TableCell style={{ borderBottom: 'none' }}>{mapping.host}</TableCell>
-              <TableCell style={{ borderBottom: 'none' }}>{mapping.container}</TableCell>
+        {volumes &&
+          volumes?.map((volume) => (
+            <TableRow key={volume.name} style={{ borderBottom: 'none' }}>
+              <TableCell style={{ borderBottom: 'none' }}>{volume.name}</TableCell>
+              <TableCell style={{ borderBottom: 'none' }}>{volume.path}</TableCell>
             </TableRow>
           ))}
       </TableBody>
     </Table>
   );
 }
-
-HostContainerTable.propTypes = {
-  data: PropTypes.array,
-};

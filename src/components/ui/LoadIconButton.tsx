@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -31,17 +30,6 @@ const LoadIconButton = (props) => {
       </IconButton>
     </Box>
   );
-};
-
-LoadIconButton.propTypes = {
-  icon: PropTypes.any,
-  variant: PropTypes.string,
-  color: PropTypes.string,
-  disabled: PropTypes.bool,
-  onClick: PropTypes.func,
-  displaystate: PropTypes.string,
-  loading: PropTypes.bool,
-  label: PropTypes.string,
 };
 
 export default LoadIconButton;

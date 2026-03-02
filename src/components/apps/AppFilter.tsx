@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import { Box, Button, Divider, Paper, Typography } from '@mui/material';
-import PropTypes from 'prop-types';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
@@ -96,17 +95,6 @@ const AppFilter = (props) => {
       </Box>
     </Paper>
   );
-};
-
-AppFilter.propTypes = {
-  availableFilter: PropTypes.bool,
-  setAvailableFilter: PropTypes.func,
-  setCategoryFilter: PropTypes.func,
-  categories: PropTypes.array,
-  hiddenCategories: PropTypes.array,
-  search: PropTypes.string,
-  isSearchEnabled: PropTypes.bool,
-  setIsSearchEnabled: PropTypes.func,
 };
 
 export { AppFilter };

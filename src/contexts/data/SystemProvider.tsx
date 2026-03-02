@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React, { createContext } from 'react';
-import PropTypes from 'prop-types';
 import DeviceActivationProvider from '@contexts/device/DeviceActivationProvider';
 import { OnboardingDialog, useOnboardingStatus } from '@components/onboarding';
 import { useDeviceState } from '@contexts/device/DeviceStateProvider';
@@ -73,11 +72,3 @@ function useSystemContext() {
 }
 
 export { SystemContext, SystemContextProvider, useSystemContext };
-
-SystemContextProvider.propTypes = {
-  children: PropTypes.any,
-};
-
-SystemContent.propTypes = {
-  children: PropTypes.any,
-};

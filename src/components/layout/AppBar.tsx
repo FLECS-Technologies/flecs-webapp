@@ -25,7 +25,6 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import PropTypes from 'prop-types';
 import { useDarkMode } from '../../styles/ThemeHandler';
 import Logo from './Logo';
 import { useSearchParams } from 'react-router-dom';
@@ -50,10 +49,6 @@ function ElevationScroll(props) {
     elevation: trigger ? 4 : 0,
   });
 }
-
-ElevationScroll.propTypes = {
-  children: PropTypes.element.isRequired,
-};
 
 export default function ElevateAppBar(props) {
   const [visible, setIsVisible] = React.useState(true);

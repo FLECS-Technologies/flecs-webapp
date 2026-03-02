@@ -16,15 +16,17 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes, { InferProps } from 'prop-types';
 import { Alert, AlertTitle, Box, Typography } from '@mui/material';
 import DeviceActivationButton from './license/DeviceActivationButton';
 import MarketplaceLogin from '../auth/marketplace/MarketplaceLogin';
 import { useMarketplaceUser } from '@contexts/marketplace/MarketplaceUserProvider';
 import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 
-function DeviceActivation(props: InferProps<typeof DeviceActivation.propTypes>) {
-  const { variant } = props;
+interface DeviceActivationProps {
+  variant?: string;
+}
+
+function DeviceActivation({ variant }: DeviceActivationProps) {
   const { user, userChanged } = useMarketplaceUser();
   const { activate, activated, activating, error, statusText } =
     React.useContext(DeviceActivationContext);
@@ -65,9 +67,5 @@ function DeviceActivation(props: InferProps<typeof DeviceActivation.propTypes>) 
   // Show device activation UI if user is logged in AND device is already activated AND no error
   return <DeviceActivationButton variant={variant}></DeviceActivationButton>;
 }
-
-DeviceActivation.propTypes = {
-  variant: PropTypes.string,
-};
 
 export default DeviceActivation;

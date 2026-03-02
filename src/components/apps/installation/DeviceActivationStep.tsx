@@ -15,14 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PropTypes, { InferProps } from 'prop-types';
 import React from 'react';
 import { DeviceActivationContext } from '@contexts/device/DeviceActivationContext';
 import { Grid } from '@mui/material';
 import DeviceActivation from '../../device/DeviceActivation';
 
-function DeviceActivationStep(props: InferProps<typeof DeviceActivationStep.propTypes>) {
-  const { handleNext } = props;
+interface DeviceActivationStepProps {
+  handleNext?: () => void;
+}
+
+function DeviceActivationStep({ handleNext }: DeviceActivationStepProps) {
   const { activated } = React.useContext(DeviceActivationContext);
 
   React.useEffect(() => {
@@ -47,9 +49,5 @@ function DeviceActivationStep(props: InferProps<typeof DeviceActivationStep.prop
     </Grid>
   );
 }
-
-DeviceActivationStep.propTypes = {
-  handleNext: PropTypes.func,
-};
 
 export default DeviceActivationStep;

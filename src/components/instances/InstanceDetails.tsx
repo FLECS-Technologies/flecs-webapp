@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { getHostname, getIPAddress } from '../../api/device/InstanceDetailsService';
 import {
   Table,
@@ -140,7 +139,3 @@ export default function InstanceDetails(props) {
     </TableContainer>
   );
 }
-
-InstanceDetails.propTypes = {
-  instance: PropTypes.object,
-};

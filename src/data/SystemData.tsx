@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useSystemContext } from '@contexts/data/SystemProvider';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 import { useDeviceState } from '@contexts/device/DeviceStateProvider';
@@ -78,8 +77,4 @@ function SystemData(props) {
   };
 
   return <>{props.children}</>;
-}
-SystemData.propTypes = {
-  children: PropTypes.any,
-};
-export { SystemData };
+}export { SystemData };

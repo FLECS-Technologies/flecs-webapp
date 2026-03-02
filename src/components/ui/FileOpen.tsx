@@ -17,7 +17,6 @@
  */
 
 import React, { useRef } from 'react';
-import PropTypes from 'prop-types';
 import LoadButton from './LoadButton';
 
 const FileOpen = (props) => {
@@ -84,17 +83,6 @@ const FileOpen = (props) => {
       </LoadButton>
     </div>
   );
-};
-
-FileOpen.propTypes = {
-  buttonText: PropTypes.string,
-  buttonIcon: PropTypes.any,
-  accept: PropTypes.string,
-  setFile: PropTypes.any,
-  loading: PropTypes.bool,
-  onConfirm: PropTypes.func,
-  disabled: PropTypes.bool,
-  wholeFile: PropTypes.bool,
 };
 
 export default FileOpen;

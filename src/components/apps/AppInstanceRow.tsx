@@ -17,7 +17,6 @@
  */
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes, { bool } from 'prop-types';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Tooltip from '@mui/material/Tooltip';
@@ -41,8 +40,12 @@ import { questStateFinishedOk } from '../../utils/quests/QuestState';
 import { QuestContext, useQuestContext } from '@contexts/quests/QuestContext';
 import { useProtectedApi } from '@contexts/api/ApiProvider';
 
-export default function AppInstanceRow(props) {
-  const { appInstance, showEditors } = props;
+interface AppInstanceRowProps {
+  appInstance: any;
+  showEditors?: boolean;
+}
+
+export default function AppInstanceRow({ appInstance, showEditors }: AppInstanceRowProps) {
   const { setUpdateAppList } = React.useContext(ReferenceDataContext);
   const api = useProtectedApi();
   const context = useQuestContext(QuestContext);
@@ -51,7 +54,7 @@ export default function AppInstanceRow(props) {
   const [instanceDeleting, setInstanceDeleting] = React.useState(false);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [instanceNotReady] = React.useState(
-    props.appInstance.status !== 'running' && props.appInstance.status !== 'stopped',
+    appInstance.status !== 'running' && appInstance.status !== 'stopped',
   );
   const [instanceInfoOpen, setInstanceInfoOpen] = React.useState(false);
   const [instanceSettingsOpen, setInstanceSettingsOpen] = React.useState(false);
@@ -290,10 +293,3 @@ export default function AppInstanceRow(props) {
   );
 }
 
-AppInstanceRow.propTypes = {
-  app: PropTypes.object,
-  appInstance: PropTypes.object,
-  updateReferenceDataInstances: PropTypes.func,
-  setSnackbarState: PropTypes.func,
-  showEditors: bool,
-};

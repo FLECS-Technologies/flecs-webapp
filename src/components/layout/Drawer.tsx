@@ -17,7 +17,6 @@
  */
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -204,10 +203,6 @@ const MiniDrawer = (props) => {
       )}
     </React.Fragment>
   );
-};
-
-MiniDrawer.propTypes = {
-  history: PropTypes.any,
 };
 
 export default MiniDrawer;

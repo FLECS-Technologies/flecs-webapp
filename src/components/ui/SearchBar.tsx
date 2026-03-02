@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-import PropTypes from 'prop-types';
 import { Paper, Button, Autocomplete, TextField } from '@mui/material';
 import { FilterList, Search } from '@mui/icons-material';
 
@@ -70,12 +69,5 @@ const SearchBar = (props) => {
       />
     </Paper>
   );
-};
-
-SearchBar.propTypes = {
-  defaultSearchValue: PropTypes.string,
-  setToggleFilter: PropTypes.func,
-  searchTitle: PropTypes.string,
-  search: PropTypes.func,
 };
 export default SearchBar;

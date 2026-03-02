@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes, { InferProps } from 'prop-types';
 import InstallApp from './InstallApp';
 import SideloadApp from './SideloadApp';
 import UpdateApp from './UpdateApp';
@@ -24,10 +23,17 @@ import { Box, Step, StepLabel, Stepper } from '@mui/material';
 import DeviceActivationStep from './DeviceActivationStep';
 import { App } from '../../../models/app';
 
+interface InstallationStepperProps {
+  app?: any;
+  version?: string;
+  sideload?: boolean;
+  update?: boolean;
+  onStateChange?: (state: any) => void;
+}
+
 const steps = ['Check Device Activation', 'Installing', 'Done'];
 
-function InstallationStepper(props: InferProps<typeof InstallationStepper.propTypes>) {
-  const { app, version, sideload, update } = props;
+function InstallationStepper({ app, version, sideload, update, onStateChange }: InstallationStepperProps) {
   const myApp = app as App;
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -54,7 +60,7 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
               app={app}
               version={version || myApp?.appKey.version}
               handleActiveStep={handleNext}
-              onStateChange={props.onStateChange}
+              onStateChange={onStateChange}
             />
           );
         } else if (sideload) {
@@ -66,7 +72,7 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
               from={myApp?.installedVersions[0]}
               to={version}
               handleActiveStep={handleNext}
-              onStateChange={props.onStateChange}
+              onStateChange={onStateChange}
             />
           );
         } else {
@@ -90,13 +96,5 @@ function InstallationStepper(props: InferProps<typeof InstallationStepper.propTy
     </Box>
   );
 }
-
-InstallationStepper.propTypes = {
-  app: PropTypes.objectOf(PropTypes.any),
-  version: PropTypes.string,
-  sideload: PropTypes.bool,
-  update: PropTypes.bool,
-  onStateChange: PropTypes.func,
-};
 
 export default InstallationStepper;

@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
 import ActionSnackbar from '../ui/ActionSnackbar';
 import FileOpen from '../ui/FileOpen';
@@ -142,8 +141,3 @@ export default function Import(props) {
     </>
   );
 }
-
-Import.propTypes = {
-  apps: PropTypes.array,
-  name: PropTypes.string,
-};

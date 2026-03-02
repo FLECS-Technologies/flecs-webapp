@@ -17,7 +17,6 @@
  */
 
 import React, { createContext, useState } from 'react';
-import PropTypes from 'prop-types';
 
 export const ReferenceDataContext = createContext([]);
 
@@ -50,7 +49,3 @@ export const ReferenceDataContextProvider = ({ children }) => {
 export function useReferenceDataContext() {
   return React.useContext(ReferenceDataContext);
 }
-
-ReferenceDataContextProvider.propTypes = {
-  children: PropTypes.any,
-};

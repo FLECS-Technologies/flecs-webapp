@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useReferenceDataContext } from '@contexts/data/ReferenceDataContext';
 import {
   getAppIcon,
@@ -129,10 +128,6 @@ function AppList(props) {
 
   return <>{props.children}</>;
 }
-AppList.propTypes = {
-  children: PropTypes.any,
-};
-
 function findApp(app, list) {
   let result;
   list.forEach((product) => {

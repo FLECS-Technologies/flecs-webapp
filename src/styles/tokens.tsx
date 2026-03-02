@@ -1,26 +1,31 @@
-interface Colors {
-  primary: string;
-  secondary: string;
-  accent: string;
-  background?: string;
-}
+export const brand = {
+  primary: '#FF2E63',
+  primaryEnd: '#FF6B8A',
+  dark: '#0B0B18',
+  darkEnd: '#1A1A2E',
+  white: '#FFFFFF',
+  muted: '#6B7280',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  accent: '#73A9CA',
+} as const;
 
-const tokyoSunset = '#FF2E63';
-const cyberMint = '#08D9D6';
-const nordicSky = '#73A9CA';
-const purpleHeart = '#141826';
+export const gradients = {
+  primary: 'linear-gradient(135deg, #FF2E63, #FF6B8A)',
+  dark: 'linear-gradient(180deg, #0B0B18, #1A1A2E)',
+} as const;
 
-const colors: Colors = {
-  primary: tokyoSunset,
-  secondary: cyberMint,
-  accent: nordicSky,
-  background: purpleHeart,
-};
+// Backward compatibility — maps old token names to new brand tokens
+export const colors = {
+  primary: brand.primary,
+  secondary: brand.success,
+  accent: brand.accent,
+  background: brand.darkEnd,
+} as const;
 
-const appBarIconColors: Colors = {
-  primary: 'white',
-  secondary: 'black',
-  accent: nordicSky,
-};
-
-export { colors, appBarIconColors };
+export const appBarIconColors = {
+  primary: brand.white,
+  secondary: brand.dark,
+  accent: brand.accent,
+} as const;

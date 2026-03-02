@@ -16,6 +16,10 @@
  * limitations under the License.
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Toaster } from 'sonner';
 import Frame from './components/layout/Frame';
 import { AppList } from './data/AppList';
 import { UIRoutes } from './pages/ui-routes';
@@ -23,18 +27,46 @@ import { SystemData } from './data/SystemData';
 import { ThemeHandler } from './styles/ThemeHandler';
 import Providers from '@contexts/Providers';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      refetchOnWindowFocus: true,
+      retry: 1,
+    },
+  },
+});
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div style={{ padding: 40, textAlign: 'center' }}>
+      <h2>Something went wrong</h2>
+      <pre style={{ color: '#FF2E63', whiteSpace: 'pre-wrap' }}>{error.message}</pre>
+      <button onClick={resetErrorBoundary} style={{ marginTop: 16, padding: '8px 24px' }}>
+        Try again
+      </button>
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <ThemeHandler>
-      <Providers>
-        <Frame>
-          <SystemData>
-            <AppList>
-              <UIRoutes />
-            </AppList>
-          </SystemData>
-        </Frame>
-      </Providers>
-    </ThemeHandler>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeHandler>
+          <Toaster position="top-right" richColors closeButton />
+          <Providers>
+            <Frame>
+              <SystemData>
+                <AppList>
+                  <UIRoutes />
+                </AppList>
+              </SystemData>
+            </Frame>
+          </Providers>
+        </ThemeHandler>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

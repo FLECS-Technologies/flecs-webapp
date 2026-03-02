@@ -1,83 +1,64 @@
-/*
- * Copyright (c) 2021 FLECS Technologies GmbH
- *
- * Created on Tue Nov 30 2021
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 import '../styles/fonts.css';
-import { colors } from './tokens';
+import { brand, colors } from './tokens';
 
-const baseTheme: ThemeOptions = createTheme({
+const baseTheme: ThemeOptions = {
+  spacing: 4,
   typography: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+    h1: { fontWeight: 700, fontSize: '48px' },
+    h2: { fontWeight: 700, fontSize: '36px' },
+    h3: { fontWeight: 700, fontSize: '32px' },
+    h4: { fontWeight: 600, fontSize: '24px' },
+    h5: { fontWeight: 600, fontSize: '20px' },
+    h6: { fontWeight: 600, fontSize: '16px' },
+    body1: { fontWeight: 400, fontSize: '16px' },
+    body2: { fontWeight: 400, fontSize: '14px' },
+    caption: { fontWeight: 400, fontSize: '12px' },
   },
-
   palette: {
-    primary: {
-      main: colors.primary,
-    },
-    secondary: {
-      main: colors.secondary,
-    },
-    success: {
-      main: colors.secondary,
-    },
-    info: {
-      main: colors.accent,
-    },
+    primary: { main: brand.primary },
+    secondary: { main: brand.accent },
+    success: { main: brand.success },
+    warning: { main: brand.warning },
+    error: { main: brand.error },
+    info: { main: brand.accent },
   },
-
+  shape: { borderRadius: 8 },
   components: {
+    MuiButton: {
+      defaultProps: { disableElevation: true },
+      styleOverrides: {
+        root: { textTransform: 'none', fontWeight: 600 },
+      },
+    },
     MuiListItemButton: {
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: colors.primary,
-            '& .MuiListItemIcon-root': {
-              color: colors.secondary,
-            },
-          },
-          '&$selected:hover': {
-            color: colors.primary,
-            '& .MuiListItemIcon-root': {
-              color: colors.secondary,
-            },
+            color: brand.primary,
+            '& .MuiListItemIcon-root': { color: brand.primary },
           },
           '&:hover': {
-            color: colors.secondary,
-            '& .MuiListItemIcon-root': {
-              color: colors.secondary,
-            },
+            color: brand.primary,
+            '& .MuiListItemIcon-root': { color: brand.primary },
           },
         },
-        selected: {},
       },
     },
   },
-});
+};
 
 const darkTheme = createTheme({
   ...baseTheme,
   palette: {
     ...baseTheme.palette,
+    mode: 'dark',
     text: {
       primary: '#F5F5F5',
       secondary: 'rgba(255, 255, 255, 0.7)',
       disabled: 'rgba(255, 255, 255, 0.5)',
     },
-
     action: {
       active: '#F5F5F5',
       hover: 'rgba(255, 255, 255, 0.08)',
@@ -85,21 +66,17 @@ const darkTheme = createTheme({
       disabled: 'rgba(255, 255, 255, 0.3)',
       disabledBackground: 'rgba(255, 255, 255, 0.12)',
     },
-
     background: {
-      default: '#0A0A0A',
-      paper: colors.background,
+      default: brand.dark,
+      paper: brand.darkEnd,
     },
-
     divider: 'rgba(255, 255, 255, 0.12)',
   },
   components: {
     ...baseTheme.components,
     MuiAppBar: {
       styleOverrides: {
-        colorPrimary: {
-          backgroundColor: colors.primary,
-        },
+        colorPrimary: { backgroundColor: brand.dark },
       },
     },
   },
@@ -110,14 +87,12 @@ const lightTheme = createTheme({
   palette: {
     ...baseTheme.palette,
     mode: 'light',
-
     background: {
       default: '#F5F5F5',
-      paper: '#fff',
+      paper: '#FFFFFF',
     },
-
     text: {
-      primary: '#0A0A0A',
+      primary: brand.dark,
     },
   },
 });

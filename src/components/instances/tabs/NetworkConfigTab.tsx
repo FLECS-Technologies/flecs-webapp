@@ -194,6 +194,7 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChang
           ),
         );
 
+        onChange(true);
         setSnackbarState({
           alertSeverity: 'success',
           snackbarText: 'Network config saved successfully!',

@@ -9,11 +9,11 @@ import ContentDialog from '@shared/components/ContentDialog';
 import ConfirmDialog from '@shared/components/ConfirmDialog';
 import InstanceInfo from './instances/InstanceInfo';
 import InstanceConfigDialog from './instances/InstanceConfigDialog';
-import { EditorButtons } from './instances/tabs/editors/EditorButtons';
+import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
 import { useProtectedApi } from '@shared/api/ApiProvider';
-import { useQuestActions } from '@features/jobs/hooks';
-import { useInvalidateAppData } from '@features/apps/hooks';
-import { questStateFinishedOk } from '@features/jobs/utils/QuestState';
+import { useQuestActions } from '@shared/quests/hooks';
+import { useInvalidateAppData } from '@shared/hooks/app-queries';
+import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
 
 interface InstanceRowProps {
   instance: any;

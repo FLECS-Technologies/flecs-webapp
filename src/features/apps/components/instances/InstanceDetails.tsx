@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { getHostname, getIPAddress } from '@features/system/api/InstanceDetailsService';
+import { getHostname, getIPAddress } from '@shared/api/instance-details-service';
 import {
   Table,
   TableBody,

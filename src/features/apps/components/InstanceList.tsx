@@ -1,5 +1,5 @@
 import { Divider, Typography, Stack } from '@mui/material';
-import { App } from '@features/apps/types';
+import { App } from '@shared/types/app';
 import InstanceRow from './InstanceRow';
 
 interface InstanceListProps {

@@ -28,7 +28,7 @@ vi.mock('@shared/api/ApiProvider', () => ({
 // Import the modules after mocking
 import { useProtectedApi } from '@shared/api/ApiProvider';
 import DeviceActivationProvider from '../DeviceActivationProvider';
-import { DeviceActivationContext } from '../DeviceActivationContext';
+import { DeviceActivationContext } from '@shared/contexts/DeviceActivationContext';
 
 const mockUseProtectedApi = vi.mocked(useProtectedApi);
 

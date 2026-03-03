@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { Box, Typography, Button, Paper, Stack } from '@mui/material';
 import { Network, ExternalLink, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppList } from '@features/apps/hooks';
-import { EditorButton } from '../features/apps/components/instances/tabs/editors/EditorButton';
+import { useAppList } from '@shared/hooks/app-queries';
+import { EditorButton } from '@shared/components/app-actions/editors/EditorButton';
 import HelpButton from '@shared/components/help/HelpButton';
 import { servicemesh } from '@shared/components/help/helplinks';
 

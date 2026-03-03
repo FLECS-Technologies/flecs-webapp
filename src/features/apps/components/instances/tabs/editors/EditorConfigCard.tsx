@@ -20,7 +20,7 @@ import { Card, ListItemText, Box, TextField, Stack, IconButton } from '@mui/mate
 import { Trash2, Save } from 'lucide-react';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
-import { createUrl } from './EditorButton';
+import { createUrl } from '@shared/components/app-actions/editors/EditorButton';
 import { host, useProtectedApi } from '@shared/api/ApiProvider';
 
 interface EditorConfigCardProps {

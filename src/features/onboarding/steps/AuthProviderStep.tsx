@@ -36,8 +36,8 @@ import {
   checkAuthProviderConfigured,
   checkAuthProviderCoreConfigured,
 } from '../utils/onboardingHelpers';
-import { useQuestActions } from '@features/jobs/hooks';
-import { questStateFinishedOk } from '@features/jobs/utils/QuestState';
+import { useQuestActions } from '@shared/quests/hooks';
+import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
 
 // Types
 type SetupMode = 'loading' | 'select' | 'first-time' | 'polling' | 'completed';

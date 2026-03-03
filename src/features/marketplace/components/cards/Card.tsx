@@ -15,11 +15,11 @@ import Avatar from '@mui/material/Avatar';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { createVersion, createVersions, getLatestVersion } from '@shared/utils/version-utils';
 import { Version } from '@shared/types/version';
-import { App } from '@features/apps/types';
-import { useSystemInfo } from '@features/system/hooks';
+import { App } from '@shared/types/app';
+import { useSystemInfo } from '@shared/hooks/system-queries';
 import FullCard from './FullCard';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
-import InstallButton from '@features/apps/components/buttons/InstallButton';
+import InstallButton from '@shared/components/app-actions/InstallButton';
 
 export default function MarketplaceCard(props: App) {
   const { data: systemInfo } = useSystemInfo();

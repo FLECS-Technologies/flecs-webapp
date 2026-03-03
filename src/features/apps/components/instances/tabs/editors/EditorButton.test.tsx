@@ -17,8 +17,8 @@
  */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { EditorButton } from './EditorButton';
-import { AppInstance } from '@features/system/api/instances/instance';
+import { EditorButton } from '@shared/components/app-actions/editors/EditorButton';
+import { AppInstance } from '@shared/api/instances';
 
 const testInstance: AppInstance = {
   editors: [{ name: 'Editor 1', url: '/editor', supportsReverseProxy: false, port: 80 }],

@@ -30,16 +30,16 @@ import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 import Avatar from '@mui/material/Avatar';
 import LoadIconButton from '@shared/components/LoadIconButton';
-import UninstallButton from './buttons/UninstallButton';
-import { useInvalidateAppData } from '@features/apps/hooks';
+import UninstallButton from '@shared/components/app-actions/UninstallButton';
+import { useInvalidateAppData } from '@shared/hooks/app-queries';
 import AppInstanceRow from './AppInstanceRow';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
 import useStateWithLocalStorage from '@shared/hooks/LocalStorage';
 import HelpButton from '@shared/components/help/HelpButton';
-import { EditorButtons } from './instances/tabs/editors/EditorButtons';
+import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
 import { InstanceStartCreateButtons } from './instances/buttons/InstanceStartCreateButtons';
-import { questStateFinishedOk } from '@features/jobs/utils/QuestState';
-import { useQuestActions } from '@features/jobs/hooks';
+import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
+import { useQuestActions } from '@shared/quests/hooks';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 
 export default function Row(props) {

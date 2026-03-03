@@ -1,7 +1,7 @@
 import { Paper, Typography, Stack, Tooltip } from '@mui/material';
 import { Download, Upload, FileText } from 'lucide-react';
-import Export from './export/Export';
-import Import from './device/Import';
+import Export from '@shared/components/data-transfer/Export';
+import Import from '@shared/components/data-transfer/Import';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 

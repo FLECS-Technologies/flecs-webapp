@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { getLog } from '@features/system/api/InstanceLogService';
+import { getLog } from '@shared/api/instance-log-service';
 import { Box, Button } from '@mui/material';
 import { RefreshCw } from 'lucide-react';
 import { useProtectedApi } from '@shared/api/ApiProvider';

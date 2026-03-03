@@ -12,9 +12,9 @@ import {
   useTheme,
 } from '@mui/material';
 import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
-import { useQuestActions, useQuestPolling } from '@features/jobs/hooks';
+import { useQuestActions, useQuestPolling } from '@shared/quests/hooks';
 import { useQuestStore } from '@stores/quests';
-import { QuestLogEntry } from '@features/jobs/components/QuestLogEntry';
+import { QuestLogEntry } from '@shared/quests/components/QuestLogEntry';
 
 export default function JobsRail() {
   const mainQuestIds = useQuestStore((s) => s.mainQuestIds);

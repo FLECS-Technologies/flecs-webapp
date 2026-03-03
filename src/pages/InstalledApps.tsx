@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
-import { useAppList } from '@features/apps/hooks';
-import { useSystemPing } from '@features/system/hooks';
+import { useAppList } from '@shared/hooks/app-queries';
+import { useSystemPing } from '@shared/hooks/system-queries';
 import { AppGrid, AppGridSkeleton, AppsToolbar, EmptyApps } from '../features/apps';
 import ContentDialog from '@shared/components/ContentDialog';
-import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
-import { App } from '@features/apps/types';
+import InstallationStepper from '@shared/components/installation/InstallationStepper';
+import { App } from '@shared/types/app';
 
 export default function InstalledApps() {
   const { appList, isLoading: appListLoading, isError: appListError } = useAppList();

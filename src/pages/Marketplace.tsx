@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Box, Typography, Stack, Collapse, Chip, Skeleton, Card as MuiCard } from '@mui/material';
-import { useAppList } from '@features/apps/hooks';
+import { useAppList } from '@shared/hooks/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
 import { MarketplaceSearch, CategoryChips, MarketplaceGrid, MarketplaceEmpty } from '@features/marketplace';
 import Card from '@features/marketplace/components/cards/Card';
@@ -22,7 +22,7 @@ import {
   getPurchasable,
   getDocumentationUrl,
   getDescription,
-} from '@features/marketplace/api/ProductService';
+} from '@shared/api/product-service';
 
 function SkeletonCard() {
   return (

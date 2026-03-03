@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React, { useCallback } from 'react';
-import { DeviceActivationContext } from './DeviceActivationContext';
+import { DeviceActivationContext } from '@shared/contexts/DeviceActivationContext';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 
 const DeviceActivationProvider = ({ children }: { children: React.ReactNode }) => {

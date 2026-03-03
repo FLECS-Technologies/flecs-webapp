@@ -21,10 +21,18 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Profile from '../Profile';
 import { mockOAuth4WebApiAuth, mockScenarios } from '../../test/oauth-test-utils';
-import { User } from '@contexts/auth/oauth/types';
+import { User } from '@features/auth/providers/oauth/types';
 
 // Mock OAuth4WebApiAuthProvider
-vi.mock('@contexts/auth/OAuth4WebApiAuthProvider');
+vi.mock('@features/auth/providers/OAuth4WebApiAuthProvider');
+
+// Mock lucide-react icons
+vi.mock('lucide-react', () => ({
+  User: (props: any) => <div data-testid="PersonIcon" {...props} />,
+  Shield: (props: any) => <div data-testid="ShieldIcon" {...props} />,
+  LogOut: (props: any) => <div data-testid="LogOutIcon" {...props} />,
+  ShieldCheck: (props: any) => <div data-testid="ShieldCheckIcon" {...props} />,
+}));
 
 // Mock whitelabeling colors
 vi.mock('../../whitelabeling/custom-tokens', () => ({

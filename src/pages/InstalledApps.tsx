@@ -1,30 +1,64 @@
-/*
- * Copyright (c) 2021 FLECS Technologies GmbH
- *
- * Created on Tue Nov 30 2021
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import { useContext, React } from 'react';
-import InstalledAppsList from '../components/apps/InstalledAppsList';
-import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
+import { useState } from 'react';
+import { Box, Paper, Typography } from '@mui/material';
+import { useAppList } from '@features/apps/hooks';
+import { useSystemPing } from '@features/system/hooks';
+import { AppGrid, AppGridSkeleton, AppsToolbar, EmptyApps } from '../features/apps';
+import ContentDialog from '@shared/components/ContentDialog';
+import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
+import { App } from '@features/apps/types';
 
-export default function installedApps() {
-  const { appList } = useContext(ReferenceDataContext);
+export default function InstalledApps() {
+  const { appList, isLoading: appListLoading, isError: appListError } = useAppList();
+  const { data: ping } = useSystemPing();
+  const [sideloadDoc, setSideloadDoc] = useState<any>(null);
+  const [sideloadOpen, setSideloadOpen] = useState(false);
+
+  const installedApps: App[] = (appList ?? []).filter((app: App) => app?.status === 'installed');
+
+  const handleSideload = (doc: any) => {
+    setSideloadDoc(doc);
+    setSideloadOpen(true);
+  };
+
+  if (!ping) {
+    return (
+      <Box sx={{ py: 10, textAlign: 'center' }}>
+        <Typography color="text.secondary">
+          FLECS services are not ready. Please try again in a moment.
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (appListError) {
+    return (
+      <Box sx={{ py: 10, textAlign: 'center' }}>
+        <Typography color="error">Failed to load installed apps from the device.</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <InstalledAppsList appData={appList} />
-    </div>
+    <Box>
+      <AppsToolbar
+        loading={appListLoading && ping}
+        hasApps={installedApps.length > 0}
+        onSideload={handleSideload}
+      />
+
+      {appListLoading && ping && installedApps.length === 0 ? (
+        <AppGridSkeleton />
+      ) : installedApps.length === 0 && !appListLoading ? (
+        <Paper sx={{ borderRadius: 3 }}>
+          <EmptyApps onSideload={() => handleSideload(null)} />
+        </Paper>
+      ) : (
+        <AppGrid apps={installedApps} />
+      )}
+
+      <ContentDialog open={sideloadOpen} setOpen={setSideloadOpen} title="Sideload App">
+        <InstallationStepper app={sideloadDoc} sideload={true} />
+      </ContentDialog>
+    </Box>
   );
 }

@@ -17,9 +17,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Box, Button, CircularProgress, Typography, Alert, Paper, Container } from '@mui/material';
-import WhiteLabelLogo from '../whitelabeling/WhiteLabelLogo';
-import { useOAuth4WebApiAuth } from '@contexts/auth/OAuth4WebApiAuthProvider';
-import { usePublicApi } from '@contexts/api/ApiProvider';
+import WhiteLabelLogo from '@app/theme/WhiteLabelLogo';
+import { useOAuth4WebApiAuth } from '@features/auth/providers/OAuth4WebApiAuthProvider';
+import { usePublicApi } from '@shared/api/ApiProvider';
 
 export default function DeviceLogin() {
   const [loading, setLoading] = useState(true);

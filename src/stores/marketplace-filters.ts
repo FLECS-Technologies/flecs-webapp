@@ -1,0 +1,156 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface Category {
+  id: number;
+  name: string;
+  count: number;
+}
+
+interface FilterParams {
+  hiddenCategories: number[];
+  search: string | undefined;
+  available: boolean;
+}
+
+interface MarketplaceFiltersState {
+  // State
+  filterParams: FilterParams;
+  categories: Category[];
+  showFilter: boolean;
+  isSearchEnabled: boolean;
+  finalProducts: any[];
+
+  // Actions
+  setSearchFilter: (e: React.ChangeEvent<HTMLInputElement> | undefined) => void;
+  setCategoryFilter: (categoryId: number) => void;
+  setAvailableFilter: () => void;
+  toggleFilter: () => void;
+  setIsSearchEnabled: (val: boolean) => void;
+  applyFilters: (loadedProducts: any[]) => void;
+}
+
+function searchProducts(products: any[], search: string, isSearchEnabled: boolean): any[] {
+  if (!search || !isSearchEnabled) return products;
+  const query = search.toLowerCase();
+  return products.filter(
+    (p: any) =>
+      p.author?.toLowerCase().includes(query) ||
+      p.short_description?.toLowerCase().includes(query) ||
+      p.name?.toLowerCase().includes(query),
+  );
+}
+
+function filterByAvailability(products: any[], available: boolean): any[] {
+  return available ? products.filter((p: any) => p.stock_status === 'instock') : products;
+}
+
+function isCategoryHidden(productCategories: any[] | undefined, hiddenCategories: number[]): boolean {
+  const filtered = productCategories?.filter((p: any) => p.id !== 27);
+  const categoryId = filtered?.map((p: any) => p.id)[0];
+  return hiddenCategories.includes(categoryId);
+}
+
+function filterByCategories(products: any[], hiddenCategories: number[]): any[] {
+  if (hiddenCategories.length === 0) return products;
+  return products.filter((p: any) => !isCategoryHidden(p.categories, hiddenCategories));
+}
+
+function getIntersection(...arrays: any[][]): any[] {
+  if (arrays.length < 2) return arrays[0] ?? [];
+  return arrays[0].filter((item) =>
+    arrays.slice(1).every((arr) => arr.some((p: any) => p.id === item.id)),
+  );
+}
+
+function getCleanName(name: string): string {
+  return name.includes('&amp;') ? name.replace('&amp;', '&') : name;
+}
+
+function getUniqueCategories(products: any[]): Category[] {
+  const uniqueCategories: Category[] = [];
+  products.forEach((product: any) => {
+    product.categories?.forEach((category: any) => {
+      if (category.id !== 27) {
+        const index = uniqueCategories.findIndex((c) => c.id === category.id);
+        if (index > -1) {
+          uniqueCategories[index].count++;
+        } else {
+          uniqueCategories.push({
+            id: category.id,
+            name: getCleanName(category.name),
+            count: 1,
+          });
+        }
+      }
+    });
+  });
+  uniqueCategories.sort((a, b) => (a.name < b.name ? -1 : 1));
+  return uniqueCategories;
+}
+
+export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
+  persist(
+    (set, get) => ({
+      filterParams: { hiddenCategories: [], search: undefined, available: false },
+      categories: [],
+      showFilter: false,
+      isSearchEnabled: true,
+      finalProducts: [],
+
+      setSearchFilter: (e) => {
+        if (!e) return;
+        set((state) => ({
+          filterParams: { ...state.filterParams, search: e.target.value },
+        }));
+      },
+
+      setCategoryFilter: (categoryId) => {
+        set((state) => {
+          const hidden = state.filterParams.hiddenCategories;
+          const newHidden = hidden.includes(categoryId)
+            ? hidden.filter((c) => c !== categoryId)
+            : [...hidden, categoryId];
+          newHidden.sort((a, b) => a - b);
+          return { filterParams: { ...state.filterParams, hiddenCategories: newHidden } };
+        });
+      },
+
+      setAvailableFilter: () => {
+        set((state) => ({
+          filterParams: { ...state.filterParams, available: !state.filterParams.available },
+        }));
+      },
+
+      toggleFilter: () => {
+        set((state) => ({ showFilter: !state.showFilter }));
+      },
+
+      setIsSearchEnabled: (val) => set({ isSearchEnabled: val }),
+
+      applyFilters: (loadedProducts) => {
+        if (!loadedProducts || loadedProducts.length === 0) return;
+
+        const { filterParams, isSearchEnabled } = get();
+
+        const byAvailability = filterByAvailability(loadedProducts, filterParams.available);
+        const byCategories = filterByCategories(loadedProducts, filterParams.hiddenCategories);
+        const bySearch = searchProducts(loadedProducts, filterParams.search ?? '', isSearchEnabled);
+
+        const finalProducts = getIntersection(byAvailability, byCategories, bySearch);
+        const forCategories = getIntersection(byAvailability, bySearch);
+        const categories = getUniqueCategories(forCategories);
+
+        set({ finalProducts, categories });
+      },
+    }),
+    {
+      name: 'marketplace-filters',
+      partialize: (state) => ({
+        filterParams: state.filterParams,
+        showFilter: state.showFilter,
+        isSearchEnabled: state.isSearchEnabled,
+      }),
+    },
+  ),
+);

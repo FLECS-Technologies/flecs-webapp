@@ -17,17 +17,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@components/*": ["./src/components/*"],
-      "@contexts/*": ["./src/contexts/*"],
+      "@app/*": ["./src/app/*"],
+      "@features/*": ["./src/features/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@stores/*": ["./src/stores/*"],
       "@pages/*": ["./src/pages/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@models/*": ["./src/models/*"],
-      "@api/*": ["./src/api/*"],
       "@test/*": ["./src/test/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@data/*": ["./src/data/*"]
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "include": ["src", "vite-env.d.ts"]

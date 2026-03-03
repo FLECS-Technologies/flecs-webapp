@@ -1,105 +1,68 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Created on Fri Feb 18 2022
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import { Alert, AlertTitle, Grid, Paper, Toolbar, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
-import React from 'react';
-import HelpButton from '@components/help/HelpButton';
-import { servicemesh } from '../components/help/helplinks';
-import { ReferenceDataContext } from '@contexts/data/ReferenceDataContext';
-import { EditorButton } from '../components/instances/tabs/editors/EditorButton';
+import { useMemo } from 'react';
+import { Box, Typography, Button, Paper, Stack } from '@mui/material';
+import { Network, ExternalLink, Store } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAppList } from '@features/apps/hooks';
+import { EditorButton } from '../features/apps/components/instances/tabs/editors/EditorButton';
+import HelpButton from '@shared/components/help/HelpButton';
+import { servicemesh } from '@shared/components/help/helplinks';
 
 export default function ServiceMesh() {
-  const { appList } = React.useContext(ReferenceDataContext);
-  const [serviceMeshInstalled, setServiceMeshInstalled] = React.useState(false);
-  const [serviceMeshInstance, setServiceMeshInstance] = React.useState();
+  const { appList } = useAppList();
+  const navigate = useNavigate();
 
-  // check if service mesh is installed
-  React.useEffect(() => {
-    if (appList) {
-      const serviceMeshApp = appList.find((app) => app.appKey.name === 'tech.flecs.flunder');
-      if (
-        serviceMeshApp &&
-        serviceMeshApp.instances.length > 0 &&
-        serviceMeshApp.instances[0].editors.length > 0
-      ) {
-        setServiceMeshInstalled(true);
-        setServiceMeshInstance(serviceMeshApp.instances[0]);
-      } else {
-        setServiceMeshInstalled(false);
-        setServiceMeshInstance(null);
-      }
-    }
+  const meshApp = useMemo(() => {
+    if (!appList) return null;
+    return appList.find((app: any) => app.appKey.name === 'tech.flecs.flunder') ?? null;
   }, [appList]);
 
+  const meshInstance = meshApp?.instances?.[0];
+  const hasEditor = meshInstance?.editors?.length > 0;
+
   return (
-    <>
-      <Paper data-testid="service-mesh" sx={{ flexGrow: 1, overflowY: 'auto' }}>
-        <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
-          <Typography
-            data-testid="service-mesh-title"
-            sx={{ flex: '0.1 0.1 10%' }}
-            variant="h6"
-            id="service-mesh-title"
-            component="div"
-          >
-            Service Mesh
-            <HelpButton url={servicemesh}></HelpButton>
-          </Typography>
-          {serviceMeshInstalled &&
-            serviceMeshInstance &&
-            serviceMeshInstance.editors &&
-            serviceMeshInstance.editors.length > 0 && (
-              <EditorButton key={0} editor={serviceMeshInstance.editors[0]} index={0} />
+    <Box>
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight={700}>
+          Service Mesh
+        </Typography>
+        <HelpButton url={servicemesh} />
+      </Stack>
+
+      <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
+        <Network size={48} strokeWidth={1.2} style={{ opacity: 0.4, marginBottom: 16 }} />
+
+        {meshApp && hasEditor ? (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Service Mesh is running
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              The service mesh has its own UI. Open it to manage your mesh configuration.
+            </Typography>
+            <EditorButton editor={meshInstance.editors[0]} index={0} />
+          </>
+        ) : (
+          <>
+            <Typography variant="h6" gutterBottom>
+              {meshApp ? 'Service Mesh is installed' : 'Service Mesh not installed'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              {meshApp
+                ? 'Start the service mesh app to access its UI.'
+                : 'Install the FLECS Service Mesh from the marketplace to connect your apps.'}
+            </Typography>
+            {!meshApp && (
+              <Button
+                variant="contained"
+                startIcon={<Store size={18} />}
+                onClick={() => navigate('/marketplace')}
+              >
+                Go to Marketplace
+              </Button>
             )}
-        </Toolbar>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          sx={{ pb: { sm: 2 } }}
-        >
-          <Grid>
-            {serviceMeshInstalled && (
-              <React.Fragment>
-                <Alert severity="info">
-                  <AlertTitle>Info</AlertTitle>
-                  <Typography>
-                    The service mesh is a separate app that has its own ui now. Click on &quot;
-                    {`Open ${serviceMeshInstance?.editors?.[0]?.name || 'editor'}`}&quot; to access
-                    the service mesh.
-                  </Typography>
-                </Alert>
-              </React.Fragment>
-            )}
-            {!serviceMeshInstalled && (
-              <Alert severity="info">
-                <AlertTitle>Info</AlertTitle>
-                <Typography>The service mesh is a separate app that has its own ui now.</Typography>
-                <Typography>
-                  Please visit our <Link to="/Marketplace">marketplace</Link> to install the latest
-                  version of the service mesh app.
-                </Typography>
-              </Alert>
-            )}
-          </Grid>
-        </Grid>
+          </>
+        )}
       </Paper>
-    </>
+    </Box>
   );
 }

@@ -9,10 +9,12 @@ import OpenSource from './OpenSource';
 import DeviceLogin from './DeviceLogin';
 import Profile from './Profile';
 import OAuthCallback from './OAuthCallback';
+import Onboarding from './Onboarding';
 
 const UIRoutes: React.FC = () => {
-  return useRoutes([
+  const routes = useRoutes([
     { path: '/', element: <InstalledApps /> },
+    { path: '/onboarding', element: <Onboarding /> },
     { path: '/marketplace', element: <Marketplace /> },
     { path: 'service-mesh', element: <ServiceMesh /> },
     { path: '/system', element: <System /> },
@@ -22,6 +24,8 @@ const UIRoutes: React.FC = () => {
     { path: '/oauth/callback', element: <OAuthCallback /> },
     { path: '*', element: <NotFound /> },
   ]);
+
+  return <>{routes}</>;
 };
 
 export { UIRoutes };

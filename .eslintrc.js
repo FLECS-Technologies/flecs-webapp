@@ -21,6 +21,20 @@ module.exports = {
     'no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
+    // Enforce dependency direction: app → pages → features → shared
+    'import/no-restricted-paths': ['error', {
+      zones: [
+        // shared/ cannot import from features/, pages/, or app/
+        { target: './src/shared', from: './src/features', message: 'shared/ cannot import from features/' },
+        { target: './src/shared', from: './src/pages', message: 'shared/ cannot import from pages/' },
+        { target: './src/shared', from: './src/app', message: 'shared/ cannot import from app/' },
+        // features/ cannot import from pages/ or app/
+        { target: './src/features', from: './src/pages', message: 'features/ cannot import from pages/' },
+        { target: './src/features', from: './src/app', message: 'features/ cannot import from app/' },
+        // pages/ cannot import from app/
+        { target: './src/pages', from: './src/app', message: 'pages/ cannot import from app/' },
+      ],
+    }],
   },
   settings: {
     react: {

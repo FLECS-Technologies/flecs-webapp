@@ -19,7 +19,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { useOAuth4WebApiAuth } from '@contexts/auth/OAuth4WebApiAuthProvider';
+import { useOAuth4WebApiAuth } from '@features/auth/providers/OAuth4WebApiAuthProvider';
 
 /**
  * OAuth callback page that handles the OAuth redirect

@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Button,
+  Chip,
   Divider,
   IconButton,
   ListItemIcon,
@@ -24,15 +25,20 @@ import {
   Info,
   Trash2,
   BookOpen,
+  RefreshCw,
+  GitBranch,
 } from 'lucide-react';
 import { App } from '@shared/types/app';
+import { Version } from '@shared/types/version';
+import { createVersions, getLatestVersion, createVersion } from '@shared/utils/version-utils';
 import AppStatusDot from './AppStatusDot';
 import UninstallButton from '@shared/components/app-actions/UninstallButton';
+import UpdateButton from '@shared/components/app-actions/UpdateButton';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
 import ContentDialog from '@shared/components/ContentDialog';
 import InstanceInfo from './instances/InstanceInfo';
 import InstanceConfigDialog from './instances/InstanceConfigDialog';
-import ConfirmDialog from '@shared/components/ConfirmDialog';
+import { VersionSelector } from '@shared/components/VersionSelector';
 import { createUrl } from '@shared/components/app-actions/editors/EditorButton';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 import { useQuestActions } from '@shared/quests/hooks';
@@ -55,6 +61,19 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const hasEditors = instance?.editors?.length > 0;
   const primaryEditor = instance?.editors?.[0];
 
+  // Version management
+  const versionsArray = app.versions
+    ? createVersions(app.versions, app.installedVersions || [])
+    : [];
+  const latestVersion = getLatestVersion(versionsArray);
+  const updateAvailable =
+    latestVersion &&
+    app.installedVersions &&
+    !app.installedVersions.includes(latestVersion.version);
+  const [selectedVersion, setSelectedVersion] = useState<Version>(
+    latestVersion ?? createVersion(app.appKey?.version ?? ''),
+  );
+
   const statusLabel = !instance
     ? 'No instance'
     : isRunning
@@ -70,6 +89,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   // Dialog states
   const [infoOpen, setInfoOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [versionOpen, setVersionOpen] = useState(false);
 
   // Action states
   const [busy, setBusy] = useState(false);
@@ -150,15 +170,6 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
     );
   };
 
-  const handleDelete = () => {
-    if (!instance) return;
-    runInstanceAction(
-      () => api.instances.instancesInstanceIdDelete(instance.instanceId),
-      `Instance deleted`,
-      `Failed to delete instance`,
-    );
-  };
-
   const handleUninstallComplete = (success: boolean, message: string, error?: string) => {
     setSnackbar({
       text: message,
@@ -173,6 +184,9 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
       window.open(createUrl(primaryEditor.url));
     }
   };
+
+  const selectedVersionNotInstalled =
+    !app.installedVersions?.includes(selectedVersion.version);
 
   return (
     <>
@@ -211,9 +225,28 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
 
         {/* Identity + status */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="subtitle2" fontWeight={700} noWrap>
-            {app.title}
-          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="subtitle2" fontWeight={700} noWrap>
+              {app.title}
+            </Typography>
+            {updateAvailable && (
+              <Chip
+                label="Update"
+                size="small"
+                color="info"
+                variant="outlined"
+                icon={<RefreshCw size={12} />}
+                onClick={() => setVersionOpen(true)}
+                sx={{
+                  height: 22,
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  '& .MuiChip-icon': { fontSize: 12 },
+                }}
+              />
+            )}
+          </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
             {app.author && (
               <Typography variant="caption" color="text.secondary" noWrap>
@@ -329,6 +362,31 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
               <ListItemText>Stop</ListItemText>
             </MenuItem>
           )}
+          {versionsArray.length > 0 && (
+            <MenuItem
+              onClick={() => {
+                setMenuAnchor(null);
+                setVersionOpen(true);
+              }}
+            >
+              <ListItemIcon>
+                <GitBranch size={16} />
+              </ListItemIcon>
+              <ListItemText>
+                Change Version
+                {updateAvailable && (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="info.main"
+                    sx={{ ml: 1 }}
+                  >
+                    {latestVersion?.version}
+                  </Typography>
+                )}
+              </ListItemText>
+            </MenuItem>
+          )}
           {instance && (
             <MenuItem
               onClick={() => {
@@ -380,34 +438,75 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
       </Stack>
 
       {/* Dialogs via portal */}
-      {instance &&
-        ReactDOM.createPortal(
-          <>
-            <ContentDialog
-              title={`Info: ${instance.instanceName}`}
-              open={infoOpen}
-              setOpen={setInfoOpen}
-            >
-              <InstanceInfo instance={instance} />
-            </ContentDialog>
-            <InstanceConfigDialog
-              instanceId={instance.instanceId}
-              instanceName={instance.instanceName}
-              open={settingsOpen}
-              onClose={() => setSettingsOpen(false)}
-            />
-          </>,
-          document.body,
-        )}
-
       {ReactDOM.createPortal(
-        <ActionSnackbar
-          text={snackbar.text}
-          errorText={snackbar.errorText}
-          open={snackbarOpen}
-          setOpen={setSnackbarOpen}
-          alertSeverity={snackbar.severity}
-        />,
+        <>
+          {instance && (
+            <>
+              <ContentDialog
+                title={`Info: ${instance.instanceName}`}
+                open={infoOpen}
+                setOpen={setInfoOpen}
+              >
+                <InstanceInfo instance={instance} />
+              </ContentDialog>
+              <InstanceConfigDialog
+                instanceId={instance.instanceId}
+                instanceName={instance.instanceName}
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+              />
+            </>
+          )}
+
+          {/* Version management dialog */}
+          <ContentDialog
+            title={`${app.title} — Version`}
+            open={versionOpen}
+            setOpen={setVersionOpen}
+          >
+            <Box sx={{ p: 1 }}>
+              {versionsArray.length > 0 && (
+                <VersionSelector
+                  availableVersions={versionsArray}
+                  selectedVersion={selectedVersion}
+                  setSelectedVersion={setSelectedVersion}
+                />
+              )}
+              {selectedVersionNotInstalled && (
+                <Box sx={{ mt: 2 }}>
+                  <UpdateButton
+                    app={app}
+                    to={selectedVersion}
+                    showSelectedVersion
+                    fullWidth
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 700,
+                    }}
+                  />
+                </Box>
+              )}
+              {!selectedVersionNotInstalled && (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 2, textAlign: 'center' }}
+                >
+                  v{selectedVersion.version} is already installed.
+                </Typography>
+              )}
+            </Box>
+          </ContentDialog>
+
+          <ActionSnackbar
+            text={snackbar.text}
+            errorText={snackbar.errorText}
+            open={snackbarOpen}
+            setOpen={setSnackbarOpen}
+            alertSeverity={snackbar.severity}
+          />
+        </>,
         document.body,
       )}
     </>

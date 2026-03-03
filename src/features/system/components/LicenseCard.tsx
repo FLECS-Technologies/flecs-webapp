@@ -1,6 +1,6 @@
 import { Paper, Typography } from '@mui/material';
 import LicenseInfo from './device/license/LicenseInfo';
-import DeviceActivation from './device/DeviceActivation';
+import DeviceActivation from '@shared/components/device/DeviceActivation';
 
 export default function LicenseCard() {
   return (

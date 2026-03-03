@@ -26,7 +26,7 @@ These principles are not aspirational — they are enforced by the stack and val
 |-----------|---------------|--------|
 | **Single Source of Truth** | Server state in TanStack Query cache. Client state in Zustand stores. Never duplicated. | Active |
 | **Command-Query Separation** | `useQuery` = read. `useMutation` = write. No mixed hooks. | Active |
-| **Colocation** | Feature code lives with its feature. No cross-feature imports. Shared code in `shared/`. | Active (36 violations remaining) |
+| **Colocation** | Feature code lives with its feature. No cross-feature imports. Shared code in `shared/`. | ~~Done — 0 violations~~ |
 | **Dependency Inversion** | Components depend on hooks, hooks depend on API abstractions, never the reverse. | Active |
 | **Immutability** | Zustand `set()` produces new state references. TanStack Query cache is read-only. No direct mutation. | Active |
 | **Referential Transparency** | Pure components receive props, produce JSX. Side effects live in hooks. | Active |
@@ -165,7 +165,7 @@ build: {
 | Problem | Impact | Fix |
 |---------|--------|-----|
 | 6 nested providers (target: 4) | Unnecessary re-render scope | Flatten auth + device state |
-| 36 cross-feature imports across 29 files | Couples feature modules | Move shared logic to `shared/` |
+| ~~36 cross-feature imports across 29 files~~ | ~~Couples feature modules~~ | ~~Done — 0 violations remaining~~ |
 | No empty states with CTAs | New users see blank pages | Add illustrations + action buttons |
 | Quest polling via module-level Map | Not reactive, manual sync | Migrate to TanStack Query polling |
 | React Hook Form installed but unused | No schema-driven form validation | Wire RHF + Zod for complex forms |
@@ -395,27 +395,17 @@ const Providers = composeProviders(
 );
 ```
 
-### Phase 5: Cross-Feature Import Cleanup
+### Phase 5: Cross-Feature Import Cleanup ~~Done~~
 
-**Goal:** Zero cross-feature imports. Features are self-contained modules.
+**Result:** Zero cross-feature imports. 36 violations eliminated across 29 files.
 
-Current violations (36 imports across 29 files):
-- `features/apps/` importing from `features/jobs/` (7 instances)
-- `features/apps/` importing from `features/system/` (4 instances)
-- `features/marketplace/` importing from `features/apps/` (3 instances)
-- `features/marketplace/` importing from `features/system/` (2 instances)
-- `features/system/` importing from `features/jobs/` (4 instances)
-- `features/system/` importing from `features/apps/` (2 instances)
-- `features/onboarding/` importing from `features/auth/` (1 instance)
-- `features/onboarding/` importing from `features/jobs/` (1 instance)
-- `features/notifications/` importing from `features/jobs/` (1 instance)
-
-**Resolution pattern:** Extract shared types/hooks to `shared/`:
-```
-features/apps/hooks.ts imports from features/jobs/hooks.ts
-→ Move shared quest types to shared/types/quest.ts
-→ Both features import from shared/
-```
+Key moves:
+- `features/jobs/` → `shared/quests/` (cross-cutting infrastructure, not a domain feature)
+- Feature hooks → `shared/hooks/{app,system,marketplace}-queries.ts`
+- Shared types → `shared/types/{app,marketplace}.ts`
+- Shared API services → `shared/api/`
+- Shared components → `shared/components/{installation,app-actions,device,marketplace,data-transfer}/`
+- Feature barrels updated to re-export from `shared/` for backward compatibility
 
 ### Phase 6: Polish
 

@@ -34,7 +34,7 @@ vi.mock('@shared/api/ApiProvider', () => ({
 ### Mocking quest actions (Zustand + hooks)
 
 ```typescript
-vi.mock('@features/jobs/hooks', () => ({
+vi.mock('@shared/quests/hooks', () => ({
   useQuestActions: () => ({
     fetchQuest: vi.fn().mockResolvedValue(undefined),
     waitForQuest: vi.fn().mockResolvedValue({ state: 'finished-ok' }),

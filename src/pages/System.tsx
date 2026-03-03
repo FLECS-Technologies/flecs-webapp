@@ -1,5 +1,5 @@
 import { Box, Typography, Stack } from '@mui/material';
-import { useSystemInfo } from '@features/system/hooks';
+import { useSystemInfo } from '@shared/hooks/system-queries';
 import { SystemInfoCard, VersionCard, LicenseCard, QuickActions, ExportsCard } from '../features/system';
 
 export default function System() {

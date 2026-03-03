@@ -1,4 +1,4 @@
-import { App } from '../types';
+import { App } from '@shared/types/app';
 
 export const mockApp: App = {
   app: 'com.my.app',

@@ -30,7 +30,7 @@ vi.mock('@shared/api/ApiProvider', () => ({
 }));
 
 // Mock the DeviceActivationContext
-vi.mock('@features/auth/providers/DeviceActivationContext', () => ({
+vi.mock('@shared/contexts/DeviceActivationContext', () => ({
   DeviceActivationContext: React.createContext({}),
 }));
 

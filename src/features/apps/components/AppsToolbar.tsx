@@ -1,8 +1,8 @@
 import { Stack, Typography, CircularProgress, Tooltip } from '@mui/material';
 import { Code } from 'lucide-react';
 import Yaml from 'js-yaml';
-import Export from '@features/system/components/export/Export';
-import Import from '@features/system/components/device/Import';
+import Export from '@shared/components/data-transfer/Export';
+import Import from '@shared/components/data-transfer/Import';
 import FileOpen from '@shared/components/FileOpen';
 
 interface AppsToolbarProps {

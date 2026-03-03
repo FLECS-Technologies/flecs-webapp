@@ -37,17 +37,17 @@ import {
 } from '@mui/material';
 
 import { X, CheckCircle2, ExternalLink, RefreshCw, ShoppingCart, ExternalLink as OpenInNew } from 'lucide-react';
-import { App } from '@features/apps/types';
-import { useSystemInfo } from '@features/system/hooks';
-import { isBlacklisted } from '../../api/ProductService';
+import { App } from '@shared/types/app';
+import { useSystemInfo } from '@shared/hooks/system-queries';
+import { isBlacklisted } from '@shared/api/product-service';
 import { createVersion, createVersions, getLatestVersion } from '@shared/utils/version-utils';
 import { Version } from '@shared/types/version';
-import { EditorButtons } from '@features/apps/components/instances/tabs/editors/EditorButtons';
+import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
 import { VersionSelector } from '@shared/components/VersionSelector';
-import UninstallButton from '@features/apps/components/buttons/UninstallButton';
+import UninstallButton from '@shared/components/app-actions/UninstallButton';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
-import InstallButton from '@features/apps/components/buttons/InstallButton';
-import UpdateButton from '@features/apps/components/buttons/UpdateButton';
+import InstallButton from '@shared/components/app-actions/InstallButton';
+import UpdateButton from '@shared/components/app-actions/UpdateButton';
 
 interface FullCardProps {
   app: App;

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { App } from '@features/apps/types';
+import { App } from '@shared/types/app';
 import AppCard from './AppCard';
 
 interface AppGridProps {

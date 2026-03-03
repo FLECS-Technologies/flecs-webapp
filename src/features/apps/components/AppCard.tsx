@@ -19,19 +19,19 @@ import {
   ExternalLink,
   Plus,
 } from 'lucide-react';
-import { App } from '@features/apps/types';
+import { App } from '@shared/types/app';
 import AppStatusDot from './AppStatusDot';
 import InstanceList from './InstanceList';
-import UninstallButton from './buttons/UninstallButton';
+import UninstallButton from '@shared/components/app-actions/UninstallButton';
 import LoadIconButton from '@shared/components/LoadIconButton';
 import HelpButton from '@shared/components/help/HelpButton';
 import { InstanceStartCreateButtons } from './instances/buttons/InstanceStartCreateButtons';
-import { EditorButtons } from './instances/tabs/editors/EditorButtons';
+import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
-import { useQuestActions } from '@features/jobs/hooks';
+import { useQuestActions } from '@shared/quests/hooks';
 import { useProtectedApi } from '@shared/api/ApiProvider';
-import { useInvalidateAppData } from '@features/apps/hooks';
-import { questStateFinishedOk } from '@features/jobs/utils/QuestState';
+import { useInvalidateAppData } from '@shared/hooks/app-queries';
+import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
 import useStateWithLocalStorage from '@shared/hooks/LocalStorage';
 
 interface AppCardProps {

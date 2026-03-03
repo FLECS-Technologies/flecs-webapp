@@ -24,14 +24,14 @@ import Grid from '@mui/material/Grid';
 import { Play, Square, Circle, AlertCircle, Trash2, Info, Settings } from 'lucide-react';
 import LoadIconButton from '@shared/components/LoadIconButton';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
-import { useInvalidateAppData } from '@features/apps/hooks';
+import { useInvalidateAppData } from '@shared/hooks/app-queries';
 import ContentDialog from '@shared/components/ContentDialog';
 import InstanceInfo from './instances/InstanceInfo';
 import ConfirmDialog from '@shared/components/ConfirmDialog';
 import InstanceConfigDialog from './instances/InstanceConfigDialog';
-import { EditorButtons } from './instances/tabs/editors/EditorButtons';
-import { questStateFinishedOk } from '@features/jobs/utils/QuestState';
-import { useQuestActions } from '@features/jobs/hooks';
+import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
+import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
+import { useQuestActions } from '@shared/quests/hooks';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 
 interface AppInstanceRowProps {

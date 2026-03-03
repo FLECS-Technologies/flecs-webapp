@@ -18,9 +18,9 @@
 import React from 'react';
 import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/material';
 import VersionsTable from './version/VersionsTable';
-import { getLatestVersion, isLaterThan } from '@features/marketplace/api/VersionService';
+import { getLatestVersion, isLaterThan } from '@shared/api/version-service';
 import { VersionSelector } from '@shared/components/VersionSelector';
-import { useSystemInfo } from '@features/system/hooks';
+import { useSystemInfo } from '@shared/hooks/system-queries';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 
 export default function Version() {

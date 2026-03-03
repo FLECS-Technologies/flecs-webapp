@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { MarketplaceUser } from '@features/marketplace/types';
+import { MarketplaceUser } from '@shared/types/marketplace';
 
 interface MarketplaceUserState {
   user: MarketplaceUser | null;

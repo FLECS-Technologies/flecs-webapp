@@ -19,7 +19,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import InstallButton from '../InstallButton';
+import InstallButton from '@shared/components/app-actions/InstallButton';
 import { mockAvailableApp } from '@features/apps/__mocks__/app';
 import { createVersion } from '@shared/utils/version-utils';
 
@@ -32,7 +32,7 @@ vi.mock('@shared/components/ContentDialog', () => ({
   ),
 }));
 
-vi.mock('../../installation/InstallationStepper', () => ({
+vi.mock('@shared/components/installation/InstallationStepper', () => ({
   default: ({ app, version, onStateChange }: any) => {
     React.useEffect(() => {
       // Simulate what would happen in the real component

@@ -36,17 +36,17 @@ import { visuallyHidden } from '@mui/utils';
 import Yaml from 'js-yaml';
 import Row from './InstalledAppsListRow';
 import FileOpen from '@shared/components/FileOpen';
-import { useAppList } from '@features/apps/hooks';
+import { useAppList } from '@shared/hooks/app-queries';
 import useStateWithLocalStorage from '@shared/hooks/LocalStorage';
 import usePagination from '@shared/hooks/usePagination';
 import { CircularProgress } from '@mui/material';
-import { useSystemPing } from '@features/system/hooks';
+import { useSystemPing } from '@shared/hooks/system-queries';
 import ContentDialog from '@shared/components/ContentDialog';
-import Export from '@features/system/components/export/Export';
-import Import from '@features/system/components/device/Import';
-import InstallationStepper from './installation/InstallationStepper';
+import Export from '@shared/components/data-transfer/Export';
+import Import from '@shared/components/data-transfer/Import';
+import InstallationStepper from '@shared/components/installation/InstallationStepper';
 import PoweredBy from '@shared/components/layout/PoweredBy';
-import { QuestLog } from '@features/jobs/components/QuestLog';
+import { QuestLog } from '@shared/quests/components/QuestLog';
 
 const headCells = [
   {

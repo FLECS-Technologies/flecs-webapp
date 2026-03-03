@@ -21,12 +21,20 @@ export default function ServiceMesh() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight={700}>
+      <Box sx={{ mb: 3 }}>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography variant="overline" color="text.disabled" fontWeight={600}>
+            DEVICE
+          </Typography>
+          <HelpButton url={servicemesh} />
+        </Stack>
+        <Typography variant="h4" fontWeight={800}>
           Service Mesh
         </Typography>
-        <HelpButton url={servicemesh} />
-      </Stack>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+          Network configuration and monitoring.
+        </Typography>
+      </Box>
 
       <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
         <Network size={48} strokeWidth={1.2} style={{ opacity: 0.4, marginBottom: 16 }} />

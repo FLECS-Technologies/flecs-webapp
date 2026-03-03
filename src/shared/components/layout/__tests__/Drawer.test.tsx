@@ -18,7 +18,28 @@
 
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { vi } from 'vitest';
 import Drawer from '../Drawer';
+
+vi.mock('@shared/hooks/app-queries', () => ({
+  useAppList: () => ({ appList: [], isLoading: false, isError: false }),
+}));
+
+vi.mock('@shared/hooks/marketplace-queries', () => ({
+  useMarketplaceProducts: () => ({ data: [], isLoading: false }),
+}));
+
+vi.mock('@features/auth/providers/OAuth4WebApiAuthProvider', () => ({
+  useOAuth4WebApiAuth: () => ({ user: null, signOut: vi.fn() }),
+}));
+
+vi.mock('@app/theme/ThemeHandler', () => ({
+  useDarkMode: () => ({ isDarkMode: false, setDarkMode: vi.fn() }),
+}));
+
+vi.mock('../FLECSLogo', () => ({
+  default: () => <span data-testid="flecs-logo" />,
+}));
 
 describe('Drawer', () => {
   test('renders Drawer component', () => {
@@ -28,10 +49,12 @@ describe('Drawer', () => {
       </Router>,
     );
 
-    expect(screen.getByText('Apps')).toBeVisible();
-    expect(screen.getByText('Marketplace')).toBeVisible();
+    expect(screen.getByText('Installed')).toBeVisible();
+    expect(screen.getByText('Browse')).toBeVisible();
     expect(screen.getByText('System')).toBeVisible();
-
-    // screen.debug()
+    expect(screen.getByText('APPS')).toBeVisible();
+    expect(screen.getByText('DEVICE')).toBeVisible();
+    expect(screen.getByText('FLECS')).toBeVisible();
+    expect(screen.getByText('Sign in')).toBeVisible();
   });
 });

@@ -28,10 +28,9 @@ const Frame = ({ children }: FrameProps) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: isMobile ? 2 : 6,
-          pt: isMobile ? 10 : 20,
+          p: isMobile ? 2 : 4,
+          pt: isMobile ? 9 : 4,
           minWidth: 0,
-          ml: isMobile ? 0 : undefined,
         }}
       >
         {children}

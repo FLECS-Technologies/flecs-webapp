@@ -11,6 +11,7 @@ interface FilterParams {
   hiddenCategories: number[];
   search: string | undefined;
   available: boolean;
+  freeOnly: boolean;
 }
 
 interface MarketplaceFiltersState {
@@ -25,6 +26,7 @@ interface MarketplaceFiltersState {
   setSearchFilter: (e: React.ChangeEvent<HTMLInputElement> | undefined) => void;
   setCategoryFilter: (categoryId: number) => void;
   setAvailableFilter: () => void;
+  setFreeOnlyFilter: () => void;
   toggleFilter: () => void;
   setIsSearchEnabled: (val: boolean) => void;
   applyFilters: (loadedProducts: any[]) => void;
@@ -43,6 +45,14 @@ function searchProducts(products: any[], search: string, isSearchEnabled: boolea
 
 function filterByAvailability(products: any[], available: boolean): any[] {
   return available ? products.filter((p: any) => p.stock_status === 'instock') : products;
+}
+
+function filterByPrice(products: any[], freeOnly: boolean): any[] {
+  if (!freeOnly) return products;
+  return products.filter((p: any) => {
+    const price = p.price;
+    return !price || price === '' || price === '0' || price === '$0';
+  });
 }
 
 function isCategoryHidden(productCategories: any[] | undefined, hiddenCategories: number[]): boolean {
@@ -92,7 +102,7 @@ function getUniqueCategories(products: any[]): Category[] {
 export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
   persist(
     (set, get) => ({
-      filterParams: { hiddenCategories: [], search: undefined, available: false },
+      filterParams: { hiddenCategories: [], search: undefined, available: false, freeOnly: false },
       categories: [],
       showFilter: false,
       isSearchEnabled: true,
@@ -122,6 +132,12 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
         }));
       },
 
+      setFreeOnlyFilter: () => {
+        set((state) => ({
+          filterParams: { ...state.filterParams, freeOnly: !state.filterParams.freeOnly },
+        }));
+      },
+
       toggleFilter: () => {
         set((state) => ({ showFilter: !state.showFilter }));
       },
@@ -136,9 +152,10 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
         const byAvailability = filterByAvailability(loadedProducts, filterParams.available);
         const byCategories = filterByCategories(loadedProducts, filterParams.hiddenCategories);
         const bySearch = searchProducts(loadedProducts, filterParams.search ?? '', isSearchEnabled);
+        const byPrice = filterByPrice(loadedProducts, filterParams.freeOnly);
 
-        const finalProducts = getIntersection(byAvailability, byCategories, bySearch);
-        const forCategories = getIntersection(byAvailability, bySearch);
+        const finalProducts = getIntersection(byAvailability, byCategories, bySearch, byPrice);
+        const forCategories = getIntersection(byAvailability, bySearch, byPrice);
         const categories = getUniqueCategories(forCategories);
 
         set({ finalProducts, categories });

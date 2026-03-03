@@ -11,6 +11,8 @@ export { AppFilter } from './components/AppFilter';
 export { default as AppInstanceRow } from './components/AppInstanceRow';
 export { default as InstalledAppsList } from './components/InstalledAppsList';
 export { default as InstalledAppsListRow } from './components/InstalledAppsListRow';
+export { default as InstalledAppsTable } from './components/InstalledAppsTable';
+export { default as InstalledAppRow } from './components/InstalledAppRow';
 export { default as InstallButton } from '@shared/components/app-actions/InstallButton';
 export { default as UninstallButton } from '@shared/components/app-actions/UninstallButton';
 export { default as UpdateButton } from '@shared/components/app-actions/UpdateButton';

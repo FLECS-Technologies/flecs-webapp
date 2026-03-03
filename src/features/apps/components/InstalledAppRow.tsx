@@ -26,7 +26,6 @@ import {
   Trash2,
   BookOpen,
   RefreshCw,
-  GitBranch,
 } from 'lucide-react';
 import { App } from '@shared/types/app';
 import { Version } from '@shared/types/version';
@@ -89,7 +88,6 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   // Dialog states
   const [infoOpen, setInfoOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [versionOpen, setVersionOpen] = useState(false);
 
   // Action states
   const [busy, setBusy] = useState(false);
@@ -236,7 +234,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 color="info"
                 variant="outlined"
                 icon={<RefreshCw size={12} />}
-                onClick={() => setVersionOpen(true)}
+                onClick={() => setSettingsOpen(true)}
                 sx={{
                   height: 22,
                   fontSize: '0.65rem',
@@ -362,31 +360,6 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
               <ListItemText>Stop</ListItemText>
             </MenuItem>
           )}
-          {versionsArray.length > 0 && (
-            <MenuItem
-              onClick={() => {
-                setMenuAnchor(null);
-                setVersionOpen(true);
-              }}
-            >
-              <ListItemIcon>
-                <GitBranch size={16} />
-              </ListItemIcon>
-              <ListItemText>
-                Change Version
-                {updateAvailable && (
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="info.main"
-                    sx={{ ml: 1 }}
-                  >
-                    {latestVersion?.version}
-                  </Typography>
-                )}
-              </ListItemText>
-            </MenuItem>
-          )}
           {instance && (
             <MenuItem
               onClick={() => {
@@ -454,50 +427,44 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 instanceName={instance.instanceName}
                 open={settingsOpen}
                 onClose={() => setSettingsOpen(false)}
+                versionSection={
+                  versionsArray.length > 0 ? (
+                    <Box>
+                      <VersionSelector
+                        availableVersions={versionsArray}
+                        selectedVersion={selectedVersion}
+                        setSelectedVersion={setSelectedVersion}
+                      />
+                      {selectedVersionNotInstalled && (
+                        <Box sx={{ mt: 2 }}>
+                          <UpdateButton
+                            app={app}
+                            to={selectedVersion}
+                            showSelectedVersion
+                            fullWidth
+                            sx={{
+                              borderRadius: 2,
+                              textTransform: 'none',
+                              fontWeight: 700,
+                            }}
+                          />
+                        </Box>
+                      )}
+                      {!selectedVersionNotInstalled && (
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mt: 2, textAlign: 'center' }}
+                        >
+                          v{selectedVersion.version} is already installed.
+                        </Typography>
+                      )}
+                    </Box>
+                  ) : undefined
+                }
               />
             </>
           )}
-
-          {/* Version management dialog */}
-          <ContentDialog
-            title={`${app.title} — Version`}
-            open={versionOpen}
-            setOpen={setVersionOpen}
-          >
-            <Box sx={{ p: 1 }}>
-              {versionsArray.length > 0 && (
-                <VersionSelector
-                  availableVersions={versionsArray}
-                  selectedVersion={selectedVersion}
-                  setSelectedVersion={setSelectedVersion}
-                />
-              )}
-              {selectedVersionNotInstalled && (
-                <Box sx={{ mt: 2 }}>
-                  <UpdateButton
-                    app={app}
-                    to={selectedVersion}
-                    showSelectedVersion
-                    fullWidth
-                    sx={{
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 700,
-                    }}
-                  />
-                </Box>
-              )}
-              {!selectedVersionNotInstalled && (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mt: 2, textAlign: 'center' }}
-                >
-                  v{selectedVersion.version} is already installed.
-                </Typography>
-              )}
-            </Box>
-          </ContentDialog>
 
           <ActionSnackbar
             text={snackbar.text}

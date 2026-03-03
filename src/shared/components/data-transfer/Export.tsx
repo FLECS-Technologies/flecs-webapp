@@ -19,7 +19,7 @@ import React, { ButtonHTMLAttributes } from 'react';
 import Button from '@mui/material/Button';
 // If you want a loading button, use the following instead:
 // import LoadingButton from '@mui/lab/LoadingButton';
-import { Upload } from 'lucide-react';
+import { FolderDown } from 'lucide-react';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
 import { useAppList } from '@shared/hooks/app-queries';
 import { useQuestActions } from '@shared/quests/hooks';
@@ -103,13 +103,13 @@ const Export: React.FC<ExportProps> = (props) => {
     <>
       <Button
         variant="outlined"
-        startIcon={<Upload size={18} />}
+        startIcon={<FolderDown size={16} />}
         onClick={() => exportApps()}
         loading={exporting}
         loadingPosition="start"
         {...(buttonProps as any)}
       >
-        {exporting ? 'Exporting...' : 'Export'}
+        {exporting ? 'Downloading...' : 'Download App Config'}
       </Button>
       <ActionSnackbar
         text={snackbarState.snackbarText}

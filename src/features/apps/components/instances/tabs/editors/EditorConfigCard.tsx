@@ -1,23 +1,23 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed May 15 2025
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
+
 import React, { useState } from 'react';
-import { Card, ListItemText, Box, TextField, Stack, IconButton } from '@mui/material';
-import { Trash2, Save } from 'lucide-react';
+import {
+  Box,
+  IconButton,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { Trash2, Save, ExternalLink } from 'lucide-react';
 import { InstanceEditor } from '@flecs/core-client-ts';
 import { EditorConfigSnackbar } from '../EditorConfigTab';
 import { createUrl } from '@shared/components/app-actions/editors/EditorButton';
@@ -49,6 +49,7 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
     editor.path_prefix,
   );
   const api = useProtectedApi();
+
   const putEditorPrefix = async (port: number, pathPrefix: string) => {
     try {
       await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixPut(instanceId, port, {
@@ -57,15 +58,14 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
       setCurrentEditorPathPrefix(pathPrefix);
       setSnackbarState({
         alertSeverity: 'success',
-        snackbarText: 'Editor prefix was saved!',
+        snackbarText: 'Editor prefix saved',
         clipBoardContent: '',
       });
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Failed to put editor prefix:', error);
       setSnackbarState({
         alertSeverity: 'error',
-        snackbarText: 'Failed to save editor prefix!',
+        snackbarText: 'Failed to save editor prefix',
         clipBoardContent: '' + error,
       });
       setSnackbarOpen(true);
@@ -74,22 +74,21 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
     }
   };
 
-  const deleteEditorPrefix = async (port: number, pathPrefix: string) => {
+  const deleteEditorPrefix = async (port: number) => {
     try {
       await api.instances.instancesInstanceIdConfigEditorsPortPathPrefixDelete(instanceId, port);
       setCurrentEditorPathPrefix(undefined);
       setEditorPathPrefix('');
       setSnackbarState({
         alertSeverity: 'success',
-        snackbarText: 'Editor prefix was deleted!',
+        snackbarText: 'Editor prefix deleted',
         clipBoardContent: '',
       });
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Failed to delete editor prefix:', error);
       setSnackbarState({
         alertSeverity: 'error',
-        snackbarText: 'Failed to delete editor prefix!',
+        snackbarText: 'Failed to delete editor prefix',
         clipBoardContent: '' + error,
       });
       setSnackbarOpen(true);
@@ -98,59 +97,131 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({
     }
   };
 
-  return (
-    <Card key={editor.name || 'Editor at port' + editor.port} sx={{ width: '100%', p: 2, mb: 2 }}>
-      <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
-        {/* Left Section */}
-        <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display="flex" gap={2}>
-            <Box flex={1}>
-              <ListItemText primary={editor.name} secondary="Name" />
-            </Box>
-            <Box flex={1}>
-              <ListItemText primary={editor.port} secondary="Port" />
-            </Box>
-          </Box>
-          <Box>
-            <ListItemText primary={createUrl(editor.url)} secondary="Fixed URL" />
-          </Box>
-        </Stack>
+  const fixedUrl = createUrl(editor.url);
+  const customUrl = editor_path_prefix ? createCustomUrl('/' + editor_path_prefix) : '';
 
-        {/* Right Section */}
-        <Stack spacing={1} sx={{ flex: 1 }}>
-          <Box display="flex" alignItems="center" gap={0}>
-            <TextField
-              value={editor_path_prefix}
-              label="Path Prefix"
-              fullWidth
-              onChange={(e) => setEditorPathPrefix(e.target.value)}
-            />
-            <IconButton
-              aria-label="put-editor-prefix-button"
-              disabled={!editor_path_prefix || editor_path_prefix === current_editor_path_prefix}
-              onClick={() => putEditorPrefix(editor.port, editor_path_prefix)}
-              sx={{ flexShrink: 0 }}
-            >
-              <Save size={18} />
-            </IconButton>
-            <IconButton
-              aria-label="delete-editor-prefix-button"
-              disabled={current_editor_path_prefix === undefined}
-              onClick={() => deleteEditorPrefix(editor.port, editor_path_prefix)}
-              sx={{ flexShrink: 0 }}
-            >
-              <Trash2 size={18} />
-            </IconButton>
-          </Box>
-          <Box>
-            <ListItemText
-              primary={editor_path_prefix ? createCustomUrl('/' + editor_path_prefix) : ''}
-              secondary="Custom URL created from Path Prefix"
-            />
-          </Box>
+  return (
+    <Box
+      sx={{
+        p: 2.5,
+        borderRadius: 2.5,
+        border: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      {/* Header: name + port */}
+      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+        <Typography variant="subtitle2" fontWeight={700}>
+          {editor.name || 'Editor'}
+        </Typography>
+        <Typography
+          variant="caption"
+          fontFamily="monospace"
+          sx={{
+            px: 1,
+            py: 0.25,
+            borderRadius: 1,
+            bgcolor: (theme) =>
+              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+            color: 'text.secondary',
+          }}
+        >
+          <Box component="span" sx={{ opacity: 0.5 }}>:</Box>{editor.port}
+        </Typography>
+      </Stack>
+
+      {/* Fixed URL */}
+      <Box sx={{ mb: 2.5 }}>
+        <Typography variant="caption" color="text.disabled" fontWeight={600} sx={{ mb: 0.5, display: 'block' }}>
+          Fixed URL
+        </Typography>
+        <Typography
+          variant="body2"
+          fontFamily="monospace"
+          sx={{
+            fontSize: '0.75rem',
+            color: 'text.secondary',
+            wordBreak: 'break-all',
+          }}
+        >
+          {fixedUrl}
+        </Typography>
+      </Box>
+
+      {/* Path prefix */}
+      <Box sx={{ mb: customUrl ? 2 : 0 }}>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <TextField
+            value={editor_path_prefix}
+            label="Path Prefix"
+            placeholder="e.g. apps/my-app"
+            size="small"
+            fullWidth
+            onChange={(e) => setEditorPathPrefix(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                fontSize: '0.85rem',
+                fontFamily: 'monospace',
+              },
+            }}
+          />
+          <Tooltip title="Save">
+            <span>
+              <IconButton
+                size="small"
+                aria-label="put-editor-prefix-button"
+                disabled={!editor_path_prefix || editor_path_prefix === current_editor_path_prefix}
+                onClick={() => putEditorPrefix(editor.port, editor_path_prefix)}
+                color="primary"
+              >
+                <Save size={16} />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip title="Delete prefix">
+            <span>
+              <IconButton
+                size="small"
+                aria-label="delete-editor-prefix-button"
+                disabled={current_editor_path_prefix === undefined}
+                onClick={() => deleteEditorPrefix(editor.port)}
+              >
+                <Trash2 size={16} />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Stack>
       </Box>
-    </Card>
+
+      {/* Custom URL */}
+      {customUrl && (
+        <Box>
+          <Typography variant="caption" color="text.disabled" fontWeight={600} sx={{ mb: 0.5, display: 'block' }}>
+            Custom URL
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography
+              variant="body2"
+              fontFamily="monospace"
+              sx={{
+                fontSize: '0.75rem',
+                color: 'info.main',
+                wordBreak: 'break-all',
+                flex: 1,
+              }}
+            >
+              {customUrl}
+            </Typography>
+            <Tooltip title="Open in new tab">
+              <IconButton size="small" onClick={() => window.open(customUrl)}>
+                <ExternalLink size={14} />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Box>
+      )}
+    </Box>
   );
 };
 

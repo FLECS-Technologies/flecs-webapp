@@ -16,11 +16,9 @@
  * limitations under the License.
  */
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, List, CircularProgress, Stack } from '@mui/material';
+import { Box, Typography, CircularProgress, Stack } from '@mui/material';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
 import { InstanceEditor } from '@flecs/core-client-ts';
-import HelpButton from '@shared/components/help/HelpButton';
-import { instancedeviceconfig } from '@shared/components/help/helplinks';
 import EditorConfigCard from './editors/EditorConfigCard';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 
@@ -81,27 +79,24 @@ const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange 
 
   return (
     <Box>
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">App Editors</Typography>
-        <HelpButton url={instancedeviceconfig}></HelpButton>
-      </Stack>
-      <List>
-        {editors.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            App has no editors.
-          </Typography>
-        )}
-        {editors.map((editor, index) => (
-          <EditorConfigCard
-            key={index}
-            setLoading={setLoading}
-            instanceId={instanceId}
-            editor={editor}
-            setSnackbarOpen={setSnackbarOpen}
-            setSnackbarState={setSnackbarState}
-          />
-        ))}
-      </List>
+      {editors.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          App has no editors.
+        </Typography>
+      ) : (
+        <Stack spacing={2}>
+          {editors.map((editor, index) => (
+            <EditorConfigCard
+              key={index}
+              setLoading={setLoading}
+              instanceId={instanceId}
+              editor={editor}
+              setSnackbarOpen={setSnackbarOpen}
+              setSnackbarState={setSnackbarState}
+            />
+          ))}
+        </Stack>
+      )}
       <ActionSnackbar
         text={snackbarState.snackbarText}
         open={snackbarOpen}

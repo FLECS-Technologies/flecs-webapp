@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Download } from 'lucide-react';
+import { FolderUp } from 'lucide-react';
 import ActionSnackbar from '@shared/components/ActionSnackbar';
 import FileOpen from '@shared/components/FileOpen';
 import { useInvalidateAppData } from '@shared/hooks/app-queries';
@@ -124,8 +124,8 @@ export default function Import(props) {
       <FileOpen
         {...buttonProps}
         data-testid="import-apps-button"
-        buttonText="Import"
-        buttonIcon={<Download size={18} />}
+        buttonText="Import Config"
+        buttonIcon={<FolderUp size={16} />}
         accept=".tar.gz, .tar, .json"
         onConfirm={handleFileUpload}
         loading={importing}

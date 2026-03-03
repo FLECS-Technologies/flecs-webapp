@@ -15,7 +15,7 @@ export default function MarketplaceGrid({ children }: MarketplaceGridProps) {
           md: 'repeat(3, 1fr)',
           xl: 'repeat(4, 1fr)',
         },
-        gap: 2,
+        gap: 3,
       }}
     >
       {children}

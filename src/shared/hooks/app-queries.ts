@@ -205,7 +205,9 @@ export function useAppList() {
     if (!marketplaceProducts) return undefined;
     if (!installedApps || appsError) return [...marketplaceProducts] as any[];
 
-    const mergedList = installedApps.map((app: any) => ({ ...app }));
+    const mergedList = installedApps
+      .filter((app: any) => app?.appKey?.name)
+      .map((app: any) => ({ ...app }));
 
     mergedList.forEach((app: any) => {
       const mpApp = marketplaceProducts.find(

@@ -21,7 +21,6 @@ import parse from 'html-react-parser';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   Box,
   Avatar,
   Typography,
@@ -31,12 +30,20 @@ import {
   IconButton,
   Rating,
   Stack,
-  Card,
-  CardContent,
   Alert,
 } from '@mui/material';
 
-import { X, CheckCircle2, ExternalLink, RefreshCw, ShoppingCart, ExternalLink as OpenInNew } from 'lucide-react';
+import {
+  X,
+  CheckCircle2,
+  ExternalLink,
+  RefreshCw,
+  ShoppingCart,
+  Star,
+  Cpu,
+  BookOpen,
+  Store,
+} from 'lucide-react';
 import { App } from '@shared/types/app';
 import { useSystemInfo } from '@shared/hooks/system-queries';
 import { isBlacklisted } from '@shared/api/product-service';
@@ -78,9 +85,8 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
   });
 
   const handleUninstallComplete = (success: boolean, message: string, error?: string) => {
-    const alertSeverity = success ? 'success' : 'error';
     setSnackbarState({
-      alertSeverity,
+      alertSeverity: success ? 'success' : 'error',
       snackbarText: message,
       clipBoardContent: error || '',
     });
@@ -89,225 +95,379 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
 
   const rating = app.average_rating ? parseFloat(app.average_rating) : 0;
   const ratingCount = app.rating_count || 0;
+  const isFree = !app.price || parseFloat(app.price) === 0;
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ p: 0 }}>
-          <Box sx={{ position: 'relative' }}>
-            <IconButton
-              onClick={onClose}
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+              overflow: 'hidden',
+            },
+          },
+        }}
+      >
+        <DialogContent sx={{ p: 0, position: 'relative' }}>
+          {/* Close */}
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            sx={{
+              position: 'absolute',
+              right: 16,
+              top: 16,
+              zIndex: 10,
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+              '&:hover': {
+                bgcolor: (theme) =>
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.08)',
+              },
+            }}
+            size="small"
+          >
+            <X size={18} />
+          </IconButton>
+
+          {/* ─── Hero ─── */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              px: 4,
+              pt: 5,
+              pb: 4,
+            }}
+          >
+            <Avatar
+              src={app.avatar}
+              variant="rounded"
               sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-                zIndex: 1,
+                width: 88,
+                height: 88,
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: (theme) =>
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50',
+                fontSize: 32,
+                fontWeight: 700,
+                mb: 2.5,
               }}
             >
-              <X size={20} />
-            </IconButton>
-          </Box>
-        </DialogTitle>
+              {app.title?.charAt(0).toUpperCase()}
+            </Avatar>
 
-        <DialogContent sx={{ p: 0 }}>
-          <Box>
-            {/* Header Section */}
-            <Box
-              sx={(theme) => ({
-                background: `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.primary.main} 100%)`,
-                p: 4,
-                pb: 3,
-              })}
-            >
-              <Stack direction="row" spacing={3} alignItems="flex-start">
-                <Avatar
-                  src={app.avatar}
-                  variant="rounded"
+            <Typography variant="h5" fontWeight={800} sx={{ letterSpacing: '-0.02em', mb: 0.5 }}>
+              {app.title}
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              by {app.author || 'Unknown'}
+            </Typography>
+
+            {/* Status + Rating + Price row */}
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              divider={
+                <Box
                   sx={{
-                    width: 120,
-                    height: 120,
-                    p: 1.5,
+                    width: 4,
+                    height: 4,
+                    borderRadius: '50%',
+                    bgcolor: 'divider',
                   }}
                 />
-                <Box sx={{ flex: 1 }}>
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                    {/* Title */}
-                    <Typography variant="h4">{app.title}</Typography>
-                    {updateAvailable && (
-                      <Chip icon={<RefreshCw size={16} />} label="Update" color="info" size="small" />
-                    )}
-                    {installed && !updateAvailable && (
-                      <Chip icon={<CheckCircle2 size={16} />} label="Installed" color="success" size="small" />
-                    )}
-                  </Stack>
-                  {/* Author */}
-                  <Typography variant="h6" sx={{ mb: 2 }}>
-                    by {app.author || 'Unknown'}
+              }
+              sx={{ mb: 2.5 }}
+            >
+              {installed && !updateAvailable && (
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <CheckCircle2 size={15} color="var(--mui-palette-success-main)" />
+                  <Typography variant="caption" fontWeight={600} color="success.main">
+                    Installed
                   </Typography>
-
-                  {/* Rating */}
-                  <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Rating value={rating} precision={0.1} readOnly size="small" />
-                    <Typography variant="body2">
-                      {rating.toFixed(1)} ({ratingCount} {ratingCount === 1 ? 'review' : 'reviews'})
-                    </Typography>
-                  </Stack>
-
-                  {/* Categories */}
-                  {app.categories && app.categories.length > 0 && (
-                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                      {app.categories.map((category: any, index) => (
-                        <Chip
-                          key={category.id || index}
-                          label={category.name || category}
-                          size="small"
-                        />
-                      ))}
-                    </Stack>
-                  )}
-                  <Typography variant="overline" component="div">
-                    {parse(app.short_description || '')}
+                </Stack>
+              )}
+              {updateAvailable && (
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <RefreshCw size={15} color="var(--mui-palette-info-main)" />
+                  <Typography variant="caption" fontWeight={600} color="info.main">
+                    Update available
                   </Typography>
-                </Box>
+                </Stack>
+              )}
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <Star size={14} fill="#F59E0B" color="#F59E0B" />
+                <Typography variant="caption" fontWeight={600}>
+                  {rating.toFixed(1)}
+                </Typography>
+                <Typography variant="caption" color="text.disabled">
+                  ({ratingCount})
+                </Typography>
               </Stack>
-            </Box>
+              <Typography
+                variant="caption"
+                fontWeight={700}
+                color={isFree ? 'success.main' : 'text.primary'}
+              >
+                {isFree ? 'Free' : `$${app.price}`}
+              </Typography>
+            </Stack>
 
-            {/* Action Buttons */}
-            <Box sx={{ px: 4, py: 3, bgcolor: 'background.paper' }}>
-              {/* Version Selector */}
-              {versionsArray.length > 0 && (
+            {/* Rating bar — always show */}
+            <Rating
+              value={rating}
+              precision={0.1}
+              readOnly
+              size="medium"
+              sx={{ mb: 2 }}
+            />
+
+            {/* Categories */}
+            {app.categories && app.categories.length > 0 && (
+              <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap justifyContent="center">
+                {app.categories.map((category: any, index) => (
+                  <Chip
+                    key={category.id || index}
+                    label={category.name || category}
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      height: 26,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderColor: 'divider',
+                      color: 'text.secondary',
+                    }}
+                  />
+                ))}
+              </Stack>
+            )}
+          </Box>
+
+          {/* ─── CTA Section ─── */}
+          <Box
+            sx={{
+              px: 4,
+              py: 3,
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'grey.50',
+              borderTop: '1px solid',
+              borderBottom: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            {versionsArray.length > 0 && (
+              <Box sx={{ mb: 2 }}>
                 <VersionSelector
                   availableVersions={versionsArray}
                   selectedVersion={selectedVersion}
                   setSelectedVersion={setSelectedVersion}
                 />
-              )}
+              </Box>
+            )}
 
-              <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                {!installed && (
-                  <InstallButton
-                    app={app}
-                    version={selectedVersion}
-                    disabled={!installable || blackListed}
-                    showSelectedVersion={true}
-                  ></InstallButton>
-                )}
-                {installed && app.instances && <EditorButtons instance={app.instances[0]} />}
+            {/* Primary action — full width */}
+            {!installed && (
+              <InstallButton
+                app={app}
+                version={selectedVersion}
+                disabled={!installable || blackListed}
+                showSelectedVersion={true}
+                size="large"
+                fullWidth
+                color="primary"
+                sx={{
+                  borderRadius: 3,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  fontSize: '1rem',
+                  py: 1.5,
+                  boxShadow: 'none',
+                  '&:hover': { boxShadow: 'none' },
+                }}
+              />
+            )}
 
+            {/* Installed actions row */}
+            {installed && (
+              <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
+                {app.instances && <EditorButtons instance={app.instances[0]} />}
                 {selectedVersionNotInstalled && (
-                  <UpdateButton
-                    app={app}
-                    to={selectedVersion}
-                    showSelectedVersion={true}
-                  ></UpdateButton>
+                  <UpdateButton app={app} to={selectedVersion} showSelectedVersion={true} />
                 )}
-                {installed && (
-                  <UninstallButton
-                    app={app}
-                    selectedVersion={selectedVersion}
-                    variant="button"
-                    onUninstallComplete={handleUninstallComplete}
-                  />
-                )}
-                {app.purchasable && app.permalink && Number(app.price) > 0 && (
+                <UninstallButton
+                  app={app}
+                  selectedVersion={selectedVersion}
+                  variant="button"
+                  onUninstallComplete={handleUninstallComplete}
+                />
+              </Stack>
+            )}
+
+            {app.purchasable && app.permalink && Number(app.price) > 0 && (
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<ShoppingCart size={16} />}
+                href={app.permalink}
+                target="_blank"
+                sx={{
+                  mt: 1.5,
+                  textTransform: 'none',
+                  borderRadius: 3,
+                  fontWeight: 600,
+                  py: 1.25,
+                }}
+              >
+                Purchase License
+              </Button>
+            )}
+
+            {!installable && app.requirement && (
+              <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
+                <Typography variant="body2">
+                  Not compatible with {systemInfo?.arch}. Requires{' '}
+                  {app.requirement.join(' or ')}.
+                </Typography>
+              </Alert>
+            )}
+          </Box>
+
+          {/* ─── Description ─── */}
+          <Box sx={{ px: 4, py: 3 }}>
+            <Typography
+              variant="overline"
+              color="text.disabled"
+              fontWeight={700}
+              sx={{ fontSize: '0.65rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
+            >
+              About
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              component="div"
+              sx={{
+                lineHeight: 1.8,
+                '& h1, & h2, & h3, & h4, & h5, & h6': {
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  color: 'text.primary',
+                  mt: 2,
+                  mb: 1,
+                },
+                '& p': { mb: 1.5 },
+                '& ul, & ol': { pl: 2.5, mb: 1.5 },
+                '& li': { mb: 0.5 },
+              }}
+            >
+              {parse(app.description || app.short_description || 'No description available.')}
+            </Typography>
+
+            {/* Links */}
+            {(app.documentationUrl || app.permalink) && (
+              <Stack direction="row" spacing={1} sx={{ mt: 3 }}>
+                {app.documentationUrl && (
                   <Button
                     variant="outlined"
-                    startIcon={<ShoppingCart size={16} />}
-                    endIcon={<ExternalLink size={16} />}
+                    size="small"
+                    startIcon={<BookOpen size={14} />}
+                    href={app.documentationUrl}
+                    target="_blank"
+                    sx={{
+                      textTransform: 'none',
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      fontSize: '0.8rem',
+                      borderColor: 'divider',
+                      color: 'text.secondary',
+                    }}
+                  >
+                    Docs
+                  </Button>
+                )}
+                {app.permalink && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Store size={14} />}
                     href={app.permalink}
                     target="_blank"
-                    fullWidth
+                    sx={{
+                      textTransform: 'none',
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      fontSize: '0.8rem',
+                      borderColor: 'divider',
+                      color: 'text.secondary',
+                    }}
                   >
-                    Purchase License
+                    Store
                   </Button>
                 )}
               </Stack>
-              {!installable && app.requirement && (
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  <Typography variant="body2">
-                    {app.title} is not compatible with your system architecture ({systemInfo?.arch}
-                    ). Required: {app.requirement.join(' or ')}
-                  </Typography>
-                </Alert>
-              )}
-            </Box>
-
-            <Divider />
-
-            {/* Content Section */}
-            <Box sx={{ px: 4, py: 3 }}>
-              <Card variant="outlined">
-                <CardContent sx={{ p: 3 }}>
-                  {/* About this app */}
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="h6" gutterBottom>
-                      About this app
-                      <IconButton href={app.permalink || ''} target="_blank">
-                        <ExternalLink size={14} />
-                      </IconButton>
-                    </Typography>
-
-                    {/* Description */}
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="body1" color="text.secondary" component="div">
-                        {parse(
-                          app.description || app.short_description || 'No description available.',
-                        )}
-                      </Typography>
-                    </Box>
-
-                    {/* Documentation Link */}
-                    {app.documentationUrl && (
-                      <Button
-                        variant="outlined"
-                        startIcon={<ExternalLink size={16} />}
-                        href={app.documentationUrl}
-                        target="_blank"
-                      >
-                        Documentation
-                      </Button>
-                    )}
-                  </Box>
-
-                  {/* System Requirements */}
-                  {app.requirement && app.requirement.length > 0 && (
-                    <>
-                      <Divider sx={{ my: 3 }} />
-                      <Box>
-                        <Typography variant="h6" sx={{ mb: 1 }}>
-                          System Requirements
-                        </Typography>
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          flexWrap="wrap"
-                          useFlexGap
-                          sx={{ mb: 1 }}
-                        >
-                          {app.requirement.map((req) => (
-                            <Chip
-                              key={req}
-                              label={req}
-                              size="small"
-                              color={
-                                systemInfo?.arch &&
-                                req.toLowerCase().includes(systemInfo.arch.toLowerCase())
-                                  ? 'success'
-                                  : 'default'
-                              }
-                            />
-                          ))}
-                        </Stack>
-                      </Box>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </Box>
+            )}
           </Box>
+
+          {/* ─── System Requirements ─── */}
+          {app.requirement && app.requirement.length > 0 && (
+            <>
+              <Divider />
+              <Box sx={{ px: 4, py: 3 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                  <Cpu size={14} style={{ opacity: 0.5 }} />
+                  <Typography
+                    variant="overline"
+                    color="text.disabled"
+                    fontWeight={700}
+                    sx={{ fontSize: '0.65rem', letterSpacing: '0.1em' }}
+                  >
+                    System Requirements
+                  </Typography>
+                </Stack>
+                <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                  {app.requirement.map((req) => {
+                    const compatible =
+                      systemInfo?.arch &&
+                      req.toLowerCase().includes(systemInfo.arch.toLowerCase());
+                    return (
+                      <Chip
+                        key={req}
+                        label={req}
+                        size="small"
+                        variant={compatible ? 'filled' : 'outlined'}
+                        sx={{
+                          height: 28,
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          bgcolor: compatible ? 'success.main' : undefined,
+                          color: compatible ? '#fff' : 'text.secondary',
+                          borderColor: compatible ? 'transparent' : 'divider',
+                        }}
+                      />
+                    );
+                  })}
+                </Stack>
+              </Box>
+            </>
+          )}
         </DialogContent>
       </Dialog>
-      {/* Snackbar for notifications */}
+
       <ActionSnackbar
         text={snackbarState.snackbarText}
         errorText={snackbarState.clipBoardContent}

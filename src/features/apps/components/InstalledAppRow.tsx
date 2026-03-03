@@ -18,6 +18,7 @@ import {
   ExternalLink,
   MoreHorizontal,
   Play,
+  Plus,
   Square,
   Settings,
   Info,
@@ -96,6 +97,34 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
       }
     } catch (err: any) {
       setSnackbar({ text: failMsg, severity: 'error', errorText: err?.message ?? '' });
+    } finally {
+      setSnackbarOpen(true);
+      invalidateAppData();
+      setBusy(false);
+    }
+  };
+
+  const handleCreateAndStart = async () => {
+    setBusy(true);
+    setMenuAnchor(null);
+    try {
+      const createQuest = await api.instances.instancesCreatePost({
+        appKey: { name: app.appKey.name, version: app.appKey.version },
+      });
+      const createResult = await waitForQuest(createQuest.data.jobId);
+
+      if (questStateFinishedOk(createResult.state) && createResult.result) {
+        const startQuest = await api.instances.instancesInstanceIdStartPost(createResult.result);
+        await waitForQuest(startQuest.data.jobId);
+      }
+
+      setSnackbar({ text: `${app.title} started`, severity: 'success', errorText: '' });
+    } catch (err: any) {
+      setSnackbar({
+        text: `Failed to create instance of ${app.title}`,
+        severity: 'error',
+        errorText: err?.message ?? '',
+      });
     } finally {
       setSnackbarOpen(true);
       invalidateAppData();
@@ -276,6 +305,14 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             },
           }}
         >
+          {!instance && (
+            <MenuItem onClick={handleCreateAndStart}>
+              <ListItemIcon>
+                <Plus size={16} />
+              </ListItemIcon>
+              <ListItemText>Create & Start</ListItemText>
+            </MenuItem>
+          )}
           {instance && isStopped && (
             <MenuItem onClick={handleStart}>
               <ListItemIcon>

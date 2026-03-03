@@ -51,18 +51,37 @@ function SkeletonCard() {
         overflow: 'hidden',
       }}
     >
-      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Skeleton variant="rounded" width={56} height={56} sx={{ borderRadius: 2, flexShrink: 0 }} />
+      <Box sx={{ p: 2.5, pb: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Stack direction="row" spacing={1.5} alignItems="flex-start">
+          <Skeleton variant="rounded" width={44} height={44} sx={{ borderRadius: 1.5, flexShrink: 0 }} />
           <Box sx={{ flex: 1 }}>
-            <Skeleton variant="text" width="70%" height={24} />
-            <Skeleton variant="text" width="90%" height={18} sx={{ mt: 0.5 }} />
             <Skeleton variant="text" width="60%" height={18} />
+            <Skeleton variant="text" width="90%" height={14} sx={{ mt: 0.5 }} />
+            <Skeleton variant="text" width="70%" height={14} />
           </Box>
         </Stack>
+        <Box sx={{ mt: 'auto', pt: 2, pb: 2 }}>
+          <Stack direction="row" spacing={0.75} alignItems="center">
+            <Skeleton variant="text" width="28%" height={12} />
+            <Skeleton variant="circular" width={10} height={10} />
+            <Skeleton variant="text" width="12%" height={12} />
+            <Box sx={{ flex: 1 }} />
+            <Skeleton variant="rounded" width={36} height={20} sx={{ borderRadius: 2 }} />
+          </Stack>
+          <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+            <Skeleton variant="rounded" width={52} height={20} sx={{ borderRadius: 2 }} />
+            <Skeleton variant="rounded" width={64} height={20} sx={{ borderRadius: 2 }} />
+          </Stack>
+        </Box>
       </Box>
-      <Box sx={{ px: 2.5, pb: 2.5, pt: 0 }}>
-        <Skeleton variant="rounded" height={40} sx={{ borderRadius: 2 }} />
+      <Box sx={{
+        bgcolor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50',
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        px: 2.5,
+        py: 1.5,
+      }}>
+        <Skeleton variant="rounded" height={40} sx={{ borderRadius: 1.5 }} />
       </Box>
     </MuiCard>
   );
@@ -108,6 +127,7 @@ export default function Marketplace() {
     return (
       <Card
         key={rdName ?? app?.id}
+        app={rdName}
         appKey={{ name: rdName, version: matchedApp?.appKey.version }}
         avatar={getAppIcon(app)}
         title={app.name}

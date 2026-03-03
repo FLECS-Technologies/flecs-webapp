@@ -12,13 +12,13 @@ import { useState } from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-import { Box, Button, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Stack, Chip } from '@mui/material';
 import { createVersion, createVersions, getLatestVersion } from '@shared/utils/version-utils';
 import { Version } from '@shared/types/version';
 import { App } from '@shared/types/app';
 import { useSystemInfo } from '@shared/hooks/system-queries';
 import FullCard from './FullCard';
-import { CheckCircle2, AlertCircle, Star } from 'lucide-react';
+import { Check, Star, AlertTriangle, ArrowUpRight } from 'lucide-react';
 import InstallButton from '@shared/components/app-actions/InstallButton';
 
 export default function MarketplaceCard(props: App) {
@@ -34,7 +34,6 @@ export default function MarketplaceCard(props: App) {
 
   const rating = parseFloat(props.average_rating || '0');
 
-  // Strip HTML tags for plain text description
   const plainDescription = (props.short_description || '')
     .replace(/<[^>]*>/g, '')
     .replace(/&amp;/g, '&')
@@ -42,6 +41,8 @@ export default function MarketplaceCard(props: App) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#039;/g, "'");
+
+  const categories = (props.categories ?? []).slice(0, 2);
 
   return (
     <Card
@@ -54,32 +55,40 @@ export default function MarketplaceCard(props: App) {
         overflow: 'hidden',
         border: '1px solid',
         borderColor: 'divider',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
         cursor: 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
+          transform: 'translateY(-2px)',
           borderColor: 'primary.main',
           boxShadow: (theme) =>
             theme.palette.mode === 'dark'
-              ? '0 4px 12px rgba(0,0,0,0.3)'
-              : '0 4px 12px rgba(0,0,0,0.06)',
+              ? '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,46,99,0.1)'
+              : '0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,46,99,0.06)',
+          '& .hover-arrow': {
+            opacity: 1,
+            transform: 'translateX(0)',
+          },
         },
       }}
       onClick={() => setFullCardOpen(true)}
     >
-      {/* Content area */}
-      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Icon + title row */}
-        <Stack direction="row" spacing={2} alignItems="center">
+      {/* Content */}
+      <Box sx={{ p: 2.5, pb: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {/* Header row: icon + title/desc + hover arrow */}
+        <Stack direction="row" spacing={1.5} alignItems="flex-start">
           <Avatar
             src={props.avatar}
             variant="rounded"
             sx={{
-              width: 56,
-              height: 56,
-              bgcolor: 'action.hover',
-              fontSize: 20,
-              borderRadius: 2,
+              width: 44,
+              height: 44,
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.100',
+              fontSize: 18,
+              borderRadius: 1.5,
               flexShrink: 0,
+              border: '1px solid',
+              borderColor: 'divider',
             }}
           >
             {props.title?.charAt(0).toUpperCase()}
@@ -87,99 +96,177 @@ export default function MarketplaceCard(props: App) {
 
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Typography variant="subtitle2" fontWeight={700} noWrap sx={{ lineHeight: 1.3 }}>
+              <Typography variant="body2" fontWeight={700} noWrap lineHeight={1.3} sx={{ flex: 1 }}>
                 {props.title}
               </Typography>
-              {installed && (
-                <Tooltip title="Installed">
-                  <span><CheckCircle2 size={16} color="#10B981" /></span>
-                </Tooltip>
-              )}
-              {!installable && (
-                <Tooltip title="Not compatible with your architecture">
-                  <span><AlertCircle size={14} color="#EF4444" /></span>
-                </Tooltip>
-              )}
+              <ArrowUpRight
+                size={14}
+                className="hover-arrow"
+                style={{
+                  opacity: 0,
+                  transform: 'translateX(-4px)',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  flexShrink: 0,
+                  color: 'var(--mui-palette-text-disabled)',
+                }}
+              />
             </Stack>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                mt: 0.5,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                lineHeight: 1.5,
+                fontSize: '0.75rem',
+              }}
+            >
+              {plainDescription || 'No description available'}
+            </Typography>
+          </Box>
+        </Stack>
+
+        {/* Meta block — pushed to bottom */}
+        <Box sx={{ mt: 'auto', pt: 2, pb: 2 }}>
+          {/* Author + rating + price */}
+          <Stack direction="row" alignItems="center" spacing={0.75}>
             {props.author && (
-              <Typography variant="caption" color="text.secondary" noWrap>
+              <Typography variant="caption" color="text.disabled" fontSize="0.7rem" noWrap sx={{ maxWidth: '40%' }}>
                 {props.author}
               </Typography>
             )}
             {rating > 0 && (
-              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 0.25 }}>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star
-                    key={i}
-                    size={12}
-                    fill={i <= Math.round(rating) ? '#F59E0B' : 'none'}
-                    color={i <= Math.round(rating) ? '#F59E0B' : '#6B7280'}
-                  />
-                ))}
-                <Typography variant="caption" color="text.secondary" sx={{ ml: 0.25 }}>
-                  {rating}
+              <>
+                <Typography variant="caption" color="text.disabled" fontSize="0.55rem">
+                  &middot;
                 </Typography>
-              </Stack>
+                <Stack direction="row" alignItems="center" spacing={0.25}>
+                  <Star size={10} fill="#F59E0B" color="#F59E0B" />
+                  <Typography variant="caption" color="text.disabled" fontSize="0.7rem">
+                    {rating.toFixed(1)}
+                  </Typography>
+                </Stack>
+              </>
             )}
-          </Box>
-        </Stack>
+            <Box sx={{ flex: 1 }} />
+            <Chip
+              label={props.price && parseFloat(props.price) > 0 ? `$${props.price}` : 'Free'}
+              size="small"
+              sx={{
+                height: 20,
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                bgcolor: (theme) =>
+                  props.price && parseFloat(props.price) > 0
+                    ? theme.palette.mode === 'dark'
+                      ? 'rgba(255,255,255,0.08)'
+                      : 'grey.100'
+                    : theme.palette.mode === 'dark'
+                      ? 'rgba(46,204,113,0.15)'
+                      : 'rgba(46,204,113,0.1)',
+                color: props.price && parseFloat(props.price) > 0 ? 'text.secondary' : 'success.main',
+                border: 'none',
+                '& .MuiChip-label': { px: 1 },
+              }}
+            />
+          </Stack>
 
-        {/* Description below icon row */}
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mt: 1.5,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            lineHeight: 1.4,
-          }}
-        >
-          {plainDescription || 'No description available'}
-        </Typography>
+          {/* Category chips */}
+          {categories.length > 0 && (
+            <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+              {categories.map((cat) => (
+                <Chip
+                  key={cat.id}
+                  label={cat.name}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    height: 20,
+                    fontSize: '0.6rem',
+                    fontWeight: 500,
+                    borderColor: 'divider',
+                    color: 'text.disabled',
+                    '& .MuiChip-label': { px: 0.75 },
+                  }}
+                />
+              ))}
+            </Stack>
+          )}
+        </Box>
       </Box>
 
-      {/* Footer: price left, action right */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 2.5, pb: 2, pt: 0 }} onClick={(e) => e.stopPropagation()}>
-        <Typography variant="body2" fontWeight={600} color="text.secondary">
-          {props.price ? `$${props.price}` : 'Free'}
-        </Typography>
-        {!installed ? (
+      {/* CTA — subtle elevated footer */}
+      <Box
+        sx={{
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          px: 2.5,
+          py: 1.5,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {installed ? (
+          <Chip
+            icon={<Check size={14} />}
+            label="Installed"
+            color="success"
+            variant="outlined"
+            sx={{
+              width: '100%',
+              height: 40,
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              borderRadius: 1.5,
+              justifyContent: 'center',
+            }}
+          />
+        ) : !installable ? (
+          <Button
+            fullWidth
+            size="small"
+            disabled
+            startIcon={<AlertTriangle size={15} />}
+            sx={{
+              borderRadius: 1.5,
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '0.8rem',
+              py: 1,
+            }}
+          >
+            Not compatible
+          </Button>
+        ) : (
           <InstallButton
             app={props}
             version={latestVersion}
-            disabled={installed || !installable}
-            variant="outlined"
+            disabled={false}
             size="small"
-            color="inherit"
+            fullWidth
             sx={{
-              borderRadius: 2,
+              borderRadius: 1.5,
               textTransform: 'none',
-              fontWeight: 600,
-              px: 2,
-              borderColor: 'divider',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              py: 1,
+              color: 'text.secondary',
+              bgcolor: 'transparent',
+              boxShadow: 'none',
+              transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                bgcolor: 'primary.main',
+                color: '#fff',
+                boxShadow: 'none',
+              },
             }}
           />
-        ) : (
-          <Button
-            variant="outlined"
-            color="success"
-            size="small"
-            startIcon={<CheckCircle2 size={14} />}
-            disabled
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-              px: 2,
-            }}
-          >
-            Installed
-          </Button>
         )}
-      </Stack>
+      </Box>
 
       <FullCard app={props} open={fullCardOpen} onClose={() => setFullCardOpen(false)} />
     </Card>

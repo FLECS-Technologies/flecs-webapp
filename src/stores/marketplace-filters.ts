@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getRequirement } from '@shared/api/product-service';
 
 interface Category {
   id: number;
@@ -10,7 +11,7 @@ interface Category {
 interface FilterParams {
   hiddenCategories: number[];
   search: string | undefined;
-  available: boolean;
+  compatible: boolean;
   freeOnly: boolean;
 }
 
@@ -25,11 +26,11 @@ interface MarketplaceFiltersState {
   // Actions
   setSearchFilter: (e: React.ChangeEvent<HTMLInputElement> | undefined) => void;
   setCategoryFilter: (categoryId: number) => void;
-  setAvailableFilter: () => void;
+  setCompatibleFilter: () => void;
   setFreeOnlyFilter: () => void;
   toggleFilter: () => void;
   setIsSearchEnabled: (val: boolean) => void;
-  applyFilters: (loadedProducts: any[]) => void;
+  applyFilters: (loadedProducts: any[], arch?: string) => void;
 }
 
 function searchProducts(products: any[], search: string, isSearchEnabled: boolean): any[] {
@@ -43,8 +44,12 @@ function searchProducts(products: any[], search: string, isSearchEnabled: boolea
   );
 }
 
-function filterByAvailability(products: any[], available: boolean): any[] {
-  return available ? products.filter((p: any) => p.stock_status === 'instock') : products;
+function filterByCompatibility(products: any[], compatible: boolean, arch: string | undefined): any[] {
+  if (!compatible || !arch) return products;
+  return products.filter((p: any) => {
+    const req = getRequirement(p);
+    return req && req.length > 0 && req.includes(arch);
+  });
 }
 
 function filterByPrice(products: any[], freeOnly: boolean): any[] {
@@ -102,7 +107,7 @@ function getUniqueCategories(products: any[]): Category[] {
 export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
   persist(
     (set, get) => ({
-      filterParams: { hiddenCategories: [], search: undefined, available: false, freeOnly: false },
+      filterParams: { hiddenCategories: [], search: undefined, compatible: false, freeOnly: false },
       categories: [],
       showFilter: false,
       isSearchEnabled: true,
@@ -126,9 +131,10 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
         });
       },
 
-      setAvailableFilter: () => {
+      setCompatibleFilter: () => {
         set((state) => ({
-          filterParams: { ...state.filterParams, available: !state.filterParams.available },
+          filterParams: { ...state.filterParams, compatible: !state.filterParams.compatible },
+          page: 0,
         }));
       },
 
@@ -144,18 +150,18 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
 
       setIsSearchEnabled: (val) => set({ isSearchEnabled: val }),
 
-      applyFilters: (loadedProducts) => {
+      applyFilters: (loadedProducts, arch) => {
         if (!loadedProducts || loadedProducts.length === 0) return;
 
         const { filterParams, isSearchEnabled } = get();
 
-        const byAvailability = filterByAvailability(loadedProducts, filterParams.available);
+        const byCompatible = filterByCompatibility(loadedProducts, filterParams.compatible, arch);
         const byCategories = filterByCategories(loadedProducts, filterParams.hiddenCategories);
         const bySearch = searchProducts(loadedProducts, filterParams.search ?? '', isSearchEnabled);
         const byPrice = filterByPrice(loadedProducts, filterParams.freeOnly);
 
-        const finalProducts = getIntersection(byAvailability, byCategories, bySearch, byPrice);
-        const forCategories = getIntersection(byAvailability, bySearch, byPrice);
+        const finalProducts = getIntersection(byCompatible, byCategories, bySearch, byPrice);
+        const forCategories = getIntersection(byCompatible, bySearch, byPrice);
         const categories = getUniqueCategories(forCategories);
 
         set({ finalProducts, categories });

@@ -21,6 +21,9 @@ import { useOAuth4WebApiAuth } from '@features/auth/providers/OAuth4WebApiAuthPr
 import { Configuration } from '@flecs/core-client-ts';
 import { createApi } from '@shared/api/api-client';
 
+/** Default timeout for all API requests (ms). Prevents hung requests when device is unreachable. */
+const API_TIMEOUT_MS = 15_000;
+
 export function getBaseURL(): string {
   const base = host();
   const path = baseURL();
@@ -79,7 +82,7 @@ export function PublicApiProvider({ children }: ApiProviderProps) {
   const api = useMemo(() => {
     const config = new Configuration({
       basePath: getBaseURL(),
-      // No accessToken for public API
+      baseOptions: { timeout: API_TIMEOUT_MS },
     });
     return createApi(config);
   }, []);
@@ -94,6 +97,7 @@ export function ProtectedApiProvider({ children }: ApiProviderProps) {
     const config = new Configuration({
       basePath: getBaseURL(),
       accessToken: auth.user?.access_token,
+      baseOptions: { timeout: API_TIMEOUT_MS },
     });
     return createApi(config);
   }, [auth.user?.access_token]);

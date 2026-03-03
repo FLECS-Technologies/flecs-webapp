@@ -11,6 +11,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 import type { SystemInfo, SystemVersionGet200Response, ExportRequest } from '@flecs/core-client-ts';
+import {
+  SystemInfoSchema,
+  SystemVersionSchema,
+  ExportsResponseSchema,
+  safeParseResponse,
+} from '@shared/types/schemas';
 
 export const systemKeys = {
   all: ['system'] as const,
@@ -40,7 +46,7 @@ export function useSystemInfo() {
     queryKey: systemKeys.info(),
     queryFn: async () => {
       const response = await api.system.systemInfoGet();
-      return response.data;
+      return safeParseResponse(SystemInfoSchema, response.data, 'systemInfo') as SystemInfo;
     },
     staleTime: 60_000,
   });
@@ -52,7 +58,7 @@ export function useSystemVersion() {
     queryKey: systemKeys.version(),
     queryFn: async () => {
       const response = await api.system.systemVersionGet();
-      return response.data;
+      return safeParseResponse(SystemVersionSchema, response.data, 'systemVersion') as SystemVersionGet200Response;
     },
     staleTime: 60_000,
   });
@@ -87,7 +93,7 @@ export function useExports() {
     queryKey: systemKeys.exports(),
     queryFn: async () => {
       const response = await api.export.exportsGet();
-      return response.data;
+      return safeParseResponse(ExportsResponseSchema, response.data, 'exports');
     },
   });
 }

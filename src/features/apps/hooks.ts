@@ -12,6 +12,13 @@ import { useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 import type { InstalledApp, AppInstance } from '@flecs/core-client-ts';
+import {
+  InstalledAppsResponseSchema,
+  AppInstancesResponseSchema,
+  InstanceDetailSchema,
+  InstanceLogsSchema,
+  safeParseResponse,
+} from '@shared/types/schemas';
 import { useMarketplaceProducts, marketplaceKeys } from '@features/marketplace/hooks';
 import {
   getAppIcon,
@@ -39,7 +46,7 @@ export function useApps() {
     queryKey: appKeys.list(),
     queryFn: async () => {
       const response = await api.app.appsGet();
-      return response.data;
+      return safeParseResponse(InstalledAppsResponseSchema, response.data, 'appsGet');
     },
     refetchInterval: 10_000,
   });
@@ -51,7 +58,7 @@ export function useInstances(app?: string, version?: string) {
     queryKey: [...appKeys.instances(), app, version],
     queryFn: async () => {
       const response = await api.instances.instancesGet(app, version);
-      return response.data;
+      return safeParseResponse(AppInstancesResponseSchema, response.data, 'instancesGet');
     },
     refetchInterval: 5_000,
   });
@@ -63,7 +70,7 @@ export function useInstanceDetail(instanceId: string) {
     queryKey: appKeys.instanceDetail(instanceId),
     queryFn: async () => {
       const response = await api.instances.instancesInstanceIdGet(instanceId);
-      return response.data;
+      return safeParseResponse(InstanceDetailSchema, response.data, 'instanceDetail');
     },
     enabled: !!instanceId,
   });
@@ -75,7 +82,7 @@ export function useInstanceLogs(instanceId: string) {
     queryKey: appKeys.instanceLogs(instanceId),
     queryFn: async () => {
       const response = await api.instances.instancesInstanceIdLogsGet(instanceId);
-      return response.data;
+      return safeParseResponse(InstanceLogsSchema, response.data, 'instanceLogs');
     },
     enabled: !!instanceId,
   });

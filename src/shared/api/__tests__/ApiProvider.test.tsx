@@ -96,9 +96,11 @@ describe('ApiProvider', () => {
         </PublicApiProvider>,
       );
 
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.stringMatching(/\/api\/v2$/), // Ends with /api/v2
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.stringMatching(/\/api\/v2$/), // Ends with /api/v2
+        }),
+      );
     });
 
     it('creates configuration with proper structure', () => {
@@ -130,10 +132,11 @@ describe('ApiProvider', () => {
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        // No accessToken should be provided for public API
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+        }),
+      );
     });
 
     it('creates API with correct configuration for public access', () => {
@@ -187,10 +190,12 @@ describe('ApiProvider', () => {
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        accessToken: 'mock-access-token',
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+          accessToken: 'mock-access-token',
+        }),
+      );
     });
 
     it('provides protected API context without token when user is not authenticated', () => {
@@ -210,10 +215,12 @@ describe('ApiProvider', () => {
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        accessToken: undefined,
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+          accessToken: undefined,
+        }),
+      );
     });
 
     it('recreates API when access token changes', () => {
@@ -227,10 +234,12 @@ describe('ApiProvider', () => {
         </OAuth4WebApiAuthProvider>,
       );
 
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        accessToken: 'mock-access-token',
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+          accessToken: 'mock-access-token',
+        }),
+      );
 
       // Change the access token
       mockOAuth4WebApiAuth.setAuthenticated(true, {
@@ -247,10 +256,12 @@ describe('ApiProvider', () => {
         </OAuth4WebApiAuthProvider>,
       );
 
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        accessToken: 'new-token',
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+          accessToken: 'new-token',
+        }),
+      );
     });
 
     it('throws error when useProtectedApi is used outside provider', () => {
@@ -333,10 +344,12 @@ describe('ApiProvider', () => {
       );
 
       expect(getByTestId('api-available')).toHaveTextContent('Available');
-      expect(mockConfiguration).toHaveBeenCalledWith({
-        basePath: expect.any(String),
-        accessToken: 'mock-access-token',
-      });
+      expect(mockConfiguration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basePath: expect.any(String),
+          accessToken: 'mock-access-token',
+        }),
+      );
     });
   });
 

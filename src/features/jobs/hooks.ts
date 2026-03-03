@@ -17,6 +17,7 @@ import { useCallback, useEffect } from 'react';
 import { Quest, QuestState } from '@flecs/core-client-ts';
 import { useProtectedApi } from '@shared/api/ApiProvider';
 import { useQuestStore, addQuest, getQuest, getQuestsMap } from '@stores/quests';
+import { QuestSchema, QuestsResponseSchema, safeParseResponse } from '@shared/types/schemas';
 
 const questFinished = (quest: Quest): boolean => {
   switch (quest.state) {
@@ -43,7 +44,8 @@ export function useQuestActions() {
     async (id: number) => {
       try {
         const { data } = await api.quests.questsIdGet(id);
-        addQuest(data);
+        const validated = safeParseResponse(QuestSchema, data, `quest/${id}`);
+        addQuest(validated as Quest);
       } catch (error) {
         console.error(error);
       }
@@ -54,8 +56,9 @@ export function useQuestActions() {
   const fetchQuests = useCallback(async () => {
     try {
       const { data } = await api.quests.questsGet();
-      data.forEach((q: Quest) => addQuest(q));
-      useQuestStore.getState().setMainQuestIds(data.map((q: Quest) => q.id));
+      const validated = safeParseResponse(QuestsResponseSchema, data, 'quests');
+      validated.forEach((q: Quest) => addQuest(q));
+      useQuestStore.getState().setMainQuestIds(validated.map((q: Quest) => q.id));
     } catch (error) {
       console.error(error);
     }

@@ -22,6 +22,7 @@ import {
   getPrice,
   getPurchasable,
   getReverseDomainName,
+  getVersions,
 } from '@shared/api/product-service';
 import { decodeHtmlEntities } from '@shared/utils/html-utils';
 
@@ -216,6 +217,7 @@ export function useAppList() {
         app.permalink = getPermalink(mpApp);
         app.purchasable = getPurchasable(mpApp);
         app.documentationUrl = getDocumentationUrl(mpApp);
+        app.versions = getVersions(mpApp);
       }
 
       if (typeof app === 'object' && app !== null) {

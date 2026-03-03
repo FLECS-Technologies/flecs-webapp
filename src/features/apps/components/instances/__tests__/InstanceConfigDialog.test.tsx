@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import InstanceConfigDialog from '../InstanceConfigDialog';
 import { createMockApi } from '../../../../../__mocks__/core-client-ts';
@@ -12,7 +12,6 @@ vi.mock('@shared/api/ApiProvider', () => ({
 
 describe('InstanceConfigDialog', () => {
   const mockOnClose = vi.fn();
-  const mockSetActiveTab = vi.fn();
   const mockInstanceId = 'test-instance-id';
   const mockInstanceName = 'Test Instance';
 
@@ -22,64 +21,72 @@ describe('InstanceConfigDialog', () => {
     mockUseProtectedApi.mockReturnValue(mockApi);
   });
 
-  it('renders the dialog with the correct title', async () => {
+  it('renders the dialog with the instance name', async () => {
     render(
       <InstanceConfigDialog
         open={true}
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
-        activeTab={0}
-        setActiveTab={mockSetActiveTab}
       />,
     );
 
     await waitFor(() => {
-      expect(screen.getByText(`Configure ${mockInstanceName}`)).toBeInTheDocument();
+      expect(screen.getByText(mockInstanceName)).toBeInTheDocument();
     });
   });
 
-  it('switches between tabs', async () => {
+  it('renders all section labels in the sidebar', async () => {
     render(
       <InstanceConfigDialog
         open={true}
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
-        activeTab={0}
-        setActiveTab={mockSetActiveTab}
       />,
     );
 
-    // Check initial tab
     await waitFor(() => {
-      expect(screen.getByText('USB Devices')).toBeInTheDocument();
-    });
-
-    // Switch to "Network Interfaces" tab
-    const networkTab = screen.getByRole('tab', { name: 'Network Interfaces' });
-    fireEvent.click(networkTab);
-    await waitFor(() => {
-      expect(screen.getByText('Network Interfaces')).toBeInTheDocument();
-    });
-
-    // Switch to "Ports" tab
-    const portsTab = screen.getByRole('tab', { name: 'Ports' });
-    fireEvent.click(portsTab);
-    await waitFor(() => {
-      expect(screen.getByText('Ports')).toBeInTheDocument();
+      expect(screen.getAllByText('USB Devices').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Network').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Ports').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Environment').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Editors').length).toBeGreaterThan(0);
     });
   });
 
-  it('calls onClose when the dialog is closed without changes', async () => {
+  it('switches between sections', async () => {
     render(
       <InstanceConfigDialog
         open={true}
         onClose={mockOnClose}
         instanceId={mockInstanceId}
         instanceName={mockInstanceName}
-        activeTab={0}
-        setActiveTab={mockSetActiveTab}
+      />,
+    );
+
+    // Click "Network" in sidebar
+    const networkItem = screen.getByText('Network');
+    fireEvent.click(networkItem);
+    await waitFor(() => {
+      expect(screen.getByText('Configure network interfaces.')).toBeInTheDocument();
+    });
+
+    // Click "Ports" in sidebar
+    const portsItem = screen.getByText('Ports');
+    fireEvent.click(portsItem);
+    await waitFor(() => {
+      expect(screen.getByText('Configure port mappings.')).toBeInTheDocument();
+    });
+  });
+
+  it('calls onClose when the Close button is clicked', async () => {
+    render(
+      <InstanceConfigDialog
+        open={true}
+        onClose={mockOnClose}
+        instanceId={mockInstanceId}
+        instanceName={mockInstanceName}
       />,
     );
 

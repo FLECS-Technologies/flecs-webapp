@@ -1,19 +1,11 @@
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
- * Created on Wed Apr 16 2025
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -103,15 +95,13 @@ describe('EnvironmentConfigTab', () => {
     fireEvent.click(deleteButton);
 
     await waitFor(() => {
-      // expect(screen.queryByDisplayValue('TEST_KEY')).not.toBeInTheDocument()
       expect(
         mockApi.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete,
       ).toHaveBeenCalled();
     });
   });
 
-  it('saves environment variables', async () => {
-    // Mock API responses
+  it('saves environment variables via Save All', async () => {
     mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
@@ -123,13 +113,12 @@ describe('EnvironmentConfigTab', () => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
     });
 
-    // Simulate a change to enable the Save button
+    // Simulate a change to enable the Save All button
     const keyInput = screen.getByDisplayValue('TEST_KEY');
     fireEvent.change(keyInput, { target: { value: 'UPDATED_KEY' } });
 
-    const saveButton = screen
-      .getAllByLabelText('Save Environment Variable')
-      .find((button) => button.tagName.toLowerCase() === 'button') as HTMLElement;
+    const saveButton = screen.getByLabelText('Save Environment Variable');
+    expect(saveButton).not.toBeDisabled();
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -141,7 +130,6 @@ describe('EnvironmentConfigTab', () => {
   });
 
   it('shows a success snackbar when saving succeeds', async () => {
-    // Mock API responses
     mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
@@ -153,14 +141,19 @@ describe('EnvironmentConfigTab', () => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
     });
 
-    const saveButton = screen
-      .getAllByLabelText('Save Environment Variable')
-      .find((button) => button.tagName.toLowerCase() === 'button') as HTMLElement;
+    // Modify to enable Save All
+    const keyInput = screen.getByDisplayValue('TEST_KEY');
+    fireEvent.change(keyInput, { target: { value: 'CHANGED' } });
+
+    const saveButton = screen.getByLabelText('Save Environment Variable');
     fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Saved/)).toBeInTheDocument();
+    });
   });
 
   it('shows an error snackbar when saving fails', async () => {
-    // Mock API responses
     mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
       data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
     });
@@ -172,9 +165,49 @@ describe('EnvironmentConfigTab', () => {
       expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
     });
 
-    const saveButton = screen
-      .getAllByLabelText('Save Environment Variable')
-      .find((button) => button.tagName.toLowerCase() === 'button') as HTMLElement;
+    // Modify to enable Save All
+    const keyInput = screen.getByDisplayValue('TEST_KEY');
+    fireEvent.change(keyInput, { target: { value: 'CHANGED' } });
+
+    const saveButton = screen.getByLabelText('Save Environment Variable');
     fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to save/)).toBeInTheDocument();
+    });
+  });
+
+  it('shows unsaved changes indicator when variables are modified', async () => {
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
+      data: [{ name: 'TEST_KEY', value: 'TEST_VALUE' }],
+    });
+
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('TEST_KEY')).toBeInTheDocument();
+    });
+
+    const keyInput = screen.getByDisplayValue('TEST_KEY');
+    fireEvent.change(keyInput, { target: { value: 'CHANGED' } });
+
+    expect(screen.getByText(/unsaved change/)).toBeInTheDocument();
+  });
+
+  it('shows "New" chip on newly added variables', async () => {
+    mockApi.instances.instancesInstanceIdConfigEnvironmentGet.mockResolvedValueOnce({
+      data: [{ name: 'EXISTING', value: 'val' }],
+    });
+
+    render(<EnvironmentConfigTab instanceId={instanceId} onChange={mockOnChange} />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('EXISTING')).toBeInTheDocument();
+    });
+
+    const addButton = screen.getByText('Add Environment Variable');
+    fireEvent.click(addButton);
+
+    expect(screen.getByText('New')).toBeInTheDocument();
   });
 });

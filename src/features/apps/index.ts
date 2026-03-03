@@ -1,5 +1,4 @@
 export { default as AppStatusDot } from './components/AppStatusDot';
-export { default as AppsToolbar } from './components/AppsToolbar';
 export { default as EmptyApps } from './components/EmptyApps';
 export { default as InstalledAppsTable } from './components/InstalledAppsTable';
 export { default as InstalledAppRow } from './components/InstalledAppRow';

@@ -17,6 +17,7 @@
  */
 
 import React, { useState } from 'react';
+import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
 import LoadButton from '@shared/components/LoadButton';
 import LoadIconButton from '@shared/components/LoadIconButton';
 import ConfirmDialog from '@shared/components/ConfirmDialog';
@@ -32,8 +33,9 @@ interface UninstallButtonProps {
   app: App;
   selectedVersion: Version;
   displayState?: string;
-  variant?: 'button' | 'icon';
+  variant?: 'button' | 'icon' | 'menuItem';
   onUninstallComplete?: (success: boolean, message: string, error?: string) => void;
+  onMenuClose?: () => void;
 }
 
 export default function UninstallButton({
@@ -42,6 +44,7 @@ export default function UninstallButton({
   displayState,
   variant = 'button',
   onUninstallComplete,
+  onMenuClose,
 }: UninstallButtonProps): React.ReactElement | null {
   const invalidateAppData = useInvalidateAppData();
   const { fetchQuest, waitForQuest } = useQuestActions();
@@ -98,7 +101,22 @@ export default function UninstallButton({
 
   return (
     <>
-      {variant === 'icon' ? (
+      {variant === 'menuItem' ? (
+        <MenuItem
+          data-testid="uninstall-button"
+          disabled={uninstalling}
+          onClick={() => {
+            onMenuClose?.();
+            setConfirmOpen(true);
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          <ListItemIcon sx={{ color: 'error.main' }}>
+            <Trash2 size={16} />
+          </ListItemIcon>
+          <ListItemText>Uninstall</ListItemText>
+        </MenuItem>
+      ) : variant === 'icon' ? (
         <LoadIconButton
           data-testid="uninstall-button"
           icon={<Trash2 size={18} />}

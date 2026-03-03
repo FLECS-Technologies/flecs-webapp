@@ -93,7 +93,7 @@ build: {
 | Metric | Value |
 |--------|-------|
 | Build tool | Vite 7.3.1 (Rolldown) |
-| Bundle size | **320KB gzip** |
+| Bundle size | **338KB gzip** |
 | Build time | **~2s** |
 | Output | Single JS + single CSS + index.html |
 
@@ -168,7 +168,8 @@ build: {
 | 36 cross-feature imports across 29 files | Couples feature modules | Move shared logic to `shared/` |
 | No empty states with CTAs | New users see blank pages | Add illustrations + action buttons |
 | Quest polling via module-level Map | Not reactive, manual sync | Migrate to TanStack Query polling |
-| Zod + React Hook Form installed but unused | No runtime validation at API boundaries | Wire Zod schemas for API responses + forms |
+| React Hook Form installed but unused | No schema-driven form validation | Wire RHF + Zod for complex forms |
+| No API request timeout | Hung requests when device unreachable | ~~Done — 15s Axios timeout via baseOptions~~ |
 
 ---
 
@@ -421,7 +422,8 @@ features/apps/hooks.ts imports from features/jobs/hooks.ts
 - [ ] Empty states — illustrations + CTAs for every page when no data (Apps + Marketplace done, others missing)
 - [ ] Per-feature error boundaries (currently only root)
 - [ ] Quest polling migration from module-level Map to TanStack Query
-- [ ] Type safety at boundaries — wire Zod schemas for API response validation (Zod installed, zero usage)
+- [x] Type safety at boundaries — Zod schemas for all API responses (`src/shared/types/schemas.ts`), `safeParseResponse()` in all hooks
+- [x] API request timeout — 15s Axios timeout via `Configuration.baseOptions`
 - [ ] Form validation with React Hook Form + Zod for complex forms (RHF installed, zero usage)
 
 ---
@@ -431,7 +433,7 @@ features/apps/hooks.ts imports from features/jobs/hooks.ts
 | Metric | Baseline (pre-redesign) | Current | Target |
 |--------|------------------------|---------|--------|
 | TypeScript coverage | 68% | **100%** | 100% ✅ |
-| Bundle size (gzip) | ~320KB | **320KB** | < 400KB (single bundle) |
+| Bundle size (gzip) | ~320KB | **338KB** | < 400KB (single bundle) |
 | Build time | ~4s | **~2s** | < 3s ✅ |
 | Provider nesting | 11+ levels | **6** | 4 |
 | Zustand stores | 0 | **6** | 6 ✅ |

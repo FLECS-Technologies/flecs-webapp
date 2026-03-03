@@ -26,9 +26,9 @@ These principles are not aspirational — they are enforced by the stack and val
 |-----------|---------------|--------|
 | **Single Source of Truth** | Server state in TanStack Query cache. Client state in Zustand stores. Never duplicated. | Active |
 | **Command-Query Separation** | `useQuery` = read. `useMutation` = write. No mixed hooks. | Active |
-| **Colocation** | Feature code lives with its feature. No cross-feature imports. Shared code in `shared/`. | Active (15 violations remaining) |
+| **Colocation** | Feature code lives with its feature. No cross-feature imports. Shared code in `shared/`. | Active (36 violations remaining) |
 | **Dependency Inversion** | Components depend on hooks, hooks depend on API abstractions, never the reverse. | Active |
-| **Immutability** | Zustand `immer` middleware. TanStack Query cache is read-only. No direct mutation. | Active |
+| **Immutability** | Zustand `set()` produces new state references. TanStack Query cache is read-only. No direct mutation. | Active |
 | **Referential Transparency** | Pure components receive props, produce JSX. Side effects live in hooks. | Active |
 | **KISS** | Simplest solution that works. No premature abstractions. Three similar lines > one premature helper. | Enforced |
 
@@ -165,10 +165,10 @@ build: {
 | Problem | Impact | Fix |
 |---------|--------|-----|
 | 6 nested providers (target: 4) | Unnecessary re-render scope | Flatten auth + device state |
-| ~60 cross-feature imports across 29 files | Couples feature modules | Move shared logic to `shared/` |
-| Legacy `useState`+`useEffect` data fetching | No caching, no dedup | Wire TanStack Query hooks into components |
+| 36 cross-feature imports across 29 files | Couples feature modules | Move shared logic to `shared/` |
 | No empty states with CTAs | New users see blank pages | Add illustrations + action buttons |
 | Quest polling via module-level Map | Not reactive, manual sync | Migrate to TanStack Query polling |
+| Zod + React Hook Form installed but unused | No runtime validation at API boundaries | Wire Zod schemas for API responses + forms |
 
 ---
 
@@ -358,11 +358,18 @@ No tabs. One page. Device info, license, quick actions, recent exports — all v
 - [x] Component smoke tests (3 tests)
 - [x] **61 files, 415 tests, 100% pass rate**
 
+### Phase 3: Wire TanStack Query into Components ✅
+
+- [x] Legacy `src/data/AppList.tsx` and `src/data/SystemData.tsx` deleted — replaced by TanStack Query hooks
+- [x] All data fetching uses `useQuery` / `useMutation` hooks (useApps, useInstances, useSystemInfo, etc.)
+- [x] Smart polling configured: apps (10s), instances (5s), system ping (30s) via `refetchInterval`
+- [x] Remaining `useState` + `useEffect` is local UI state only (modals, forms) — not data fetching
+
 ---
 
 ## 9. Remaining Phases
 
-### Phase 3: Provider Flattening
+### Phase 4: Provider Flattening
 
 **Goal:** Reduce provider nesting from 6 to 4.
 
@@ -370,10 +377,12 @@ No tabs. One page. Device info, license, quick actions, recent exports — all v
 |-----------------|--------|
 | QueryClientProvider | Keep — TanStack Query requires it |
 | ThemeHandler | Keep — MUI theming |
-| AuthProvider (OAuth) | Keep — auth context |
-| DeviceAuthorizationProvider | **Merge into AuthProvider** |
+| PublicApiProvider | Keep — public API access |
+| PublicAuthProviderApiProvider | **Merge into PublicApiProvider** |
+| OAuth4WebApiAuthProvider | Keep — auth context |
+| ProtectedApiProvider | Keep — authenticated API access |
 | OnboardingGuard | **Convert to route-level guard** (not a provider) |
-| BrowserRouter (HashRouter) | Keep — routing |
+| DeviceActivationProvider | **Merge into OAuth4WebApiAuthProvider** |
 
 **Pattern:** Use a `composeProviders` utility to flatten remaining providers:
 ```typescript
@@ -385,36 +394,20 @@ const Providers = composeProviders(
 );
 ```
 
-### Phase 4: Wire TanStack Query into Components
-
-**Goal:** Replace all `useState` + `useEffect` data fetching with TanStack Query hooks.
-
-The hooks exist (created in Phase 1). They need to replace the legacy patterns:
-
-```typescript
-// BEFORE (legacy)
-const [apps, setApps] = useState([]);
-useEffect(() => { api.apps.appsGet().then(setApps); }, []);
-
-// AFTER (TanStack Query — hook already exists)
-const { data: apps, isLoading } = useApps();
-```
-
-**Files to wire:**
-- `src/data/AppList.tsx` → use `useApps()`, `useInstances()`
-- `src/data/SystemData.tsx` → use `useSystemInfo()`, `useSystemVersion()`
-- Instance detail panels → use `useInstanceDetail()`
-- All manual polling → use `refetchInterval` option
-
 ### Phase 5: Cross-Feature Import Cleanup
 
 **Goal:** Zero cross-feature imports. Features are self-contained modules.
 
-Current violations (~60 imports across 29 files):
-- `features/apps/` importing from `features/jobs/` (11 instances)
-- `features/marketplace/` importing from `features/apps/` (9 instances)
-- `features/system/` importing from `features/jobs/` and `features/apps/`
-- `features/onboarding/` importing from `features/auth/`
+Current violations (36 imports across 29 files):
+- `features/apps/` importing from `features/jobs/` (7 instances)
+- `features/apps/` importing from `features/system/` (4 instances)
+- `features/marketplace/` importing from `features/apps/` (3 instances)
+- `features/marketplace/` importing from `features/system/` (2 instances)
+- `features/system/` importing from `features/jobs/` (4 instances)
+- `features/system/` importing from `features/apps/` (2 instances)
+- `features/onboarding/` importing from `features/auth/` (1 instance)
+- `features/onboarding/` importing from `features/jobs/` (1 instance)
+- `features/notifications/` importing from `features/jobs/` (1 instance)
 
 **Resolution pattern:** Extract shared types/hooks to `shared/`:
 ```
@@ -425,10 +418,11 @@ features/apps/hooks.ts imports from features/jobs/hooks.ts
 
 ### Phase 6: Polish
 
-- [ ] Empty states — illustrations + CTAs for every page when no data
+- [ ] Empty states — illustrations + CTAs for every page when no data (Apps + Marketplace done, others missing)
 - [ ] Per-feature error boundaries (currently only root)
-- [ ] Form validation with React Hook Form + Zod (complex forms)
 - [ ] Quest polling migration from module-level Map to TanStack Query
+- [ ] Type safety at boundaries — wire Zod schemas for API response validation (Zod installed, zero usage)
+- [ ] Form validation with React Hook Form + Zod for complex forms (RHF installed, zero usage)
 
 ---
 
@@ -445,7 +439,7 @@ features/apps/hooks.ts imports from features/jobs/hooks.ts
 | Test files | ~30 broken | **61** | 80+ |
 | Test cases | unknown | **415** | 600+ |
 | Pass rate | unknown | **100%** | 100% ✅ |
-| Cross-feature imports | unknown | **~60** | 0 |
+| Cross-feature imports | unknown | **36** | 0 |
 | Install an app | 4 clicks | **1 click** | 1 click ✅ |
 | See instance status | Expand row | **Visible on card** | 0 clicks ✅ |
 | Onboarding time | ~2 min | **< 30s** | < 30s ✅ |

@@ -1,16 +1,6 @@
-export { default as AppCard } from './components/AppCard';
-export { default as AppGrid } from './components/AppGrid';
 export { default as AppStatusDot } from './components/AppStatusDot';
 export { default as AppsToolbar } from './components/AppsToolbar';
 export { default as EmptyApps } from './components/EmptyApps';
-export { default as InstanceList } from './components/InstanceList';
-export { default as InstanceRow } from './components/InstanceRow';
-export { default as AppCardSkeleton } from './components/AppCardSkeleton';
-export { default as AppGridSkeleton } from './components/AppGridSkeleton';
-export { AppFilter } from './components/AppFilter';
-export { default as AppInstanceRow } from './components/AppInstanceRow';
-export { default as InstalledAppsList } from './components/InstalledAppsList';
-export { default as InstalledAppsListRow } from './components/InstalledAppsListRow';
 export { default as InstalledAppsTable } from './components/InstalledAppsTable';
 export { default as InstalledAppRow } from './components/InstalledAppRow';
 export { default as InstallButton } from '@shared/components/app-actions/InstallButton';

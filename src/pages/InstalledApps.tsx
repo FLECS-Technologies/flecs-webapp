@@ -8,22 +8,23 @@ import ContentDialog from '@shared/components/ContentDialog';
 import InstallationStepper from '@shared/components/installation/InstallationStepper';
 import { App } from '@shared/types/app';
 
-function TableSkeleton() {
+function RowSkeleton() {
   return (
     <Paper
       variant="outlined"
-      sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden', p: 2 }}
+      sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}
     >
-      <Stack spacing={2}>
+      <Stack divider={<Box sx={{ borderBottom: '1px solid', borderColor: 'divider' }} />}>
         {[0, 1, 2].map((i) => (
-          <Stack key={i} direction="row" spacing={2} alignItems="center">
-            <Skeleton variant="rounded" width={36} height={36} />
+          <Stack key={i} direction="row" spacing={2} alignItems="center" sx={{ px: 3, py: 2 }}>
+            <Skeleton variant="rounded" width={48} height={48} sx={{ borderRadius: 2 }} />
             <Box sx={{ flex: 1 }}>
-              <Skeleton width="40%" height={20} />
-              <Skeleton width="25%" height={14} />
+              <Skeleton width="35%" height={20} />
+              <Skeleton width="45%" height={14} sx={{ mt: 0.5 }} />
+              <Skeleton width="15%" height={12} sx={{ mt: 0.5 }} />
             </Box>
-            <Skeleton width={60} height={20} />
-            <Skeleton width={80} height={24} sx={{ borderRadius: 2 }} />
+            <Skeleton variant="rounded" width={72} height={32} sx={{ borderRadius: 2 }} />
+            <Skeleton variant="circular" width={28} height={28} />
           </Stack>
         ))}
       </Stack>
@@ -78,7 +79,7 @@ export default function InstalledApps() {
       </Box>
 
       {appListLoading && ping && installedApps.length === 0 ? (
-        <TableSkeleton />
+        <RowSkeleton />
       ) : installedApps.length === 0 && !appListLoading ? (
         <Paper variant="outlined" sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
           <EmptyApps onSideload={() => handleSideload(null)} />

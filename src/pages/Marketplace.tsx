@@ -1,8 +1,24 @@
-import { useEffect } from 'react';
-import { Box, Typography, Stack, Collapse, Chip, Skeleton, Card as MuiCard } from '@mui/material';
+import { useEffect, useState } from 'react';
+import {
+  Box,
+  Typography,
+  Skeleton,
+  Card as MuiCard,
+  Stack,
+  Button,
+  Popover,
+  Chip,
+  Switch,
+  InputBase,
+  Paper,
+  Divider,
+  Checkbox,
+  FormControlLabel,
+} from '@mui/material';
+import { SlidersHorizontal, Search, X } from 'lucide-react';
 import { useAppList } from '@shared/hooks/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
-import { MarketplaceSearch, CategoryChips, MarketplaceGrid, MarketplaceEmpty } from '@features/marketplace';
+import { MarketplaceGrid, MarketplaceEmpty } from '@features/marketplace';
 import Card from '@features/marketplace/components/cards/Card';
 import {
   getAppIcon,
@@ -60,11 +76,12 @@ export default function Marketplace() {
     setCategoryFilter,
     setSearchFilter,
     setAvailableFilter,
-    toggleFilter,
-    showFilter,
+    setFreeOnlyFilter,
     finalProducts,
     applyFilters,
   } = useMarketplaceFilters();
+
+  const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null);
 
   // Re-apply filters whenever products or filter params change
   useEffect(() => {
@@ -74,10 +91,20 @@ export default function Marketplace() {
   }, [products, filterParams, applyFilters]);
 
   const totalApps = products?.length ?? 0;
+  const hiddenCount = filterParams.hiddenCategories?.length ?? 0;
+  const activeFilterCount =
+    (hiddenCount > 0 ? 1 : 0) + (filterParams.available ? 1 : 0) + (filterParams.freeOnly ? 1 : 0);
+  const hasFilters = activeFilterCount > 0;
+
+  const clearAllFilters = () => {
+    if (filterParams.available) setAvailableFilter();
+    if (filterParams.freeOnly) setFreeOnlyFilter();
+    (filterParams.hiddenCategories ?? []).forEach((id: number) => setCategoryFilter(id));
+  };
 
   const productCards = (finalProducts ?? []).map((app: any) => {
     const rdName = getReverseDomainName(app);
-    const matchedApp = appList?.find((o: any) => o.appKey.name === rdName);
+    const matchedApp = appList?.find((o: any) => o?.appKey?.name === rdName);
     return (
       <Card
         key={rdName ?? app?.id}
@@ -109,56 +136,211 @@ export default function Marketplace() {
 
   return (
     <Box>
-      {/* Header */}
-      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1 }}>
-        <Typography variant="h4" fontWeight={800}>
-          FLECS Marketplace
+      {/* Header row */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="overline" color="text.disabled" fontWeight={600}>
+          MARKETPLACE
         </Typography>
-        {totalApps > 0 && (
-          <Chip
-            label={`${totalApps}+ Apps`}
-            size="small"
-            sx={{
-              fontWeight: 600,
-              fontSize: '0.75rem',
-              height: 26,
-              bgcolor: 'action.selected',
-            }}
-          />
-        )}
-      </Stack>
-
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Choose from our curated collection of industry-leading applications
-      </Typography>
-
-      {/* Category chips — always visible */}
-      <Box sx={{ mb: 2.5 }}>
-        <CategoryChips
-          categories={categories ?? []}
-          hiddenCategories={filterParams.hiddenCategories ?? []}
-          onToggle={setCategoryFilter}
-        />
+        <Typography variant="h4" fontWeight={800}>
+          Browse Apps
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+          Extend your device with {totalApps || '...'} integrations.
+        </Typography>
       </Box>
 
-      {/* Search + filters */}
-      <Stack spacing={2} sx={{ mb: 3 }}>
-        <MarketplaceSearch
-          value={filterParams.search}
-          onSearch={setSearchFilter}
-          onToggleFilter={toggleFilter}
-        />
-
-        <Collapse in={showFilter}>
-          <Chip
-            label="Available only"
-            variant={filterParams.available ? 'filled' : 'outlined'}
-            color={filterParams.available ? 'primary' : 'default'}
-            size="small"
-            onClick={setAvailableFilter}
-            sx={{ alignSelf: 'flex-start' }}
+      {/* Search + filter bar */}
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+        <Paper
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            px: 1.5,
+            py: 0.75,
+            borderRadius: 2,
+            flex: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: 'none',
+          }}
+        >
+          <Search size={18} style={{ opacity: 0.4, marginRight: 10, flexShrink: 0 }} />
+          <InputBase
+            fullWidth
+            placeholder="Search apps..."
+            value={filterParams.search ?? ''}
+            onChange={(e) => setSearchFilter(e as any)}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+            sx={{ fontSize: '0.875rem' }}
           />
-        </Collapse>
+        </Paper>
+
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<SlidersHorizontal size={15} />}
+          onClick={(e) => setFilterAnchor(e.currentTarget)}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            borderRadius: 2,
+            px: 1.5,
+            borderColor: hasFilters ? 'primary.main' : 'divider',
+            color: hasFilters ? 'primary.main' : 'text.secondary',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Filters{hasFilters ? ` (${activeFilterCount})` : ''}
+        </Button>
+
+        {/* Filter popover */}
+        <Popover
+          open={Boolean(filterAnchor)}
+          anchorEl={filterAnchor}
+          onClose={() => setFilterAnchor(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          slotProps={{ paper: { sx: { width: 300, borderRadius: 2.5, mt: 0.5 } } }}
+        >
+          <Box sx={{ p: 2 }}>
+            {/* Header */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
+              <Typography variant="subtitle2" fontWeight={700} fontSize="0.85rem">
+                Filters
+              </Typography>
+              {hasFilters && (
+                <Button
+                  size="small"
+                  onClick={clearAllFilters}
+                  sx={{ textTransform: 'none', fontSize: '0.75rem', fontWeight: 500, minWidth: 0, px: 1 }}
+                >
+                  Clear all
+                </Button>
+              )}
+            </Stack>
+
+            {/* Categories */}
+            <Typography variant="overline" color="text.disabled" sx={{ fontSize: '0.6rem', letterSpacing: '0.08em', display: 'block', mb: 0.75 }}>
+              Category
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {(categories ?? []).map((cat) => {
+                const active = !(filterParams.hiddenCategories ?? []).includes(cat.id);
+                return (
+                  <FormControlLabel
+                    key={cat.id}
+                    control={
+                      <Checkbox
+                        size="small"
+                        checked={active}
+                        onChange={() => setCategoryFilter(cat.id)}
+                        sx={{ py: 0.25, px: 1 }}
+                      />
+                    }
+                    label={
+                      <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%' }}>
+                        <Typography variant="body2" fontSize="0.8rem" sx={{ flex: 1 }}>
+                          {cat.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.disabled" fontSize="0.7rem">
+                          {cat.count}
+                        </Typography>
+                      </Stack>
+                    }
+                    sx={{ mx: 0, width: '100%', '& .MuiFormControlLabel-label': { flex: 1 } }}
+                  />
+                );
+              })}
+            </Box>
+
+            <Divider sx={{ my: 1.5 }} />
+
+            {/* Toggles */}
+            <Stack spacing={1.5}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography variant="body2" fontWeight={600} fontSize="0.8rem">
+                    Compatible only
+                  </Typography>
+                  <Typography variant="caption" color="text.disabled" fontSize="0.7rem">
+                    Match your device architecture
+                  </Typography>
+                </Box>
+                <Switch
+                  size="small"
+                  checked={filterParams.available}
+                  onChange={setAvailableFilter}
+                />
+              </Stack>
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography variant="body2" fontWeight={600} fontSize="0.8rem">
+                    Free only
+                  </Typography>
+                  <Typography variant="caption" color="text.disabled" fontSize="0.7rem">
+                    Hide paid apps
+                  </Typography>
+                </Box>
+                <Switch
+                  size="small"
+                  checked={filterParams.freeOnly}
+                  onChange={setFreeOnlyFilter}
+                />
+              </Stack>
+            </Stack>
+          </Box>
+        </Popover>
+      </Stack>
+
+      {/* Active filter chips + result count */}
+      <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" sx={{ mb: 2, gap: 0.75 }}>
+        <Typography variant="body2" color="text.secondary" fontSize="0.8rem">
+          {productCards.length} app{productCards.length !== 1 ? 's' : ''}
+        </Typography>
+        {hasFilters && (
+          <>
+            <Typography variant="body2" color="text.disabled" fontSize="0.8rem">
+              &middot;
+            </Typography>
+            {filterParams.available && (
+              <Chip
+                label="Compatible"
+                size="small"
+                onDelete={setAvailableFilter}
+                deleteIcon={<X size={12} />}
+                sx={{ height: 24, fontSize: '0.75rem', fontWeight: 500 }}
+              />
+            )}
+            {filterParams.freeOnly && (
+              <Chip
+                label="Free"
+                size="small"
+                onDelete={setFreeOnlyFilter}
+                deleteIcon={<X size={12} />}
+                sx={{ height: 24, fontSize: '0.75rem', fontWeight: 500 }}
+              />
+            )}
+            {hiddenCount > 0 && (
+              <Chip
+                label={`${(categories?.length ?? 0) - hiddenCount} of ${categories?.length ?? 0} categories`}
+                size="small"
+                onDelete={() => {
+                  (filterParams.hiddenCategories ?? []).forEach((id: number) => setCategoryFilter(id));
+                }}
+                deleteIcon={<X size={12} />}
+                sx={{ height: 24, fontSize: '0.75rem', fontWeight: 500 }}
+              />
+            )}
+            <Chip
+              label="Clear all"
+              size="small"
+              variant="outlined"
+              onClick={clearAllFilters}
+              sx={{ height: 24, fontSize: '0.75rem', fontWeight: 500, borderStyle: 'dashed' }}
+            />
+          </>
+        )}
       </Stack>
 
       {/* Skeleton loading — 6 placeholder cards */}

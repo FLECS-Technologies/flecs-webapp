@@ -10,25 +10,24 @@ export default defineConfig({
   plugins: [react(), svgr(), basicSsl()],
   resolve: {
     alias: {
-      '@components': path.resolve(__dirname, './src/components'),
-      '@contexts': path.resolve(__dirname, './src/contexts'),
+      // New architecture aliases
+      '@app': path.resolve(__dirname, './src/app'),
+      '@features': path.resolve(__dirname, './src/features'),
+      '@shared': path.resolve(__dirname, './src/shared'),
+      '@stores': path.resolve(__dirname, './src/stores'),
+
+      // Legacy aliases (still referenced)
       '@pages': path.resolve(__dirname, './src/pages'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@models': path.resolve(__dirname, './src/models'),
-      '@api': path.resolve(__dirname, './src/api'),
       '@test': path.resolve(__dirname, './src/test'),
       '@assets': path.resolve(__dirname, './src/assets'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@data': path.resolve(__dirname, './src/data'),
     },
   },
   server: {
     open: true,
   },
   build: {
-    // We want to keep a flat asset structure without chunk/ directory to
-    // keep our webserver config simple ("try_files")
+    // Static SPA — single bundle served from assets/ by a simple webserver (try_files)
+    chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
         manualChunks: undefined,
@@ -58,7 +57,6 @@ export default defineConfig({
         '**/*.{test,spec}.{js,jsx,ts,tsx}',
         '**/*.d.ts',
         'src/test/**',
-        'src/models/**',
         '*.config.js',
         'index.ts',
         'types.ts',

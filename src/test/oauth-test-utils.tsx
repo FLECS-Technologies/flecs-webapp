@@ -24,12 +24,13 @@
  */
 
 import React from 'react';
+import { vi } from 'vitest';
 import { render, RenderOptions } from '@testing-library/react';
 import {
   OAuth4WebApiAuthProvider,
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';
+} from '@features/auth/providers/__mocks__/OAuth4WebApiAuthProvider';
 
 /**
  * Custom render function that wraps components with OAuth4WebApiAuthProvider
@@ -225,7 +226,7 @@ export const setupOAuthTests = () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 };
 
@@ -233,4 +234,4 @@ export const setupOAuthTests = () => {
 export {
   mockOAuth4WebApiAuth,
   mockScenarios,
-} from '@contexts/auth/__mocks__/OAuth4WebApiAuthProvider';
+} from '@features/auth/providers/__mocks__/OAuth4WebApiAuthProvider';

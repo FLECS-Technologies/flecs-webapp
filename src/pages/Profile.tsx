@@ -12,10 +12,10 @@ import {
   Typography,
   Chip,
 } from '@mui/material';
-import { Person, Security, ExitToApp, AdminPanelSettings } from '@mui/icons-material';
+import { User, Shield, LogOut, ShieldCheck } from 'lucide-react';
 import React, { useState } from 'react';
-import { useOAuth4WebApiAuth } from '@contexts/auth/OAuth4WebApiAuthProvider';
-import { colors } from '../whitelabeling/custom-tokens';
+import { useOAuth4WebApiAuth } from '@features/auth/providers/OAuth4WebApiAuthProvider';
+import { colors } from '@app/theme/tokens';
 
 export default function Profile() {
   const auth = useOAuth4WebApiAuth();
@@ -87,7 +87,7 @@ export default function Profile() {
               fontWeight: 'bold',
             }}
           >
-            {user?.preferred_username ? getInitials(user.preferred_username) : <Person />}
+            {user?.preferred_username ? getInitials(user.preferred_username) : <User size={20} />}
           </Avatar>
           <Typography variant="h4" component="h1" gutterBottom>
             {user?.preferred_username || 'Anonymous'}
@@ -109,7 +109,7 @@ export default function Profile() {
                 gutterBottom
                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
               >
-                <Person color="primary" />
+                <User size={20} />
                 User Information
               </Typography>
               <Divider sx={{ mb: 2 }} />
@@ -149,7 +149,7 @@ export default function Profile() {
                   gutterBottom
                   sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                 >
-                  <AdminPanelSettings color="primary" />
+                  <ShieldCheck size={20} />
                   Roles & Permissions
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
@@ -161,7 +161,7 @@ export default function Profile() {
                       color="primary"
                       variant="outlined"
                       size="small"
-                      icon={<Security />}
+                      icon={<Shield size={16} />}
                     />
                   ))}
                 </Box>
@@ -175,7 +175,7 @@ export default function Profile() {
                 gutterBottom
                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
               >
-                <Security color="primary" />
+                <Shield size={20} />
                 Login Information
               </Typography>
               <Divider sx={{ mb: 2 }} />
@@ -205,7 +205,7 @@ export default function Profile() {
         <CardActions sx={{ justifyContent: 'center', p: 3 }}>
           <Button
             variant="contained"
-            startIcon={<ExitToApp />}
+            startIcon={<LogOut size={18} />}
             onClick={handleSignOut}
             disabled={isSigningOut}
             loading={isSigningOut}

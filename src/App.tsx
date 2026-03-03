@@ -20,12 +20,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'sonner';
-import Frame from './components/layout/Frame';
-import { AppList } from './data/AppList';
+import Frame from '@shared/components/layout/Frame';
 import { UIRoutes } from './pages/ui-routes';
-import { SystemData } from './data/SystemData';
-import { ThemeHandler } from './styles/ThemeHandler';
-import Providers from '@contexts/Providers';
+import { ThemeHandler } from './app/theme/ThemeHandler';
+import Providers from '@app/Providers';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,11 +55,7 @@ export default function App() {
           <Toaster position="top-right" richColors closeButton />
           <Providers>
             <Frame>
-              <SystemData>
-                <AppList>
-                  <UIRoutes />
-                </AppList>
-              </SystemData>
+              <UIRoutes />
             </Frame>
           </Providers>
         </ThemeHandler>

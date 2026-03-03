@@ -82,7 +82,7 @@ The current webapp works. The next version must be **immersive, fast, and type-s
 
 1. **KISS** — Simplest solution that works. No premature abstractions.
 2. **Anti-monolithic** — Feature modules, lazy-loaded, independently testable.
-3. **Type-safe end-to-end** — TypeScript strict, typed routes, typed API hooks.
+3. **Type-safe end-to-end** — TypeScript strict, typed API hooks, typed stores.
 4. **Server state ≠ app state** — TanStack Query owns API data. Zustand owns UI state.
 5. **Dark-mode-first** — Design for `#0B0B18`, adapt to light.
 
@@ -93,7 +93,7 @@ The current webapp works. The next version must be **immersive, fast, and type-s
 | Build | Vite 6.3.5 | **Vite 7.x** | Rolldown-powered, faster builds, latest stable |
 | Framework | React 19.1 | React 19.x | Already current, keep updated |
 | Language | JS + TS mixed | **100% TypeScript strict** | Convert 85 .js/.jsx files, disable `allowJs` |
-| Routing | React Router 7.6 (HashRouter) | **TanStack Router** | Fully typed routes/params/search, built-in code splitting, file-based routes |
+| Routing | React Router 7.6 (HashRouter) | **Keep HashRouter** | CTO decision — HashRouter works, customer paths matter, stable before API layer |
 | Styling | MUI 7 + Emotion + styled-components | **MUI 7 + Emotion only** | Drop styled-components, use MUI theme tokens + `sx` prop |
 | Server State | React Context + manual fetch | **TanStack Query v5** | Caching, dedup, background refetch, optimistic updates, smart polling |
 | Client State | 11+ Context providers | **Zustand** (2-3 stores max) | Flat, no provider nesting, selectors prevent re-renders |
@@ -121,14 +121,12 @@ The current webapp works. The next version must be **immersive, fast, and type-s
 | `normalize-url` | Crashes on relative URLs, use native `URL` constructor |
 | `oidc-client-ts` | Redundant — `oauth4webapi` handles OAuth |
 | `react-oidc-context` | Redundant — custom OAuth hooks already exist |
-| `react-router-dom` | Replaced by TanStack Router |
+| `@mui/icons-material` | Replaced by Lucide React |
 
 **Add:**
 | Package | Purpose |
 |---------|---------|
 | `@tanstack/react-query` | Server state management |
-| `@tanstack/react-router` | Type-safe routing |
-| `@tanstack/router-devtools` | Dev-only route debugging |
 | `@tanstack/react-query-devtools` | Dev-only query debugging |
 | `zustand` | Client state (UI, notifications, sidebar) |
 | `react-hook-form` | Form management |
@@ -143,7 +141,7 @@ The current webapp works. The next version must be **immersive, fast, and type-s
 src/
 ├── app/                    # App shell, providers, router
 │   ├── App.tsx
-│   ├── Router.tsx          # TanStack Router tree
+│   ├── Router.tsx          # React Router HashRouter
 │   ├── Providers.tsx       # Flat: QueryClient + Auth + Theme (3 max)
 │   └── theme/
 │       ├── palette.ts
@@ -168,16 +166,6 @@ src/
 │   ├── hooks/
 │   ├── api/                # Query client config, API wrapper
 │   └── utils/
-│
-├── routes/                 # TanStack Router route definitions
-│   ├── __root.tsx
-│   ├── index.tsx
-│   ├── apps.tsx
-│   ├── marketplace.tsx
-│   ├── system.tsx
-│   └── auth/
-│       ├── login.tsx
-│       └── callback.tsx
 │
 └── stores/                 # Zustand stores
     ├── ui.ts               # Sidebar, theme toggle
@@ -297,38 +285,37 @@ No flow changes. Visual polish:
 
 ## 5. Migration Strategy
 
-### Phase 0: Foundation (Week 1-2)
+### Phase 0: Foundation ✅
 
-- [ ] **Vite 7 upgrade** — update `vite` + plugins, test build
-- [ ] **Brand theme** — apply FLECS palette, Inter font, 4px grid to MUI theme
-- [ ] **TanStack Query** — add provider, create first hooks wrapping existing API calls
-- [ ] **Zustand** — create `ui` store (sidebar, theme) and `notifications` store
-- [ ] **Error boundary** — wrap app root with `react-error-boundary`
-- [ ] **Toast system** — add `sonner`, replace `console.error` user-facing messages
-- [ ] **Dependency cleanup** — remove `prop-types`, `styled-components`, `draft-js`, `normalize-url`
+- [x] **Vite 7 upgrade** — Vite 7.3.1 with Rolldown
+- [x] **Brand theme** — FLECS palette, Inter font, 4px grid applied
+- [x] **TanStack Query** — QueryClient configured (staleTime: 30s, retry: 1, refetchOnWindowFocus)
+- [x] **Zustand** — `ui` store (sidebar, theme) + `notifications` store
+- [x] **Error boundary** — `react-error-boundary` at app root
+- [x] **Toast system** — `sonner` integrated
+- [x] **Dependency cleanup** — removed `prop-types`, `styled-components`, `draft-js`, `normalize-url`, `oidc-client-ts`, `react-oidc-context`, `@mui/icons-material`
 
-### Phase 1: Convert & Rewire (Week 3-6)
+### Phase 1: Convert & Rewire ✅
 
-- [ ] **JSX → TSX** — convert all 78 `.jsx` + 7 `.js` files, remove PropTypes, add interfaces
-- [ ] **Disable `allowJs`** — flip to `false` in tsconfig, fix any remaining errors
-- [ ] **TanStack Router** — replace React Router, define typed route tree, file-based routes
-- [ ] **TanStack Query migration** — move all `useEffect` + `useState` fetch patterns to query hooks
-- [ ] **Kill context providers** — replace 11+ contexts with TanStack Query (server state) + Zustand (client state)
-- [ ] **Lucide React** — replace MUI Icons imports across all components
-- [ ] **Drop styled-components** — migrate remaining usages to MUI `sx` prop
+- [x] **JSX → TSX** — all 85 files converted, PropTypes removed, interfaces added
+- [x] **Disable `allowJs`** — `allowJs: false` in tsconfig
+- [x] **TanStack Query hooks** — `useApps`, `useInstances`, `useInstanceDetail`, `useInstanceLogs`, `useStartInstance`, `useStopInstance`, `useDeleteInstance`, `useCreateInstance`, `useUninstallApp`, `useSystemPing`, `useSystemInfo`, `useSystemVersion`, `useLicenseStatus`, `useActivateDevice`, `useExports`, `useCreateExport`, `useMarketplaceProducts`
+- [x] **Context providers internally rewired** — `SystemProvider` and `ReferenceDataContext` now powered by TanStack Query internally (backward-compatible shape preserved)
+- [x] **Lucide React** — 100% migration, `@mui/icons-material` uninstalled
+- [x] **Drop styled-components** — removed, Emotion only
 
-### Phase 2: UX & Polish (Week 7-10)
+### Phase 2: UX & Polish (in progress)
 
-- [ ] **Apps page** — card grid with live status, slide-over details panel
-- [ ] **Marketplace** — search-first layout, inline install, virtual list
-- [ ] **System page** — single dashboard, no tabs
-- [ ] **Onboarding** — route-based flow, not modal
-- [ ] **Notification rail** — bottom jobs panel + toast integration
-- [ ] **Keyboard shortcuts** — Cmd+K search, navigation shortcuts
+- [x] **Apps page** — card grid with live status dots, expand/collapse instances
+- [x] **Marketplace** — search-first layout, category chips, inline install
+- [x] **System page** — single dashboard, no tabs
+- [x] **Onboarding** — route-based flow at `/onboarding`, skip button
+- [x] **Notification rail** — collapsible bottom jobs panel
+- [x] **Keyboard shortcuts** — Cmd+K command palette with search + navigation
 - [ ] **Empty states** — illustrations + CTAs for every empty page
-- [ ] **Loading skeletons** — replace all spinners
-- [ ] **Responsive pass** — mobile/tablet layouts
-- [ ] **Accessibility** — ARIA labels, focus management, contrast check
+- [x] **Loading skeletons** — skeleton shimmer on all pages
+- [x] **Responsive pass** — mobile drawer, hamburger menu, adaptive padding, full-width jobs rail
+- [x] **Accessibility** — ARIA labels, roles, aria-expanded on all interactive elements
 
 ---
 
@@ -341,7 +328,7 @@ No flow changes. Visual polish:
 | TypeScript coverage | 68% | **100% strict** |
 | Context providers | 11+ nested | **3 flat** (Query + Auth + Theme) |
 | Error boundaries | 0 | **Per-feature + root** |
-| Bundle size (gzip) | Audit needed | **< 200KB initial** |
+| Bundle size (gzip) | ~320KB | **< 200KB initial** (needs code splitting) |
 | Lighthouse Performance | Audit needed | **> 90** |
 | Onboarding time | ~2 min | **< 30 seconds** |
 
@@ -354,16 +341,16 @@ No flow changes. Visual polish:
 - **No GraphQL** — backend is REST, stay with REST
 - **No WebSocket yet** — TanStack Query smart polling is sufficient, add SSE later
 - **No design system package** — MUI theme tokens are enough
+- **No router migration** — HashRouter works, CTO decision, focus on API layer first
 - **No inline OpenAPI generation yet** — no specs available, keep external packages
 
 ---
 
 ## 8. Open Questions
 
-1. **TanStack Router migration** — incremental (route-by-route) or big-bang? Incremental is safer but means two routers temporarily coexist.
-2. **Marketplace OpenAPI spec** — does the marketplace backend have a spec? Needed for future inline generation.
-3. **Service Mesh nav item** — remove from nav if it's just "go install the app"? Or keep as marketplace feature highlight?
-4. **Dual auth unification** — OAuth (device) + Marketplace JWT (cloud) — should these merge into one session?
+1. **Marketplace OpenAPI spec** — does the marketplace backend have a spec? Needed for future inline generation.
+2. **Service Mesh nav item** — remove from nav if it's just "go install the app"? Or keep as marketplace feature highlight?
+3. **Dual auth unification** — OAuth (device) + Marketplace JWT (cloud) — should these merge into one session?
 
 ---
 

@@ -179,7 +179,7 @@ describe('useMarketplaceFilters', () => {
 
   it('has correct initial state', () => {
     const s = useMarketplaceFilters.getState();
-    expect(s.filterParams).toEqual({ hiddenCategories: [], search: undefined, available: false, freeOnly: false });
+    expect(s.filterParams).toEqual({ hiddenCategories: [], search: undefined, available: false, freeOnly: false, pageSize: 100 });
     expect(s.categories).toEqual([]);
     expect(s.showFilter).toBe(false);
     expect(s.isSearchEnabled).toBe(true);

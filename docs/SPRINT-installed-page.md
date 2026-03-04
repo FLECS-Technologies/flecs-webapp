@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-03
 **Branch:** `feature/ux-redesign`
-**Status:** Planning
+**Status:** Complete
 **CTO Decision:** One instance per app — multi-instance UX is dead.
 
 ---

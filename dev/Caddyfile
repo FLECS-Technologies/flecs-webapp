@@ -24,6 +24,19 @@ localhost {
 		}
 	}
 
+	# Marketplace app icons → flecs.tech (strips CORP header to avoid cross-origin block)
+	handle /cdn-proxy/* {
+		uri strip_prefix /cdn-proxy
+		reverse_proxy https://flecs.tech {
+			header_up Host flecs.tech
+			header_up User-Agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+			header_down -Cross-Origin-Resource-Policy
+			transport http {
+				tls
+			}
+		}
+	}
+
 	# Everything else → Vite dev server
 	handle {
 		reverse_proxy https://localhost:5173 {

@@ -53,6 +53,7 @@ export default function UninstallButton({
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
 
   const uninstallApp = async (app: App): Promise<void> => {
+    onMenuClose?.();
     setUninstalling(true);
 
     try {
@@ -106,7 +107,6 @@ export default function UninstallButton({
           data-testid="uninstall-button"
           disabled={uninstalling}
           onClick={() => {
-            onMenuClose?.();
             setConfirmOpen(true);
           }}
           sx={{ color: 'error.main' }}

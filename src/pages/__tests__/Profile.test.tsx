@@ -34,12 +34,25 @@ vi.mock('lucide-react', () => ({
   ShieldCheck: (props: any) => <div data-testid="ShieldCheckIcon" {...props} />,
 }));
 
-// Mock whitelabeling colors
+// Mock theme tokens
 vi.mock('../../whitelabeling/custom-tokens', () => ({
+  brand: {
+    primary: '#FF2E63',
+    primaryEnd: '#FF6B8A',
+    dark: '#0B0B18',
+    darkEnd: '#1A1A2E',
+    white: '#FFFFFF',
+    muted: '#6B7280',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    accent: '#73A9CA',
+  },
   colors: {
-    secondary: '#667eea',
-    background: '#764ba2',
-    accent: '#f093fb',
+    primary: '#FF2E63',
+    secondary: '#10B981',
+    accent: '#73A9CA',
+    background: '#1A1A2E',
   },
 }));
 
@@ -87,9 +100,9 @@ describe('Profile', () => {
       render(<Profile />);
 
       expect(screen.getByText('Anonymous')).toBeInTheDocument();
-      // Person icon should be rendered in avatar (first one in avatar, second in section header)
+      // Person icon should be rendered in avatar
       const personIcons = screen.getAllByTestId('PersonIcon');
-      expect(personIcons).toHaveLength(2);
+      expect(personIcons).toHaveLength(1);
     });
 
     it('handles user with single name correctly for initials', () => {
@@ -232,7 +245,9 @@ describe('Profile', () => {
       render(<Profile />);
 
       expect(screen.getByText('Authentication Status:')).toBeInTheDocument();
-      expect(screen.getByText('Authenticated')).toBeInTheDocument();
+      // Auth chip appears in both header and session section
+      const authChips = screen.getAllByText('Authenticated');
+      expect(authChips.length).toBeGreaterThanOrEqual(1);
     });
 
     it('displays authentication status as not authenticated', () => {
@@ -240,7 +255,8 @@ describe('Profile', () => {
 
       render(<Profile />);
 
-      expect(screen.getByText('Not Authenticated')).toBeInTheDocument();
+      const notAuthChips = screen.getAllByText('Not Authenticated');
+      expect(notAuthChips.length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -390,8 +406,8 @@ describe('Profile', () => {
       expect(mainHeading).toHaveTextContent('testuser');
 
       const sectionHeadings = screen.getAllByRole('heading', { level: 6 });
-      // There's an empty subtitle heading plus the 3 section headings
-      expect(sectionHeadings).toHaveLength(4); // Empty subtitle, User Information, Roles & Permissions, Login Information
+      // 5 SettingsCard titles: Account, User Information, Roles & Permissions, Login Information, End Session
+      expect(sectionHeadings).toHaveLength(5);
     });
 
     it('uses proper semantic elements', () => {
@@ -433,7 +449,9 @@ describe('Profile', () => {
 
       // Should render the component but with loading states
       expect(screen.getByText('Anonymous')).toBeInTheDocument();
-      expect(screen.getByText('Not Authenticated')).toBeInTheDocument();
+      // Auth chip appears in both header and session section
+      const notAuthChips = screen.getAllByText('Not Authenticated');
+      expect(notAuthChips.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders correctly when there is an authentication error', () => {
@@ -442,7 +460,8 @@ describe('Profile', () => {
       render(<Profile />);
 
       expect(screen.getByText('Anonymous')).toBeInTheDocument();
-      expect(screen.getByText('Not Authenticated')).toBeInTheDocument();
+      const notAuthChips = screen.getAllByText('Not Authenticated');
+      expect(notAuthChips.length).toBeGreaterThanOrEqual(1);
     });
   });
 

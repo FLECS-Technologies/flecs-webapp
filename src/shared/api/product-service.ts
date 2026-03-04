@@ -45,9 +45,13 @@ function getEditorAddress(app) {
 }
 
 function getAppIcon(app) {
-  const url = app?.meta_data.find((o) => o.key === 'app-icon')?.value;
+  let url = app?.meta_data.find((o) => o.key === 'app-icon')?.value;
   if (typeof url === 'string' && url.startsWith('http://')) {
-    return url.replace('http://', 'https://');
+    url = url.replace('http://', 'https://');
+  }
+  // Dev: route flecs.tech images through Caddy's /cdn-proxy to avoid CORP block
+  if (typeof url === 'string' && url.includes('flecs.tech') && window.location.hostname === 'localhost') {
+    url = url.replace(/https?:\/\/flecs\.tech/, '/cdn-proxy');
   }
   return url;
 }

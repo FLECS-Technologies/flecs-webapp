@@ -12,8 +12,11 @@ import {
   Divider,
   Checkbox,
   FormControlLabel,
+  IconButton,
+  Select,
+  MenuItem,
 } from '@mui/material';
-import { SlidersHorizontal, Search, X } from 'lucide-react';
+import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppList } from '@shared/hooks/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
 import { useSystemInfo } from '@shared/hooks/system-queries';
@@ -77,6 +80,9 @@ export default function Marketplace() {
     setSearchFilter,
     setCompatibleFilter,
     setFreeOnlyFilter,
+    setPageSize,
+    setPage,
+    page,
     finalProducts,
     applyFilters,
   } = useMarketplaceFilters();
@@ -102,7 +108,15 @@ export default function Marketplace() {
     (filterParams.hiddenCategories ?? []).forEach((id: number) => setCategoryFilter(id));
   };
 
-  const productCards = (finalProducts ?? []).map((app: any) => {
+  const allFiltered = finalProducts ?? [];
+  const totalFiltered = allFiltered.length;
+  const pageSize = filterParams.pageSize || 20;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+  const safePage = Math.min(page, Math.max(totalPages - 1, 0));
+  const startIdx = safePage * pageSize;
+  const paginatedProducts = allFiltered.slice(startIdx, startIdx + pageSize);
+
+  const productCards = paginatedProducts.map((app: any) => {
     const rdName = getReverseDomainName(app);
     const matchedApp = appList?.find((o: any) => o?.appKey?.name === rdName);
     return (
@@ -203,7 +217,7 @@ export default function Marketplace() {
         sx={{ mb: 3 }}
       >
         <Typography variant="body2" color="text.secondary" fontWeight={500} sx={{ mr: 0.5 }}>
-          {productCards.length} app{productCards.length !== 1 ? 's' : ''}
+          {totalFiltered} app{totalFiltered !== 1 ? 's' : ''}
         </Typography>
 
         <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
@@ -351,6 +365,76 @@ export default function Marketplace() {
 
       {!isLoading && productCards.length > 0 && (
         <MarketplaceGrid>{productCards}</MarketplaceGrid>
+      )}
+
+      {/* Pagination footer */}
+      {!isLoading && totalFiltered > 0 && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ mt: 4 }}
+        >
+          {/* Per-page selector */}
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">
+              Rows per page
+            </Typography>
+            <Select
+              value={pageSize}
+              onChange={(e) => setPageSize(e.target.value as number)}
+              size="small"
+              variant="outlined"
+              sx={{
+                minWidth: 72,
+                height: 32,
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                borderRadius: 2,
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
+              }}
+            >
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </Stack>
+
+          {/* Page info + nav */}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="body2" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+              {startIdx + 1}–{Math.min(startIdx + pageSize, totalFiltered)} of {totalFiltered}
+            </Typography>
+            <IconButton
+              size="small"
+              disabled={safePage === 0}
+              onClick={() => setPage(safePage - 1)}
+              sx={{
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                width: 32,
+                height: 32,
+              }}
+            >
+              <ChevronLeft size={16} />
+            </IconButton>
+            <IconButton
+              size="small"
+              disabled={safePage >= totalPages - 1}
+              onClick={() => setPage(safePage + 1)}
+              sx={{
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                width: 32,
+                height: 32,
+              }}
+            >
+              <ChevronRight size={16} />
+            </IconButton>
+          </Stack>
+        </Stack>
       )}
     </Box>
   );

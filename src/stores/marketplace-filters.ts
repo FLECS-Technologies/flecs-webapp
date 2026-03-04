@@ -13,6 +13,7 @@ interface FilterParams {
   search: string | undefined;
   compatible: boolean;
   freeOnly: boolean;
+  pageSize: number;
 }
 
 interface MarketplaceFiltersState {
@@ -22,12 +23,15 @@ interface MarketplaceFiltersState {
   showFilter: boolean;
   isSearchEnabled: boolean;
   finalProducts: any[];
+  page: number;
 
   // Actions
   setSearchFilter: (e: React.ChangeEvent<HTMLInputElement> | undefined) => void;
   setCategoryFilter: (categoryId: number) => void;
   setCompatibleFilter: () => void;
   setFreeOnlyFilter: () => void;
+  setPageSize: (size: number) => void;
+  setPage: (page: number) => void;
   toggleFilter: () => void;
   setIsSearchEnabled: (val: boolean) => void;
   applyFilters: (loadedProducts: any[], arch?: string) => void;
@@ -107,16 +111,18 @@ function getUniqueCategories(products: any[]): Category[] {
 export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
   persist(
     (set, get) => ({
-      filterParams: { hiddenCategories: [], search: undefined, compatible: false, freeOnly: false },
+      filterParams: { hiddenCategories: [], search: undefined, compatible: false, freeOnly: false, pageSize: 100 },
       categories: [],
       showFilter: false,
       isSearchEnabled: true,
       finalProducts: [],
+      page: 0,
 
       setSearchFilter: (e) => {
         if (!e) return;
         set((state) => ({
           filterParams: { ...state.filterParams, search: e.target.value },
+          page: 0,
         }));
       },
 
@@ -127,7 +133,7 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
             ? hidden.filter((c) => c !== categoryId)
             : [...hidden, categoryId];
           newHidden.sort((a, b) => a - b);
-          return { filterParams: { ...state.filterParams, hiddenCategories: newHidden } };
+          return { filterParams: { ...state.filterParams, hiddenCategories: newHidden }, page: 0 };
         });
       },
 
@@ -141,8 +147,18 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
       setFreeOnlyFilter: () => {
         set((state) => ({
           filterParams: { ...state.filterParams, freeOnly: !state.filterParams.freeOnly },
+          page: 0,
         }));
       },
+
+      setPageSize: (size) => {
+        set((state) => ({
+          filterParams: { ...state.filterParams, pageSize: size },
+          page: 0,
+        }));
+      },
+
+      setPage: (page) => set({ page }),
 
       toggleFilter: () => {
         set((state) => ({ showFilter: !state.showFilter }));

@@ -20,9 +20,7 @@ import { MarketplaceAPIConfiguration } from '../api-config';
 
 async function getLatestVersion() {
   return axios
-    .get(
-      MarketplaceAPIConfiguration.MP_PROXY_URL + MarketplaceAPIConfiguration.GET_LATEST_VERSION_URL,
-    )
+    .get(MarketplaceAPIConfiguration.GET_CORE_LATEST_VERSION_URL)
     .then((response) => {
       return response.data;
     })

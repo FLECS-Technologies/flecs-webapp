@@ -94,7 +94,7 @@ export default function Version() {
         )}
         {(loadingVersion || loadingLatestVersion) && <LinearProgress color="primary" />}
         {(loadingVersion || loadingLatestVersion) && (
-          <Typography align="center">Loading configuration...</Typography>
+          <Typography align="center">Checking for updates...</Typography>
         )}
       </Box>
       <Box>

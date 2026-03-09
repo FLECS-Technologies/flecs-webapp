@@ -33,7 +33,7 @@ const POST_VALIDATE_URL = '/api/v2/auth/validate';
 const POST_GET_CURRENT_USER_LICENSES_URL = '/api/license/get-current-user-licenses';
 const POST_SET_LICENSE_META_URL = '/api/license/add-license-key-meta';
 const GET_PRODUCTS_URL = '/api/v2/products/apps';
-const GET_LATEST_VERSION_URL = '/api/v1/core/version/latest';
+const GET_CORE_LATEST_VERSION_URL = 'https://latest.flecs.tech/core?format=json';
 const POST_PRODUCT_RATING_URL = GET_PRODUCTS_URL + '/reviews';
 
 class MarketplaceAPIConfiguration {
@@ -108,8 +108,8 @@ class MarketplaceAPIConfiguration {
     return GET_PRODUCTS_URL;
   }
 
-  static get GET_LATEST_VERSION_URL() {
-    return GET_LATEST_VERSION_URL;
+  static get GET_CORE_LATEST_VERSION_URL() {
+    return GET_CORE_LATEST_VERSION_URL;
   }
 
   // post requests

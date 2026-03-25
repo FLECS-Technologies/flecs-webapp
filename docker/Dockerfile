@@ -5,7 +5,7 @@
 FROM alpine:3 AS staging
 
 # rootfs
-COPY --from=flecspublic.azurecr.io/docker/nginx:alpine / /staging/
+COPY --from=cr.flecs.tech/docker/nginx:alpine / /staging/
 COPY dist/ /staging/usr/share/nginx/html/
 COPY docker/fs/ /staging/
 

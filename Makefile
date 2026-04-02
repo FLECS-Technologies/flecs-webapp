@@ -20,5 +20,6 @@ build: ci
 special_%:
 	@./special/$*.sh
 
-docker_%:
-	./docker/build-image.sh $(DOCKER_TAG) $* $(ARGS)
+.PHONY: docker
+docker:
+	docker buildx bake -f docker-bake.hcl $(ARGS)

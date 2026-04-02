@@ -3,11 +3,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
-import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
   base: '',
-  plugins: [react(), svgr(), basicSsl()],
+  plugins: [react(), svgr()],
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, './src/components'),

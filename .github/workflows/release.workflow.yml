@@ -29,36 +29,28 @@ jobs:
 
   docker:
     needs: build
-
-    strategy:
-      matrix:
-        include:
-          - runs-on: construction-worker
-            arch: amd64
-            platform: linux/amd64
-          - runs-on: construction-worker-arm64
-            arch: arm64
-            platform: linux/arm64
-
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: recursive
+
       - name: download raw artifacts
         uses: actions/download-artifact@a9bc5e6ef2cb54c177f32aa5726adaa15e7e2d59 # v3.1.0
         with:
           name: build
           path: dist/
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
 
-      - name: Determine webapp version
+      - name: Determine version
         id: version
-        run: |
-          echo "webapp-version=$(make version)" >> "$GITHUB_OUTPUT"
+        run: echo "value=$(cat package.json | jq -r '.version')" >> "$GITHUB_OUTPUT"
 
       - name: Login to container registry
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
@@ -67,50 +59,12 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_AUTH }}
 
-      - name: Build Docker images
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
-        with:
-          context: .
-          file: docker/Dockerfile
-          platforms: ${{ matrix.platform }}
-          tags: flecspublic.azurecr.io/webapp:${{ steps.version.outputs.webapp-version }}-${{ matrix.arch }}
-          pull: true
-          push: true
-          cache-from: type=gha,scope=buildkit-${{ matrix.arch }}
-          cache-to: type=gha,mode=max,scope=buildkit-${{ matrix.arch }}
-
-  container-registry:
-    needs: docker
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-        with:
-          registry: flecspublic.azurecr.io
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_AUTH }}
-
-      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-
-      - name: Determine webapp version
-        id: version
-        run: |
-          echo "webapp-version=$(make version)" >> "$GITHUB_OUTPUT"
-
-      - name: Create and push manifest
+      - name: Build and push
+        uses: docker/bake-action@82490499d2e5613fcead7e128237ef0b0ea210f7 # v7.0.0
         env:
-          WEBAPP_VERSION: ${{ steps.version.outputs.webapp-version }}
-        run: |
-          docker buildx imagetools create \
-            -t flecspublic.azurecr.io/webapp:${WEBAPP_VERSION} \
-            flecspublic.azurecr.io/webapp:${WEBAPP_VERSION}-amd64 \
-            flecspublic.azurecr.io/webapp:${WEBAPP_VERSION}-arm64
-          docker buildx imagetools inspect flecspublic.azurecr.io/webapp:${WEBAPP_VERSION}
-
-          docker buildx imagetools create \
-            -t flecspublic.azurecr.io/webapp:latest \
-            flecspublic.azurecr.io/webapp:${WEBAPP_VERSION}-amd64 \
-            flecspublic.azurecr.io/webapp:${WEBAPP_VERSION}-arm64
-          docker buildx imagetools inspect flecspublic.azurecr.io/webapp:latest
+          VERSION: ${{ steps.version.outputs.value }}
+          NAMED_TAG: latest
+        with:
+          source: .
+          files: docker-bake.hcl
+          push: true

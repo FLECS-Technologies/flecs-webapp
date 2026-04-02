@@ -1,125 +1,46 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Created on Wed Jun 01 2022
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import React from 'react';
-import { Alert, AlertTitle, Box, LinearProgress, Typography } from '@mui/material';
 import VersionsTable from './version/VersionsTable';
-import { getLatestVersion, isLaterThan } from '@shared/api/version-service';
-import { VersionSelector } from '@shared/components/VersionSelector';
-import { useSystemInfo } from '@shared/hooks/system-queries';
-import { useProtectedApi } from '@shared/api/ApiProvider';
+import { VersionSelector } from '@app/components/VersionSelector';
+import { useGetSystemInfo, useGetSystemVersion } from '@generated/core/system/system';
+import type { GetSystemVersion200 } from '@generated/core/schemas';
+
+function isLaterThan(a?: string, b?: string): boolean { if (!a || !b) return false; const pa = a.replace(/^v/, '').split('.').map(Number); const pb = b.replace(/^v/, '').split('.').map(Number); for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const na = pa[i] ?? 0; const nb = pb[i] ?? 0; if (na > nb) return true; if (na < nb) return false; } return false; }
+async function fetchLatestGithubVersion(): Promise<{ version: string } | null> { try { const res = await fetch('https://api.github.com/repos/FLECS-Technologies/flecs-public/releases/latest'); if (!res.ok) return null; const data = await res.json(); const tag = data?.tag_name as string | undefined; return tag ? { version: tag.replace(/^v/, '') } : null; } catch { return null; } }
 
 export default function Version() {
-  const executedRef = React.useRef(false);
-  const { data: systemInfo } = useSystemInfo();
-  const api = useProtectedApi();
-  const [loadingVersion, setLoadingVersion] = React.useState(false);
-  const [version, setVersion] = React.useState();
+  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const systemInfo = infoResponse?.data;
+  const { data: versionResponse, isLoading: loadingVersion, isError: versionError, error: versionErrorObj } = useGetSystemVersion();
+  const version = versionResponse?.data as GetSystemVersion200 | undefined;
   const [loadingLatestVersion, setLoadingLatestVersion] = React.useState(false);
-  const [latestVersion, setLatestVersion] = React.useState();
+  const [latestVersion, setLatestVersion] = React.useState<{ version: string } | undefined>();
   const [error, setError] = React.useState(false);
-  const [errorText, setErrorText] = React.useState();
+  const [errorText, setErrorText] = React.useState<string | undefined>();
+  const executedRef = React.useRef(false);
 
-  React.useEffect(() => {
-    if (executedRef.current) {
-      return;
-    }
-    if (!loadingVersion) {
-      fetchVersion();
-    }
-    if (!loadingLatestVersion) {
-      fetchLatestVersion();
-    }
-    executedRef.current = true;
-  }, []);
+  React.useEffect(() => { if (executedRef.current) return; if (!loadingLatestVersion) fetchLatestVersion(); executedRef.current = true; }, []);
+  React.useEffect(() => { if (versionError) { setError(true); setErrorText((versionErrorObj as any)?.message); } }, [versionError, versionErrorObj]);
 
-  const fetchVersion = async (props) => {
-    setLoadingVersion(true);
-
-    api.system
-      .systemVersionGet()
-      .then((response) => {
-        if (response) {
-          setVersion(response.data);
-        }
-        setError(false);
-      })
-      .catch((error) => {
-        setErrorText(error.message);
-        setError(true);
-      })
-      .finally(() => {
-        setLoadingVersion(false);
-      });
-  };
-
-  const fetchLatestVersion = async (props) => {
-    setLoadingLatestVersion(true);
-
-    getLatestVersion()
-      .then((response) => {
-        if (response) {
-          setLatestVersion(response);
-        }
-        setError(false);
-      })
-      .catch((error) => {
-        setErrorText(error.message);
-        setError(true);
-      })
-      .finally(() => {
-        setLoadingLatestVersion(false);
-      });
-  };
+  const fetchLatestVersion = async () => { setLoadingLatestVersion(true); fetchLatestGithubVersion().then(r => { if (r) setLatestVersion(r); setError(false); }).catch(e => { setErrorText(e.message); setError(true); }).finally(() => setLoadingLatestVersion(false)); };
 
   return (
-    <Box>
-      <Box alignContent="center">
-        {error && (loadingVersion || loadingLatestVersion) && (
-          <Typography align="center">Oops... {errorText}</Typography>
-        )}
-        {(loadingVersion || loadingLatestVersion) && <LinearProgress color="primary" />}
-        {(loadingVersion || loadingLatestVersion) && (
-          <Typography align="center">Checking for updates...</Typography>
-        )}
-      </Box>
-      <Box>
+    <div>
+      <div>
+        {error && (loadingVersion || loadingLatestVersion) && <p className="text-center text-sm">Oops... {errorText}</p>}
+        {(loadingVersion || loadingLatestVersion) && <div className="h-1 bg-white/10 rounded"><div className="h-full bg-brand rounded animate-pulse" style={{width: '60%'}} /></div>}
+        {(loadingVersion || loadingLatestVersion) && <p className="text-center text-sm">Checking for updates...</p>}
+      </div>
+      <div>
         {isLaterThan(latestVersion?.version, version?.core) && (
-          <Alert sx={{ mb: 2 }} severity="info">
-            <AlertTitle>Info</AlertTitle>
-            <Typography variant="body2">There is a newer version for FLECS available:</Typography>
-            <VersionSelector
-              availableVersions={[latestVersion]}
-              selectedVersion={latestVersion}
-              setSelectedVersion={() => {}} // No-op since this is just for display
-            ></VersionSelector>
-            <Typography variant="body2">
-              Install this update by running <i>curl -fsSL install.flecs.tech | bash</i> in the
-              terminal of this device ({window.location.hostname}).
-            </Typography>
-          </Alert>
+          <div className="px-4 py-3 rounded-lg bg-accent/10 text-accent mb-4">
+            <p className="font-semibold mb-1">Info</p>
+            <p className="text-sm">There is a newer version for FLECS available:</p>
+            <VersionSelector availableVersions={[latestVersion as any]} selectedVersion={latestVersion as any} setSelectedVersion={() => {}} />
+            <p className="text-sm">Install this update by running <i>curl -fsSL install.flecs.tech | bash</i> in the terminal of this device ({window.location.hostname}).</p>
+          </div>
         )}
-      </Box>
-      <VersionsTable
-        coreVersion={version}
-        webappVersion={import.meta.env.VITE_APP_VERSION}
-        distro={systemInfo?.distro}
-        kernel={systemInfo?.kernel}
-      ></VersionsTable>
-    </Box>
+      </div>
+      <VersionsTable coreVersion={version} webappVersion={import.meta.env.VITE_APP_VERSION} distro={systemInfo?.distro} kernel={systemInfo?.kernel} />
+    </div>
   );
 }

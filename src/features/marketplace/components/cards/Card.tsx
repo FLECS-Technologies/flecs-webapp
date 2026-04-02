@@ -1,237 +1,45 @@
-/*
- * Copyright (c) 2021 FLECS Technologies GmbH
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-
 import { useState } from 'react';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import { Box, Button } from '@mui/material';
-import { createVersion, createVersions, getLatestVersion } from '@shared/utils/version-utils';
-import { Version } from '@shared/types/version';
-import { App } from '@shared/types/app';
-import { useSystemInfo } from '@shared/hooks/system-queries';
+const getLatestVersion = (versions: string[]) => versions?.[0]; const createVersion = (v: string) => v; const createVersions = (v: string[]) => v;
+type Version = string;
+type App = any;
+import { useGetSystemInfo } from '@generated/core/system/system';
 import FullCard from './FullCard';
 import { Check, AlertTriangle } from 'lucide-react';
-import InstallButton from '@shared/components/app-actions/InstallButton';
+import InstallButton from '@features/apps/components/actions/InstallButton';
 
 export default function MarketplaceCard(props: App) {
-  const { data: systemInfo } = useSystemInfo();
+  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const systemInfo = infoResponse?.data;
   const installed = props.status === 'installed';
-  const versionsArray = props.versions
-    ? createVersions(props.versions, props.installedVersions || [])
-    : [];
+  const versionsArray = props.versions ? createVersions(props.versions, props.installedVersions || []) : [];
   const [latestVersion] = useState<Version>(getLatestVersion(versionsArray) ?? createVersion(''));
-  const installable =
-    props.requirement && systemInfo?.arch && props.requirement.includes(systemInfo.arch);
-  const [fullCardOpen, setFullCardOpen] = useState<boolean>(false);
-
-  const plainDescription = (props.short_description || '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'");
-
+  const installable = props.requirement && systemInfo?.arch && props.requirement.includes(systemInfo.arch);
+  const [fullCardOpen, setFullCardOpen] = useState(false);
+  const plainDescription = (props.short_description || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
   const isFree = !props.price || parseFloat(props.price) === 0;
 
   return (
-    <Card
-      data-testid="app-card"
-      variant="outlined"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 4,
-        overflow: 'hidden',
-        border: '1px solid',
-        borderColor: 'divider',
-        cursor: 'pointer',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          borderColor: 'transparent',
-          boxShadow: (theme) =>
-            theme.palette.mode === 'dark'
-              ? '0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)'
-              : '0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
-          '& .card-icon': {
-            transform: 'scale(1.05)',
-          },
-        },
-      }}
-      onClick={() => setFullCardOpen(true)}
-    >
-      {/* Content — centered */}
-      <Box
-        sx={{
-          p: 3,
-          pt: 4,
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          minHeight: 260,
-        }}
-      >
-        <Avatar
-          src={props.avatar}
-          variant="rounded"
-          className="card-icon"
-          sx={{
-            width: 72,
-            height: 72,
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50',
-            fontSize: 26,
-            fontWeight: 700,
-            borderRadius: 2.5,
-            mb: 2,
-            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            border: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          {props.title?.charAt(0).toUpperCase()}
-        </Avatar>
-
-        <Typography
-          variant="subtitle1"
-          fontWeight={700}
-          sx={{
-            lineHeight: 1.2,
-            letterSpacing: '-0.01em',
-            textAlign: 'center',
-            wordBreak: 'break-word',
-            mb: 0.5,
-          }}
-        >
-          {props.title}
-        </Typography>
-
-        {props.author && (
-          <Typography variant="caption" color="text.disabled" sx={{ fontSize: '0.75rem' }}>
-            {props.author}
-          </Typography>
-        )}
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mt: 1.5,
-            textAlign: 'center',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            lineHeight: 1.6,
-            fontSize: '0.8rem',
-          }}
-        >
-          {plainDescription || 'No description available'}
-        </Typography>
-
-        <Box sx={{ flex: 1, minHeight: 16 }} />
-
-        <Typography
-          variant="caption"
-          sx={{
-            mt: 2,
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            color: isFree ? 'success.main' : 'text.secondary',
-          }}
-        >
-          {isFree ? 'Free' : `$${props.price}`}
-        </Typography>
-      </Box>
-
-      {/* CTA footer */}
-      <Box
-        onClick={(e) => e.stopPropagation()}
-        sx={{
-          px: 2.5,
-          py: 2,
-          bgcolor: (theme) =>
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'grey.50',
-          borderTop: '1px solid',
-          borderColor: 'divider',
-        }}
-      >
+    <div data-testid="app-card" className="flex flex-col rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-transparent" onClick={() => setFullCardOpen(true)}>
+      <div className="p-6 pt-8 flex-1 flex flex-col items-center min-h-[260px]">
+        <div className="w-[72px] h-[72px] rounded-xl bg-white/5 flex items-center justify-center text-2xl font-bold border border-white/10 overflow-hidden mb-4 transition-transform duration-300 card-icon">
+          {props.avatar ? <img src={props.avatar} alt={props.title} className="w-full h-full object-cover" /> : props.title?.charAt(0).toUpperCase()}
+        </div>
+        <span className="text-base font-bold text-center break-words mb-1">{props.title}</span>
+        {props.author && <span className="text-xs text-muted">{props.author}</span>}
+        <p className="text-sm text-muted mt-3 text-center line-clamp-2">{plainDescription || 'No description available'}</p>
+        <div className="flex-1 min-h-4" />
+        <span className={`text-xs font-semibold mt-4 ${isFree ? 'text-success' : 'text-muted'}`}>{isFree ? 'Free' : `$${props.price}`}</span>
+      </div>
+      <div onClick={(e) => e.stopPropagation()} className="px-5 py-4 bg-white/2 border-t border-white/10">
         {installed ? (
-          <Button
-            fullWidth
-            variant="outlined"
-            size="large"
-            startIcon={<Check size={18} />}
-            sx={{
-              borderRadius: 3,
-              textTransform: 'none',
-              fontWeight: 700,
-              fontSize: '1rem',
-              py: 1.75,
-              borderColor: 'success.main',
-              color: 'success.main',
-              '&:hover': {
-                borderColor: 'success.main',
-                bgcolor: (theme) =>
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(16,185,129,0.08)'
-                    : 'rgba(16,185,129,0.04)',
-              },
-            }}
-            onClick={() => setFullCardOpen(true)}
-          >
-            Installed
-          </Button>
+          <button className="w-full px-4 py-3 border border-success text-success rounded-xl font-bold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2" onClick={() => setFullCardOpen(true)}><Check size={18} /> Installed</button>
         ) : !installable ? (
-          <Button
-            fullWidth
-            disabled
-            size="large"
-            startIcon={<AlertTriangle size={18} />}
-            sx={{
-              borderRadius: 3,
-              textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '1rem',
-              py: 1.75,
-            }}
-          >
-            Not compatible
-          </Button>
+          <button className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-50 cursor-not-allowed inline-flex items-center justify-center gap-2" disabled><AlertTriangle size={18} /> Not compatible</button>
         ) : (
-          <InstallButton
-            app={props}
-            version={latestVersion}
-            disabled={false}
-            size="large"
-            fullWidth
-            color="primary"
-            sx={{
-              borderRadius: 3,
-              textTransform: 'none',
-              fontWeight: 700,
-              fontSize: '1rem',
-              py: 1.75,
-              boxShadow: 'none',
-              '&:hover': {
-                boxShadow: 'none',
-              },
-            }}
-          />
+          <InstallButton app={props} version={latestVersion} disabled={false} fullWidth />
         )}
-      </Box>
-
+      </div>
       <FullCard app={props} open={fullCardOpen} onClose={() => setFullCardOpen(false)} />
-    </Card>
+    </div>
   );
 }

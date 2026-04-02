@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { Box, Typography, Button, Paper, Stack } from '@mui/material';
-import { Network, ExternalLink, Store } from 'lucide-react';
+import { Network, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppList } from '@shared/hooks/app-queries';
-import { EditorButton } from '@shared/components/app-actions/editors/EditorButton';
-import HelpButton from '@shared/components/help/HelpButton';
-import { servicemesh } from '@shared/components/help/helplinks';
+import { useAppList } from '@features/apps/hooks/app-queries';
+import { EditorButton } from '@features/apps/components/actions/editors/EditorButton';
+import HelpButton from '@app/layout/HelpButton';
+import { servicemesh } from '@app/layout/helplinks';
 
 export default function ServiceMesh() {
   const { appList } = useAppList();
@@ -13,64 +12,56 @@ export default function ServiceMesh() {
 
   const meshApp = useMemo(() => {
     if (!appList) return null;
-    return appList.find((app: any) => app.appKey.name === 'tech.flecs.flunder') ?? null;
+    return appList.find((app: any) => app.appKey?.name === 'tech.flecs.flunder') ?? null;
   }, [appList]);
 
   const meshInstance = meshApp?.instances?.[0];
   const hasEditor = meshInstance?.editors?.length > 0;
 
   return (
-    <Box>
-      <Box sx={{ mb: 3 }}>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="overline" color="text.disabled" fontWeight={600}>
-            DEVICE
-          </Typography>
+    <div>
+      <div className="mb-3">
+        <div className="flex items-center gap-1">
+          <span className="text-xs uppercase tracking-wider font-semibold text-muted">DEVICE</span>
           <HelpButton url={servicemesh} />
-        </Stack>
-        <Typography variant="h4" fontWeight={800}>
-          Service Mesh
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
-          Network configuration and monitoring.
-        </Typography>
-      </Box>
+        </div>
+        <h4 className="text-2xl font-extrabold">Service Mesh</h4>
+        <p className="text-base text-muted mt-1">Network configuration and monitoring.</p>
+      </div>
 
-      <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
-        <Network size={48} strokeWidth={1.2} style={{ opacity: 0.4, marginBottom: 16 }} />
+      <div className="rounded-xl bg-dark-end p-8 text-center">
+        <Network size={48} strokeWidth={1.2} className="opacity-40 mx-auto mb-4" />
 
         {meshApp && hasEditor ? (
           <>
-            <Typography variant="h6" gutterBottom>
-              Service Mesh is running
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <h6 className="text-lg font-semibold mb-2">Service Mesh is running</h6>
+            <p className="text-sm text-muted mb-3">
               The service mesh has its own UI. Open it to manage your mesh configuration.
-            </Typography>
+            </p>
             <EditorButton editor={meshInstance.editors[0]} index={0} />
           </>
         ) : (
           <>
-            <Typography variant="h6" gutterBottom>
+            <h6 className="text-lg font-semibold mb-2">
               {meshApp ? 'Service Mesh is installed' : 'Service Mesh not installed'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            </h6>
+            <p className="text-sm text-muted mb-3">
               {meshApp
                 ? 'Start the service mesh app to access its UI.'
                 : 'Install the FLECS Service Mesh from the marketplace to connect your apps.'}
-            </Typography>
+            </p>
             {!meshApp && (
-              <Button
-                variant="contained"
-                startIcon={<Store size={18} />}
+              <button
+                className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition inline-flex items-center gap-2"
                 onClick={() => navigate('/marketplace')}
               >
+                <Store size={18} />
                 Go to Marketplace
-              </Button>
+              </button>
             )}
           </>
         )}
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 }

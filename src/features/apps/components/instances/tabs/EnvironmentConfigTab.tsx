@@ -1,291 +1,76 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, Button, CircularProgress, Divider, Stack, Typography } from '@mui/material';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Plus, Save } from 'lucide-react';
-import { InstanceEnvironmentVariable } from '@flecs/core-client-ts';
-import ActionSnackbar from '@shared/components/ActionSnackbar';
+import { InstanceEnvironmentVariable } from '@generated/core/schemas';
+import { useGetInstancesInstanceIdConfigEnvironment, usePutInstancesInstanceIdConfigEnvironment, useDeleteInstancesInstanceIdConfigEnvironmentVariableName } from '@generated/core/instances/instances';
+import ActionSnackbar from '@app/components/ActionSnackbar';
 import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
-import { useProtectedApi } from '@shared/api/ApiProvider';
 
-interface EnvironmentConfigTabProps {
-  instanceId: string;
-  onChange: (hasChanges: boolean) => void;
-}
+interface EnvironmentConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 
 const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId, onChange }) => {
-  const executedRef = useRef(false);
-  const api = useProtectedApi();
   const [envVars, setEnvVars] = useState<InstanceEnvironmentVariable[]>([]);
   const [savedSnapshot, setSavedSnapshot] = useState<InstanceEnvironmentVariable[]>([]);
   const [newIndices, setNewIndices] = useState<Set<number>>(new Set());
   const [modifiedIndices, setModifiedIndices] = useState<Set<number>>(new Set());
-  const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarState, setSnackbarState] = useState({
-    snackbarText: 'Info',
-    alertSeverity: 'success',
-    clipBoardContent: '',
-  });
-
+  const [snackbarState, setSnackbarState] = useState({ snackbarText: 'Info', alertSeverity: 'success', clipBoardContent: '' });
+  const { data: envResponse, isLoading } = useGetInstancesInstanceIdConfigEnvironment(instanceId);
+  const { mutateAsync: putEnvironment } = usePutInstancesInstanceIdConfigEnvironment();
+  const { mutateAsync: deleteVariable } = useDeleteInstancesInstanceIdConfigEnvironmentVariableName();
   const hasChanges = newIndices.size > 0 || modifiedIndices.size > 0;
 
-  const fetchEnvironment = async () => {
-    setLoading(true);
-    try {
-      const environmentData = (
-        await api.instances.instancesInstanceIdConfigEnvironmentGet(instanceId)
-      ).data as InstanceEnvironmentVariable[];
+  useEffect(() => { if (envResponse?.data) { const d = envResponse.data as InstanceEnvironmentVariable[]; if (Array.isArray(d)) { setEnvVars(d); setSavedSnapshot(d.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); } } }, [envResponse]);
+  useEffect(() => { onChange(hasChanges); }, [hasChanges]);
 
-      if (Array.isArray(environmentData)) {
-        setEnvVars(environmentData);
-        setSavedSnapshot(environmentData.map((e) => ({ ...e })));
-        setNewIndices(new Set());
-        setModifiedIndices(new Set());
-      }
-    } catch (error) {
-      console.error('Failed to fetch environment variables:', error);
-    }
-    setLoading(false);
-  };
+  const handleAdd = () => { setEnvVars(prev => { const next = [...prev, { name: '', value: '' }]; setNewIndices(s => new Set(s).add(next.length - 1)); return next; }); };
+  const handleChange = useCallback((index: number, key: string, value: string) => { setEnvVars(prev => prev.map((env, i) => i === index ? { ...env, [key]: value } : env)); setModifiedIndices(prev => { const next = new Set(prev); next.add(index); return next; }); }, []);
 
-  useEffect(() => {
-    if (executedRef.current) return;
-    if (!loading) fetchEnvironment();
-    executedRef.current = true;
-  }, []);
-
-  useEffect(() => {
-    onChange(hasChanges);
-  }, [hasChanges]);
-
-  const handleAdd = () => {
-    setEnvVars((prev) => {
-      const next = [...prev, { name: '', value: '' }];
-      setNewIndices((s) => new Set(s).add(next.length - 1));
-      return next;
-    });
-  };
-
-  const handleChange = useCallback((index: number, key: string, value: string) => {
-    setEnvVars((prev) => prev.map((env, i) => (i === index ? { ...env, [key]: value } : env)));
-    setModifiedIndices((prev) => {
-      const next = new Set(prev);
-      next.add(index);
-      return next;
-    });
-  }, []);
+  const reindex = (prev: Set<number>, index: number) => { const next = new Set<number>(); prev.forEach(i => { if (i < index) next.add(i); else if (i > index) next.add(i - 1); }); return next; };
 
   const handleDelete = async (index: number) => {
     const envVar = envVars[index];
-
-    // New unsaved row — just remove locally
-    if (newIndices.has(index)) {
-      setEnvVars((prev) => prev.filter((_, i) => i !== index));
-      // Reindex new and modified sets
-      setNewIndices((prev) => {
-        const next = new Set<number>();
-        prev.forEach((i) => {
-          if (i < index) next.add(i);
-          else if (i > index) next.add(i - 1);
-        });
-        return next;
-      });
-      setModifiedIndices((prev) => {
-        const next = new Set<number>();
-        prev.forEach((i) => {
-          if (i < index) next.add(i);
-          else if (i > index) next.add(i - 1);
-        });
-        return next;
-      });
-      return;
-    }
-
-    // Saved row — delete via API
+    if (newIndices.has(index)) { setEnvVars(prev => prev.filter((_, i) => i !== index)); setNewIndices(prev => reindex(prev, index)); setModifiedIndices(prev => reindex(prev, index)); return; }
     if (envVar.name) {
-      try {
-        await api.instances.instancesInstanceIdConfigEnvironmentVariableNameDelete(
-          instanceId,
-          envVar.name,
-        );
-        onChange(true);
-        setEnvVars((prev) => prev.filter((_, i) => i !== index));
-        // Reindex
-        setNewIndices((prev) => {
-          const next = new Set<number>();
-          prev.forEach((i) => {
-            if (i < index) next.add(i);
-            else if (i > index) next.add(i - 1);
-          });
-          return next;
-        });
-        setModifiedIndices((prev) => {
-          const next = new Set<number>();
-          prev.forEach((i) => {
-            if (i < index) next.add(i);
-            else if (i > index) next.add(i - 1);
-          });
-          return next;
-        });
-        setSavedSnapshot((prev) => prev.filter((_, i) => i !== index));
-        setSnackbarState({
-          alertSeverity: 'success',
-          snackbarText: `Deleted "${envVar.name}"`,
-          clipBoardContent: '',
-        });
-        setSnackbarOpen(true);
-      } catch {
-        setSnackbarState({
-          alertSeverity: 'error',
-          snackbarText: 'Failed to delete environment variable!',
-          clipBoardContent: '',
-        });
-        setSnackbarOpen(true);
-      }
+      try { await deleteVariable({ instanceId, variableName: envVar.name }); onChange(true); setEnvVars(prev => prev.filter((_, i) => i !== index)); setNewIndices(prev => reindex(prev, index)); setModifiedIndices(prev => reindex(prev, index)); setSavedSnapshot(prev => prev.filter((_, i) => i !== index)); setSnackbarState({ alertSeverity: 'success', snackbarText: `Deleted "${envVar.name}"`, clipBoardContent: '' }); setSnackbarOpen(true); }
+      catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to delete environment variable!', clipBoardContent: '' }); setSnackbarOpen(true); }
     }
   };
 
   const handleSaveAll = async () => {
-    try {
-      const variables = envVars
-        .filter(({ name }) => name)
-        .map(({ name, value }) => ({ name, value }));
-
-      await api.instances.instancesInstanceIdConfigEnvironmentPut(instanceId, variables);
-      onChange(true);
-      setSavedSnapshot(variables.map((e) => ({ ...e })));
-      setNewIndices(new Set());
-      setModifiedIndices(new Set());
-      setSnackbarState({
-        alertSeverity: 'success',
-        snackbarText: `Saved ${variables.length} variable${variables.length !== 1 ? 's' : ''}`,
-        clipBoardContent: '',
-      });
-    } catch {
-      setSnackbarState({
-        alertSeverity: 'error',
-        snackbarText: 'Failed to save environment variables!',
-        clipBoardContent: '',
-      });
-    } finally {
-      setSnackbarOpen(true);
-    }
+    try { const variables = envVars.filter(({ name }) => name).map(({ name, value }) => ({ name, value })); await putEnvironment({ instanceId, data: variables }); onChange(true); setSavedSnapshot(variables.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); setSnackbarState({ alertSeverity: 'success', snackbarText: `Saved ${variables.length} variable${variables.length !== 1 ? 's' : ''}`, clipBoardContent: '' }); }
+    catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to save environment variables!', clipBoardContent: '' }); }
+    finally { setSnackbarOpen(true); }
   };
 
-  if (loading) {
-    return <CircularProgress />;
-  }
+  if (isLoading) return <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />;
 
   return (
-    <Box>
+    <div>
       {envVars.length === 0 ? (
-        <Box
-          sx={{
-            py: 4,
-            textAlign: 'center',
-            border: '1px dashed',
-            borderColor: 'divider',
-            borderRadius: 2.5,
-            mb: 2,
-          }}
-        >
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-            No environment variables configured.
-          </Typography>
-          <Button
-            onClick={handleAdd}
-            variant="outlined"
-            size="small"
-            startIcon={<Plus size={16} />}
-            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
-          >
-            Add Environment Variable
-          </Button>
-        </Box>
+        <div className="py-8 text-center border border-dashed border-white/10 rounded-xl mb-4">
+          <p className="text-sm text-muted mb-3">No environment variables configured.</p>
+          <button onClick={handleAdd} className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm"><Plus size={16} /> Add Environment Variable</button>
+        </div>
       ) : (
         <>
-          {/* Variable rows */}
-          <Box
-            sx={{
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 2.5,
-              overflow: 'hidden',
-              mb: 2,
-            }}
-          >
+          <div className="border border-white/10 rounded-xl overflow-hidden mb-4">
             {envVars.map((env, index) => (
               <React.Fragment key={index}>
-                {index > 0 && <Divider />}
-                <EnvironmentVariableCard
-                  env={{ ...env, value: env.value || '' }}
-                  index={index}
-                  isNew={newIndices.has(index)}
-                  isModified={modifiedIndices.has(index) && !newIndices.has(index)}
-                  onChange={handleChange}
-                  onDelete={handleDelete}
-                />
+                {index > 0 && <hr className="border-white/10" />}
+                <EnvironmentVariableCard env={{ ...env, value: env.value || '' }} index={index} isNew={newIndices.has(index)} isModified={modifiedIndices.has(index) && !newIndices.has(index)} onChange={handleChange} onDelete={handleDelete} />
               </React.Fragment>
             ))}
-          </Box>
-
-          {/* Actions row */}
-          <Stack direction="row" spacing={1.5} alignItems="center">
-            <Button
-              onClick={handleAdd}
-              variant="text"
-              size="small"
-              startIcon={<Plus size={16} />}
-              sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
-            >
-              Add Environment Variable
-            </Button>
-
-            <Box sx={{ flex: 1 }} />
-
-            {hasChanges && (
-              <Typography variant="caption" color="warning.main" fontWeight={600}>
-                {newIndices.size + modifiedIndices.size} unsaved change
-                {newIndices.size + modifiedIndices.size !== 1 ? 's' : ''}
-              </Typography>
-            )}
-
-            <Button
-              variant="contained"
-              size="small"
-              disabled={!hasChanges}
-              onClick={handleSaveAll}
-              startIcon={<Save size={14} />}
-              aria-label="Save Environment Variable"
-              sx={{
-                textTransform: 'none',
-                fontWeight: 600,
-                borderRadius: 2,
-                px: 2.5,
-              }}
-            >
-              Save All
-            </Button>
-          </Stack>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={handleAdd} className="px-4 py-2 text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm"><Plus size={16} /> Add Environment Variable</button>
+            <div className="flex-1" />
+            {hasChanges && <span className="text-xs text-warning font-semibold">{newIndices.size + modifiedIndices.size} unsaved change{newIndices.size + modifiedIndices.size !== 1 ? 's' : ''}</span>}
+            <button className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition inline-flex items-center gap-2 text-sm disabled:opacity-50" disabled={!hasChanges} onClick={handleSaveAll}><Save size={14} /> Save All</button>
+          </div>
         </>
       )}
-
-      <ActionSnackbar
-        text={snackbarState.snackbarText}
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        alertSeverity={snackbarState.alertSeverity}
-      />
-    </Box>
+      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
+    </div>
   );
 };
-
 export default EnvironmentConfigTab;

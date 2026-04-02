@@ -1,58 +1,22 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Created on Wed Apr 16 2025
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import React from 'react';
-import { Card, CardContent, Typography, Button, Tooltip, ListItemText } from '@mui/material';
 import { X, CheckCircle2, Usb } from 'lucide-react';
 import { UsbDevice } from '../UsbConfigTab';
 
-interface UsbConfigCardProps {
-  device: UsbDevice;
-  onEnable: (port: string, enabled: boolean) => void;
-}
+interface UsbConfigCardProps { device: UsbDevice; onEnable: (port: string, enabled: boolean) => void; }
 
 const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
   return (
-    <Card key={device.port} sx={{ display: 'flex', width: '100%', p: 2, mb: 2 }}>
-      <Tooltip
-        title={`USB device ${device.name} ${device.enabled ? 'enabled in app' : 'disabled in app'}`}
-      >
-        {device.device_connected ? (
-          <Usb sx={{ mr: 2, alignSelf: 'center' }} color={device.enabled ? 'success' : 'error'} />
-        ) : (
-          <Usb
-            sx={{ mr: 2, alignSelf: 'center' }}
-            color={device.enabled ? 'success' : 'error'}
-          />
-        )}
-      </Tooltip>
-      <ListItemText primary={device.port} secondary="Port" sx={{ flex: 1, mr: 2 }} />
-      <ListItemText primary={device.name} secondary="Name" sx={{ flex: 1, mr: 2 }} />
-      <ListItemText primary={device.vendor} secondary="Vendor" sx={{ flex: 1, mr: 2 }} />
-      <Button
-        sx={{ flexShrink: 0 }}
-        color={device.enabled ? 'error' : 'success'}
-        startIcon={device.enabled ? <X size={18} /> : <CheckCircle2 size={18} />}
-        onClick={() => onEnable(device.port, device.enabled)}
-      >
-        {device.enabled ? 'Disable' : 'Enable'}
-      </Button>
-    </Card>
+    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-dark-end border border-white/10">
+      <span title={`USB device ${device.name} ${device.enabled ? 'enabled in app' : 'disabled in app'}`}>
+        <Usb style={{ marginRight: 16 }} color={device.enabled ? 'var(--color-success)' : 'var(--color-error)'} size={24} />
+      </span>
+      <div className="flex-1 mr-2"><p className="text-sm font-medium">{device.port}</p><p className="text-xs text-muted">Port</p></div>
+      <div className="flex-1 mr-2"><p className="text-sm font-medium">{device.name}</p><p className="text-xs text-muted">Name</p></div>
+      <div className="flex-1 mr-2"><p className="text-sm font-medium">{device.vendor}</p><p className="text-xs text-muted">Vendor</p></div>
+      <button className={`px-4 py-2 rounded-lg font-semibold transition inline-flex items-center gap-2 shrink-0 ${device.enabled ? 'text-error hover:bg-error/10' : 'text-success hover:bg-success/10'}`} onClick={() => onEnable(device.port, device.enabled)}>
+        {device.enabled ? <X size={18} /> : <CheckCircle2 size={18} />} {device.enabled ? 'Disable' : 'Enable'}
+      </button>
+    </div>
   );
 };
-
 export default UsbConfigCard;

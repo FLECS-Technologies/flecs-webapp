@@ -1,52 +1,13 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  Divider,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Stack,
-  Typography,
-} from '@mui/material';
-import {
-  X,
-  Usb,
-  Network,
-  Cable,
-  Variable,
-  ExternalLink,
-  GitBranch,
-} from 'lucide-react';
+import { X, Usb, Network, Cable, Variable, ExternalLink, GitBranch } from 'lucide-react';
 import UsbConfigTab from './tabs/UsbConfigTab';
 import NetworkConfigTab from './tabs/NetworkConfigTab';
 import PortsConfigTab from './tabs/PortsConfigTab';
 import EnvironmentConfigTab from './tabs/EnvironmentConfigTab';
 import EditorConfigTab from './tabs/EditorConfigTab';
-import { useProtectedApi } from '@shared/api/ApiProvider';
+import { postInstancesInstanceIdStop, postInstancesInstanceIdStart } from '@generated/core/instances/instances';
 
-interface InstanceConfigDialogProps {
-  instanceId: string;
-  instanceName: string;
-  open: boolean;
-  onClose: () => void;
-  /** Optional: pass app + version data to show version section */
-  versionSection?: React.ReactNode;
-}
+interface InstanceConfigDialogProps { instanceId: string; instanceName: string; open: boolean; onClose: () => void; versionSection?: React.ReactNode; }
 
 const sections = [
   { key: 'usb', label: 'USB Devices', icon: Usb },
@@ -58,210 +19,70 @@ const sections = [
 
 type SectionKey = (typeof sections)[number]['key'] | 'version';
 
-const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
-  instanceId,
-  instanceName,
-  open,
-  onClose,
-  versionSection,
-}) => {
-  const [activeSection, setActiveSection] = useState<SectionKey>(
-    versionSection ? 'version' : 'usb',
-  );
+const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({ instanceId, instanceName, open, onClose, versionSection }) => {
+  const [activeSection, setActiveSection] = useState<SectionKey>(versionSection ? 'version' : 'usb');
   const [hasChanges, setHasChanges] = useState(false);
-  const api = useProtectedApi();
 
   const handleClose = async () => {
-    if (hasChanges) {
-      try {
-        await api.instances.instancesInstanceIdStopPost(instanceId);
-        await api.instances.instancesInstanceIdStartPost(instanceId);
-      } catch {
-        // best-effort restart
-      }
-    }
-    setHasChanges(false);
-    onClose();
+    if (hasChanges) { try { await postInstancesInstanceIdStop(instanceId); await postInstancesInstanceIdStart(instanceId); } catch {} }
+    setHasChanges(false); onClose();
   };
 
+  if (!open) return null;
+
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="md"
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: 4,
-            overflow: 'hidden',
-            height: '70vh',
-            maxHeight: 640,
-          },
-        },
-      }}
-    >
-      <DialogContent sx={{ p: 0, display: 'flex', height: '100%' }}>
-        {/* ─── Sidebar ─── */}
-        <Box
-          sx={{
-            width: 220,
-            flexShrink: 0,
-            borderRight: '1px solid',
-            borderColor: 'divider',
-            display: 'flex',
-            flexDirection: 'column',
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'grey.50',
-          }}
-        >
-          <Box sx={{ px: 2.5, py: 2.5 }}>
-            <Typography variant="subtitle2" fontWeight={700} noWrap>
-              {instanceName}
-            </Typography>
-            <Typography variant="caption" color="text.disabled">
-              Settings
-            </Typography>
-          </Box>
-
-          <Divider />
-
-          <List dense sx={{ flex: 1, py: 1 }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-dark-end rounded-2xl overflow-hidden flex shadow-2xl border border-white/10 w-full max-w-3xl" style={{ height: '70vh', maxHeight: 640 }}>
+        {/* Sidebar */}
+        <div className="w-[220px] shrink-0 border-r border-white/10 flex flex-col bg-white/2">
+          <div className="px-4 py-4">
+            <span className="text-sm font-bold truncate block">{instanceName}</span>
+            <span className="text-xs text-muted">Settings</span>
+          </div>
+          <hr className="border-white/10" />
+          <nav className="flex-1 py-1">
             {versionSection && (
-              <ListItemButton
-                selected={activeSection === 'version'}
-                onClick={() => setActiveSection('version')}
-                sx={{
-                  mx: 1,
-                  borderRadius: 1.5,
-                  mb: 0.25,
-                  '&.Mui-selected': {
-                    bgcolor: (theme) =>
-                      theme.palette.mode === 'dark'
-                        ? 'rgba(255,255,255,0.08)'
-                        : 'rgba(0,0,0,0.06)',
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  <GitBranch size={16} />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Version"
-                  primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }}
-                />
-              </ListItemButton>
+              <button onClick={() => setActiveSection('version')} className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === 'version' ? 'bg-white/8 font-medium' : 'hover:bg-white/5'}`}>
+                <GitBranch size={16} /> Version
+              </button>
             )}
             {sections.map(({ key, label, icon: Icon }) => (
-              <ListItemButton
-                key={key}
-                selected={activeSection === key}
-                onClick={() => setActiveSection(key)}
-                sx={{
-                  mx: 1,
-                  borderRadius: 1.5,
-                  mb: 0.25,
-                  '&.Mui-selected': {
-                    bgcolor: (theme) =>
-                      theme.palette.mode === 'dark'
-                        ? 'rgba(255,255,255,0.08)'
-                        : 'rgba(0,0,0,0.06)',
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  <Icon size={16} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={label}
-                  primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }}
-                />
-              </ListItemButton>
+              <button key={key} onClick={() => setActiveSection(key)} className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === key ? 'bg-white/8 font-medium' : 'hover:bg-white/5'}`}>
+                <Icon size={16} /> {label}
+              </button>
             ))}
-          </List>
-
-          <Divider />
-          <Box sx={{ p: 1.5 }}>
-            <Button
-              fullWidth
-              variant={hasChanges ? 'contained' : 'outlined'}
-              color={hasChanges ? 'primary' : 'inherit'}
-              size="small"
-              onClick={handleClose}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 600,
-                borderRadius: 2,
-                borderColor: hasChanges ? undefined : 'divider',
-              }}
-            >
+          </nav>
+          <hr className="border-white/10" />
+          <div className="p-3">
+            <button onClick={handleClose} className={`w-full px-4 py-2 rounded-lg font-semibold text-sm transition ${hasChanges ? 'bg-brand text-white hover:bg-brand-end' : 'border border-white/10 hover:bg-white/5'}`}>
               {hasChanges ? 'Save & Restart' : 'Close'}
-            </Button>
-          </Box>
-        </Box>
-
-        {/* ─── Content ─── */}
-        <Box sx={{ flex: 1, overflow: 'auto', position: 'relative' }}>
-          {/* Close button */}
-          <IconButton
-            onClick={handleClose}
-            size="small"
-            sx={{
-              position: 'absolute',
-              right: 12,
-              top: 12,
-              zIndex: 1,
-              bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-              '&:hover': {
-                bgcolor: (theme) =>
-                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-              },
-            }}
-          >
-            <X size={16} />
-          </IconButton>
-
-          <Box sx={{ p: 3 }}>
-            {/* Section header */}
-            <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
-              {activeSection === 'version'
-                ? 'Version'
-                : sections.find((s) => s.key === activeSection)?.label}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            </button>
+          </div>
+        </div>
+        {/* Content */}
+        <div className="flex-1 overflow-auto relative">
+          <button onClick={handleClose} className="absolute right-3 top-3 z-10 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition"><X size={16} /></button>
+          <div className="p-6">
+            <h6 className="text-base font-bold mb-1">{activeSection === 'version' ? 'Version' : sections.find(s => s.key === activeSection)?.label}</h6>
+            <p className="text-sm text-muted mb-4">
               {activeSection === 'version' && 'Change or update the app version.'}
               {activeSection === 'usb' && 'Configure USB device passthrough.'}
               {activeSection === 'network' && 'Configure network interfaces.'}
               {activeSection === 'ports' && 'Configure port mappings.'}
               {activeSection === 'env' && 'Configure environment variables.'}
               {activeSection === 'editors' && 'Configure editor URLs and reverse proxy.'}
-            </Typography>
-
-            <Divider sx={{ mb: 3 }} />
-
-            {/* Tab content */}
+            </p>
+            <hr className="border-white/10 mb-4" />
             {activeSection === 'version' && versionSection}
-            {activeSection === 'usb' && (
-              <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />
-            )}
-            {activeSection === 'network' && (
-              <NetworkConfigTab instanceId={instanceId} onChange={setHasChanges} />
-            )}
-            {activeSection === 'ports' && (
-              <PortsConfigTab instanceId={instanceId} onChange={setHasChanges} />
-            )}
-            {activeSection === 'env' && (
-              <EnvironmentConfigTab instanceId={instanceId} onChange={setHasChanges} />
-            )}
-            {activeSection === 'editors' && (
-              <EditorConfigTab instanceId={instanceId} onChange={setHasChanges} />
-            )}
-          </Box>
-        </Box>
-      </DialogContent>
-    </Dialog>
+            {activeSection === 'usb' && <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+            {activeSection === 'network' && <NetworkConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+            {activeSection === 'ports' && <PortsConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+            {activeSection === 'env' && <EnvironmentConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+            {activeSection === 'editors' && <EditorConfigTab instanceId={instanceId} onChange={setHasChanges} />}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
 export default InstanceConfigDialog;

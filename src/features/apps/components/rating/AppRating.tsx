@@ -1,22 +1,5 @@
-/*
- * Copyright (c) 2021 FLECS Technologies GmbH
- *
- * Created on Tue Aug 12 2022
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import React from 'react';
-import { Rating, Typography } from '@mui/material';
+import { Star } from 'lucide-react';
 
 interface AppRatingProps {
   app?: {
@@ -27,14 +10,19 @@ interface AppRatingProps {
 }
 
 const AppRating: React.FC<AppRatingProps> = ({ app }) => {
-  const [value, setValue] = React.useState<number>(Number(app?.average_rating));
+  const value = Number(app?.average_rating) || 0;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <Rating size="small" value={value} readOnly />
-      <Typography variant="subtitle1" sx={{ marginLeft: 1 }}>
-        ({app?.rating_count})
-      </Typography>
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star
+          key={star}
+          size={16}
+          fill={star <= value ? '#F59E0B' : 'none'}
+          color={star <= value ? '#F59E0B' : '#6B7280'}
+        />
+      ))}
+      <span className="text-base ml-1">({app?.rating_count})</span>
     </div>
   );
 };

@@ -1,240 +1,62 @@
-/*
- * Copyright (c) 2025 FLECS Technologies GmbH
- *
- * Created on Thu Oct 31 2025
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, Alert, LinearProgress, Stack } from '@mui/material';
 import { Eye, EyeOff } from 'lucide-react';
-import { IconButton, InputAdornment } from '@mui/material';
-import { WizardStep, WizardStepProps } from '@shared/components/steppers';
-import { usePublicAuthProviderApi } from '@shared/api/AuthProviderApiProvider';
-import { checkSuperAdminExists } from '../utils/onboardingHelpers';
+import { useCreateSuperAdmin } from '@features/auth/fence-api';
 
-const SuperAdminStepComponent: React.FC<WizardStepProps> = ({
-  onNext,
-  onPrevious,
-  onComplete,
-  isLoading,
-  error,
-}) => {
+const SuperAdminStepComponent: React.FC<{ onNext?: () => void; onComplete?: () => void }> = ({ onNext, onComplete }) => {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const authApi = usePublicAuthProviderApi();
 
-  const getPasswordStrength = (
-    password: string,
-  ): { score: number; label: string; color: string } => {
+  const { mutateAsync: createAdmin, isPending, error: mutationError } = useCreateSuperAdmin();
+
+  const getPasswordStrength = (pw: string) => {
     let score = 0;
-
-    if (password.length >= 8) score += 25;
-    if (password.length >= 12) score += 25;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 25;
-    if (/\d/.test(password)) score += 25;
-    if (/[^a-zA-Z0-9]/.test(password)) score += 25;
-
-    if (score <= 25) return { score, label: 'Weak', color: 'error.main' };
-    if (score <= 50) return { score, label: 'Fair', color: 'warning.main' };
-    if (score <= 75) return { score, label: 'Good', color: 'info.main' };
-    return { score, label: 'Strong', color: 'success.main' };
-  };
-
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-    if (!username.trim()) {
-      errors.username = 'Username is required';
-    }
-    if (!password) {
-      errors.password = 'Password is required';
-    }
-    if (password !== confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
-    }
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
+    if (pw.length >= 8) score += 25; if (pw.length >= 12) score += 25;
+    if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score += 25;
+    if (/\d/.test(pw)) score += 25; if (/[^a-zA-Z0-9]/.test(pw)) score += 25;
+    if (score <= 25) return { score, label: 'Weak', color: 'bg-error' };
+    if (score <= 50) return { score, label: 'Fair', color: 'bg-warning' };
+    if (score <= 75) return { score, label: 'Good', color: 'bg-accent' };
+    return { score, label: 'Strong', color: 'bg-success' };
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
-    setValidationErrors({});
+    const errors: Record<string, string> = {};
+    if (!username.trim()) errors.username = 'Username is required';
+    if (!password) errors.password = 'Password is required';
+    if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    setValidationErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     try {
-      const api = await authApi.api();
-      if (!api || !api.AuthApi || !api.AuthApi.postSuperAdmin) throw new Error('API unavailable');
-      await api.AuthApi.postSuperAdmin({
-        full_name: username,
-        name: username,
-        password,
-      });
-      if (onComplete) onComplete();
-      if (onNext) onNext();
-    } catch (err: any) {
-      let msg = err?.message || 'Failed to create super admin. Please try again.';
-      setValidationErrors((prev) => ({ ...prev, general: msg }));
+      await createAdmin({ full_name: username, name: username, password });
+      onComplete?.();
+      onNext?.();
+    } catch {
+      // mutationError is set automatically by TanStack
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSubmit();
-  };
-
-  const passwordStrength = getPasswordStrength(password);
-
+  const ps = getPasswordStrength(password);
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-      <form onSubmit={handleFormSubmit}>
-        <Typography variant="h5" gutterBottom>
-          Create Super Administrator
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Create the initial administrator account for your device. This account will have full
-          access to manage the system.
-        </Typography>
-
-        <Stack spacing={3}>
-          <TextField
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            error={!!validationErrors.username}
-            helperText={validationErrors.username}
-            disabled={isLoading}
-            autoFocus
-          />
-
-          <TextField
-            fullWidth
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={!!validationErrors.password}
-            helperText={validationErrors.password}
-            disabled={isLoading}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-
-          {password && (
-            <Box>
-              <Typography variant="caption" color="text.secondary">
-                Password Strength: {passwordStrength.label}
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={passwordStrength.score}
-                sx={{
-                  backgroundColor: 'grey.200',
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: passwordStrength.color,
-                  },
-                }}
-              />
-            </Box>
-          )}
-
-          <TextField
-            fullWidth
-            label="Confirm Password"
-            type={showConfirmPassword ? 'text' : 'password'}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            error={!!validationErrors.confirmPassword}
-            helperText={validationErrors.confirmPassword}
-            disabled={isLoading}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge="end"
-                      tabIndex={-1}
-                    >
-                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Stack>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            tabIndex={3}
-            type="submit"
-          >
-            {isLoading ? 'Creating Admin...' : 'Create Administrator'}
-          </Button>
-        </Box>
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        {validationErrors.general && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {validationErrors.general}
-          </Alert>
-        )}
+    <div className="max-w-xl mx-auto">
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <h5 className="text-xl font-semibold mb-2">Create Super Administrator</h5>
+        <p className="text-sm text-muted mb-6">Create the initial administrator account for your device.</p>
+        <div className="flex flex-col gap-4">
+          <div><label className="block text-sm text-muted mb-1">Username</label><input value={username} onChange={(e) => setUsername(e.target.value)} autoFocus disabled={isPending} className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand" />{validationErrors.username && <p className="text-xs text-error mt-1">{validationErrors.username}</p>}</div>
+          <div><label className="block text-sm text-muted mb-1">Password</label><div className="relative"><input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} disabled={isPending} className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand pr-10" /><button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 p-1" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button></div>{validationErrors.password && <p className="text-xs text-error mt-1">{validationErrors.password}</p>}</div>
+          {password && <div><span className="text-xs text-muted">Strength: {ps.label}</span><div className="h-1 bg-white/10 rounded mt-1"><div className={`h-full rounded ${ps.color}`} style={{ width: `${ps.score}%` }} /></div></div>}
+          <div><label className="block text-sm text-muted mb-1">Confirm Password</label><div className="relative"><input type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} disabled={isPending} className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand pr-10" /><button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 p-1" onClick={() => setShowConfirmPassword(!showConfirmPassword)} tabIndex={-1}>{showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button></div>{validationErrors.confirmPassword && <p className="text-xs text-error mt-1">{validationErrors.confirmPassword}</p>}</div>
+        </div>
+        <div className="flex justify-between mt-8"><button type="submit" className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50" disabled={isPending}>{isPending ? 'Creating Admin...' : 'Create Administrator'}</button></div>
+        {mutationError && <div className="px-4 py-3 rounded-lg bg-error/10 text-error mt-4">{mutationError.message}</div>}
+        {validationErrors.general && <div className="px-4 py-3 rounded-lg bg-error/10 text-error mt-4">{validationErrors.general}</div>}
       </form>
-    </Box>
+    </div>
   );
 };
 
-export class SuperAdminStep extends WizardStep {
-  readonly id = 'super-admin';
-  readonly title = 'Create Super Admin';
-  readonly description = 'Create the initial administrator account';
-  readonly component = SuperAdminStepComponent;
-
-  async isCompleted(apiContext?: any): Promise<boolean> {
-    if (!apiContext?.auth) return false;
-
-    return await checkSuperAdminExists(apiContext.auth);
-  }
-
-  canSkip(): boolean {
-    return false;
-  }
-
-  getDependencies(): string[] {
-    return ['auth-provider'];
-  }
-}
+export default SuperAdminStepComponent;

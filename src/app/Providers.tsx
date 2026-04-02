@@ -1,41 +1,28 @@
-/*
- * Copyright (c) 2022 FLECS Technologies GmbH
- *
- * Created on Tue Aug 05 2025
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import React from 'react';
-import { ProtectedApiProvider, PublicApiProvider } from '@shared/api/ApiProvider';
-import { OAuth4WebApiAuthProvider } from '@features/auth/providers/OAuth4WebApiAuthProvider';
-import DeviceActivationProvider from '@features/auth/providers/DeviceActivationProvider';
-import { PublicAuthProviderApiProvider } from '@shared/api/AuthProviderApiProvider';
+import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import OnboardingGuard from '@features/onboarding/OnboardingGuard';
+import DeviceLogin from '@pages/DeviceLogin';
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useOAuth4WebApiAuth();
+  if (window.location.hash.includes('/oauth/callback')) return <>{children}</>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin h-6 w-6 border-2 border-brand border-t-transparent rounded-full" />
+    </div>
+  );
+  if (!isAuthenticated) return <DeviceLogin />;
+  return <>{children}</>;
+}
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <PublicApiProvider>
-      <PublicAuthProviderApiProvider>
-        <OAuth4WebApiAuthProvider>
-          <ProtectedApiProvider>
-            <OnboardingGuard>
-              <DeviceActivationProvider>
-                {children}
-              </DeviceActivationProvider>
-            </OnboardingGuard>
-          </ProtectedApiProvider>
-        </OAuth4WebApiAuthProvider>
-      </PublicAuthProviderApiProvider>
-    </PublicApiProvider>
+    <OAuth4WebApiAuthProvider>
+      <OnboardingGuard>
+        <AuthGate>
+          {children}
+        </AuthGate>
+      </OnboardingGuard>
+    </OAuth4WebApiAuthProvider>
   );
 }

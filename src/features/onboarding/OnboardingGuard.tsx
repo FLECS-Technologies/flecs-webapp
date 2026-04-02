@@ -1,33 +1,37 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useDeviceState } from '@stores/device-state';
-import { useOnboardingStatus } from '@features/onboarding';
+import { useQuery } from '@tanstack/react-query';
+import { getProvidersAuth } from '@generated/core/experimental/experimental';
+import type { AuthProvidersAndDefaults } from '@generated/core/schemas';
 
-/**
- * Route-based onboarding redirect.
- * Extracted from the old SystemContextProvider.
- */
+export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | null {
+  const ref = data?.core;
+  if (typeof ref === 'string' && ref !== 'Default') return ref;
+  if (ref && typeof ref === 'object' && 'Provider' in ref) return ref.Provider;
+  return null;
+}
+
 export default function OnboardingGuard({ children }: { children: React.ReactNode }) {
-  const deviceState = useDeviceState();
-  const { isRequired: onboardingRequired, isLoading } = useOnboardingStatus();
   const navigate = useNavigate();
   const location = useLocation();
   const hasRedirected = useRef(false);
 
-  useEffect(() => {
-    const shouldOnboard =
-      deviceState.loaded &&
-      !deviceState.onboarded &&
-      onboardingRequired &&
-      !isLoading &&
-      !hasRedirected.current &&
-      location.pathname !== '/onboarding';
+  const { data: needsOnboarding, isLoading } = useQuery({
+    queryKey: ['onboarding-status'],
+    queryFn: async () => {
+      const res = await getProvidersAuth();
+      return !extractCoreProviderId(res.data as AuthProvidersAndDefaults);
+    },
+    retry: 1,
+    staleTime: 60_000,
+  });
 
-    if (shouldOnboard) {
+  useEffect(() => {
+    if (!isLoading && needsOnboarding && !hasRedirected.current && location.pathname !== '/onboarding') {
       hasRedirected.current = true;
       navigate('/onboarding');
     }
-  }, [deviceState.loaded, deviceState.onboarded, onboardingRequired, isLoading, location.pathname, navigate]);
+  }, [isLoading, needsOnboarding, location.pathname]);
 
   return <>{children}</>;
 }

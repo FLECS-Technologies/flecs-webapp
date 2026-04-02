@@ -1,15 +1,12 @@
-import { Paper, Typography } from '@mui/material';
 import LicenseInfo from './device/license/LicenseInfo';
-import DeviceActivation from '@shared/components/device/DeviceActivation';
+import DeviceActivation from '@features/auth/components/device/DeviceActivation';
 
 export default function LicenseCard() {
   return (
-    <Paper sx={{ p: 3, borderRadius: 3 }}>
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-        License
-      </Typography>
+    <div className="rounded-xl bg-dark-end p-6 border border-white/10">
+      <h6 className="text-base font-semibold mb-4">License</h6>
       <LicenseInfo />
       <DeviceActivation variant="line" />
-    </Paper>
+    </div>
   );
 }

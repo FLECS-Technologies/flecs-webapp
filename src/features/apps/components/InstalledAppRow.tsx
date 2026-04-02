@@ -1,480 +1,125 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import {
-  ExternalLink,
-  MoreHorizontal,
-  Play,
-  Plus,
-  Square,
-  Settings,
-  Info,
-  Trash2,
-  BookOpen,
-  RefreshCw,
-} from 'lucide-react';
-import { App } from '@shared/types/app';
-import { Version } from '@shared/types/version';
-import { createVersions, getLatestVersion, createVersion } from '@shared/utils/version-utils';
+import { ExternalLink, MoreHorizontal, Play, Plus, Square, Settings, Info, Trash2, BookOpen, RefreshCw } from 'lucide-react';
+type App = any;
+type Version = string;
+const getLatestVersion = (versions: string[]) => versions?.[0]; const createVersion = (v: string) => v; const createVersions = (v: string[]) => v;
 import AppStatusDot from './AppStatusDot';
-import UninstallButton from '@shared/components/app-actions/UninstallButton';
-import UpdateButton from '@shared/components/app-actions/UpdateButton';
-import ActionSnackbar from '@shared/components/ActionSnackbar';
-import ContentDialog from '@shared/components/ContentDialog';
+import UninstallButton from '@features/apps/components/actions/UninstallButton';
+import UpdateButton from '@features/apps/components/actions/UpdateButton';
+import ActionSnackbar from '@app/components/ActionSnackbar';
+import ContentDialog from '@app/components/ContentDialog';
 import InstanceInfo from './instances/InstanceInfo';
 import InstanceConfigDialog from './instances/InstanceConfigDialog';
-import { VersionSelector } from '@shared/components/VersionSelector';
-import { createUrl } from '@shared/components/app-actions/editors/EditorButton';
-import { useProtectedApi } from '@shared/api/ApiProvider';
-import { useQuestActions } from '@shared/quests/hooks';
-import { useInvalidateAppData } from '@shared/hooks/app-queries';
-import { questStateFinishedOk } from '@shared/quests/utils/QuestState';
+import { VersionSelector } from '@app/components/VersionSelector';
+import { createUrl } from '@features/apps/components/actions/editors/EditorButton';
+import { useQuestActions } from '@features/notifications/quests/hooks';
+import { useInvalidateAppData } from '@features/apps/hooks/app-queries';
+import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
+import { postInstancesCreate, postInstancesInstanceIdStart, postInstancesInstanceIdStop } from '@generated/core/instances/instances';
+import type { JobMeta } from '@generated/core/schemas';
 
-interface InstalledAppRowProps {
-  app: App;
-}
+interface InstalledAppRowProps { app: App; }
 
 export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const invalidateAppData = useInvalidateAppData();
-  const api = useProtectedApi();
   const { waitForQuest } = useQuestActions();
-
-  // Single instance — always pick first
   const instance = (app.instances ?? [])[0] as any | undefined;
   const isRunning = instance?.status === 'running';
   const isStopped = instance?.status === 'stopped';
   const hasEditors = instance?.editors?.length > 0;
   const primaryEditor = instance?.editors?.[0];
-
-  // Version management
-  const versionsArray = app.versions
-    ? createVersions(app.versions, app.installedVersions || [])
-    : [];
+  const versionsArray = app.versions ? createVersions(app.versions, app.installedVersions || []) : [];
   const latestVersion = getLatestVersion(versionsArray);
-  const updateAvailable =
-    latestVersion &&
-    app.installedVersions &&
-    !app.installedVersions.includes(latestVersion.version);
-  const [selectedVersion, setSelectedVersion] = useState<Version>(
-    latestVersion ?? createVersion(app.appKey?.version ?? ''),
-  );
-
-  const statusLabel = !instance
-    ? 'No instance'
-    : isRunning
-      ? 'Running'
-      : isStopped
-        ? 'Stopped'
-        : instance.status ?? 'Unknown';
-
-  // Menu state
-  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-  const menuOpen = Boolean(menuAnchor);
-
-  // Dialog states
+  const updateAvailable = latestVersion && app.installedVersions && !app.installedVersions.includes(latestVersion.version);
+  const [selectedVersion, setSelectedVersion] = useState<Version>(latestVersion ?? createVersion(app.appKey?.version ?? ''));
+  const statusLabel = !instance ? 'No instance' : isRunning ? 'Running' : isStopped ? 'Stopped' : instance.status ?? 'Unknown';
+  const [menuAnchor, setMenuAnchor] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-
-  // Action states
   const [busy, setBusy] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    text: '',
-    severity: 'success' as 'success' | 'error',
-    errorText: '',
-  });
+  const [snackbar, setSnackbar] = useState({ text: '', severity: 'success' as 'success' | 'error', errorText: '' });
 
-  const runInstanceAction = async (
-    action: () => Promise<any>,
-    successMsg: string,
-    failMsg: string,
-  ) => {
-    setBusy(true);
-    setMenuAnchor(null);
-    try {
-      const quest = await action();
-      const result = await waitForQuest(quest.data.jobId);
-      if (questStateFinishedOk(result.state)) {
-        setSnackbar({ text: successMsg, severity: 'success', errorText: '' });
-      } else {
-        throw new Error(result.description);
-      }
-    } catch (err: any) {
-      setSnackbar({ text: failMsg, severity: 'error', errorText: err?.message ?? '' });
-    } finally {
-      setSnackbarOpen(true);
-      invalidateAppData();
-      setBusy(false);
-    }
+  useEffect(() => { const handler = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuAnchor(false); }; document.addEventListener('mousedown', handler); return () => document.removeEventListener('mousedown', handler); }, []);
+
+  const runInstanceAction = async (action: () => Promise<any>, successMsg: string, failMsg: string) => {
+    setBusy(true); setMenuAnchor(false);
+    try { const quest = await action(); const result = await waitForQuest((quest.data as JobMeta).jobId); if (questStateFinishedOk(result.state)) setSnackbar({ text: successMsg, severity: 'success', errorText: '' }); else throw new Error(result.description); }
+    catch (err: any) { setSnackbar({ text: failMsg, severity: 'error', errorText: err?.message ?? '' }); }
+    finally { setSnackbarOpen(true); invalidateAppData(); setBusy(false); }
   };
 
   const handleCreateAndStart = async () => {
-    setBusy(true);
-    setMenuAnchor(null);
-    try {
-      const createQuest = await api.instances.instancesCreatePost({
-        appKey: { name: app.appKey.name, version: app.appKey.version },
-      });
-      const createResult = await waitForQuest(createQuest.data.jobId);
-
-      if (questStateFinishedOk(createResult.state) && createResult.result) {
-        const startQuest = await api.instances.instancesInstanceIdStartPost(createResult.result);
-        await waitForQuest(startQuest.data.jobId);
-      }
-
-      setSnackbar({ text: `${app.title} started`, severity: 'success', errorText: '' });
-    } catch (err: any) {
-      setSnackbar({
-        text: `Failed to create instance of ${app.title}`,
-        severity: 'error',
-        errorText: err?.message ?? '',
-      });
-    } finally {
-      setSnackbarOpen(true);
-      invalidateAppData();
-      setBusy(false);
-    }
+    setBusy(true); setMenuAnchor(false);
+    try { const createQuest = await postInstancesCreate({ appKey: { name: app.appKey.name, version: app.appKey.version } }); const createResult = await waitForQuest((createQuest.data as JobMeta).jobId); if (questStateFinishedOk(createResult.state) && createResult.result) { const startQuest = await postInstancesInstanceIdStart(createResult.result); await waitForQuest((startQuest.data as JobMeta).jobId); } setSnackbar({ text: `${app.title} started`, severity: 'success', errorText: '' }); }
+    catch (err: any) { setSnackbar({ text: `Failed to create instance of ${app.title}`, severity: 'error', errorText: err?.message ?? '' }); }
+    finally { setSnackbarOpen(true); invalidateAppData(); setBusy(false); }
   };
 
-  const handleStart = () => {
-    if (!instance) return;
-    runInstanceAction(
-      () => api.instances.instancesInstanceIdStartPost(instance.instanceId),
-      `${app.title} started`,
-      `Failed to start ${app.title}`,
-    );
-  };
-
-  const handleStop = () => {
-    if (!instance) return;
-    runInstanceAction(
-      () => api.instances.instancesInstanceIdStopPost(instance.instanceId),
-      `${app.title} stopped`,
-      `Failed to stop ${app.title}`,
-    );
-  };
-
-  const handleUninstallComplete = (success: boolean, message: string, error?: string) => {
-    setSnackbar({
-      text: message,
-      severity: success ? 'success' : 'error',
-      errorText: error ?? '',
-    });
-    setSnackbarOpen(true);
-  };
-
-  const handleOpenApp = () => {
-    if (primaryEditor) {
-      window.open(createUrl(primaryEditor.url));
-    }
-  };
-
-  const selectedVersionNotInstalled =
-    !app.installedVersions?.includes(selectedVersion.version);
+  const selectedVersionNotInstalled = !app.installedVersions?.includes(selectedVersion.version);
 
   return (
     <>
-      <Stack
-        direction="row"
-        alignItems="center"
-        spacing={2}
-        sx={{
-          px: 3,
-          py: 2,
-          transition: 'background-color 0.15s',
-          '&:hover': {
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-          },
-        }}
-      >
+      <div className="flex items-center gap-4 px-5 py-3 hover:bg-white/3 transition">
         {/* Avatar */}
-        <Avatar
-          src={app.avatar}
-          variant="rounded"
-          sx={{
-            width: 48,
-            height: 48,
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50',
-            fontSize: 18,
-            fontWeight: 700,
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          {app.title?.charAt(0).toUpperCase()}
-        </Avatar>
-
-        {/* Identity + status */}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="subtitle2" fontWeight={700} noWrap>
-              {app.title}
-            </Typography>
-            {updateAvailable && (
-              <Chip
-                label="Update"
-                size="small"
-                color="info"
-                variant="outlined"
-                icon={<RefreshCw size={12} />}
-                onClick={() => setSettingsOpen(true)}
-                sx={{
-                  height: 22,
-                  fontSize: '0.65rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  '& .MuiChip-icon': { fontSize: 12 },
-                }}
-              />
-            )}
-          </Stack>
-          <Stack direction="row" spacing={1} alignItems="center">
-            {app.author && (
-              <Typography variant="caption" color="text.secondary" noWrap>
-                {app.author}
-              </Typography>
-            )}
-            {app.author && (
-              <Typography variant="caption" color="text.disabled">
-                ·
-              </Typography>
-            )}
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              fontFamily="monospace"
-              noWrap
-            >
-              v{app.appKey?.version}
-            </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mt: 0.25 }}>
+        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-lg font-bold border border-white/10 overflow-hidden shrink-0">
+          {app.avatar ? <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" /> : app.title?.charAt(0).toUpperCase()}
+        </div>
+        {/* Identity */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold truncate">{app.title}</span>
+            {updateAvailable && <span className="px-2 py-0.5 rounded-full bg-accent/20 text-accent text-[0.65rem] font-semibold cursor-pointer inline-flex items-center gap-1" onClick={() => setSettingsOpen(true)}><RefreshCw size={10} /> Update</span>}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-muted">
+            {app.author && <span className="truncate">{app.author}</span>}
+            {app.author && <span>-</span>}
+            <span className="font-mono truncate">v{app.appKey?.version}</span>
+          </div>
+          <div className="flex items-center gap-1.5 mt-0.5">
             <AppStatusDot status={instance?.status ?? 'stopped'} size={8} />
-            <Typography
-              variant="caption"
-              fontWeight={500}
-              color={isRunning ? 'success.main' : 'text.disabled'}
-            >
-              {statusLabel}
-            </Typography>
-          </Stack>
-        </Box>
-
-        {/* Primary CTA — Open app */}
+            <span className={`text-xs font-medium ${isRunning ? 'text-success' : 'text-muted'}`}>{statusLabel}</span>
+          </div>
+        </div>
+        {/* Open button */}
         {hasEditors && (
-          <Tooltip title={`Open ${primaryEditor.name || app.title} in a new tab`}>
-            <span>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<ExternalLink size={15} />}
-                disabled={!isRunning}
-                onClick={handleOpenApp}
-                sx={{
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '0.8rem',
-                  borderRadius: 2,
-                  borderColor: 'divider',
-                  color: isRunning ? 'text.primary' : 'text.disabled',
-                  px: 2,
-                  whiteSpace: 'nowrap',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: (theme) =>
-                      theme.palette.mode === 'dark'
-                        ? 'rgba(255,46,99,0.06)'
-                        : 'rgba(255,46,99,0.04)',
-                  },
-                }}
-              >
-                Open
-              </Button>
-            </span>
-          </Tooltip>
+          <button title={`Open ${primaryEditor.name || app.title} in a new tab`} disabled={!isRunning} onClick={() => primaryEditor && window.open(createUrl(primaryEditor.url))} className="px-4 py-1.5 border border-white/10 rounded-lg text-sm font-semibold hover:border-brand hover:bg-brand/5 transition whitespace-nowrap disabled:opacity-40">Open</button>
         )}
-
-        {/* Overflow menu */}
-        <IconButton
-          size="small"
-          onClick={(e) => setMenuAnchor(e.currentTarget)}
-          disabled={busy}
-          sx={{
-            color: 'text.secondary',
-            '&:hover': { bgcolor: 'action.hover' },
-          }}
-        >
-          <MoreHorizontal size={18} />
-        </IconButton>
-
-        <Menu
-          anchorEl={menuAnchor}
-          open={menuOpen}
-          onClose={() => setMenuAnchor(null)}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          slotProps={{
-            paper: {
-              sx: { minWidth: 200, borderRadius: 2.5, mt: 0.5 },
-            },
-          }}
-        >
-          {!instance && (
-            <MenuItem onClick={handleCreateAndStart}>
-              <ListItemIcon>
-                <Plus size={16} />
-              </ListItemIcon>
-              <ListItemText>Create & Start</ListItemText>
-            </MenuItem>
+        {/* Menu */}
+        <div className="relative" ref={menuRef}>
+          <button className="p-1.5 rounded-lg hover:bg-white/10 transition text-muted" onClick={() => setMenuAnchor(!menuAnchor)} disabled={busy}><MoreHorizontal size={18} /></button>
+          {menuAnchor && (
+            <div className="absolute right-0 mt-1 w-48 rounded-xl bg-dark-end border border-white/10 shadow-xl z-50 py-1">
+              {!instance && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={handleCreateAndStart}><Plus size={16} /> Create & Start</button>}
+              {instance && isStopped && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={() => runInstanceAction(() => postInstancesInstanceIdStart(instance.instanceId), `${app.title} started`, `Failed to start ${app.title}`)}><Play size={16} /> Start</button>}
+              {instance && isRunning && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={() => runInstanceAction(() => postInstancesInstanceIdStop(instance.instanceId), `${app.title} stopped`, `Failed to stop ${app.title}`)}><Square size={16} /> Stop</button>}
+              {instance && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={() => { setMenuAnchor(false); setSettingsOpen(true); }}><Settings size={16} /> Settings</button>}
+              {instance && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={() => { setMenuAnchor(false); setInfoOpen(true); }}><Info size={16} /> Info & Logs</button>}
+              {app.documentationUrl && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={() => { setMenuAnchor(false); window.open(app.documentationUrl); }}><BookOpen size={16} /> Documentation</button>}
+              <hr className="border-white/10 my-1" />
+              <UninstallButton app={app} selectedVersion={{ version: app.appKey?.version }} variant="menuItem" onUninstallComplete={(success, message, error) => { setSnackbar({ text: message, severity: success ? 'success' : 'error', errorText: error ?? '' }); setSnackbarOpen(true); }} onMenuClose={() => setMenuAnchor(false)} />
+            </div>
           )}
-          {instance && isStopped && (
-            <MenuItem onClick={handleStart}>
-              <ListItemIcon>
-                <Play size={16} />
-              </ListItemIcon>
-              <ListItemText>Start</ListItemText>
-            </MenuItem>
-          )}
-          {instance && isRunning && (
-            <MenuItem onClick={handleStop}>
-              <ListItemIcon>
-                <Square size={16} />
-              </ListItemIcon>
-              <ListItemText>Stop</ListItemText>
-            </MenuItem>
-          )}
-          {instance && (
-            <MenuItem
-              onClick={() => {
-                setMenuAnchor(null);
-                setSettingsOpen(true);
-              }}
-            >
-              <ListItemIcon>
-                <Settings size={16} />
-              </ListItemIcon>
-              <ListItemText>Settings</ListItemText>
-            </MenuItem>
-          )}
-          {instance && (
-            <MenuItem
-              onClick={() => {
-                setMenuAnchor(null);
-                setInfoOpen(true);
-              }}
-            >
-              <ListItemIcon>
-                <Info size={16} />
-              </ListItemIcon>
-              <ListItemText>Info & Logs</ListItemText>
-            </MenuItem>
-          )}
-          {app.documentationUrl && (
-            <MenuItem
-              onClick={() => {
-                setMenuAnchor(null);
-                window.open(app.documentationUrl);
-              }}
-            >
-              <ListItemIcon>
-                <BookOpen size={16} />
-              </ListItemIcon>
-              <ListItemText>Documentation</ListItemText>
-            </MenuItem>
-          )}
-          <Divider />
-          <UninstallButton
-            app={app}
-            selectedVersion={{ version: app.appKey?.version }}
-            variant="menuItem"
-            onUninstallComplete={handleUninstallComplete}
-            onMenuClose={() => setMenuAnchor(null)}
-          />
-        </Menu>
-      </Stack>
-
-      {/* Dialogs via portal */}
+        </div>
+      </div>
       {ReactDOM.createPortal(
         <>
           {instance && (
             <>
-              <ContentDialog
-                title={`Info: ${instance.instanceName}`}
-                open={infoOpen}
-                setOpen={setInfoOpen}
-              >
-                <InstanceInfo instance={instance} />
-              </ContentDialog>
-              <InstanceConfigDialog
-                instanceId={instance.instanceId}
-                instanceName={instance.instanceName}
-                open={settingsOpen}
-                onClose={() => setSettingsOpen(false)}
-                versionSection={
-                  versionsArray.length > 0 ? (
-                    <Box>
-                      <VersionSelector
-                        availableVersions={versionsArray}
-                        selectedVersion={selectedVersion}
-                        setSelectedVersion={setSelectedVersion}
-                      />
-                      {selectedVersionNotInstalled && (
-                        <Box sx={{ mt: 2 }}>
-                          <UpdateButton
-                            app={app}
-                            to={selectedVersion}
-                            showSelectedVersion
-                            fullWidth
-                            sx={{
-                              borderRadius: 2,
-                              textTransform: 'none',
-                              fontWeight: 700,
-                            }}
-                          />
-                        </Box>
-                      )}
-                      {!selectedVersionNotInstalled && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mt: 2, textAlign: 'center' }}
-                        >
-                          v{selectedVersion.version} is already installed.
-                        </Typography>
-                      )}
-                    </Box>
-                  ) : undefined
-                }
-              />
+              <ContentDialog title={`Info: ${instance.instanceName}`} open={infoOpen} setOpen={setInfoOpen}><InstanceInfo instance={instance} /></ContentDialog>
+              <InstanceConfigDialog instanceId={instance.instanceId} instanceName={instance.instanceName} open={settingsOpen} onClose={() => setSettingsOpen(false)} versionSection={versionsArray.length > 0 ? (
+                <div>
+                  <VersionSelector availableVersions={versionsArray} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion} />
+                  {selectedVersionNotInstalled && <div className="mt-4"><UpdateButton app={app} to={selectedVersion} showSelectedVersion fullWidth /></div>}
+                  {!selectedVersionNotInstalled && <p className="text-sm text-muted mt-4 text-center">v{selectedVersion.version} is already installed.</p>}
+                </div>
+              ) : undefined} />
             </>
           )}
-
-          <ActionSnackbar
-            text={snackbar.text}
-            errorText={snackbar.errorText}
-            open={snackbarOpen}
-            setOpen={setSnackbarOpen}
-            alertSeverity={snackbar.severity}
-          />
-        </>,
-        document.body,
+          <ActionSnackbar text={snackbar.text} errorText={snackbar.errorText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbar.severity} />
+        </>, document.body
       )}
     </>
   );

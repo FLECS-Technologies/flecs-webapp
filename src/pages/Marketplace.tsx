@@ -1,26 +1,10 @@
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Skeleton,
-  Card as MuiCard,
-  Stack,
-  Popover,
-  Chip,
-  InputBase,
-  Paper,
-  Divider,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  Select,
-  MenuItem,
-} from '@mui/material';
+import { useEffect, useState, useRef } from 'react';
 import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAppList } from '@shared/hooks/app-queries';
+import { useAppList } from '@features/apps/hooks/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
-import { useSystemInfo } from '@shared/hooks/system-queries';
-import { MarketplaceGrid, MarketplaceEmpty } from '@features/marketplace';
+import { useGetSystemInfo } from '@generated/core/system/system';
+import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
+import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/cards/Card';
 import {
   getAppIcon,
@@ -40,39 +24,31 @@ import {
   getPurchasable,
   getDocumentationUrl,
   getDescription,
-} from '@shared/api/product-service';
+} from '@features/marketplace/api/product-service';
 
 function SkeletonCard() {
   return (
-    <MuiCard
-      variant="outlined"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 4,
-        overflow: 'hidden',
-      }}
-    >
-      <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Skeleton variant="rounded" width={64} height={64} sx={{ borderRadius: 2.5, mb: 2.5 }} />
-        <Skeleton variant="text" width="55%" height={22} />
-        <Skeleton variant="text" width="35%" height={14} sx={{ mt: 0.5 }} />
-        <Skeleton variant="text" width="90%" height={16} sx={{ mt: 1.5 }} />
-        <Skeleton variant="text" width="70%" height={16} />
-        <Stack direction="row" alignItems="center" sx={{ mt: 'auto', pt: 2 }}>
-          <Skeleton variant="rounded" width={72} height={28} sx={{ borderRadius: 2 }} />
-          <Box sx={{ flex: 1 }} />
-          <Skeleton variant="text" width={32} height={16} />
-        </Stack>
-      </Box>
-    </MuiCard>
+    <div className="flex flex-col rounded-2xl border border-white/10 overflow-hidden">
+      <div className="p-6 flex-1 flex flex-col">
+        <div className="animate-pulse bg-white/10 rounded-xl w-16 h-16 mb-5" />
+        <div className="animate-pulse bg-white/10 rounded h-5 w-[55%]" />
+        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[35%] mt-1" />
+        <div className="animate-pulse bg-white/10 rounded h-4 w-[90%] mt-3" />
+        <div className="animate-pulse bg-white/10 rounded h-4 w-[70%] mt-1" />
+        <div className="flex items-center mt-auto pt-4">
+          <div className="animate-pulse bg-white/10 rounded-lg w-18 h-7" />
+          <div className="flex-1" />
+          <div className="animate-pulse bg-white/10 rounded h-4 w-8" />
+        </div>
+      </div>
+    </div>
   );
 }
 
 export default function Marketplace() {
-  const { appList, products, isLoading, isError } = useAppList();
-  const { data: systemInfo } = useSystemInfo();
-  const arch = systemInfo?.arch;
+  const { appList, products, isLoading } = useAppList();
+  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const arch = infoResponse?.data?.arch;
   const {
     categories,
     filterParams,
@@ -87,7 +63,26 @@ export default function Marketplace() {
     applyFilters,
   } = useMarketplaceFilters();
 
-  const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterBtnRef = useRef<HTMLButtonElement>(null);
+  const filterDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!filterOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(e.target as Node) &&
+        filterBtnRef.current &&
+        !filterBtnRef.current.contains(e.target as Node)
+      ) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [filterOpen]);
 
   // Re-apply filters whenever products or filter params change
   useEffect(() => {
@@ -150,207 +145,124 @@ export default function Marketplace() {
   });
 
   return (
-    <Box>
+    <div>
       {/* Hero header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-0.02em' }}>
-          Marketplace
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
-          {totalApps || '...'} apps to extend your device
-        </Typography>
-      </Box>
+      <div className="mb-8">
+        <h4 className="text-2xl font-extrabold tracking-tight">Marketplace</h4>
+        <p className="text-base text-muted mt-1">{totalApps || '...'} apps to extend your device</p>
+      </div>
 
-      {/* Search bar — hero element */}
-      <Paper
-        elevation={0}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          px: 2.5,
-          py: 1.5,
-          borderRadius: 3,
-          border: '1px solid',
-          borderColor: 'divider',
-          mb: 3,
-          transition: 'border-color 0.2s',
-          '&:focus-within': {
-            borderColor: 'primary.main',
-          },
-        }}
-      >
-        <Search size={20} style={{ opacity: 0.35, marginRight: 14, flexShrink: 0 }} />
-        <InputBase
-          fullWidth
+      {/* Search bar */}
+      <div className="flex items-center px-5 py-3 rounded-xl border border-white/10 mb-6 transition focus-within:border-brand">
+        <Search size={20} className="opacity-35 mr-3.5 shrink-0" />
+        <input
+          type="text"
+          className="flex-1 bg-transparent outline-none text-base placeholder:text-muted"
           placeholder="Search apps, integrations, tools..."
           value={filterParams.search ?? ''}
           onChange={(e) => setSearchFilter(e as any)}
           onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-          sx={{ fontSize: '1rem' }}
         />
         {filterParams.search && (
-          <Box
-            component="button"
+          <button
             onClick={() => setSearchFilter({ target: { value: '' } } as any)}
-            sx={{
-              all: 'unset',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              p: 0.5,
-              borderRadius: '50%',
-              '&:hover': { bgcolor: 'action.hover' },
-            }}
+            className="p-1 rounded-full hover:bg-white/10 transition"
           >
-            <X size={16} style={{ opacity: 0.5 }} />
-          </Box>
+            <X size={16} className="opacity-50" />
+          </button>
         )}
-      </Paper>
+      </div>
 
       {/* Quick filter pills + result count */}
-      <Stack
-        direction="row"
-        spacing={1}
-        alignItems="center"
-        flexWrap="wrap"
-        useFlexGap
-        sx={{ mb: 3 }}
-      >
-        <Typography variant="body2" color="text.secondary" fontWeight={500} sx={{ mr: 0.5 }}>
+      <div className="flex items-center flex-wrap gap-2 mb-6">
+        <p className="text-sm text-muted font-medium mr-1">
           {totalFiltered} app{totalFiltered !== 1 ? 's' : ''}
-        </Typography>
+        </p>
 
-        <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+        <div className="w-px h-5 bg-white/10 mx-1" />
 
-        {/* Toggle pills — inline, always visible */}
-        <Chip
-          label="Compatible"
-          size="small"
-          variant={filterParams.compatible ? 'filled' : 'outlined'}
+        {/* Toggle pills */}
+        <button
           onClick={setCompatibleFilter}
-          sx={{
-            height: 32,
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            borderRadius: 2,
-            borderColor: filterParams.compatible ? 'transparent' : 'divider',
-            bgcolor: filterParams.compatible ? 'primary.main' : 'transparent',
-            color: filterParams.compatible ? '#fff' : 'text.secondary',
-            '&:hover': {
-              bgcolor: filterParams.compatible ? 'primary.dark' : 'action.hover',
-            },
-          }}
-        />
-        <Chip
-          label="Free"
-          size="small"
-          variant={filterParams.freeOnly ? 'filled' : 'outlined'}
+          className={`h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
+            filterParams.compatible
+              ? 'bg-brand text-white'
+              : 'border border-white/10 text-muted hover:bg-white/5'
+          }`}
+        >
+          Compatible
+        </button>
+        <button
           onClick={setFreeOnlyFilter}
-          sx={{
-            height: 32,
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            borderRadius: 2,
-            borderColor: filterParams.freeOnly ? 'transparent' : 'divider',
-            bgcolor: filterParams.freeOnly ? 'primary.main' : 'transparent',
-            color: filterParams.freeOnly ? '#fff' : 'text.secondary',
-            '&:hover': {
-              bgcolor: filterParams.freeOnly ? 'primary.dark' : 'action.hover',
-            },
-          }}
-        />
+          className={`h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
+            filterParams.freeOnly
+              ? 'bg-brand text-white'
+              : 'border border-white/10 text-muted hover:bg-white/5'
+          }`}
+        >
+          Free
+        </button>
 
-        {/* Category filter button — opens popover for advanced */}
-        <Chip
-          icon={<SlidersHorizontal size={14} />}
-          label={hiddenCount > 0 ? `Categories (${(categories?.length ?? 0) - hiddenCount})` : 'Categories'}
-          size="small"
-          variant={hiddenCount > 0 ? 'filled' : 'outlined'}
-          onClick={(e) => setFilterAnchor(e.currentTarget as HTMLElement)}
-          sx={{
-            height: 32,
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            borderRadius: 2,
-            borderColor: hiddenCount > 0 ? 'transparent' : 'divider',
-            bgcolor: hiddenCount > 0 ? 'primary.main' : 'transparent',
-            color: hiddenCount > 0 ? '#fff' : 'text.secondary',
-            '& .MuiChip-icon': {
-              color: hiddenCount > 0 ? '#fff' : 'text.secondary',
-            },
-            '&:hover': {
-              bgcolor: hiddenCount > 0 ? 'primary.dark' : 'action.hover',
-            },
-          }}
-        />
+        {/* Category filter button */}
+        <div className="relative">
+          <button
+            ref={filterBtnRef}
+            onClick={() => setFilterOpen(!filterOpen)}
+            className={`inline-flex items-center gap-1.5 h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
+              hiddenCount > 0
+                ? 'bg-brand text-white'
+                : 'border border-white/10 text-muted hover:bg-white/5'
+            }`}
+          >
+            <SlidersHorizontal size={14} />
+            {hiddenCount > 0
+              ? `Categories (${(categories?.length ?? 0) - hiddenCount})`
+              : 'Categories'}
+          </button>
+
+          {/* Category dropdown */}
+          {filterOpen && (
+            <div
+              ref={filterDropdownRef}
+              className="absolute top-full left-0 mt-2 w-70 rounded-xl bg-dark-end border border-white/10 shadow-xl z-50 p-4"
+            >
+              <p className="text-sm font-bold mb-3">Categories</p>
+              <div className="flex flex-col gap-0.5">
+                {(categories ?? []).map((cat) => {
+                  const active = !(filterParams.hiddenCategories ?? []).includes(cat.id);
+                  return (
+                    <label
+                      key={cat.id}
+                      className="flex items-center gap-2 py-1 px-1 rounded hover:bg-white/5 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={active}
+                        onChange={() => setCategoryFilter(cat.id)}
+                        className="accent-brand w-4 h-4"
+                      />
+                      <span className="flex-1 text-sm">{cat.name}</span>
+                      <span className="text-xs text-muted">{cat.count}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
         {hasFilters && (
-          <Chip
-            label="Clear all"
-            size="small"
-            variant="outlined"
+          <button
             onClick={clearAllFilters}
-            deleteIcon={<X size={14} />}
-            onDelete={clearAllFilters}
-            sx={{
-              height: 32,
-              fontSize: '0.8rem',
-              fontWeight: 500,
-              borderRadius: 2,
-              borderStyle: 'dashed',
-              borderColor: 'divider',
-              color: 'text.disabled',
-            }}
-          />
+            className="inline-flex items-center gap-1 h-8 px-3 text-[0.8rem] font-medium rounded-lg border border-dashed border-white/10 text-muted hover:bg-white/5 transition"
+          >
+            Clear all
+            <X size={14} />
+          </button>
         )}
-      </Stack>
+      </div>
 
-      {/* Category popover */}
-      <Popover
-        open={Boolean(filterAnchor)}
-        anchorEl={filterAnchor}
-        onClose={() => setFilterAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        slotProps={{ paper: { sx: { width: 280, borderRadius: 3, mt: 1, p: 0.5 } } }}
-      >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5 }}>
-            Categories
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            {(categories ?? []).map((cat) => {
-              const active = !(filterParams.hiddenCategories ?? []).includes(cat.id);
-              return (
-                <FormControlLabel
-                  key={cat.id}
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={active}
-                      onChange={() => setCategoryFilter(cat.id)}
-                      sx={{ py: 0.5, px: 1 }}
-                    />
-                  }
-                  label={
-                    <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%' }}>
-                      <Typography variant="body2" fontSize="0.85rem" sx={{ flex: 1 }}>
-                        {cat.name}
-                      </Typography>
-                      <Typography variant="caption" color="text.disabled" fontSize="0.75rem">
-                        {cat.count}
-                      </Typography>
-                    </Stack>
-                  }
-                  sx={{ mx: 0, width: '100%', '& .MuiFormControlLabel-label': { flex: 1 } }}
-                />
-              );
-            })}
-          </Box>
-        </Box>
-      </Popover>
-
-      {/* Skeleton loading — 6 placeholder cards */}
+      {/* Skeleton loading */}
       {isLoading && (
         <MarketplaceGrid>
           {Array.from({ length: 6 }).map((_, i) => (
@@ -359,9 +271,7 @@ export default function Marketplace() {
         </MarketplaceGrid>
       )}
 
-      {isError && !isLoading && <MarketplaceEmpty error />}
-
-      {!isLoading && !isError && productCards.length === 0 && <MarketplaceEmpty />}
+      {!isLoading && productCards.length === 0 && <MarketplaceEmpty />}
 
       {!isLoading && productCards.length > 0 && (
         <MarketplaceGrid>{productCards}</MarketplaceGrid>
@@ -369,73 +279,43 @@ export default function Marketplace() {
 
       {/* Pagination footer */}
       {!isLoading && totalFiltered > 0 && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mt: 4 }}
-        >
+        <div className="flex items-center justify-between mt-8">
           {/* Per-page selector */}
-          <Stack direction="row" alignItems="center" spacing={1.5}>
-            <Typography variant="body2" color="text.secondary">
-              Rows per page
-            </Typography>
-            <Select
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted">Rows per page</p>
+            <select
               value={pageSize}
-              onChange={(e) => setPageSize(e.target.value as number)}
-              size="small"
-              variant="outlined"
-              sx={{
-                minWidth: 72,
-                height: 32,
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                borderRadius: 2,
-                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
-              }}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="h-8 min-w-[72px] px-2 text-[0.8rem] font-semibold rounded-lg border border-white/10 bg-transparent outline-none"
             >
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-          </Stack>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
 
           {/* Page info + nav */}
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="body2" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted tabular-nums">
               {startIdx + 1}–{Math.min(startIdx + pageSize, totalFiltered)} of {totalFiltered}
-            </Typography>
-            <IconButton
-              size="small"
+            </p>
+            <button
               disabled={safePage === 0}
               onClick={() => setPage(safePage - 1)}
-              sx={{
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2,
-                width: 32,
-                height: 32,
-              }}
+              className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-lg hover:bg-white/5 transition disabled:opacity-30"
             >
               <ChevronLeft size={16} />
-            </IconButton>
-            <IconButton
-              size="small"
+            </button>
+            <button
               disabled={safePage >= totalPages - 1}
               onClick={() => setPage(safePage + 1)}
-              sx={{
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2,
-                width: 32,
-                height: 32,
-              }}
+              className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-lg hover:bg-white/5 transition disabled:opacity-30"
             >
               <ChevronRight size={16} />
-            </IconButton>
-          </Stack>
-        </Stack>
+            </button>
+          </div>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }

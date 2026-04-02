@@ -1,5 +1,4 @@
-import { Divider, Paper, Stack } from '@mui/material';
-import { App } from '@shared/types/app';
+type App = any;
 import InstalledAppRow from './InstalledAppRow';
 
 interface InstalledAppsTableProps {
@@ -8,20 +7,13 @@ interface InstalledAppsTableProps {
 
 export default function InstalledAppsTable({ apps }: InstalledAppsTableProps) {
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        borderRadius: 3,
-        border: '1px solid',
-        borderColor: 'divider',
-        overflow: 'hidden',
-      }}
-    >
-      <Stack divider={<Divider />}>
-        {apps.map((app) => (
-          <InstalledAppRow key={app.appKey?.name + app.appKey?.version} app={app} />
-        ))}
-      </Stack>
-    </Paper>
+    <div className="rounded-xl border border-white/10 overflow-hidden">
+      {apps.map((app, i) => (
+        <div key={app.appKey?.name + app.appKey?.version}>
+          {i > 0 && <hr className="border-white/10" />}
+          <InstalledAppRow app={app} />
+        </div>
+      ))}
+    </div>
   );
 }

@@ -16,34 +16,23 @@
  * limitations under the License.
  */
 import { Link } from 'react-router-dom';
-import { Grid, Typography } from '@mui/material';
 
 export default function NotFound() {
   return (
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      style={{ minHeight: '95vh' }}
-    >
-      <Grid size={{ xs: 3 }}>
-        <Typography aria-label="404" variant="h1" color="primary.main">
-          404
-        </Typography>
-      </Grid>
-      <Grid size={{ xs: 3 }}>
-        <Typography aria-label="sorry" variant="body">
-          Sorry we couldn&apos;t find that page...
-        </Typography>
-      </Grid>
-      <Grid size={{ xs: 3 }}>
-        <Typography aria-label="take-me-back" variant="body">
-          Take me back to&nbsp;
-          <Link to="/">my apps</Link>.
-        </Typography>
-      </Grid>
-    </Grid>
+    <div className="flex flex-col items-center justify-center min-h-[95vh] gap-2">
+      <h1 aria-label="404" className="text-6xl font-bold text-brand">
+        404
+      </h1>
+      <p aria-label="sorry" className="text-base">
+        Sorry we couldn&apos;t find that page...
+      </p>
+      <p aria-label="take-me-back" className="text-base">
+        Take me back to&nbsp;
+        <Link to="/" className="text-brand hover:underline">
+          my apps
+        </Link>
+        .
+      </p>
+    </div>
   );
 }

@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* ── FLECS brand tokens ── */
+@theme {
+  --color-brand: #FF2E63;
+  --color-brand-end: #FF6B8A;
+  --color-dark: #0B0B18;
+  --color-dark-end: #1A1A2E;
+  --color-muted: #6B7280;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-accent: #73A9CA;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Font face ── */
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Base ── */
+@layer base {
+  body {
+    @apply bg-dark text-gray-100 font-sans antialiased;
+  }
+}

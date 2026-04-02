@@ -17,7 +17,6 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Typography } from '@mui/material';
 import openSourceTxt from '../assets/third-party-licenses.txt';
 
 export default function OpenSource() {
@@ -50,10 +49,10 @@ export default function OpenSource() {
 
   return (
     <>
-      <Typography variant="h4">Open Source</Typography>
-      <Typography aria-label="licenses" sx={{ whiteSpace: 'pre-wrap', textAlign: 'left', p: 4 }}>
+      <h4 className="text-2xl font-semibold">Open Source</h4>
+      <p aria-label="licenses" className="whitespace-pre-wrap text-left p-8">
         {content}
-      </Typography>
+      </p>
     </>
   );
 }

@@ -5,12 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
+      "name": "Debug FLECS",
       "url": "https://localhost:5173/",
-      "webRoot": "${workspaceFolder}",
-      "runtimeArgs": ["--disable-web-security"]
+      "webRoot": "${workspaceFolder}/src",
+      "port": 9222,
+      "runtimeArgs": ["--remote-debugging-port=9222", "--ignore-certificate-errors"]
     },
     {
       "type": "firefox",

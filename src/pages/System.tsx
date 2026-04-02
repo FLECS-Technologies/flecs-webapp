@@ -1,33 +1,24 @@
-import { Box, Typography, Stack } from '@mui/material';
-import type {} from '@mui/material/themeCssVarsAugmentation';
-import { useSystemInfo } from '@shared/hooks/system-queries';
-import { SystemInfoCard, VersionCard, LicenseCard, QuickActions, ExportsCard } from '../features/system';
+import { useGetSystemInfo } from '@generated/core/system/system';
+import SystemInfoCard from '@features/system/components/SystemInfoCard';
+import VersionCard from '@features/system/components/VersionCard';
+import LicenseCard from '@features/system/components/LicenseCard';
+import QuickActions from '@features/system/components/QuickActions';
+import ExportsCard from '@features/system/components/ExportsCard';
 
 export default function System() {
-  const { data: systemInfo } = useSystemInfo();
+  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const systemInfo = infoResponse?.data;
 
   return (
-    <Box>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="overline" color="text.disabled" fontWeight={600}>
-          DEVICE
-        </Typography>
-        <Typography variant="h4" fontWeight={800}>
-          System
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
-          Device management and configuration.
-        </Typography>
-      </Box>
+    <div>
+      <div className="mb-3">
+        <span className="text-xs uppercase tracking-wider font-semibold text-muted">DEVICE</span>
+        <h4 className="text-2xl font-extrabold">System</h4>
+        <p className="text-base text-muted mt-1">Device management and configuration.</p>
+      </div>
 
-      <Stack spacing={3}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-            gap: 3,
-          }}
-        >
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SystemInfoCard
             hostname={window.location.hostname}
             distro={systemInfo?.distro?.name}
@@ -35,12 +26,12 @@ export default function System() {
             arch={systemInfo?.arch}
           />
           <LicenseCard />
-        </Box>
+        </div>
 
         <VersionCard />
         <QuickActions />
         <ExportsCard />
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 }

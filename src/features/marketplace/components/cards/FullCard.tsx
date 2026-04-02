@@ -1,480 +1,86 @@
-/*
- * Copyright (c) 2021 FLECS Technologies GmbH
- *
- * Created on Wed Jan 29 2025
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { useState } from 'react';
 import parse from 'html-react-parser';
-import {
-  Dialog,
-  DialogContent,
-  Box,
-  Avatar,
-  Typography,
-  Chip,
-  Button,
-  Divider,
-  IconButton,
-  Rating,
-  Stack,
-  Alert,
-} from '@mui/material';
+import { X, CheckCircle2, RefreshCw, ShoppingCart, Star, Cpu, BookOpen, Store } from 'lucide-react';
+type App = any;
+import { useGetSystemInfo } from '@generated/core/system/system';
+import { isBlacklisted } from '@features/marketplace/api/product-service';
+const getLatestVersion = (versions: string[]) => versions?.[0]; const createVersion = (v: string) => v; const createVersions = (v: string[]) => v;
+type Version = string;
+import { EditorButtons } from '@features/apps/components/actions/editors/EditorButtons';
+import { VersionSelector } from '@app/components/VersionSelector';
+import UninstallButton from '@features/apps/components/actions/UninstallButton';
+import ActionSnackbar from '@app/components/ActionSnackbar';
+import InstallButton from '@features/apps/components/actions/InstallButton';
+import UpdateButton from '@features/apps/components/actions/UpdateButton';
 
-import {
-  X,
-  CheckCircle2,
-  ExternalLink,
-  RefreshCw,
-  ShoppingCart,
-  Star,
-  Cpu,
-  BookOpen,
-  Store,
-} from 'lucide-react';
-import { App } from '@shared/types/app';
-import { useSystemInfo } from '@shared/hooks/system-queries';
-import { isBlacklisted } from '@shared/api/product-service';
-import { createVersion, createVersions, getLatestVersion } from '@shared/utils/version-utils';
-import { Version } from '@shared/types/version';
-import { EditorButtons } from '@shared/components/app-actions/editors/EditorButtons';
-import { VersionSelector } from '@shared/components/VersionSelector';
-import UninstallButton from '@shared/components/app-actions/UninstallButton';
-import ActionSnackbar from '@shared/components/ActionSnackbar';
-import InstallButton from '@shared/components/app-actions/InstallButton';
-import UpdateButton from '@shared/components/app-actions/UpdateButton';
-
-interface FullCardProps {
-  app: App;
-  open: boolean;
-  onClose: () => void;
-}
+interface FullCardProps { app: App; open: boolean; onClose: () => void; }
 
 export default function FullCard({ app, open, onClose }: FullCardProps) {
-  const { data: systemInfo } = useSystemInfo();
-  const [blackListed] = useState<boolean>(isBlacklisted(systemInfo, app.blacklist));
+  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const systemInfo = infoResponse?.data;
+  const [blackListed] = useState(isBlacklisted(systemInfo, app.blacklist));
   const installed = app.status === 'installed';
-  const versionsArray = app.versions
-    ? createVersions(app.versions, app.installedVersions || [])
-    : [];
+  const versionsArray = app.versions ? createVersions(app.versions, app.installedVersions || []) : [];
   const initialVersion = getLatestVersion(versionsArray) ?? createVersion('');
   const [selectedVersion, setSelectedVersion] = useState<Version>(initialVersion);
-  const installable =
-    app.requirement && systemInfo?.arch && app.requirement.includes(systemInfo.arch);
-  const updateAvailable =
-    !app.installedVersions?.includes(getLatestVersion(versionsArray)?.version || '') && installed;
-  const selectedVersionNotInstalled =
-    installed && !app.installedVersions?.includes(selectedVersion.version);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarState, setSnackbarState] = useState({
-    snackbarText: '',
-    alertSeverity: 'success' as 'success' | 'error' | 'info' | 'warning',
-    clipBoardContent: '',
-  });
-
-  const handleUninstallComplete = (success: boolean, message: string, error?: string) => {
-    setSnackbarState({
-      alertSeverity: success ? 'success' : 'error',
-      snackbarText: message,
-      clipBoardContent: error || '',
-    });
-    setSnackbarOpen(true);
-  };
-
+  const installable = app.requirement && systemInfo?.arch && app.requirement.includes(systemInfo.arch);
+  const updateAvailable = !app.installedVersions?.includes(getLatestVersion(versionsArray)?.version || '') && installed;
+  const selectedVersionNotInstalled = installed && !app.installedVersions?.includes(selectedVersion.version);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarState, setSnackbarState] = useState({ snackbarText: '', alertSeverity: 'success' as 'success' | 'error' | 'info' | 'warning', clipBoardContent: '' });
   const rating = app.average_rating ? parseFloat(app.average_rating) : 0;
   const ratingCount = app.rating_count || 0;
   const isFree = !app.price || parseFloat(app.price) === 0;
 
+  if (!open) return null;
+
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: 4,
-              overflow: 'hidden',
-            },
-          },
-        }}
-      >
-        <DialogContent sx={{ p: 0, position: 'relative' }}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
+        <div className="bg-dark-end rounded-2xl max-w-lg w-full max-h-[90vh] overflow-auto shadow-2xl border border-white/10" onClick={(e) => e.stopPropagation()}>
           {/* Close */}
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            sx={{
-              position: 'absolute',
-              right: 16,
-              top: 16,
-              zIndex: 10,
-              bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-              '&:hover': {
-                bgcolor: (theme) =>
-                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.08)',
-              },
-            }}
-            size="small"
-          >
-            <X size={18} />
-          </IconButton>
+          <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="absolute right-4 top-4 z-10 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition"><X size={18} /></button>
 
-          {/* ─── Hero ─── */}
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              px: 4,
-              pt: 5,
-              pb: 4,
-            }}
-          >
-            <Avatar
-              src={app.avatar}
-              variant="rounded"
-              sx={{
-                width: 88,
-                height: 88,
-                borderRadius: 3,
-                border: '1px solid',
-                borderColor: 'divider',
-                bgcolor: (theme) =>
-                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50',
-                fontSize: 32,
-                fontWeight: 700,
-                mb: 2.5,
-              }}
-            >
-              {app.title?.charAt(0).toUpperCase()}
-            </Avatar>
+          {/* Hero */}
+          <div className="flex flex-col items-center text-center px-8 pt-10 pb-6">
+            <div className="w-[88px] h-[88px] rounded-xl bg-white/5 flex items-center justify-center text-3xl font-bold border border-white/10 overflow-hidden mb-5">
+              {app.avatar ? <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" /> : app.title?.charAt(0).toUpperCase()}
+            </div>
+            <h5 className="text-xl font-extrabold tracking-tight mb-1">{app.title}</h5>
+            <p className="text-sm text-muted mb-4">by {app.author || 'Unknown'}</p>
+            <div className="flex items-center gap-4 mb-5 text-xs">
+              {installed && !updateAvailable && <span className="flex items-center gap-1 text-success font-semibold"><CheckCircle2 size={15} /> Installed</span>}
+              {updateAvailable && <span className="flex items-center gap-1 text-accent font-semibold"><RefreshCw size={15} /> Update available</span>}
+              <span className="flex items-center gap-1 font-semibold"><Star size={14} fill="#F59E0B" color="#F59E0B" /> {rating.toFixed(1)} <span className="text-muted">({ratingCount})</span></span>
+              <span className={`font-bold ${isFree ? 'text-success' : ''}`}>{isFree ? 'Free' : `$${app.price}`}</span>
+            </div>
+            <div className="flex items-center gap-0.5 mb-4">{[1,2,3,4,5].map(s => <Star key={s} size={18} fill={s <= rating ? '#F59E0B' : 'none'} color={s <= rating ? '#F59E0B' : '#6B7280'} />)}</div>
+            {app.categories?.length > 0 && <div className="flex flex-wrap justify-center gap-1.5">{app.categories.map((c: any, i: number) => <span key={c.id || i} className="px-2 py-0.5 rounded-full border border-white/10 text-xs text-muted">{c.name || c}</span>)}</div>}
+          </div>
 
-            <Typography variant="h5" fontWeight={800} sx={{ letterSpacing: '-0.02em', mb: 0.5 }}>
-              {app.title}
-            </Typography>
+          {/* CTA */}
+          <div className="px-8 py-5 bg-white/2 border-y border-white/10">
+            {versionsArray.length > 0 && <div className="mb-4"><VersionSelector availableVersions={versionsArray} selectedVersion={selectedVersion} setSelectedVersion={setSelectedVersion} /></div>}
+            {!installed && <InstallButton app={app} version={selectedVersion} disabled={!installable || blackListed} showSelectedVersion fullWidth />}
+            {installed && <div className="flex flex-wrap gap-3">{app.instances && <EditorButtons instance={app.instances[0]} />}{selectedVersionNotInstalled && <UpdateButton app={app} to={selectedVersion} showSelectedVersion />}<UninstallButton app={app} selectedVersion={selectedVersion} variant="button" onUninstallComplete={(success, message, error) => { setSnackbarState({ alertSeverity: success ? 'success' : 'error', snackbarText: message, clipBoardContent: error || '' }); setSnackbarOpen(true); }} /></div>}
+            {app.purchasable && app.permalink && Number(app.price) > 0 && <a href={app.permalink} target="_blank" className="mt-3 w-full px-4 py-2.5 border border-brand text-brand rounded-xl font-semibold hover:bg-brand/10 transition inline-flex items-center justify-center gap-2"><ShoppingCart size={16} /> Purchase License</a>}
+            {!installable && app.requirement && <div className="px-4 py-3 rounded-lg bg-error/10 text-error mt-4"><p className="text-sm">Not compatible with {systemInfo?.arch}. Requires {app.requirement.join(' or ')}.</p></div>}
+          </div>
 
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              by {app.author || 'Unknown'}
-            </Typography>
+          {/* Description */}
+          <div className="px-8 py-5">
+            <span className="text-[0.65rem] uppercase tracking-widest text-muted font-bold block mb-3">About</span>
+            <div className="text-sm text-muted leading-relaxed prose-sm">{parse(app.description || app.short_description || 'No description available.')}</div>
+            {(app.documentationUrl || app.permalink) && <div className="flex gap-2 mt-5">{app.documentationUrl && <a href={app.documentationUrl} target="_blank" className="px-3 py-1.5 border border-white/10 text-muted rounded-lg text-xs font-semibold hover:bg-white/5 transition inline-flex items-center gap-1"><BookOpen size={14} /> Docs</a>}{app.permalink && <a href={app.permalink} target="_blank" className="px-3 py-1.5 border border-white/10 text-muted rounded-lg text-xs font-semibold hover:bg-white/5 transition inline-flex items-center gap-1"><Store size={14} /> Store</a>}</div>}
+          </div>
 
-            {/* Status + Rating + Price row */}
-            <Stack
-              direction="row"
-              spacing={2}
-              alignItems="center"
-              divider={
-                <Box
-                  sx={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: '50%',
-                    bgcolor: 'divider',
-                  }}
-                />
-              }
-              sx={{ mb: 2.5 }}
-            >
-              {installed && !updateAvailable && (
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <CheckCircle2 size={15} color="var(--mui-palette-success-main)" />
-                  <Typography variant="caption" fontWeight={600} color="success.main">
-                    Installed
-                  </Typography>
-                </Stack>
-              )}
-              {updateAvailable && (
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <RefreshCw size={15} color="var(--mui-palette-info-main)" />
-                  <Typography variant="caption" fontWeight={600} color="info.main">
-                    Update available
-                  </Typography>
-                </Stack>
-              )}
-              <Stack direction="row" spacing={0.5} alignItems="center">
-                <Star size={14} fill="#F59E0B" color="#F59E0B" />
-                <Typography variant="caption" fontWeight={600}>
-                  {rating.toFixed(1)}
-                </Typography>
-                <Typography variant="caption" color="text.disabled">
-                  ({ratingCount})
-                </Typography>
-              </Stack>
-              <Typography
-                variant="caption"
-                fontWeight={700}
-                color={isFree ? 'success.main' : 'text.primary'}
-              >
-                {isFree ? 'Free' : `$${app.price}`}
-              </Typography>
-            </Stack>
-
-            {/* Rating bar — always show */}
-            <Rating
-              value={rating}
-              precision={0.1}
-              readOnly
-              size="medium"
-              sx={{ mb: 2 }}
-            />
-
-            {/* Categories */}
-            {app.categories && app.categories.length > 0 && (
-              <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap justifyContent="center">
-                {app.categories.map((category: any, index) => (
-                  <Chip
-                    key={category.id || index}
-                    label={category.name || category}
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      height: 26,
-                      fontSize: '0.75rem',
-                      fontWeight: 500,
-                      borderColor: 'divider',
-                      color: 'text.secondary',
-                    }}
-                  />
-                ))}
-              </Stack>
-            )}
-          </Box>
-
-          {/* ─── CTA Section ─── */}
-          <Box
-            sx={{
-              px: 4,
-              py: 3,
-              bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'grey.50',
-              borderTop: '1px solid',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
-            {versionsArray.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <VersionSelector
-                  availableVersions={versionsArray}
-                  selectedVersion={selectedVersion}
-                  setSelectedVersion={setSelectedVersion}
-                />
-              </Box>
-            )}
-
-            {/* Primary action — full width */}
-            {!installed && (
-              <InstallButton
-                app={app}
-                version={selectedVersion}
-                disabled={!installable || blackListed}
-                showSelectedVersion={true}
-                size="large"
-                fullWidth
-                color="primary"
-                sx={{
-                  borderRadius: 3,
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  fontSize: '1rem',
-                  py: 1.5,
-                  boxShadow: 'none',
-                  '&:hover': { boxShadow: 'none' },
-                }}
-              />
-            )}
-
-            {/* Installed actions row */}
-            {installed && (
-              <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
-                {app.instances && <EditorButtons instance={app.instances[0]} />}
-                {selectedVersionNotInstalled && (
-                  <UpdateButton app={app} to={selectedVersion} showSelectedVersion={true} />
-                )}
-                <UninstallButton
-                  app={app}
-                  selectedVersion={selectedVersion}
-                  variant="button"
-                  onUninstallComplete={handleUninstallComplete}
-                />
-              </Stack>
-            )}
-
-            {app.purchasable && app.permalink && Number(app.price) > 0 && (
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<ShoppingCart size={16} />}
-                href={app.permalink}
-                target="_blank"
-                sx={{
-                  mt: 1.5,
-                  textTransform: 'none',
-                  borderRadius: 3,
-                  fontWeight: 600,
-                  py: 1.25,
-                }}
-              >
-                Purchase License
-              </Button>
-            )}
-
-            {!installable && app.requirement && (
-              <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
-                <Typography variant="body2">
-                  Not compatible with {systemInfo?.arch}. Requires{' '}
-                  {app.requirement.join(' or ')}.
-                </Typography>
-              </Alert>
-            )}
-          </Box>
-
-          {/* ─── Description ─── */}
-          <Box sx={{ px: 4, py: 3 }}>
-            <Typography
-              variant="overline"
-              color="text.disabled"
-              fontWeight={700}
-              sx={{ fontSize: '0.65rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
-            >
-              About
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              component="div"
-              sx={{
-                lineHeight: 1.8,
-                '& h1, & h2, & h3, & h4, & h5, & h6': {
-                  fontSize: '0.95rem',
-                  fontWeight: 700,
-                  color: 'text.primary',
-                  mt: 2,
-                  mb: 1,
-                },
-                '& p': { mb: 1.5 },
-                '& ul, & ol': { pl: 2.5, mb: 1.5 },
-                '& li': { mb: 0.5 },
-              }}
-            >
-              {parse(app.description || app.short_description || 'No description available.')}
-            </Typography>
-
-            {/* Links */}
-            {(app.documentationUrl || app.permalink) && (
-              <Stack direction="row" spacing={1} sx={{ mt: 3 }}>
-                {app.documentationUrl && (
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<BookOpen size={14} />}
-                    href={app.documentationUrl}
-                    target="_blank"
-                    sx={{
-                      textTransform: 'none',
-                      borderRadius: 2,
-                      fontWeight: 600,
-                      fontSize: '0.8rem',
-                      borderColor: 'divider',
-                      color: 'text.secondary',
-                    }}
-                  >
-                    Docs
-                  </Button>
-                )}
-                {app.permalink && (
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<Store size={14} />}
-                    href={app.permalink}
-                    target="_blank"
-                    sx={{
-                      textTransform: 'none',
-                      borderRadius: 2,
-                      fontWeight: 600,
-                      fontSize: '0.8rem',
-                      borderColor: 'divider',
-                      color: 'text.secondary',
-                    }}
-                  >
-                    Store
-                  </Button>
-                )}
-              </Stack>
-            )}
-          </Box>
-
-          {/* ─── System Requirements ─── */}
-          {app.requirement && app.requirement.length > 0 && (
-            <>
-              <Divider />
-              <Box sx={{ px: 4, py: 3 }}>
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-                  <Cpu size={14} style={{ opacity: 0.5 }} />
-                  <Typography
-                    variant="overline"
-                    color="text.disabled"
-                    fontWeight={700}
-                    sx={{ fontSize: '0.65rem', letterSpacing: '0.1em' }}
-                  >
-                    System Requirements
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                  {app.requirement.map((req) => {
-                    const compatible =
-                      systemInfo?.arch &&
-                      req.toLowerCase().includes(systemInfo.arch.toLowerCase());
-                    return (
-                      <Chip
-                        key={req}
-                        label={req}
-                        size="small"
-                        variant={compatible ? 'filled' : 'outlined'}
-                        sx={{
-                          height: 28,
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          bgcolor: compatible ? 'success.main' : undefined,
-                          color: compatible ? '#fff' : 'text.secondary',
-                          borderColor: compatible ? 'transparent' : 'divider',
-                        }}
-                      />
-                    );
-                  })}
-                </Stack>
-              </Box>
-            </>
+          {/* Requirements */}
+          {app.requirement?.length > 0 && (
+            <><hr className="border-white/10" /><div className="px-8 py-5"><div className="flex items-center gap-2 mb-3"><Cpu size={14} className="opacity-50" /><span className="text-[0.65rem] uppercase tracking-widest text-muted font-bold">System Requirements</span></div><div className="flex flex-wrap gap-1.5">{app.requirement.map((req: string) => { const compatible = systemInfo?.arch && req.toLowerCase().includes(systemInfo.arch.toLowerCase()); return <span key={req} className={`px-2.5 py-1 rounded-full text-xs font-semibold ${compatible ? 'bg-success text-white' : 'border border-white/10 text-muted'}`}>{req}</span>; })}</div></div></>
           )}
-        </DialogContent>
-      </Dialog>
-
-      <ActionSnackbar
-        text={snackbarState.snackbarText}
-        errorText={snackbarState.clipBoardContent}
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        alertSeverity={snackbarState.alertSeverity}
-      />
+        </div>
+      </div>
+      <ActionSnackbar text={snackbarState.snackbarText} errorText={snackbarState.clipBoardContent} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
     </>
   );
 }

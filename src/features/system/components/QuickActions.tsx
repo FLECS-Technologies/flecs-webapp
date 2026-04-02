@@ -1,37 +1,17 @@
-import { Paper, Typography, Stack, Tooltip } from '@mui/material';
-import { Download, Upload, FileText } from 'lucide-react';
-import Export from '@shared/components/data-transfer/Export';
-import Import from '@shared/components/data-transfer/Import';
+import { FileText } from 'lucide-react';
+import Export from '@features/system/components/data-transfer/Export';
+import Import from '@features/system/components/data-transfer/Import';
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material';
 
 export default function QuickActions() {
   return (
-    <Paper sx={{ p: 3, borderRadius: 3 }}>
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-        Quick Actions
-      </Typography>
-      <Stack direction="row" spacing={2} flexWrap="wrap">
-        <Tooltip title="Export all apps and data from this device">
-          <div>
-            <Export />
-          </div>
-        </Tooltip>
-        <Tooltip title="Import apps from a backup file">
-          <div>
-            <Import />
-          </div>
-        </Tooltip>
-        <Button
-          component={Link}
-          to="/open-source"
-          variant="outlined"
-          size="small"
-          startIcon={<FileText size={16} />}
-        >
-          Open Source
-        </Button>
-      </Stack>
-    </Paper>
+    <div className="rounded-xl bg-dark-end p-6 border border-white/10">
+      <h6 className="text-base font-semibold mb-4">Quick Actions</h6>
+      <div className="flex items-center gap-4 flex-wrap">
+        <span title="Export all apps and data from this device"><Export /></span>
+        <span title="Import apps from a backup file"><Import /></span>
+        <Link to="/open-source" className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm"><FileText size={16} /> Open Source</Link>
+      </div>
+    </div>
   );
 }

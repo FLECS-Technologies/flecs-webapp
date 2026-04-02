@@ -1,9 +1,7 @@
-import { Avatar, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { User, Shield, LogOut } from 'lucide-react';
 import { useState } from 'react';
-import { useOAuth4WebApiAuth } from '@features/auth/providers/OAuth4WebApiAuthProvider';
-import { brand } from '@app/theme/tokens';
-import SettingsCard from '@shared/components/SettingsCard';
+import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
+import SettingsCard from '@app/components/SettingsCard';
 
 export default function Profile() {
   const auth = useOAuth4WebApiAuth();
@@ -48,165 +46,126 @@ export default function Profile() {
   };
 
   return (
-    <Box>
-      <Stack spacing={3}>
-        {/* ── Account (avatar card — like Vercel) ── */}
+    <div>
+      <div className="flex flex-col gap-6">
+        {/* Account (avatar card) */}
         <SettingsCard
           title="Account"
           description="Your account identity from the identity provider."
           footer="Account details are managed by your administrator."
         >
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Box>
-              <Typography variant="h5" component="h1" fontWeight={700}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">
                 {user?.preferred_username || 'Anonymous'}
-              </Typography>
-              <Chip
-                label={auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
-                color={auth.isAuthenticated ? 'success' : 'error'}
-                size="small"
-                sx={{ fontWeight: 600, mt: 1 }}
-              />
-            </Box>
-            <Avatar
-              sx={{
-                width: 80,
-                height: 80,
-                bgcolor: `${brand.primary}14`,
-                color: brand.primary,
-                fontSize: '1.75rem',
-                fontWeight: 700,
-                border: '2px solid',
-                borderColor: `${brand.primary}28`,
-              }}
-            >
+              </h1>
+              <span
+                className={`mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
+                  auth.isAuthenticated
+                    ? 'bg-success/20 text-success'
+                    : 'bg-error/20 text-error'
+                }`}
+              >
+                {auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+              </span>
+            </div>
+            <div className="w-20 h-20 rounded-full bg-brand/10 border-2 border-brand/15 flex items-center justify-center text-brand text-[1.75rem] font-bold">
               {user?.preferred_username ? getInitials(user.preferred_username) : <User size={20} />}
-            </Avatar>
-          </Stack>
+            </div>
+          </div>
         </SettingsCard>
 
-        {/* ── User Information ── */}
+        {/* User Information */}
         <SettingsCard
           title="User Information"
           description="Your account details from the identity provider."
           footer="Account details are managed by your administrator."
         >
-          <Stack spacing={1.5}>
-            <Stack direction="row" alignItems="center">
-              <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
-                Username:
-              </Typography>
-              <Typography variant="body2" fontWeight={600}>
-                {user?.preferred_username || 'Not available'}
-              </Typography>
-            </Stack>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center">
+              <p className="text-sm text-muted w-40 shrink-0">Username:</p>
+              <p className="text-sm font-semibold">{user?.preferred_username || 'Not available'}</p>
+            </div>
             {user?.email && (
-              <Stack direction="row" alignItems="center">
-                <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
-                  Email:
-                </Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  {/*{user.email}*/}-
-                </Typography>
-              </Stack>
+              <div className="flex items-center">
+                <p className="text-sm text-muted w-40 shrink-0">Email:</p>
+                <p className="text-sm font-semibold">-</p>
+              </div>
             )}
-            <Stack direction="row" alignItems="center">
-              <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
-                User ID:
-              </Typography>
-              <Typography
-                variant="body2"
-                fontWeight={600}
-                sx={{
-                  fontFamily: 'monospace',
-                  fontSize: '0.8rem',
-                  bgcolor: (theme) =>
-                    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                  px: 1,
-                  py: 0.25,
-                  borderRadius: 1,
-                }}
-              >
-                -{/*{user?.sub || 'Not available'}*/}
-              </Typography>
-            </Stack>
-          </Stack>
+            <div className="flex items-center">
+              <p className="text-sm text-muted w-40 shrink-0">User ID:</p>
+              <span className="text-sm font-semibold font-mono text-[0.8rem] bg-white/5 px-2 py-0.5 rounded">
+                -
+              </span>
+            </div>
+          </div>
         </SettingsCard>
 
-        {/* ── Roles & Permissions ── */}
+        {/* Roles & Permissions */}
         {getRoles().length > 0 && (
           <SettingsCard
             title="Roles & Permissions"
             description="Your access level and permissions on this device."
             footer="Roles are assigned by your identity provider."
           >
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <div className="flex flex-wrap gap-2">
               {getRoles().map((role) => (
-                <Chip
+                <span
                   key={role}
-                  label={role}
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  icon={<Shield size={16} />}
-                  sx={{ fontWeight: 500 }}
-                />
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-brand text-brand text-xs font-medium"
+                >
+                  <Shield size={16} />
+                  {role}
+                </span>
               ))}
-            </Box>
+            </div>
           </SettingsCard>
         )}
 
-        {/* ── Login Information ── */}
+        {/* Login Information */}
         <SettingsCard
           title="Login Information"
           description="Your current authentication session details."
           footer="Sessions are managed by your identity provider."
         >
-          <Stack spacing={1.5}>
-            <Stack direction="row" alignItems="center">
-              <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
-                Login Expires:
-              </Typography>
-              <Typography variant="body2" fontWeight={600}>
-                {formatTokenExpiration(user?.exp)}
-              </Typography>
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
-                Authentication Status:
-              </Typography>
-              <Chip
-                label={auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
-                color={auth.isAuthenticated ? 'success' : 'error'}
-                size="small"
-                sx={{ fontWeight: 600 }}
-              />
-            </Stack>
-          </Stack>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center">
+              <p className="text-sm text-muted w-40 shrink-0">Login Expires:</p>
+              <p className="text-sm font-semibold">{formatTokenExpiration(user?.exp)}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm text-muted w-40 shrink-0">Authentication Status:</p>
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                  auth.isAuthenticated
+                    ? 'bg-success/20 text-success'
+                    : 'bg-error/20 text-error'
+                }`}
+              >
+                {auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+              </span>
+            </div>
+          </div>
         </SettingsCard>
 
-        {/* ── End Session (danger) ── */}
+        {/* End Session (danger) */}
         <SettingsCard
           danger
           title="End Session"
           description="Sign out and end your current session on this device. You will be redirected to the login page."
           footer="This will not affect other active sessions."
           footerAction={
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              startIcon={<LogOut size={14} />}
+            <button
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-error text-error rounded-lg text-sm font-semibold hover:bg-error/10 transition disabled:opacity-50"
               onClick={handleSignOut}
               disabled={isSigningOut}
-              loading={isSigningOut}
-              sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, px: 2.5 }}
             >
+              <LogOut size={14} />
               {isSigningOut ? 'Signing Out...' : 'Sign Out'}
-            </Button>
+            </button>
           }
         />
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 }

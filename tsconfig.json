@@ -19,12 +19,12 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@features/*": ["./src/features/*"],
-      "@shared/*": ["./src/shared/*"],
+      "@generated/*": ["./generated/*"],
       "@stores/*": ["./src/stores/*"],
       "@pages/*": ["./src/pages/*"],
       "@test/*": ["./src/test/*"],
       "@assets/*": ["./src/assets/*"]
     }
   },
-  "include": ["src", "vite-env.d.ts"]
+  "include": ["src", "generated", "vite-env.d.ts"]
 }

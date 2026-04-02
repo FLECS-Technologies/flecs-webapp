@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getRequirement } from '@shared/api/product-service';
+import { getRequirement } from '@features/marketplace/api/product-service';
 
 interface Category {
   id: number;

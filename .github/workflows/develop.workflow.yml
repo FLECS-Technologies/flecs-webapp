@@ -19,7 +19,7 @@ jobs:
           node-version: 22.x
 
       - name: build
-        run: make dev-build
+        run: npm ci && npm run build:test --if-present
 
       - name: archive raw artifacts
         uses: actions/upload-artifact@c6a366c94c3e0affe28c06c8df20a878f24da3cf # v3.2.2

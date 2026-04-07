@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { FileCode2, FolderUp, PackagePlus, RefreshCw } from 'lucide-react';
 import Yaml from 'js-yaml';
-import { useAppList } from '@features/apps/hooks/app-queries';
+import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';
 import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';

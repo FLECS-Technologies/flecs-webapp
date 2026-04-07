@@ -52,7 +52,8 @@ export default function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <QueryClientProvider client={queryClient}>
         <ThemeHandler>
-          <Toaster position="top-right" richColors closeButton />
+          <Toaster position="top-right" richColors closeButton theme="dark"
+            toastOptions={{ style: { background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' } }} />
           <Providers>
             <Frame>
               <UIRoutes />

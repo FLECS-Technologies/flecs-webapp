@@ -3,7 +3,8 @@
  * Polling: useGetQuests with refetchInterval (generated).
  * This file only has: waitForQuest (imperative polling for install flows) + quest invalidation.
  */
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import type { Quest } from '@generated/core/schemas';
 import { QuestState } from '@generated/core/schemas';
 import { useGetQuests, useDeleteQuestsId, getQuestsId } from '@generated/core/quests/quests';
@@ -12,15 +13,28 @@ import { useQuestStore, addQuest, getQuest } from '@stores/quests';
 
 const isFinished = (q: Quest) => q.state !== QuestState.failing && q.state !== QuestState.ongoing && q.state !== QuestState.pending;
 
-/** Live quest polling — just the generated hook with smart interval */
+/** Live quest polling with auto-toast on completion */
 export function useQuestPolling() {
   const hasActive = useQuestStore((s) => s.mainQuestIds.length > 0);
   const { data } = useGetQuests({ query: { refetchInterval: hasActive ? 2000 : 10_000 } });
+  const prevStates = useRef<Map<number, string>>(new Map());
 
   useEffect(() => {
     if (!data?.data) return;
     const quests = data.data as Quest[];
-    quests.forEach((q) => addQuest(q));
+    quests.forEach((q) => {
+      const prev = prevStates.current.get(q.id);
+      addQuest(q);
+      // Auto-toast when quest transitions to finished
+      if (prev && !isFinished({ state: prev } as Quest) && isFinished(q)) {
+        if (q.state === QuestState.success || q.state === QuestState.skipped) {
+          toast.success(q.description || 'Job completed');
+        } else if (q.state === QuestState.failed) {
+          toast.error(q.description || 'Job failed', { description: q.detail });
+        }
+      }
+      prevStates.current.set(q.id, q.state);
+    });
     useQuestStore.getState().setMainQuestIds(quests.map((q) => q.id));
   }, [data]);
 }

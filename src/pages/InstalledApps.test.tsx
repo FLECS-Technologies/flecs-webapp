@@ -1,16 +1,15 @@
 /**
- * Device Login — integration test.
+ * Installed Apps — integration test.
  */
 import { describe, it, expect, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@test/test-utils';
 
-// Mock the auth provider — DeviceLogin uses useOAuth4WebApiAuth
 vi.mock('@features/auth/AuthProvider', () => ({
   useOAuth4WebApiAuth: () => ({
-    isAuthenticated: false,
+    isAuthenticated: true,
     isLoading: false,
-    user: null,
+    user: { sub: 'test', access_token: 'test-token' },
     signIn: vi.fn(),
     signOut: vi.fn(),
     isConfigReady: true,
@@ -21,13 +20,13 @@ vi.mock('@features/auth/AuthProvider', () => ({
   }),
 }));
 
-import DeviceLogin from './DeviceLogin';
+import InstalledApps from './InstalledApps';
 
-describe('Device Login', () => {
-  it('renders welcome heading', async () => {
-    renderWithProviders(<DeviceLogin />);
+describe('Installed Apps', () => {
+  it('renders installed apps heading', async () => {
+    renderWithProviders(<InstalledApps />, { route: '/' });
     await waitFor(() => {
-      expect(screen.getByText('Welcome')).toBeTruthy();
+      expect(screen.getByText(/installed apps/i)).toBeTruthy();
     });
   });
 });

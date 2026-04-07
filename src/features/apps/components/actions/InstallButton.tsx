@@ -50,7 +50,7 @@ export default function InstallButton({
         {state.installing ? (
           <MarqueeText text={state.currentQuest?.description || 'Installing'} />
         ) : (
-          `Install Now${showSelectedVersion ? ` ${version.version}` : ''}`
+          `Install Now${showSelectedVersion ? ` ${typeof version === 'string' ? version : version?.version}` : ''}`
         )}
       </button>
       <ContentDialog
@@ -60,7 +60,7 @@ export default function InstallButton({
       >
         <InstallationStepper
           app={app}
-          version={version.version}
+          version={typeof version === "string" ? version : version?.version}
           onStateChange={(state: any) =>
             setState({ installing: state.installing, currentQuest: state.currentQuest })
           }

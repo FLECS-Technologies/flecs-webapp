@@ -28,6 +28,8 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.1.3",
@@ -65,7 +67,9 @@
     "build:test": "vite build --mode test",
     "build:production": "vite build --mode production",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "coverage": "vitest run --coverage",
     "generate-license-file": "./generate-license-file.sh",

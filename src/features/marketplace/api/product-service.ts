@@ -1,4 +1,4 @@
-import { decodeHtmlEntities, sanitizeHtml } from '@app/utils/html-utils';
+import { decodeHtmlEntities, sanitizeHtml } from '@app/html-utils';
 
 // WooCommerce product field accessors.
 // These exist because the marketplace product shape uses meta_data/attributes arrays.
@@ -38,7 +38,5 @@ export const getCategories = (app: WCProduct) => app?.categories;
 export const getId = (app: WCProduct) => app?.id;
 export const getAverageRating = (app: WCProduct) => app?.average_rating;
 export const getRatingCount = (app: WCProduct) => app?.rating_count;
-export const getEditorAddress = (app: WCProduct) => attr(app, 'editor')?.[0];
-export const getMultiInstance = (app: WCProduct) => !!attr(app, 'multiInstance')?.[0];
 export const getRequirement = (app: WCProduct) => attr(app, 'archs');
 export const getVersion = (app: WCProduct) => meta(app, 'port-version');

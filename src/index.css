@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* ── FLECS brand tokens ── */
+/* ── FLECS Design Tokens ── */
+/* Per Tailwind v4 best practices: all tokens in CSS, semantic names by role */
 @theme {
+  /* Brand primitives */
   --color-brand: #FF2E63;
   --color-brand-end: #FF6B8A;
   --color-dark: #0B0B18;
@@ -12,6 +14,21 @@
   --color-error: #EF4444;
   --color-accent: #73A9CA;
 
+  /* Semantic surfaces */
+  --color-surface: #0B0B18;
+  --color-surface-raised: #1A1A2E;
+  --color-surface-overlay: #1E1E34;
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+
+  /* Semantic borders */
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.20);
+
+  /* Semantic text */
+  --color-text-primary: #F3F4F6;
+  --color-text-secondary: #9CA3AF;
+
+  /* Typography */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -27,6 +44,6 @@
 /* ── Base ── */
 @layer base {
   body {
-    @apply bg-dark text-gray-100 font-sans antialiased;
+    @apply bg-surface text-text-primary font-sans antialiased;
   }
 }

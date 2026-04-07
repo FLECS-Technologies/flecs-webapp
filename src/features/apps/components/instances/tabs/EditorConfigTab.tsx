@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
-import ActionSnackbar from '@app/components/ActionSnackbar';
+import React from 'react';
 import { InstanceEditor } from '@generated/core/schemas';
 import { useGetInstancesInstanceIdConfigEditors } from '@generated/core/instances/instances';
-import EditorConfigCard from './editors/EditorConfigCard';
+import EditorConfigCard from './EditorConfigCard';
 
 interface EditorConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
-export interface EditorConfigSnackbar { snackbarText: string; alertSeverity: string; clipBoardContent: string; }
 
 const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange }) => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarState, setSnackbarState] = useState({ snackbarText: 'Info', alertSeverity: 'success', clipBoardContent: '' });
   const { data: editorsResponse, isLoading } = useGetInstancesInstanceIdConfigEditors(instanceId);
   const editors: InstanceEditor[] = (editorsResponse?.data as InstanceEditor[]) ?? [];
 
@@ -18,9 +14,8 @@ const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange 
   return (
     <div>
       {editors.length === 0 ? <p className="text-sm text-muted">App has no editors.</p> : (
-        <div className="flex flex-col gap-4">{editors.map((editor, index) => <EditorConfigCard key={index} instanceId={instanceId} editor={editor} setSnackbarOpen={setSnackbarOpen} setSnackbarState={setSnackbarState} />)}</div>
+        <div className="flex flex-col gap-4">{editors.map((editor, index) => <EditorConfigCard key={index} instanceId={instanceId} editor={editor} />)}</div>
       )}
-      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { toast } from 'sonner';
 import { Plus, Save } from 'lucide-react';
 import { InstanceEnvironmentVariable } from '@generated/core/schemas';
 import { useGetInstancesInstanceIdConfigEnvironment, usePutInstancesInstanceIdConfigEnvironment, useDeleteInstancesInstanceIdConfigEnvironmentVariableName } from '@generated/core/instances/instances';
-import ActionSnackbar from '@app/components/ActionSnackbar';
-import EnvironmentVariableCard from './environments/EnvironmentVariableCard';
+import EnvironmentVariableCard from './EnvironmentVariableCard';
 
 interface EnvironmentConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 
@@ -12,8 +12,6 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
   const [savedSnapshot, setSavedSnapshot] = useState<InstanceEnvironmentVariable[]>([]);
   const [newIndices, setNewIndices] = useState<Set<number>>(new Set());
   const [modifiedIndices, setModifiedIndices] = useState<Set<number>>(new Set());
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarState, setSnackbarState] = useState({ snackbarText: 'Info', alertSeverity: 'success', clipBoardContent: '' });
   const { data: envResponse, isLoading } = useGetInstancesInstanceIdConfigEnvironment(instanceId);
   const { mutateAsync: putEnvironment } = usePutInstancesInstanceIdConfigEnvironment();
   const { mutateAsync: deleteVariable } = useDeleteInstancesInstanceIdConfigEnvironmentVariableName();
@@ -31,15 +29,14 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
     const envVar = envVars[index];
     if (newIndices.has(index)) { setEnvVars(prev => prev.filter((_, i) => i !== index)); setNewIndices(prev => reindex(prev, index)); setModifiedIndices(prev => reindex(prev, index)); return; }
     if (envVar.name) {
-      try { await deleteVariable({ instanceId, variableName: envVar.name }); onChange(true); setEnvVars(prev => prev.filter((_, i) => i !== index)); setNewIndices(prev => reindex(prev, index)); setModifiedIndices(prev => reindex(prev, index)); setSavedSnapshot(prev => prev.filter((_, i) => i !== index)); setSnackbarState({ alertSeverity: 'success', snackbarText: `Deleted "${envVar.name}"`, clipBoardContent: '' }); setSnackbarOpen(true); }
-      catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to delete environment variable!', clipBoardContent: '' }); setSnackbarOpen(true); }
+      try { await deleteVariable({ instanceId, variableName: envVar.name }); onChange(true); setEnvVars(prev => prev.filter((_, i) => i !== index)); setNewIndices(prev => reindex(prev, index)); setModifiedIndices(prev => reindex(prev, index)); setSavedSnapshot(prev => prev.filter((_, i) => i !== index)); toast.success(`Deleted "${envVar.name}"`); }
+      catch { toast.error('Failed to delete environment variable!'); }
     }
   };
 
   const handleSaveAll = async () => {
-    try { const variables = envVars.filter(({ name }) => name).map(({ name, value }) => ({ name, value })); await putEnvironment({ instanceId, data: variables }); onChange(true); setSavedSnapshot(variables.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); setSnackbarState({ alertSeverity: 'success', snackbarText: `Saved ${variables.length} variable${variables.length !== 1 ? 's' : ''}`, clipBoardContent: '' }); }
-    catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to save environment variables!', clipBoardContent: '' }); }
-    finally { setSnackbarOpen(true); }
+    try { const variables = envVars.filter(({ name }) => name).map(({ name, value }) => ({ name, value })); await putEnvironment({ instanceId, data: variables }); onChange(true); setSavedSnapshot(variables.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); toast.success(`Saved ${variables.length} variable${variables.length !== 1 ? 's' : ''}`); }
+    catch { toast.error('Failed to save environment variables!'); }
   };
 
   if (isLoading) return <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />;
@@ -69,7 +66,6 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
           </div>
         </>
       )}
-      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
     </div>
   );
 };

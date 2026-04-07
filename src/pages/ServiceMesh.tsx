@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Network, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppList } from '@features/apps/hooks/app-queries';
-import { EditorButton } from '@features/apps/components/actions/editors/EditorButton';
+import { useAppList } from '@features/apps/app-queries';
+import { EditorButton } from '@features/apps/components/actions/EditorButton';
 import HelpButton from '@app/layout/HelpButton';
 import { servicemesh } from '@app/layout/helplinks';
 

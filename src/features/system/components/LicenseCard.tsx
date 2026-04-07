@@ -1,5 +1,5 @@
-import LicenseInfo from './device/license/LicenseInfo';
-import DeviceActivation from '@features/auth/components/device/DeviceActivation';
+import LicenseInfo from './LicenseInfo';
+import DeviceActivation from '@features/auth/components/DeviceActivation';
 
 export default function LicenseCard() {
   return (

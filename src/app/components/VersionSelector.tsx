@@ -1,99 +1,56 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ExternalLink, Sparkles, ChevronDown } from 'lucide-react';
-const getLatestVersion = (versions: string[]) => versions?.[0];
-type Version = string;
+import { useState, useRef, useEffect } from 'react';
+import { Sparkles, ChevronDown } from 'lucide-react';
+import type { AppVersion } from '@features/apps/app-queries';
 
 interface VersionSelectorProps {
-  availableVersions: Version[];
-  setSelectedVersion: (version: Version) => void;
-  selectedVersion: Version | undefined;
+  availableVersions: AppVersion[];
+  selectedVersion: AppVersion | undefined;
+  setSelectedVersion: (v: AppVersion) => void;
 }
 
-export const VersionSelector: React.FC<VersionSelectorProps> = ({
-  availableVersions,
-  setSelectedVersion,
-  selectedVersion,
-}) => {
-  const newVersionAvailable =
-    !getLatestVersion(availableVersions)?.installed &&
-    availableVersions?.filter((version) => version?.installed).length > 0;
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+export function VersionSelector({ availableVersions, selectedVersion, setSelectedVersion }: VersionSelectorProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const hasUpdate = availableVersions.length > 0 && !availableVersions[0]?.installed;
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
+    if (!open) return;
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  }, [open]);
 
-  const onReleaseNoteButtonClick = () => {
-    if (selectedVersion?.release_notes) {
-      window.open(selectedVersion.release_notes);
-    }
-  };
-
-  const onBreakingChangesButtonClick = () => {
-    if (selectedVersion?.breaking_changes) {
-      window.open(selectedVersion.breaking_changes);
-    }
-  };
+  if (!availableVersions.length) return null;
 
   return (
-    <div className="my-2">
-      {availableVersions?.length === 1 && availableVersions[0]?.version && (
-        <p className="text-sm text-muted mb-1">Version {availableVersions[0].version}</p>
-      )}
-      {availableVersions?.length > 1 && (
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 bg-dark rounded-lg border border-white/10 text-white text-sm focus:outline-none focus:border-brand"
-          >
-            <span>{selectedVersion?.version || 'Select version'}</span>
-            <div className="flex items-center gap-1">
-              {selectedVersion?.installed && <span className="text-xs text-muted">installed</span>}
-              {newVersionAvailable && <Sparkles size={14} className="text-brand" />}
-              <ChevronDown size={16} />
-            </div>
-          </button>
-          {dropdownOpen && (
-            <div className="absolute z-50 mt-1 w-full rounded-lg bg-dark-end border border-white/10 shadow-xl max-h-60 overflow-auto">
-              {availableVersions.map((option) => (
-                <button
-                  key={option.version}
-                  onClick={() => {
-                    setSelectedVersion(findVersionByProperty(availableVersions, option.version));
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-white/5 transition ${option.version === selectedVersion?.version ? 'bg-white/5' : ''}`}
-                >
-                  <span>{option.version}</span>
-                  {option.installed && <span className="text-xs text-muted">installed</span>}
-                </button>
-              ))}
-            </div>
-          )}
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2.5 bg-surface rounded-lg border border-border text-text-primary text-sm hover:border-border-strong transition cursor-pointer"
+      >
+        <span>{selectedVersion?.version || 'Select version'}</span>
+        <div className="flex items-center gap-1.5">
+          {selectedVersion?.installed && <span className="text-[11px] text-muted px-1.5 py-0.5 rounded bg-surface-hover">installed</span>}
+          {hasUpdate && <Sparkles size={13} className="text-brand" />}
+          <ChevronDown size={15} className={`text-muted transition-transform ${open ? 'rotate-180' : ''}`} />
+        </div>
+      </button>
+      {open && (
+        <div className="absolute z-50 mt-1 w-full rounded-lg bg-surface-raised border border-border shadow-xl max-h-60 overflow-auto">
+          {availableVersions.map((v) => (
+            <button
+              key={v.version}
+              onClick={() => { setSelectedVersion(v); setOpen(false); }}
+              className={`w-full flex items-center justify-between px-3 py-2 text-sm transition cursor-pointer ${v.version === selectedVersion?.version ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'}`}
+            >
+              <span>{v.version}</span>
+              {v.installed && <span className="text-[11px] text-muted">installed</span>}
+            </button>
+          ))}
         </div>
       )}
-      <div className="flex gap-2 mt-1">
-        {selectedVersion?.release_notes && (
-          <button className="text-xs text-brand hover:underline inline-flex items-center gap-1" onClick={onReleaseNoteButtonClick}>
-            <ExternalLink size={12} /> Release Notes
-          </button>
-        )}
-        {selectedVersion?.breaking_changes && (
-          <button className="text-xs text-brand hover:underline inline-flex items-center gap-1" onClick={onBreakingChangesButtonClick}>
-            <ExternalLink size={12} /> Breaking Changes
-          </button>
-        )}
-      </div>
     </div>
   );
-};
+}
 
 export default VersionSelector;

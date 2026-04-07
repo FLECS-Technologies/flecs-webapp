@@ -1,11 +1,11 @@
-import { brand } from '@app/theme/tokens';
+
 
 const statusConfig: Record<string, { color: string; label: string }> = {
-  running: { color: brand.success, label: 'Running' },
-  stopped: { color: brand.muted, label: 'Stopped' },
-  error: { color: brand.error, label: 'Error' },
-  installing: { color: brand.warning, label: 'Installing' },
-  uninstalling: { color: brand.warning, label: 'Uninstalling' },
+  running: { color: 'var(--color-success)', label: 'Running' },
+  stopped: { color: 'var(--color-muted)', label: 'Stopped' },
+  error: { color: 'var(--color-error)', label: 'Error' },
+  installing: { color: 'var(--color-warning)', label: 'Installing' },
+  uninstalling: { color: 'var(--color-warning)', label: 'Uninstalling' },
 };
 
 interface AppStatusDotProps {
@@ -15,7 +15,7 @@ interface AppStatusDotProps {
 }
 
 export default function AppStatusDot({ status, size = 10, pulse = false }: AppStatusDotProps) {
-  const config = statusConfig[status] ?? { color: brand.muted, label: status };
+  const config = statusConfig[status] ?? { color: 'var(--color-muted)', label: status };
   const shouldPulse = pulse || status === 'running';
 
   return (

@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAppList } from '@features/apps/hooks/app-queries';
+import { useAppList } from '@features/apps/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
-import Card from '@features/marketplace/components/cards/Card';
+import Card from '@features/marketplace/components/Card';
 import {
   getAppIcon,
   getAuthor,
@@ -128,7 +128,7 @@ export default function Marketplace() {
         availability={app.stock_status}
         relatedLinks={getCustomLinks(app)}
         requirement={getRequirement(app)}
-        versions={getVersions(app)}
+        versions={(getVersions(app) ?? []).map((v: string) => ({ version: v, installed: matchedApp?.installedVersions?.includes(v) ?? false }))}
         id={getId(app)}
         categories={getCategories(app)}
         average_rating={getAverageRating(app)}

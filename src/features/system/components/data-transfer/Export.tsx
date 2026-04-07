@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
+import { toast } from 'sonner';
 import { FolderDown } from 'lucide-react';
-import ActionSnackbar from '@app/components/ActionSnackbar';
-import { useAppList } from '@features/apps/hooks/app-queries';
+import { useAppList } from '@features/apps/app-queries';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postExports, getExportsExportId } from '@generated/core/flecsport/flecsport';
@@ -18,8 +18,6 @@ const Export: React.FC<ExportProps> = (props) => {
   const { appList } = useAppList();
   const { fetchQuest, waitForQuest } = useQuestActions();
   const [exporting, setExporting] = React.useState(false);
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [snackbarState, setSnackbarState] = React.useState({ snackbarText: 'Info', alertSeverity: 'success' as 'success' | 'error' });
 
   const exportApps = async () => {
     setExporting(true);
@@ -40,18 +38,15 @@ const Export: React.FC<ExportProps> = (props) => {
       const blob = exportDownload.data as unknown as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `flecs-export-${exportId}.tar`; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
-    } catch (error: any) { setSnackbarState({ alertSeverity: 'error', snackbarText: error?.response?.data?.message || error?.message }); setSnackbarOpen(true); }
+    } catch (error: any) { toast.error(error?.response?.data?.message || error?.message || 'Export failed'); }
     finally { setExporting(false); }
   };
 
   return (
-    <>
-      <button className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm disabled:opacity-50" onClick={exportApps} disabled={exporting} {...(buttonProps as any)}>
-        {exporting ? <div className="animate-spin h-4 w-4 border-2 border-brand border-t-transparent rounded-full" /> : <FolderDown size={16} />}
-        {exporting ? 'Downloading...' : 'Download App Config'}
-      </button>
-      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
-    </>
+    <button className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm disabled:opacity-50" onClick={exportApps} disabled={exporting} {...(buttonProps as any)}>
+      {exporting ? <div className="animate-spin h-4 w-4 border-2 border-brand border-t-transparent rounded-full" /> : <FolderDown size={16} />}
+      {exporting ? 'Downloading...' : 'Download App Config'}
+    </button>
   );
 };
 export default Export;

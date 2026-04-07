@@ -1,4 +1,4 @@
-import Version from './device/Version';
+import Version from './Version';
 
 export default function VersionCard() {
   return (

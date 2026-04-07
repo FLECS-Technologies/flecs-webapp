@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu as MenuIcon } from 'lucide-react';
 import { useUIStore } from '@stores/ui';
 import FLECSLogo from './FLECSLogo';
-import { brand } from '@app/theme/tokens';
+
 
 export default function MobileBar() {
   const [isMobile, setIsMobile] = useState(false);
@@ -28,7 +28,7 @@ export default function MobileBar() {
         >
           <MenuIcon size={22} />
         </button>
-        <FLECSLogo logoColor={brand.primary} />
+        <FLECSLogo logoColor={'var(--color-brand)'} />
         <span className="text-sm font-bold text-white">FLECS</span>
       </div>
     </header>

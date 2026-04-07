@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import React, { useState } from 'react';
 import { X, Usb, Network, Cable, Variable, ExternalLink, GitBranch } from 'lucide-react';
 import UsbConfigTab from './tabs/UsbConfigTab';
@@ -30,7 +31,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({ instanceId,
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="bg-dark-end rounded-2xl overflow-hidden flex shadow-2xl border border-white/10 w-full max-w-3xl" style={{ height: '70vh', maxHeight: 640 }}>
         {/* Sidebar */}
@@ -82,7 +83,8 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({ instanceId,
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 export default InstanceConfigDialog;

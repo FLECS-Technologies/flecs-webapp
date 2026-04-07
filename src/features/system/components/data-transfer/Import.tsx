@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 /*
  * Copyright (c) 2022 FLECS Technologies GmbH
  *
@@ -16,10 +17,10 @@
  * limitations under the License.
  */
 import React from 'react';
+import { toast } from 'sonner';
 import { FolderUp } from 'lucide-react';
-import ActionSnackbar from '@app/components/ActionSnackbar';
 import FileOpen from '@app/components/FileOpen';
-import { useInvalidateAppData } from '@features/apps/hooks/app-queries';
+
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postDeviceOnboarding } from '@generated/core/device/device';
@@ -27,15 +28,10 @@ import { postImports } from '@generated/core/flecsport/flecsport';
 import type { JobMeta } from '@generated/core/schemas';
 
 export default function Import(props) {
-  const invalidateAppData = useInvalidateAppData();
+  const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
   const { ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [snackbarState, setSnackbarState] = React.useState({
-    snackbarText: 'Info',
-    alertSeverity: 'success',
-  });
 
   const handleFileUpload = (file: File) => {
     if (file) {
@@ -45,11 +41,7 @@ export default function Import(props) {
       } else if (fileName.endsWith('.json')) {
         handleJsonFile(file);
       } else {
-        setSnackbarState({
-          alertSeverity: 'error',
-          snackbarText: 'Unsupported file type. Please upload a .tar, .tar.gz or .json file.',
-        });
-        setSnackbarOpen(true);
+        toast.error('Unsupported file type. Please upload a .tar, .tar.gz or .json file.');
       }
     }
   };
@@ -68,24 +60,16 @@ export default function Import(props) {
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
 
-      // Success case
-      setSnackbarState({
-        alertSeverity: 'success',
-        snackbarText: 'Importing finished successfully',
-      });
-      setSnackbarOpen(true);
+      toast.success('Importing finished successfully');
     } catch (error: unknown) {
       const err = error as any;
-      setSnackbarState({
-        alertSeverity: 'error',
-        snackbarText: err?.response?.data?.message
-          ? err.response.data.message
-          : err?.message ?? String(error),
-      });
-      setSnackbarOpen(true);
+      const msg = err?.response?.data?.message
+        ? err.response.data.message
+        : err?.message ?? String(error);
+      toast.error('Import failed', { description: msg });
     } finally {
       setImporting(false);
-      invalidateAppData();
+      qc.invalidateQueries();
     }
   };
 
@@ -100,46 +84,30 @@ export default function Import(props) {
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
 
-      // Success case
-      setSnackbarState({
-        alertSeverity: 'success',
-        snackbarText: 'Importing finished successfully',
-      });
-      setSnackbarOpen(true);
+      toast.success('Importing finished successfully');
     } catch (error: unknown) {
       const err = error as any;
-      setSnackbarState({
-        alertSeverity: 'error',
-        snackbarText: err?.response?.data?.message
-          ? err.response.data.message
-          : err?.message ?? String(error),
-      });
-      setSnackbarOpen(true);
+      const msg = err?.response?.data?.message
+        ? err.response.data.message
+        : err?.message ?? String(error);
+      toast.error('Import failed', { description: msg });
     } finally {
       setImporting(false);
-      invalidateAppData();
+      qc.invalidateQueries();
     }
   };
 
   return (
-    <>
-      <FileOpen
-        {...buttonProps}
-        data-testid="import-apps-button"
-        buttonText="Import Config"
-        buttonIcon={<FolderUp size={16} />}
-        accept=".tar.gz, .tar, .json"
-        onConfirm={handleFileUpload}
-        loading={importing}
-        wholeFile={true}
-        disabled={buttonProps.disabled || importing}
-      ></FileOpen>
-      <ActionSnackbar
-        text={snackbarState.snackbarText}
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        alertSeverity={snackbarState.alertSeverity}
-      />
-    </>
+    <FileOpen
+      {...buttonProps}
+      data-testid="import-apps-button"
+      buttonText="Import Config"
+      buttonIcon={<FolderUp size={16} />}
+      accept=".tar.gz, .tar, .json"
+      onConfirm={handleFileUpload}
+      loading={importing}
+      wholeFile={true}
+      disabled={buttonProps.disabled || importing}
+    ></FileOpen>
   );
 }

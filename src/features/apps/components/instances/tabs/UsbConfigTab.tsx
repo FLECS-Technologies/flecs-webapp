@@ -1,20 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { toast } from 'sonner';
 import { UsbDevice as SystemUsbDevice, InstanceConfigUsbDevice } from '@generated/core/schemas';
 import { useGetInstancesInstanceIdConfigDevicesUsb, usePutInstancesInstanceIdConfigDevicesUsbPort, useDeleteInstancesInstanceIdConfigDevicesUsbPort } from '@generated/core/instances/instances';
 import { useGetSystemDevicesUsb } from '@generated/core/system/system';
 import { useQueryClient } from '@tanstack/react-query';
 import HelpButton from '@app/layout/HelpButton';
 import { instancedeviceconfig } from '@app/layout/helplinks';
-import UsbConfigCard from './usb-devices/UsbConfigCard';
-import ActionSnackbar from '@app/components/ActionSnackbar';
+import UsbConfigCard from './UsbConfigCard';
 
 export interface UsbDevice { port: string; name: string; vendor: string; device_connected: boolean; enabled: boolean; }
 interface UsbConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 
 const UsbConfigTab: React.FC<UsbConfigTabProps> = ({ instanceId, onChange }) => {
   const queryClient = useQueryClient();
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarState, setSnackbarState] = useState({ snackbarText: 'Info', alertSeverity: 'success', clipBoardContent: '' });
   const { data: systemDevicesResponse, isLoading: loadingSystem } = useGetSystemDevicesUsb();
   const { data: instanceDevicesResponse, isLoading: loadingInstance } = useGetInstancesInstanceIdConfigDevicesUsb(instanceId);
   const { mutateAsync: enableUsb } = usePutInstancesInstanceIdConfigDevicesUsbPort();
@@ -32,9 +30,8 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({ instanceId, onChange }) => 
   }, [systemDevicesResponse, instanceDevicesResponse]);
 
   const handleToggle = async (port: string, enabled: boolean) => {
-    try { if (!enabled) await enableUsb({ instanceId, port }); else await disableUsb({ instanceId, port }); onChange(true); queryClient.invalidateQueries({ queryKey: [`/instances/${instanceId}/config/devices/usb`] }); queryClient.invalidateQueries({ queryKey: [`/system/devices/usb`] }); setSnackbarState({ alertSeverity: 'success', snackbarText: 'USB config saved!', clipBoardContent: '' }); }
-    catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to save USB config!', clipBoardContent: '' }); }
-    finally { setSnackbarOpen(true); }
+    try { if (!enabled) await enableUsb({ instanceId, port }); else await disableUsb({ instanceId, port }); onChange(true); queryClient.invalidateQueries({ queryKey: [`/instances/${instanceId}/config/devices/usb`] }); queryClient.invalidateQueries({ queryKey: [`/system/devices/usb`] }); toast.success('USB config saved!'); }
+    catch { toast.error('Failed to save USB config!'); }
   };
 
   if (loading) return <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />;
@@ -42,7 +39,6 @@ const UsbConfigTab: React.FC<UsbConfigTabProps> = ({ instanceId, onChange }) => 
     <div>
       <div className="flex items-center gap-2 mb-4"><h6 className="text-base font-semibold">USB Devices</h6><HelpButton url={instancedeviceconfig} /></div>
       <div>{usbDevices.length === 0 && <p className="text-sm">No USB devices available.</p>}{usbDevices.map(d => <UsbConfigCard key={d.port} device={d} onEnable={handleToggle} />)}</div>
-      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
     </div>
   );
 };

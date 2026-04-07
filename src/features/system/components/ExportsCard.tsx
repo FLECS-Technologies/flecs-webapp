@@ -1,4 +1,4 @@
-import ExportList from './export/ExportList';
+import ExportList from './ExportList';
 
 export default function ExportsCard() {
   return (

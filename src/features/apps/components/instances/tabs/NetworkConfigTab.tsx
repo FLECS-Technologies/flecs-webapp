@@ -1,21 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
 import { DeploymentNetwork, InstanceConfigNetwork, NetworkAdapter, NetworkKind, NetworkType } from '@generated/core/schemas';
 import { useGetInstancesInstanceIdConfigNetworks, usePostInstancesInstanceIdConfigNetworks, useDeleteInstancesInstanceIdConfigNetworksNetworkId } from '@generated/core/instances/instances';
 import { useGetSystemNetworkAdapters } from '@generated/core/system/system';
 import { useGetDeploymentsDeploymentIdNetworks, usePostDeploymentsDeploymentIdNetworks, usePostDeploymentsDeploymentIdNetworksNetworkIdDhcpIpv4 } from '@generated/core/deployments/deployments';
 import { useQueryClient } from '@tanstack/react-query';
-import NetworkConfigCard from './networks/NetworkConfigCard';
+import NetworkConfigCard from './NetworkConfigCard';
 import HelpButton from '@app/layout/HelpButton';
 import { instancenicconfig } from '@app/layout/helplinks';
-import ActionSnackbar from '@app/components/ActionSnackbar';
 
 export interface NetworkState { id: string; name: string; net_type: string; is_connected: boolean; networks: NetworkAdapter['networks']; deploymentNetworkName: string; ipAddress: string; is_activated: boolean; }
 interface NetworkConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 
 const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChange }) => {
   const queryClient = useQueryClient();
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarState, setSnackbarState] = useState({ snackbarText: 'Info', alertSeverity: 'success', clipBoardContent: '' });
   const { data: networkAdaptersResponse, isLoading: loadingAdapters } = useGetSystemNetworkAdapters();
   const { data: deploymentNetworksResponse, isLoading: loadingDeployments } = useGetDeploymentsDeploymentIdNetworks('default');
   const { data: instanceNetworksResponse, isLoading: loadingInstance } = useGetInstancesInstanceIdConfigNetworks(instanceId);
@@ -54,9 +52,8 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChang
         const ip = (ipRes.data as { ipv4_address: string }).ipv4_address;
         await connectNetwork({ instanceId, data: { network_id: deploymentNetworkName, ipAddress: ip } });
       } else { await disconnectNetwork({ instanceId, networkId: network.deploymentNetworkName }); }
-      setSnackbarState({ alertSeverity: 'success', snackbarText: 'Network config saved!', clipBoardContent: '' }); invalidateAll();
-    } catch { setSnackbarState({ alertSeverity: 'error', snackbarText: 'Failed to save Network config!', clipBoardContent: '' }); }
-    finally { setSnackbarOpen(true); }
+      toast.success('Network config saved!'); invalidateAll();
+    } catch { toast.error('Failed to save Network config!'); }
   }, [networks, instanceId]);
 
   if (loading) return <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />;
@@ -64,7 +61,6 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChang
     <div>
       <div className="flex items-center gap-2 mb-4"><h6 className="text-base font-semibold">Connect Network Interface to App</h6><HelpButton url={instancenicconfig} /></div>
       <div>{networks.map(n => <NetworkConfigCard network={n} onActivationChange={handleNetworkActivationChange} key={n.id} />)}</div>
-      <ActionSnackbar text={snackbarState.snackbarText} open={snackbarOpen} setOpen={setSnackbarOpen} alertSeverity={snackbarState.alertSeverity} />
     </div>
   );
 };

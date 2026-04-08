@@ -8,7 +8,7 @@ interface EditorButtonProps {
 
 export const createUrl = (editorUrl: string) => {
   let baseURL: string = window.location.protocol + '//';
-  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
+  if (import.meta.env.DEV) {
     baseURL = import.meta.env.VITE_APP_DEV_CORE_URL || '';
   } else {
     baseURL = baseURL.concat(window.location.host);

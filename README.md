@@ -2,33 +2,32 @@
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (LTS)
+- [Node.js](https://nodejs.org/) 22+
 - [npm](https://www.npmjs.com/)
 
 ## Getting Started
 
 ```bash
 npm install
+npm run generate   # generate API hooks from OpenAPI specs
 npm run dev
 ```
 
-The dev server starts at [http://localhost:5173](http://localhost:5173).
+The dev server starts at [https://localhost:5173](https://localhost:5173).
 
-## Available Scripts
+## Scripts
 
-| Command                | Description                    |
-| ---------------------- | ------------------------------ |
-| `npm run dev`          | Start the Vite dev server      |
-| `npm run build`        | Production build               |
-| `npm test`             | Run tests (Vitest, watch mode) |
-| `npm run coverage`     | Run tests with coverage report |
-| `npm run lint`         | Lint with ESLint               |
-| `npm run format`       | Format with Prettier           |
-| `npm run format:check` | Check formatting               |
+| Command              | Description                              |
+| -------------------- | ---------------------------------------- |
+| `npm run dev`        | Start the Vite dev server (HTTPS)        |
+| `npm run build`      | Production build                         |
+| `npm run generate`   | Generate hooks/types from OpenAPI specs  |
+| `npm test`           | Run tests (Vitest)                       |
+| `npm run coverage`   | Run tests with coverage report           |
+| `npm run test:e2e`   | Run Playwright E2E tests                 |
+| `npm run lint`       | Lint with ESLint                         |
+| `npm run format`     | Format with Prettier                     |
 
 ## Tech Stack
 
-- **React 19** with **Vite**
-- **MUI** (Material UI) for components
-- **Vitest** + **React Testing Library** for tests
-- **TypeScript** (partial adoption, migration in progress)
+React 19 · TypeScript · Vite 7 · Tailwind CSS v4 · TanStack Query v5 · Orval · Zustand · Sonner · Vitest · MSW · Playwright

@@ -21,9 +21,7 @@ export function getBaseURL(): string {
 }
 
 export function host() {
-  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-    return '';
-  }
+  if (import.meta.env.DEV) return '';
   return window.location.origin;
 }
 
@@ -35,9 +33,7 @@ export function getAuthProviderURL(providerId: string) {
 }
 
 export function baseURL() {
-  if (import.meta.env.VITE_APP_ENVIRONMENT === 'development') {
-    return '/api/v2';
-  }
+  if (import.meta.env.DEV) return '/api/v2';
   return '../api/v2';
 }
 

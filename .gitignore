@@ -1,10 +1,7 @@
 node_modules
-build
 dist
 coverage
-build/asset-manifest.json
-build/index.html
-out/**
+out
 src/assets/third-party-licenses.txt
 src/assets/sbom.json
 generated/

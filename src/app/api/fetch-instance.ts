@@ -25,8 +25,12 @@ export const customInstance = async <T>(url: string, options?: RequestInit): Pro
     throw new Error('Session expired');
   }
 
-  const ct = response.headers.get('content-type');
-  const data = ct?.includes('json') ? await response.json() : await response.text();
+  const ct = response.headers.get('content-type') ?? '';
+  const data = ct.includes('json')
+    ? await response.json()
+    : ct.includes('octet-stream') || ct.includes('tar') || ct.includes('zip')
+      ? await response.blob()
+      : await response.text();
   return { data, status: response.status, headers: response.headers } as T;
 };
 

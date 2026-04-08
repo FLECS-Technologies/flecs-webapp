@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
  */
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, LayoutGrid, Store, Network, Settings, FileText, ArrowRight } from 'lucide-react';
+import { Search, LayoutGrid, Store, Settings, FileText, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface CommandItem {
@@ -41,7 +41,6 @@ export default function CommandPalette() {
     () => [
       { id: 'apps', label: 'Apps', description: 'Installed applications', icon: <LayoutGrid size={18} />, action: () => go('/'), category: 'Navigation' },
       { id: 'marketplace', label: 'Marketplace', description: 'Browse and install apps', icon: <Store size={18} />, action: () => go('/marketplace'), category: 'Navigation' },
-      { id: 'mesh', label: 'Service Mesh', description: 'Network mesh configuration', icon: <Network size={18} />, action: () => go('/service-mesh'), category: 'Navigation' },
       { id: 'system', label: 'System', description: 'Device info, license, exports', icon: <Settings size={18} />, action: () => go('/system'), category: 'Navigation' },
       { id: 'licenses', label: 'Open Source Licenses', description: 'Third-party licenses', icon: <FileText size={18} />, action: () => go('/open-source'), category: 'Navigation' },
     ],

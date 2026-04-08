@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, Download, Network, Settings, User, LogIn, ShieldCheck, ShieldAlert, Sun, Moon, PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react';
+import { Search, Download, Settings, User, LogIn, ShieldCheck, ShieldAlert, Sun, Moon, PanelLeftClose, ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUIStore } from '@stores/ui';
 import { useGetApps } from '@generated/core/apps/apps';
@@ -15,7 +15,6 @@ const NAV = [
     { label: 'Installed', icon: Download, path: '/', badgeKey: 'installed' },
   ]},
   { section: 'Device', items: [
-    { label: 'Service Mesh', icon: Network, path: '/service-mesh' },
     { label: 'System', icon: Settings, path: '/system' },
   ]},
 ];

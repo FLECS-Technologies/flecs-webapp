@@ -21,8 +21,8 @@ target "webapp" {
   dockerfile = "docker/Dockerfile"
   platforms  = ["linux/amd64", "linux/arm64"]
   tags = compact([
-    VERSION != "" ? "cr.flecs.tech/webapp:${VERSION}${VERSION_SPECIAL}" : "",
-    "cr.flecs.tech/webapp:${NAMED_TAG}",
+    VERSION != "" ? "cr.flecs.tech/flecs/webapp:${VERSION}${VERSION_SPECIAL}" : "",
+    "cr.flecs.tech/flecs/webapp:${NAMED_TAG}",
   ])
   cache-from = ["type=gha"]
   cache-to   = ["type=gha,mode=max"]

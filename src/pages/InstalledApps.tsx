@@ -1,8 +1,11 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FileCode2, FolderUp, PackagePlus, RefreshCw } from 'lucide-react';
 import Yaml from 'js-yaml';
 import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';
+import { useGetQuests } from '@generated/core/quests/quests';
+import { QuestState } from '@generated/core/schemas';
+import type { Quest } from '@generated/core/schemas';
 import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';
 import ContentDialog from '@app/components/ContentDialog';
@@ -31,9 +34,16 @@ function RowSkeleton() {
 
 function getAppsWithUpdates(apps: App[]) { return apps.filter(app => { if (!app.versions || !app.installedVersions) return false; const v = createVersions(app.versions, app.installedVersions); const l = getLatestVersion(v); return l && !app.installedVersions.includes(l.version); }); }
 
+/** Parse "Install io.linuxserver.mariadb-11.4.4" → { name, version } */
+function parseInstallQuest(desc: string) {
+  const m = desc.match(/^Install\s+(\S+)-(\S+)$/);
+  return m ? { name: m[1], version: m[2] } : null;
+}
+
 export default function InstalledApps() {
   const { appList, isLoading: appListLoading, isError: appListError } = useAppList();
   const { data: pingData } = useGetSystemPing({ query: { retry: false, refetchInterval: 30_000 } });
+  const { data: questsData } = useGetQuests({ query: { refetchInterval: 2000 } });
   const ping = !!pingData;
   const [sideloadDoc, setSideloadDoc] = useState<any>(null);
   const [sideloadPickerOpen, setSideloadPickerOpen] = useState(false);
@@ -41,6 +51,32 @@ export default function InstalledApps() {
   const [updateAllOpen, setUpdateAllOpen] = useState(false);
   const sideloadInputRef = useRef<HTMLInputElement>(null);
   const installedApps = (appList ?? []).filter((app: App) => app?.status === 'installed');
+
+  // Derive phantom "installing" entries from active install quests
+  const installingApps = useMemo(() => {
+    const quests = ((questsData as any)?.data ?? []) as Quest[];
+    const activeInstalls = quests.filter(q =>
+      (q.state === QuestState.ongoing || q.state === QuestState.pending) &&
+      q.description?.startsWith('Install ')
+    );
+    const installedNames = new Set(installedApps.map((a: App) => a.appKey?.name));
+    return activeInstalls
+      .map(q => {
+        const parsed = parseInstallQuest(q.description);
+        if (!parsed || installedNames.has(parsed.name)) return null;
+        const progress = q.progress;
+        const pct = progress?.total ? Math.round((progress.current / progress.total) * 100) : undefined;
+        return {
+          appKey: { name: parsed.name, version: parsed.version },
+          status: 'installing',
+          title: parsed.name.split('.').pop(),
+          _quest: { description: q.description, progress: pct, state: q.state },
+        };
+      })
+      .filter(Boolean);
+  }, [questsData, installedApps]);
+
+  const allApps = [...installedApps, ...installingApps];
   const appsWithUpdates = getAppsWithUpdates(installedApps);
   const updateCount = appsWithUpdates.length;
 
@@ -56,7 +92,7 @@ export default function InstalledApps() {
       <div className="mb-6">
         <span className="text-xs uppercase tracking-wider text-muted font-semibold">APPS</span>
         <h4 className="text-2xl font-extrabold">Installed Apps</h4>
-        <p className="text-base text-muted mt-1">{installedApps.length} app{installedApps.length !== 1 ? 's' : ''} active on this device.</p>
+        <p className="text-base text-muted mt-1">{installedApps.length} app{installedApps.length !== 1 ? 's' : ''} active on this device.{installingApps.length > 0 && ` ${installingApps.length} installing.`}</p>
       </div>
 
       <div className="flex gap-4 mb-5">
@@ -79,9 +115,9 @@ export default function InstalledApps() {
         </div>
       )}
 
-      {appListLoading && ping && installedApps.length === 0 ? <RowSkeleton /> : installedApps.length === 0 && !appListLoading ? (
+      {appListLoading && ping && allApps.length === 0 ? <RowSkeleton /> : allApps.length === 0 && !appListLoading ? (
         <div className="rounded-xl border border-white/10"><EmptyApps onSideload={() => setSideloadPickerOpen(true)} /></div>
-      ) : <InstalledAppsTable apps={installedApps} />}
+      ) : <InstalledAppsTable apps={allApps} />}
 
       {installedApps.length > 0 && <div className="flex justify-end mt-4"><Export disabled={installedApps.length === 0} /></div>}
 

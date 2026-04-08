@@ -13,20 +13,17 @@ export type AppVersion = { version: string; installed: boolean };
 
 function combineAppList(results: any[]) {
   const [pRes, aRes, iRes] = results;
+  const isLoading = aRes.isPending;
+  const isError = results.some((r: any) => r.isError);
+
+  if (isLoading) return { appList: undefined, products: [], isLoading, isError };
+
   const products = (pRes.data as any)?.data?.data?.products ?? (pRes.data as any)?.data?.products ?? [];
   const apps = Array.isArray((aRes.data as any)?.data) ? (aRes.data as any).data : [];
   const instances = Array.isArray((iRes.data as any)?.data) ? (iRes.data as any).data : [];
-  const isLoading = results.some((r: any) => r.isLoading);
 
-  if (!apps.length && !products.length) return { appList: undefined, products, isLoading };
-
-  // Enrich ALL marketplace products with version objects
-  const enrichedProducts = products.map((p: any) => ({
-    ...p,
-    versions: (getVersions(p) ?? []).map((v: string) => ({ version: v, installed: false })),
-  }));
-
-  const appList = apps.length === 0 ? enrichedProducts : apps.filter((a: any) => a?.appKey?.name).map((app: any) => {
+  // Enrich device apps with marketplace metadata + instances
+  const appList = apps.filter((a: any) => a?.appKey?.name).map((app: any) => {
     const mp = products.find((p: any) => app.appKey.name === getReverseDomainName(p));
     const installedVersions = apps.filter((a2: any) => a2.appKey?.name === app.appKey.name).map((a2: any) => a2.appKey.version);
     return {
@@ -38,7 +35,7 @@ function combineAppList(results: any[]) {
     };
   });
 
-  return { appList, products, isLoading };
+  return { appList, products, isLoading, isError };
 }
 
 export function useAppList() {

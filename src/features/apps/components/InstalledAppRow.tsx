@@ -26,6 +26,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const qc = useQueryClient();
   const { waitForQuest } = useQuestActions();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
+  const isInstalling = app.status === 'installing';
   const instance = (app.instances ?? [])[0] as any | undefined;
   const isRunning = instance?.status === 'running';
   const isStopped = instance?.status === 'stopped';
@@ -33,9 +34,10 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const primaryEditor = instance?.editors?.[0];
   const versionsArray = app.versions ?? [];
   const latestVersion = versionsArray[0];
-  const updateAvailable = latestVersion && app.installedVersions && !app.installedVersions.includes(latestVersion.version);
+  const updateAvailable = !isInstalling && latestVersion && app.installedVersions && !app.installedVersions.includes(latestVersion.version);
   const [selectedVersion, setSelectedVersion] = useState<Version>(latestVersion ?? { version: app.appKey?.version ?? '', installed: true });
-  const statusLabel = !instance ? 'No instance' : isRunning ? 'Running' : isStopped ? 'Stopped' : instance.status ?? 'Unknown';
+  const questProgress = app._quest?.progress;
+  const statusLabel = isInstalling ? `Installing${questProgress != null ? `... ${questProgress}%` : ''}` : !instance ? 'No instance' : isRunning ? 'Running' : isStopped ? 'Stopped' : instance.status ?? 'Unknown';
   const [menuAnchor, setMenuAnchor] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -89,8 +91,12 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             <span className="font-mono truncate">v{app.appKey?.version}</span>
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <AppStatusDot status={instance?.status ?? 'stopped'} size={8} />
-            <span className={`text-xs font-medium ${isRunning ? 'text-success' : 'text-muted'}`}>{statusLabel}</span>
+            {isInstalling ? (
+              <div className="w-2 h-2 rounded-full bg-brand animate-pulse" />
+            ) : (
+              <AppStatusDot status={instance?.status ?? 'stopped'} size={8} />
+            )}
+            <span className={`text-xs font-medium ${isInstalling ? 'text-brand' : isRunning ? 'text-success' : 'text-muted'}`}>{statusLabel}</span>
           </div>
         </div>
         {/* Open button */}

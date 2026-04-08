@@ -2,29 +2,20 @@ import { CheckCircle2, AlertCircle } from 'lucide-react';
 import MarketplaceLogin from '@features/marketplace/components/MarketplaceLogin';
 import { useMarketplaceUser } from '@stores/marketplace-user';
 import { useGetDeviceLicenseActivationStatus, usePostDeviceLicenseActivation, getGetDeviceLicenseActivationStatusQueryKey } from '@generated/core/device/device';
-import { putConsoleAuthentication } from '@generated/core/console/console';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
 export default function DeviceActivation({ variant }: { variant?: string }) {
   const qc = useQueryClient();
   const { user } = useMarketplaceUser();
   const { data, isLoading } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
-  const { mutate: activate, isLoading: activating, isError } = usePostDeviceLicenseActivation({
+  const { mutate: activate, isPending: activating, isError } = usePostDeviceLicenseActivation({
     mutation: { onSuccess: () => qc.invalidateQueries({ queryKey: getGetDeviceLicenseActivationStatusQueryKey() }) },
   });
 
   const activated = (data as any)?.data?.isValid ?? false;
 
-  // Auto-activate after marketplace login stores JWT on device
-  useEffect(() => {
-    if (user && !activated && !activating && !isError) activate();
-  }, [user, activated, activating, isError]);
-
-  // Loading
   if (isLoading) return <p className="text-sm text-muted">Checking license...</p>;
 
-  // Activated
   if (activated) return (
     <div className="flex items-center gap-2">
       <CheckCircle2 size={20} className="text-success" />
@@ -32,7 +23,7 @@ export default function DeviceActivation({ variant }: { variant?: string }) {
     </div>
   );
 
-  // Not activated — show marketplace login OR activate button
+  // Not activated — show marketplace login or retry button
   return (
     <div>
       {!user ? (

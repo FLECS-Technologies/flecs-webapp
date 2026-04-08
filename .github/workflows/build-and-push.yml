@@ -55,6 +55,13 @@ jobs:
           name: build
           path: dist/
 
+      - name: Login to container registry
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        with:
+          registry: cr.flecs.tech
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_AUTH }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
 
@@ -64,13 +71,6 @@ jobs:
       - name: Determine version
         id: version
         run: echo "value=$(cat package.json | jq -r '.version')${{ inputs.version_suffix }}" >> "$GITHUB_OUTPUT"
-
-      - name: Login to container registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-        with:
-          registry: flecspublic.azurecr.io
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_AUTH }}
 
       - name: Build and push
         uses: docker/bake-action@82490499d2e5613fcead7e128237ef0b0ea210f7 # v7.0.0

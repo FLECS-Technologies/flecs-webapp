@@ -1,7 +1,3 @@
-variable "REGISTRY" {
-  default = "flecspublic.azurecr.io"
-}
-
 variable "VERSION" {
   default = ""
 }
@@ -25,8 +21,8 @@ target "webapp" {
   dockerfile = "docker/Dockerfile"
   platforms  = ["linux/amd64", "linux/arm64"]
   tags = compact([
-    VERSION != "" ? "${REGISTRY}/webapp:${VERSION}${VERSION_SPECIAL}" : "",
-    "${REGISTRY}/webapp:${NAMED_TAG}",
+    VERSION != "" ? "cr.flecs.tech/webapp:${VERSION}${VERSION_SPECIAL}" : "",
+    "cr.flecs.tech/webapp:${NAMED_TAG}",
   ])
   cache-from = ["type=gha"]
   cache-to   = ["type=gha,mode=max"]

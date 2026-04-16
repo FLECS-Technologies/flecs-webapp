@@ -25,9 +25,9 @@ import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postDeviceOnboarding } from '@generated/core/device/device';
 import { postImports } from '@generated/core/flecsport/flecsport';
-import type { JobMeta } from '@generated/core/schemas';
+import { unwrapSuccess } from '@app/api/unwrap';
 
-export default function Import(props) {
+export default function Import(props: React.ComponentProps<'button'>) {
   const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
   const { ...buttonProps } = props;
@@ -54,7 +54,8 @@ export default function Import(props) {
       const jsonData = JSON.parse(fileContent);
 
       const onboardingQuest = await postDeviceOnboarding(jsonData);
-      const onboardingData = onboardingQuest.data as JobMeta;
+      const onboardingData = unwrapSuccess(onboardingQuest);
+      if (!onboardingData) throw new Error('Onboarding request failed');
       await fetchQuest(onboardingData.jobId);
       const result = await waitForQuest(onboardingData.jobId);
 
@@ -62,10 +63,7 @@ export default function Import(props) {
 
       toast.success('Importing finished successfully');
     } catch (error: unknown) {
-      const err = error as any;
-      const msg = err?.response?.data?.message
-        ? err.response.data.message
-        : err?.message ?? String(error);
+      const msg = error instanceof Error ? error.message : String(error);
       toast.error('Import failed', { description: msg });
     } finally {
       setImporting(false);
@@ -78,7 +76,8 @@ export default function Import(props) {
 
     try {
       const importQuest = await postImports({ file });
-      const importData = importQuest.data as JobMeta;
+      const importData = unwrapSuccess(importQuest);
+      if (!importData) throw new Error('Import request failed');
       await fetchQuest(importData.jobId);
       const result = await waitForQuest(importData.jobId);
 
@@ -86,10 +85,7 @@ export default function Import(props) {
 
       toast.success('Importing finished successfully');
     } catch (error: unknown) {
-      const err = error as any;
-      const msg = err?.response?.data?.message
-        ? err.response.data.message
-        : err?.message ?? String(error);
+      const msg = error instanceof Error ? error.message : String(error);
       toast.error('Import failed', { description: msg });
     } finally {
       setImporting(false);

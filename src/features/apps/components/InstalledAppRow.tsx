@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import ReactDOM from 'react-dom';
 import { ExternalLink, MoreHorizontal, Play, Plus, Square, Settings, Info, Trash2, BookOpen, RefreshCw } from 'lucide-react';
-type App = any;
-type Version = { version: string; installed?: boolean };
+import type { EnrichedApp, AppVersion } from '@features/apps/types';
+import type { AppInstance } from '@generated/core/schemas';
 import AppStatusDot from './AppStatusDot';
 import UpdateButton from '@features/apps/components/actions/UpdateButton';
 import ContentDialog from '@app/components/ContentDialog';
@@ -15,27 +15,28 @@ import InstanceConfigDialog from './instances/InstanceConfigDialog';
 import { VersionSelector } from '@app/components/VersionSelector';
 import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
+import { unwrapSuccess } from '@app/api/unwrap';
 
 import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postInstancesCreate, postInstancesInstanceIdStart, postInstancesInstanceIdStop } from '@generated/core/instances/instances';
 import type { JobMeta } from '@generated/core/schemas';
 
-interface InstalledAppRowProps { app: App; }
+interface InstalledAppRowProps { app: EnrichedApp; }
 
 export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const qc = useQueryClient();
   const { waitForQuest } = useQuestActions();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
   const isInstalling = app.status === 'installing';
-  const instance = (app.instances ?? [])[0] as any | undefined;
+  const instance: AppInstance | undefined = (app.instances ?? [])[0];
   const isRunning = instance?.status === 'running';
   const isStopped = instance?.status === 'stopped';
-  const hasEditors = instance?.editors?.length > 0;
+  const hasEditors = (instance?.editors?.length ?? 0) > 0;
   const primaryEditor = instance?.editors?.[0];
   const versionsArray = app.versions ?? [];
   const latestVersion = versionsArray[0];
   const updateAvailable = !isInstalling && latestVersion && app.installedVersions && !app.installedVersions.includes(latestVersion.version);
-  const [selectedVersion, setSelectedVersion] = useState<Version>(latestVersion ?? { version: app.appKey?.version ?? '', installed: true });
+  const [selectedVersion, setSelectedVersion] = useState<AppVersion>(latestVersion ?? { version: app.appKey?.version ?? '', installed: true });
   const questProgress = app._quest?.progress;
   const statusLabel = isInstalling ? `Installing${questProgress != null ? `... ${questProgress}%` : ''}` : !instance ? 'No instance' : isRunning ? 'Running' : isStopped ? 'Stopped' : instance.status ?? 'Unknown';
   const [menuAnchor, setMenuAnchor] = useState(false);
@@ -56,17 +57,23 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const runInstanceAction = async (action: () => Promise<any>, successMsg: string, failMsg: string) => {
+  /** Extract jobId from a 202 response (mutator throws on non-2xx, so data is always success variant) */
+  const extractJobId = (resp: { data: unknown; status: number }): number => {
+    const data = resp.data as JobMeta;
+    return data.jobId;
+  };
+
+  const runInstanceAction = async (action: () => Promise<{ data: unknown; status: number }>, successMsg: string, failMsg: string) => {
     setBusy(true); setMenuAnchor(false);
-    try { const quest = await action(); const result = await waitForQuest((quest.data as JobMeta).jobId); if (questStateFinishedOk(result.state)) toast.success(successMsg); else throw new Error(result.description); }
-    catch (err: any) { toast.error(failMsg, { description: err?.message ?? '' }); }
+    try { const resp = await action(); const jobId = extractJobId(resp); const result = await waitForQuest(jobId); if (questStateFinishedOk(result.state)) toast.success(successMsg); else throw new Error(result.description); }
+    catch (err: unknown) { toast.error(failMsg, { description: err instanceof Error ? err.message : String(err) }); }
     finally { qc.invalidateQueries(); setBusy(false); }
   };
 
   const handleCreateAndStart = async () => {
     setBusy(true); setMenuAnchor(false);
-    try { const createQuest = await postInstancesCreate({ appKey: { name: app.appKey.name, version: app.appKey.version } }); const createResult = await waitForQuest((createQuest.data as JobMeta).jobId); if (questStateFinishedOk(createResult.state) && createResult.result) { const startQuest = await postInstancesInstanceIdStart(createResult.result); await waitForQuest((startQuest.data as JobMeta).jobId); } toast.success(`${app.title} started`); }
-    catch (err: any) { toast.error(`Failed to create instance of ${app.title}`, { description: err?.message ?? '' }); }
+    try { const createQuest = await postInstancesCreate({ appKey: { name: app.appKey.name, version: app.appKey.version } }); const createJobId = unwrapSuccess(createQuest)?.jobId; if (!createJobId) throw new Error('No jobId in create response'); const createResult = await waitForQuest(createJobId); if (questStateFinishedOk(createResult.state) && createResult.result) { const startQuest = await postInstancesInstanceIdStart(createResult.result); const startJobId = unwrapSuccess(startQuest)?.jobId; if (startJobId) await waitForQuest(startJobId); } toast.success(`${app.title} started`); }
+    catch (err: unknown) { toast.error(`Failed to create instance of ${app.title}`, { description: err instanceof Error ? err.message : String(err) }); }
     finally { qc.invalidateQueries(); setBusy(false); }
   };
 
@@ -101,7 +108,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
         </div>
         {/* Open button */}
         {hasEditors && (
-          <button title={`Open ${primaryEditor.name || app.title} in a new tab`} disabled={!isRunning} onClick={() => primaryEditor && window.open(createUrl(primaryEditor.url))} className="px-4 py-1.5 border border-white/10 rounded-lg text-sm font-semibold hover:border-brand hover:bg-brand/5 transition whitespace-nowrap disabled:opacity-40">Open</button>
+          <button title={`Open ${primaryEditor?.name || app.title} in a new tab`} disabled={!isRunning} onClick={() => primaryEditor && window.open(createUrl(primaryEditor.url))} className="px-4 py-1.5 border border-white/10 rounded-lg text-sm font-semibold hover:border-brand hover:bg-brand/5 transition whitespace-nowrap disabled:opacity-40">Open</button>
         )}
         {/* Menu */}
         <div className="relative" ref={menuRef}>
@@ -137,10 +144,10 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
         setBusy(true);
         try {
           const r = await deleteApp({ app: app.appKey.name, params: { version: app.appKey.version } });
-          const jobId = (r as any)?.data?.jobId ?? (r as any)?.jobId;
+          const jobId = unwrapSuccess(r)?.jobId;
           if (jobId) { const result = await waitForQuest(jobId); if (questStateFinishedOk(result.state)) toast.success(`${app.title} uninstalled`); else toast.error(`Failed to uninstall ${app.title}`); }
           qc.invalidateQueries();
-        } catch (err: any) { toast.error(`Failed to uninstall ${app.title}`, { description: err?.message }); }
+        } catch (err: unknown) { toast.error(`Failed to uninstall ${app.title}`, { description: err instanceof Error ? err.message : String(err) }); }
         finally { setBusy(false); }
       }}>
         This will remove {app.title} and all its data from your device.

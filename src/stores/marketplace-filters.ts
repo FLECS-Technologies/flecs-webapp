@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Product, ProductCategory } from '@generated/console/schemas';
 import { getRequirement } from '@features/marketplace/api/product-service';
 
 interface Category {
@@ -22,7 +23,7 @@ interface MarketplaceFiltersState {
   categories: Category[];
   showFilter: boolean;
   isSearchEnabled: boolean;
-  finalProducts: any[];
+  finalProducts: Product[];
   page: number;
 
   // Actions
@@ -34,51 +35,50 @@ interface MarketplaceFiltersState {
   setPage: (page: number) => void;
   toggleFilter: () => void;
   setIsSearchEnabled: (val: boolean) => void;
-  applyFilters: (loadedProducts: any[], arch?: string) => void;
+  applyFilters: (loadedProducts: Product[], arch?: string) => void;
 }
 
-function searchProducts(products: any[], search: string, isSearchEnabled: boolean): any[] {
+function searchProducts(products: Product[], search: string, isSearchEnabled: boolean): Product[] {
   if (!search || !isSearchEnabled) return products;
   const query = search.toLowerCase();
   return products.filter(
-    (p: any) =>
-      p.author?.toLowerCase().includes(query) ||
+    (p) =>
       p.short_description?.toLowerCase().includes(query) ||
       p.name?.toLowerCase().includes(query),
   );
 }
 
-function filterByCompatibility(products: any[], compatible: boolean, arch: string | undefined): any[] {
+function filterByCompatibility(products: Product[], compatible: boolean, arch: string | undefined): Product[] {
   if (!compatible || !arch) return products;
-  return products.filter((p: any) => {
+  return products.filter((p) => {
     const req = getRequirement(p);
     return req && req.length > 0 && req.includes(arch);
   });
 }
 
-function filterByPrice(products: any[], freeOnly: boolean): any[] {
+function filterByPrice(products: Product[], freeOnly: boolean): Product[] {
   if (!freeOnly) return products;
-  return products.filter((p: any) => {
+  return products.filter((p) => {
     const price = p.price;
     return !price || price === '' || price === '0' || price === '$0';
   });
 }
 
-function isCategoryHidden(productCategories: any[] | undefined, hiddenCategories: number[]): boolean {
-  const filtered = productCategories?.filter((p: any) => p.id !== 27);
-  const categoryId = filtered?.map((p: any) => p.id)[0];
-  return hiddenCategories.includes(categoryId);
+function isCategoryHidden(productCategories: ProductCategory[] | undefined, hiddenCategories: number[]): boolean {
+  const filtered = productCategories?.filter((p) => p.id !== 27);
+  const categoryId = filtered?.map((p) => p.id)[0];
+  return categoryId !== undefined && hiddenCategories.includes(categoryId);
 }
 
-function filterByCategories(products: any[], hiddenCategories: number[]): any[] {
+function filterByCategories(products: Product[], hiddenCategories: number[]): Product[] {
   if (hiddenCategories.length === 0) return products;
-  return products.filter((p: any) => !isCategoryHidden(p.categories, hiddenCategories));
+  return products.filter((p) => !isCategoryHidden(p.categories, hiddenCategories));
 }
 
-function getIntersection(...arrays: any[][]): any[] {
+function getIntersection(...arrays: Product[][]): Product[] {
   if (arrays.length < 2) return arrays[0] ?? [];
   return arrays[0].filter((item) =>
-    arrays.slice(1).every((arr) => arr.some((p: any) => p.id === item.id)),
+    arrays.slice(1).every((arr) => arr.some((p) => p.id === item.id)),
   );
 }
 
@@ -86,10 +86,10 @@ function getCleanName(name: string): string {
   return name.includes('&amp;') ? name.replace('&amp;', '&') : name;
 }
 
-function getUniqueCategories(products: any[]): Category[] {
+function getUniqueCategories(products: Product[]): Category[] {
   const uniqueCategories: Category[] = [];
-  products.forEach((product: any) => {
-    product.categories?.forEach((category: any) => {
+  products.forEach((product) => {
+    product.categories?.forEach((category) => {
       if (category.id !== 27) {
         const index = uniqueCategories.findIndex((c) => c.id === category.id);
         if (index > -1) {

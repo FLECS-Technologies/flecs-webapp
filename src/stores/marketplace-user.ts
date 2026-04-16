@@ -1,6 +1,7 @@
 import { create } from 'zustand';
+import type { PostApiV2AuthLogin200Data } from '@generated/console/schemas';
 
-type MarketplaceUser = any;
+type MarketplaceUser = PostApiV2AuthLogin200Data;
 
 interface MarketplaceUserState {
   user: MarketplaceUser | null;

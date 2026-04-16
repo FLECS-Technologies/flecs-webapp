@@ -1,9 +1,10 @@
 import React from 'react';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useGetDeviceLicenseInfo } from '@generated/core/device/device';
+import { unwrapSuccess } from '@app/api/unwrap';
 
 function LicenseInfo() {
-  const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } }); const activated = (licData as any)?.data?.isValid ?? false;
+  const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } }); const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { data: response, isLoading: loading, isError: error } = useGetDeviceLicenseInfo({ query: { queryKey: [`/device/license/info`, activated] } });
   const info = response?.data;
 

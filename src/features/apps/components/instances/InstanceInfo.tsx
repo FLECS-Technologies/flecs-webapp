@@ -1,9 +1,13 @@
 import React from 'react';
 import InstanceDetails from './InstanceDetails';
 import InstanceLog from './InstanceLog';
+import type { AppInstance } from '@generated/core/schemas';
 
-export default function InstanceInfo(props: any) {
-  const { instance } = props;
+interface InstanceInfoProps {
+  instance: AppInstance;
+}
+
+export default function InstanceInfo({ instance }: InstanceInfoProps) {
   const [tab, setTab] = React.useState<'1' | '2'>('1');
 
   const infoRows = [

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Sparkles, ChevronDown } from 'lucide-react';
-import type { AppVersion } from '@features/apps/app-queries';
+import type { AppVersion } from '@features/apps/types';
 
 interface VersionSelectorProps {
   availableVersions: AppVersion[];

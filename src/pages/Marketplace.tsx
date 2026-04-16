@@ -3,6 +3,7 @@ import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight } from 'lucide-
 import { useAppList } from '@features/apps/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
+import type { Product } from '@generated/console/schemas';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/Card';
@@ -111,14 +112,14 @@ export default function Marketplace() {
   const startIdx = safePage * pageSize;
   const paginatedProducts = allFiltered.slice(startIdx, startIdx + pageSize);
 
-  const productCards = paginatedProducts.map((app: any) => {
+  const productCards = paginatedProducts.map((app: Product) => {
     const rdName = getReverseDomainName(app);
-    const matchedApp = appList?.find((o: any) => o?.appKey?.name === rdName);
+    const matchedApp = appList?.find((o) => o?.appKey?.name === rdName);
     return (
       <Card
         key={rdName ?? app?.id}
         app={rdName}
-        appKey={{ name: rdName, version: matchedApp?.appKey?.version }}
+        appKey={{ name: rdName ?? '', version: matchedApp?.appKey?.version ?? '' }}
         avatar={getAppIcon(app)}
         title={app.name}
         author={getAuthor(app)}
@@ -160,12 +161,12 @@ export default function Marketplace() {
           className="flex-1 bg-transparent outline-none text-base placeholder:text-muted"
           placeholder="Search apps, integrations, tools..."
           value={filterParams.search ?? ''}
-          onChange={(e) => setSearchFilter(e as any)}
+          onChange={(e) => setSearchFilter(e)}
           onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
         />
         {filterParams.search && (
           <button
-            onClick={() => setSearchFilter({ target: { value: '' } } as any)}
+            onClick={() => setSearchFilter({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
             className="p-1 rounded-full hover:bg-white/10 transition"
           >
             <X size={16} className="opacity-50" />

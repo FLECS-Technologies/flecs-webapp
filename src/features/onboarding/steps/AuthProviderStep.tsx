@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import type { AuthProvidersAndDefaults, AuthProvider, Accepted } from '@generated/core/schemas';
+import type { AuthProvidersAndDefaults, AuthProvider } from '@generated/core/schemas';
 import { getProvidersAuth, putProvidersAuthCore, postProvidersAuthFirstTimeSetupFlecsport } from '@generated/core/experimental/experimental';
 import { extractCoreProviderId } from '@features/onboarding/OnboardingGuard';
-const checkAuthProviderConfigured = async () => (await getProvidersAuth().then(r => extractCoreProviderId((r as any).data))) !== null;
+import { unwrapSuccess } from '@app/api/unwrap';
+const checkAuthProviderConfigured = async () => extractCoreProviderId(unwrapSuccess(await getProvidersAuth())!) !== null;
 const checkAuthProviderCoreConfigured = checkAuthProviderConfigured;
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
@@ -20,19 +21,19 @@ const AuthProviderStepComponent: React.FC<{ onNext?: () => void; onPrevious?: ()
   const { fetchQuest, waitForQuest } = useQuestActions();
   const resetError = () => setError(null);
   const getProviderIds = (data: AuthProvidersAndDefaults | null) => data?.providers ? Object.keys(data.providers) : [];
-  const completeStep = async () => { await onComplete(); onNext(); };
-  const configureAndComplete = async (id: string) => { setIsLoading(true); resetError(); try { await putProvidersAuthCore({ provider: id }); setSetupMode('completed'); await completeStep(); } catch (err: any) { setError(err.message); throw err; } finally { setIsLoading(false); } };
+  const completeStep = async () => { await onComplete?.(); onNext?.(); };
+  const configureAndComplete = async (id: string) => { setIsLoading(true); resetError(); try { await putProvidersAuthCore({ provider: id }); setSetupMode('completed'); await completeStep(); } catch (err: unknown) { setError(err instanceof Error ? err.message : String(err)); throw err; } finally { setIsLoading(false); } };
 
   const initializeStep = async () => {
     if (initialized) return;
     try {
       setInitialized(true); setIsLoading(true); resetError();
       if (await checkAuthProviderCoreConfigured()) { setSetupMode('completed'); await completeStep(); return; }
-      const r = await getProvidersAuth(); const data = r.data as AuthProvidersAndDefaults; setAuthProviders(data);
+      const r = await getProvidersAuth(); const data = unwrapSuccess(r)!; setAuthProviders(data);
       const ids = getProviderIds(data);
       if (ids.length > 0) { setSelectedProvider(ids[0]); setSetupMode('select'); if (ids.length === 1) await configureAndComplete(ids[0]); }
-      else { setSetupMode('first-time'); const fr = await postProvidersAuthFirstTimeSetupFlecsport(); setSetupMode('polling'); const questId = (fr as any).jobId ?? (fr as any).data?.jobId; await fetchQuest(questId); const result = await waitForQuest(questId); if (!questStateFinishedOk(result.state)) throw new Error('Failed to import auth provider.'); const r2 = await getProvidersAuth(); const d2 = r2.data as AuthProvidersAndDefaults; if (d2?.core) { setSetupMode('completed'); await completeStep(); return; } const ids2 = getProviderIds(d2); if (ids2.length > 0) { setAuthProviders(d2); setSelectedProvider(ids2[0]); setSetupMode('select'); await configureAndComplete(ids2[0]); } else throw new Error('No providers found after setup'); }
-    } catch (err: any) { setInitialized(false); setError(err.message); } finally { setIsLoading(false); }
+      else { setSetupMode('first-time'); const fr = await postProvidersAuthFirstTimeSetupFlecsport(); setSetupMode('polling'); const questId = unwrapSuccess(fr)!.jobId; await fetchQuest(questId); const result = await waitForQuest(questId); if (!questStateFinishedOk(result.state)) throw new Error('Failed to import auth provider.'); const r2 = await getProvidersAuth(); const d2 = unwrapSuccess(r2)!; if (d2?.core) { setSetupMode('completed'); await completeStep(); return; } const ids2 = getProviderIds(d2); if (ids2.length > 0) { setAuthProviders(d2); setSelectedProvider(ids2[0]); setSetupMode('select'); await configureAndComplete(ids2[0]); } else throw new Error('No providers found after setup'); }
+    } catch (err: unknown) { setInitialized(false); setError(err instanceof Error ? err.message : String(err)); } finally { setIsLoading(false); }
   };
 
   useEffect(() => { if (executedRef.current) return; if (!initialized) initializeStep(); executedRef.current = true; }, []);

@@ -1,6 +1,7 @@
+import type { ChangeEvent } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
-interface MarketplaceSearchProps { value: string; onSearch: (event: any, value: string) => void; onToggleFilter: () => void; }
+interface MarketplaceSearchProps { value: string; onSearch: (event: ChangeEvent<HTMLInputElement>, value: string) => void; onToggleFilter: () => void; }
 
 export default function MarketplaceSearch({ value, onSearch, onToggleFilter }: MarketplaceSearchProps) {
   return (

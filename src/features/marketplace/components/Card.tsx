@@ -1,18 +1,45 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-type Version = { version: string; installed?: boolean };
-type App = any;
+import type { AppVersion, EnrichedApp } from '@features/apps/types';
+import type { ProductCategory } from '@generated/console/schemas';
+import type { AppKey, AppInstance } from '@generated/core/schemas';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import FullCard from './FullCard';
 import { Check, AlertTriangle } from 'lucide-react';
 import InstallButton from '@features/apps/components/actions/InstallButton';
 
-export default function MarketplaceCard(props: App) {
+export interface MarketplaceCardProps {
+  app?: string;
+  appKey: AppKey;
+  avatar?: string;
+  title?: string;
+  author?: string;
+  short_description?: string;
+  description?: string;
+  status?: string;
+  availability?: string;
+  relatedLinks?: string[];
+  requirement?: string[];
+  versions: AppVersion[];
+  id?: number;
+  categories?: ProductCategory[];
+  average_rating?: string;
+  rating_count?: number;
+  blacklist?: string[];
+  installedVersions?: string[];
+  permalink?: string;
+  price?: string;
+  purchasable?: boolean;
+  documentationUrl?: string;
+  instances?: AppInstance[];
+}
+
+export default function MarketplaceCard(props: MarketplaceCardProps) {
   const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
   const systemInfo = infoResponse?.data;
   const installed = props.status === 'installed';
   const versionsArray = props.versions ?? [];
-  const [latestVersion] = useState<Version>(versionsArray[0] ?? { version: '', installed: false });
+  const [latestVersion] = useState<AppVersion>(versionsArray[0] ?? { version: '', installed: false });
   const installable = props.requirement && systemInfo?.arch && props.requirement.includes(systemInfo.arch);
   const [fullCardOpen, setFullCardOpen] = useState(false);
   const plainDescription = (props.short_description || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
@@ -37,7 +64,7 @@ export default function MarketplaceCard(props: App) {
           ) : !installable ? (
             <button className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-50 cursor-not-allowed inline-flex items-center justify-center gap-2" disabled><AlertTriangle size={18} /> Not compatible</button>
           ) : (
-            <InstallButton app={props} version={latestVersion} disabled={false} fullWidth />
+            <InstallButton app={props as unknown as EnrichedApp} version={latestVersion} disabled={false} fullWidth />
           )}
         </div>
       </div>

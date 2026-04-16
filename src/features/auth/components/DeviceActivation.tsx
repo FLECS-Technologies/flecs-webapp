@@ -3,6 +3,7 @@ import MarketplaceLogin from '@features/marketplace/components/MarketplaceLogin'
 import { useMarketplaceUser } from '@stores/marketplace-user';
 import { useGetDeviceLicenseActivationStatus, usePostDeviceLicenseActivation, getGetDeviceLicenseActivationStatusQueryKey } from '@generated/core/device/device';
 import { useQueryClient } from '@tanstack/react-query';
+import { unwrapSuccess } from '@app/api/unwrap';
 
 export default function DeviceActivation({ variant }: { variant?: string }) {
   const qc = useQueryClient();
@@ -12,7 +13,7 @@ export default function DeviceActivation({ variant }: { variant?: string }) {
     mutation: { onSuccess: () => qc.invalidateQueries({ queryKey: getGetDeviceLicenseActivationStatusQueryKey() }) },
   });
 
-  const activated = (data as any)?.data?.isValid ?? false;
+  const activated = unwrapSuccess(data)?.isValid ?? false;
 
   if (isLoading) return <p className="text-sm text-muted">Checking license...</p>;
 

@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
-type App = any;
-type Version = string;
+import type { EnrichedApp, AppVersion, InstallerState } from '@features/apps/types';
 import ContentDialog from '@app/components/ContentDialog';
 import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
 import { Download } from 'lucide-react';
-import { Quest } from '@generated/core/schemas';
+import type { Quest } from '@generated/core/schemas';
 import MarqueeText from '@app/components/MarqueeText';
 
 interface InstallButtonProps {
-  app: App;
-  version: Version;
+  app: EnrichedApp;
+  version: AppVersion | string;
   onInstallComplete?: (success: boolean, message: string, error?: string) => void;
   showSelectedVersion?: boolean;
   disabled?: boolean;
-  size?: string;
   fullWidth?: boolean;
-  color?: string;
-  sx?: any;
-  [key: string]: any;
 }
 
 export default function InstallButton({
@@ -27,7 +22,6 @@ export default function InstallButton({
   showSelectedVersion = false,
   disabled,
   fullWidth,
-  ...rest
 }: InstallButtonProps): React.ReactElement {
   const [state, setState] = useState<{ installing: boolean; currentQuest: Quest | null }>({
     installing: false,
@@ -61,8 +55,8 @@ export default function InstallButton({
         <InstallationStepper
           app={app}
           version={typeof version === "string" ? version : version?.version}
-          onStateChange={(state: any) =>
-            setState({ installing: state.installing, currentQuest: state.currentQuest })
+          onStateChange={(s: InstallerState) =>
+            setState({ installing: s.installing, currentQuest: s.currentQuest ?? null })
           }
         />
       </ContentDialog>

@@ -9,9 +9,11 @@ import { EditorButtons } from '@features/apps/components/actions/EditorButtons';
 import UninstallButton from '@features/apps/components/actions/UninstallButton';
 import InstallButton from '@features/apps/components/actions/InstallButton';
 import UpdateButton from '@features/apps/components/actions/UpdateButton';
-import type { AppVersion } from '@features/apps/app-queries';
+import type { AppVersion, EnrichedApp } from '@features/apps/types';
+import type { MarketplaceCardProps } from './Card';
+import type { ProductCategory } from '@generated/console/schemas';
 
-interface FullCardProps { app: any; open: boolean; onClose: () => void; }
+interface FullCardProps { app: MarketplaceCardProps; open: boolean; onClose: () => void; }
 
 export default function FullCard({ app, open, onClose }: FullCardProps) {
   const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
@@ -25,6 +27,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
   const selectedNotInstalled = installed && !selectedVersion?.installed;
   const rating = parseFloat(app.average_rating || '0');
   const isFree = !app.price || parseFloat(app.price) === 0;
+  const enrichedApp = app as unknown as EnrichedApp;
 
   if (!open) return null;
 
@@ -63,10 +66,10 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           </div>
 
           {/* Category tags */}
-          {app.categories?.length > 0 && (
+          {app.categories && app.categories.length > 0 && (
             <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-              {app.categories.map((c: any, i: number) => (
-                <span key={c.id || i} className="px-2 py-0.5 rounded-full text-[11px] text-muted border border-border">{c.name || c}</span>
+              {app.categories.map((c: ProductCategory, i: number) => (
+                <span key={c.id || i} className="px-2 py-0.5 rounded-full text-[11px] text-muted border border-border">{c.name}</span>
               ))}
             </div>
           )}
@@ -81,14 +84,14 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           )}
 
           {!installed && (
-            <InstallButton app={app} version={selectedVersion} disabled={!installable || blackListed} showSelectedVersion fullWidth />
+            <InstallButton app={enrichedApp} version={selectedVersion} disabled={!installable || blackListed} showSelectedVersion fullWidth />
           )}
 
           {installed && (
             <div className="flex flex-wrap gap-2">
               {app.instances?.[0] && <EditorButtons instance={app.instances[0]} />}
-              {selectedNotInstalled && <UpdateButton app={app} to={selectedVersion} showSelectedVersion />}
-              <UninstallButton app={app} selectedVersion={selectedVersion} variant="button"
+              {selectedNotInstalled && <UpdateButton app={enrichedApp} to={selectedVersion} showSelectedVersion />}
+              <UninstallButton app={enrichedApp} selectedVersion={selectedVersion} variant="button"
                 onUninstallComplete={(success: boolean, msg: string, err?: string) => success ? toast.success(msg) : toast.error(msg, { description: err })} />
             </div>
           )}
@@ -128,7 +131,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           )}
 
           {/* System requirements */}
-          {app.requirement?.length > 0 && (
+          {app.requirement && app.requirement.length > 0 && (
             <div className="px-6 pb-5 border-t border-border pt-4">
               <h3 className="text-[11px] uppercase tracking-wider text-muted font-semibold mb-2">Requirements</h3>
               <div className="flex flex-wrap gap-1.5">

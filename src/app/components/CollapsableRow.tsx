@@ -1,8 +1,12 @@
 import React, { Fragment, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function CollapsableRow(props: any) {
-  const { title, children } = props;
+interface CollapsableRowProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+export default function CollapsableRow({ title, children }: CollapsableRowProps) {
   const [open, setOpen] = useState(false);
   return (
     <Fragment>

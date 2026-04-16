@@ -1,10 +1,14 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import { getInstancesInstanceIdLogs } from '@generated/core/instances/instances';
-import type { GetInstancesInstanceIdLogs200 } from '@generated/core/schemas';
+import type { AppInstance } from '@generated/core/schemas';
+import { unwrapSuccess } from '@app/api/unwrap';
 
-export default function InstanceLog(props: any) {
-  const { instance } = props;
+interface InstanceLogProps {
+  instance: AppInstance;
+}
+
+export default function InstanceLog({ instance }: InstanceLogProps) {
   const executedRef = React.useRef(false);
   const [loadingLog, setLoadingLog] = React.useState(false);
   const [logText, setLogText] = React.useState('No log available...');
@@ -14,7 +18,7 @@ export default function InstanceLog(props: any) {
   const fetchLog = async () => {
     setLoadingLog(true);
     getInstancesInstanceIdLogs(instance.instanceId)
-      .then((response) => { const logs = response.data as GetInstancesInstanceIdLogs200; setLogText(logs?.stdout || logs?.stderr || 'No log available...'); })
+      .then((response) => { const logs = unwrapSuccess(response); setLogText(logs?.stdout || logs?.stderr || 'No log available...'); })
       .catch((error) => console.log(error))
       .finally(() => setLoadingLog(false));
   };

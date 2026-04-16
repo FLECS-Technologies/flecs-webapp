@@ -49,14 +49,14 @@ function useAuthConfig() {
       if (!coreId) return null;
 
       const provider: AuthProviderType = data.providers[coreId];
-      const props = (provider.properties || {}) as Record<string, any>;
+      const props = (provider.properties || {}) as Record<string, string>;
 
       return {
         authServer: {
           issuer: provider.issuer_url,
-          authorization_endpoint: provider.kind === 'oauth' ? (provider as any).authorize_url : undefined,
-          token_endpoint: provider.kind === 'oauth' ? (provider as any).token_url : undefined,
-          jwks_uri: provider.kind === 'oauth' ? (provider as any).jwk_url : undefined,
+          authorization_endpoint: provider.kind === 'oauth' ? provider.authorize_url : undefined,
+          token_endpoint: provider.kind === 'oauth' ? provider.token_url : undefined,
+          jwks_uri: provider.kind === 'oauth' ? provider.jwk_url : undefined,
           ...(props.userinfo_url && { userinfo_endpoint: props.userinfo_url }),
           ...(props.end_session_url && { end_session_endpoint: props.end_session_url }),
           code_challenge_methods_supported: ['S256'],

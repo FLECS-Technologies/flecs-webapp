@@ -13,16 +13,18 @@ import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/devi
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
+import { unwrapSuccess } from '@app/api/unwrap';
+import type { EnrichedApp, InstallerState } from '@features/apps/types';
 
 type Mode = 'install' | 'update' | 'sideload';
 type Phase = 'activation' | 'running' | 'success' | 'error';
 
 interface AppInstallerProps {
   mode: Mode;
-  app: any;
+  app?: EnrichedApp;
   version?: string;
   fromVersion?: string;
-  onStateChange?: (state: any) => void;
+  onStateChange?: (state: InstallerState) => void;
 }
 
 export default function AppInstaller({ mode, app, version, fromVersion, onStateChange }: AppInstallerProps) {
@@ -42,21 +44,26 @@ export default function AppInstaller({ mode, app, version, fromVersion, onStateC
 
   // Activation check — generated hook
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
-  const activated = (licData as any)?.data?.isValid ?? false;
+  const activated = unwrapSuccess(licData)?.isValid ?? false;
 
   // Auto-advance past activation when device is activated
   useEffect(() => {
     if (activated && phase === 'activation') runInstall();
   }, [activated, phase]);
 
-  const questStep = async (response: any): Promise<any> => {
-    console.log('[INSTALL] mutation response:', JSON.stringify(response).substring(0, 200));
-    const jobId = (response as any)?.data?.jobId ?? (response as any)?.jobId ?? (response as any)?.data?.data?.jobId;
-    if (!jobId) throw new Error('No jobId in response');
+  const questStep = async (jobId: number) => {
     onStateChange?.({ installing: true });
     const result = await waitForQuest(jobId);
     if (!questStateFinishedOk(result.state)) throw new Error(result.description || 'Quest failed');
     return result;
+  };
+
+  /** Extract jobId from an orval mutation response via unwrapSuccess */
+  const getJobId = (response: unknown): number => {
+    const data = unwrapSuccess(response as { status: number; data: unknown });
+    const jobId = (data as { jobId?: number } | undefined)?.jobId;
+    if (!jobId) throw new Error('No jobId in response');
+    return jobId;
   };
 
   const runInstall = useCallback(async () => {
@@ -68,47 +75,47 @@ export default function AppInstaller({ mode, app, version, fromVersion, onStateC
     try {
       if (mode === 'install') {
         setMessage('Installing app...');
-        const r = await installApp({ data: { appKey: { name: app.appKey?.name || app.name, version: version! } } });
-        await questStep(r);
+        const r = await installApp({ data: { appKey: { name: app?.appKey?.name || app?.appKey?.name || '', version: version! } } });
+        await questStep(getJobId(r));
 
         setMessage('Creating instance...');
-        const cr = await createInstance({ data: { appKey: { name: app.appKey?.name || app.name, version: version! } } });
-        const createResult = await questStep(cr);
+        const cr = await createInstance({ data: { appKey: { name: app?.appKey?.name || '', version: version! } } });
+        const createResult = await questStep(getJobId(cr));
 
         if (createResult.result) {
           setMessage('Starting instance...');
           const sr = await startInstance({ instanceId: createResult.result });
-          await questStep(sr);
+          await questStep(getJobId(sr));
         }
 
       } else if (mode === 'sideload') {
         setMessage('Sideloading app...');
-        const r = await sideloadApp({ data: app });
-        await questStep(r);
+        const r = await sideloadApp({ data: app as unknown as Parameters<typeof sideloadApp>[0]['data'] });
+        await questStep(getJobId(r));
 
       } else if (mode === 'update') {
         setMessage('Installing new version...');
-        const r = await installApp({ data: { appKey: { name: app.appKey.name, version: version! } } });
-        await questStep(r);
+        const r = await installApp({ data: { appKey: { name: app!.appKey.name, version: version! } } });
+        await questStep(getJobId(r));
 
         setMessage('Migrating instances...');
-        const instances = app.instances || [];
+        const instances = app?.instances || [];
         for (const inst of instances) {
-          const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version } });
-          await questStep(pr);
+          const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version! } });
+          await questStep(getJobId(pr));
         }
 
         setMessage('Removing old version...');
-        const dr = await deleteApp({ app: app.appKey.name, params: { version: fromVersion! } });
-        await questStep(dr);
+        const dr = await deleteApp({ app: app!.appKey.name, params: { version: fromVersion! } });
+        await questStep(getJobId(dr));
       }
 
       setPhase('success');
       setMessage(mode === 'install' ? 'App installed!' : mode === 'update' ? 'App updated!' : 'App sideloaded!');
       qc.invalidateQueries();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setPhase('error');
-      setMessage(err.message || 'Installation failed');
+      setMessage(err instanceof Error ? err.message : 'Installation failed');
     }
   }, [mode, app, version, fromVersion]);
 

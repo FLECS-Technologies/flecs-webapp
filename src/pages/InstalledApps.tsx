@@ -12,8 +12,9 @@ import ContentDialog from '@app/components/ContentDialog';
 import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
 import Import from '@features/system/components/data-transfer/Import';
 import Export from '@features/system/components/data-transfer/Export';
-type App = any;
-const getLatestVersion = (versions: string[]) => versions?.[0]; const createVersions = (v: string[]) => v;
+import type { EnrichedApp, AppVersion } from '@features/apps/types';
+import { unwrapSuccess } from '@app/api/unwrap';
+const getLatestVersion = (versions: AppVersion[]) => versions?.[0]; const createVersions = (v: AppVersion[], _installed?: string[]) => v;
 
 function RowSkeleton() {
   return (
@@ -32,7 +33,7 @@ function RowSkeleton() {
   );
 }
 
-function getAppsWithUpdates(apps: App[]) { return apps.filter(app => { if (!app.versions || !app.installedVersions) return false; const v = createVersions(app.versions, app.installedVersions); const l = getLatestVersion(v); return l && !app.installedVersions.includes(l.version); }); }
+function getAppsWithUpdates(apps: EnrichedApp[]) { return apps.filter(app => { if (!app.versions || !app.installedVersions) return false; const v = createVersions(app.versions, app.installedVersions); const l = getLatestVersion(v); return l && !app.installedVersions.includes(l.version); }); }
 
 /** Parse "Install io.linuxserver.mariadb-11.4.4" → { name, version } */
 function parseInstallQuest(desc: string) {
@@ -45,21 +46,21 @@ export default function InstalledApps() {
   const { data: pingData } = useGetSystemPing({ query: { retry: false, refetchInterval: 30_000 } });
   const { data: questsData } = useGetQuests({ query: { refetchInterval: 2000 } });
   const ping = !!pingData;
-  const [sideloadDoc, setSideloadDoc] = useState<any>(null);
+  const [sideloadDoc, setSideloadDoc] = useState<EnrichedApp | null>(null);
   const [sideloadPickerOpen, setSideloadPickerOpen] = useState(false);
   const [sideloadRunning, setSideloadRunning] = useState(false);
   const [updateAllOpen, setUpdateAllOpen] = useState(false);
   const sideloadInputRef = useRef<HTMLInputElement>(null);
-  const installedApps = (appList ?? []).filter((app: App) => app?.status === 'installed');
+  const installedApps = (appList ?? []).filter((app: EnrichedApp) => app?.status === 'installed');
 
   // Derive phantom "installing" entries from active install quests
   const installingApps = useMemo(() => {
-    const quests = ((questsData as any)?.data ?? []) as Quest[];
+    const quests = unwrapSuccess(questsData) ?? ([] as Quest[]);
     const activeInstalls = quests.filter(q =>
       (q.state === QuestState.ongoing || q.state === QuestState.pending) &&
       q.description?.startsWith('Install ')
     );
-    const installedNames = new Set(installedApps.map((a: App) => a.appKey?.name));
+    const installedNames = new Set(installedApps.map((a: EnrichedApp) => a.appKey?.name));
     return activeInstalls
       .map(q => {
         const parsed = parseInstallQuest(q.description);
@@ -76,11 +77,11 @@ export default function InstalledApps() {
       .filter(Boolean);
   }, [questsData, installedApps]);
 
-  const allApps = [...installedApps, ...installingApps];
+  const allApps = [...installedApps, ...installingApps] as EnrichedApp[];
   const appsWithUpdates = getAppsWithUpdates(installedApps);
   const updateCount = appsWithUpdates.length;
 
-  const handleSideloadFile = (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const doc = Yaml.load(ev.target?.result as string); setSideloadDoc(doc); setSideloadPickerOpen(false); setSideloadRunning(true); } catch (err) { console.error('Failed to parse sideload file:', err); } }; reader.readAsText(file); e.target.value = ''; };
+  const handleSideloadFile = (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const doc = Yaml.load(ev.target?.result as string) as EnrichedApp; setSideloadDoc(doc); setSideloadPickerOpen(false); setSideloadRunning(true); } catch (err) { console.error('Failed to parse sideload file:', err); } }; reader.readAsText(file); e.target.value = ''; };
 
   if (!ping) return <div className="py-20 text-center"><p className="text-muted">FLECS services are not ready. Please try again in a moment.</p></div>;
   if (appListError) return <div className="py-20 text-center"><p className="text-error">Failed to load installed apps from the device.</p></div>;
@@ -134,7 +135,7 @@ export default function InstalledApps() {
       </ContentDialog>
 
       <ContentDialog open={sideloadRunning} setOpen={setSideloadRunning} title="Installing Sideloaded App">
-        <InstallationStepper app={sideloadDoc} sideload={true} />
+        <InstallationStepper app={sideloadDoc ?? undefined} sideload={true} />
       </ContentDialog>
 
       <ContentDialog open={updateAllOpen} setOpen={setUpdateAllOpen} title={`Update ${updateCount} app${updateCount !== 1 ? 's' : ''}`}>

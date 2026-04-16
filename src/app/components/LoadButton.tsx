@@ -1,6 +1,18 @@
+import React from 'react';
 import { Loading } from './Loading';
 
-const LoadButton = (props: any) => {
+interface LoadButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  startIcon?: React.ReactNode;
+  text?: React.ReactNode;
+  variant?: string;
+  color?: string;
+  displaystate?: string;
+  loading?: boolean;
+  label?: string;
+  width?: string | number;
+}
+
+const LoadButton: React.FC<LoadButtonProps> = (props) => {
   const {
     startIcon,
     text,
@@ -25,10 +37,10 @@ const LoadButton = (props: any) => {
     outlined: 'border border-brand text-brand hover:bg-brand/10',
   };
 
-  const classes = `${base} ${colorMap[color] || variantMap[variant] || variantMap.outlined}`;
+  const classes = `${base} ${(color && colorMap[color]) || (variant && variantMap[variant]) || variantMap.outlined}`;
 
   return (
-    <Loading loading={loading}>
+    <Loading loading={loading ?? false}>
       <button
         {...buttonProps}
         data-testid="button"

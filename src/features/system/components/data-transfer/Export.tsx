@@ -6,7 +6,8 @@ import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postExports, getExportsExportId } from '@generated/core/flecsport/flecsport';
 import { getProvidersAuthCore, getProvidersAuthDefault } from '@generated/core/experimental/experimental';
-import type { JobMeta, ProviderReference } from '@generated/core/schemas';
+import type { ProviderReference } from '@generated/core/schemas';
+import { unwrapSuccess } from '@app/api/unwrap';
 
 interface ExportProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
@@ -22,28 +23,29 @@ const Export: React.FC<ExportProps> = (props) => {
   const exportApps = async () => {
     setExporting(true);
     try {
-      const apps = (appList || []).map((app: any) => ({ name: app.appKey.name, version: app.appKey.version }));
-      const instances = (appList || []).map((app: any) => app?.instances.map((i: any) => i.instanceId)).flat();
+      const apps = (appList || []).map((app) => ({ name: app.appKey.name, version: app.appKey.version }));
+      const instances = (appList || []).map((app) => app.instances.map((i) => i.instanceId)).flat();
       const authProviderInstanceId = await getAuthCoreProvider();
-      if (authProviderInstanceId) { const filtered = instances.filter((id: any) => id !== authProviderInstanceId); instances.length = 0; instances.push(...filtered); }
+      if (authProviderInstanceId) { const filtered = instances.filter((id) => id !== authProviderInstanceId); instances.length = 0; instances.push(...filtered); }
       const exportQuest = await postExports({ apps, instances });
-      const exportData = exportQuest.data as JobMeta;
+      const exportData = unwrapSuccess(exportQuest);
+      if (!exportData) throw new Error('Export request failed');
       await fetchQuest(exportData.jobId);
       const result = await waitForQuest(exportData.jobId);
       if (!questStateFinishedOk(result.state)) throw new Error(result.detail || 'Export quest failed');
       const exportId = result.result;
       if (!exportId || typeof exportId !== 'string') throw new Error('Invalid export ID');
       const exportDownload = await getExportsExportId(exportId);
-      if (!exportDownload) throw new Error('Could not download export file');
-      const blob = exportDownload.data as unknown as Blob;
+      const blob = unwrapSuccess(exportDownload);
+      if (!blob) throw new Error('Could not download export file');
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `flecs-export-${exportId}.tar`; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
-    } catch (error: any) { toast.error(error?.response?.data?.message || error?.message || 'Export failed'); }
+    } catch (error: unknown) { toast.error(error instanceof Error ? error.message : 'Export failed'); }
     finally { setExporting(false); }
   };
 
   return (
-    <button className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm disabled:opacity-50" onClick={exportApps} disabled={exporting} {...(buttonProps as any)}>
+    <button className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm disabled:opacity-50" onClick={exportApps} disabled={exporting} {...buttonProps}>
       {exporting ? <div className="animate-spin h-4 w-4 border-2 border-brand border-t-transparent rounded-full" /> : <FolderDown size={16} />}
       {exporting ? 'Downloading...' : 'Download App Config'}
     </button>

@@ -1,8 +1,8 @@
-type App = any;
+import type { EnrichedApp } from '@features/apps/types';
 import InstalledAppRow from './InstalledAppRow';
 
 interface InstalledAppsTableProps {
-  apps: App[];
+  apps: EnrichedApp[];
 }
 
 export default function InstalledAppsTable({ apps }: InstalledAppsTableProps) {

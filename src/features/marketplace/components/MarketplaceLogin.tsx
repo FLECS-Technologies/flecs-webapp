@@ -4,6 +4,7 @@ import { postApiV2AuthLogin } from '@generated/console/default/default';
 import { putConsoleAuthentication } from '@generated/core/console/console';
 import { postDeviceLicenseActivation, getGetDeviceLicenseActivationStatusQueryKey } from '@generated/core/device/device';
 import { useMarketplaceUser } from '@stores/marketplace-user';
+import { unwrapSuccess } from '@app/api/unwrap';
 import type { AuthResponseData } from '@generated/core/schemas';
 
 /**
@@ -19,14 +20,14 @@ function useMarketplaceLoginAndActivate() {
     mutationFn: async (credentials: { username: string; password: string }) => {
       // Step 1: Login to marketplace
       const loginRes = await postApiV2AuthLogin(credentials);
-      const raw = (loginRes as any)?.data;
+      const raw = unwrapSuccess(loginRes);
 
       // Server error (500, 401, etc.)
       if (raw?.statusCode && raw.statusCode >= 400) {
         throw new Error(raw.statusText || `Marketplace error (${raw.statusCode})`);
       }
 
-      const loginData = raw?.data ?? raw;
+      const loginData = raw?.data;
 
       if (!loginData?.jwt?.token) {
         throw new Error('Marketplace login failed — no JWT received');

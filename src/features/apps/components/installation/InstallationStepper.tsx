@@ -1,11 +1,12 @@
+import type { EnrichedApp, InstallerState } from '@features/apps/types';
 import AppInstaller from './AppInstaller';
 
 interface InstallationStepperProps {
-  app?: any;
+  app?: EnrichedApp;
   version?: string;
   sideload?: boolean;
   update?: boolean;
-  onStateChange?: (state: any) => void;
+  onStateChange?: (state: InstallerState) => void;
 }
 
 export default function InstallationStepper({ app, version, sideload, update, onStateChange }: InstallationStepperProps) {

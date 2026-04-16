@@ -1,9 +1,9 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
-type CoreVersion = any; type Distro = any; type Kernel = any;
+import type { GetSystemVersion200, SystemDistro, SystemKernel } from '@generated/core/schemas';
 import sbomHref from '@assets/sbom.json?url';
 
-interface VersionsTableProps { coreVersion?: CoreVersion; webappVersion?: string; distro?: Distro; kernel?: Kernel; }
+interface VersionsTableProps { coreVersion?: GetSystemVersion200; webappVersion?: string; distro?: SystemDistro; kernel?: SystemKernel; }
 
 const VersionsTable: React.FC<VersionsTableProps> = ({ coreVersion = {}, webappVersion = 'N/A', distro = { name: 'Distro', version: 'N/A' }, kernel = { version: 'N/A' } }) => {
   const versions = React.useMemo(() => [

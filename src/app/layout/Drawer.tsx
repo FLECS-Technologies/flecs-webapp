@@ -7,15 +7,16 @@ import { useGetApiV2ProductsApps } from '@generated/console/products/products';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useDarkMode } from '@app/theme/ThemeHandler';
+import { unwrapSuccess } from '@app/api/unwrap';
 import FLECSLogo from './FLECSLogo';
 
 const NAV = [
   { section: 'Apps', items: [
-    { label: 'Browse', icon: Search, path: '/marketplace', badgeKey: 'products' },
-    { label: 'Installed', icon: Download, path: '/', badgeKey: 'installed' },
+    { label: 'Browse', icon: Search, path: '/marketplace', badgeKey: 'products' as string | undefined },
+    { label: 'Installed', icon: Download, path: '/', badgeKey: 'installed' as string | undefined },
   ]},
   { section: 'Device', items: [
-    { label: 'System', icon: Settings, path: '/system' },
+    { label: 'System', icon: Settings, path: '/system', badgeKey: undefined as string | undefined },
   ]},
 ];
 
@@ -31,14 +32,14 @@ export default function Sidebar() {
   const { data: mpRes } = useGetApiV2ProductsApps(undefined, { query: { staleTime: 300_000 } });
   const auth = useOAuth4WebApiAuth();
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
-  const activated = (licData as any)?.data?.isValid ?? false;
+  const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { isDarkMode, setDarkMode } = useDarkMode();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const products = (mpRes as any)?.data?.data?.products ?? (mpRes as any)?.data?.products ?? [];
-  const installedApps = Array.isArray((appsRes as any)?.data) ? (appsRes as any).data : [];
-  const installedCount = installedApps.filter((a: any) => a?.status === 'installed').length;
+  const products = unwrapSuccess(mpRes)?.data?.products ?? [];
+  const installedApps = unwrapSuccess(appsRes) ?? [];
+  const installedCount = installedApps.filter((a) => a?.status === 'installed').length;
   const badges: Record<string, number> = { products: products.length, installed: installedCount };
 
   useEffect(() => {

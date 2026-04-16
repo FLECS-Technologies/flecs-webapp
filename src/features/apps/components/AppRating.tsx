@@ -5,7 +5,6 @@ interface AppRatingProps {
   app?: {
     average_rating?: number | string;
     rating_count?: number | string;
-    [key: string]: any;
   };
 }
 

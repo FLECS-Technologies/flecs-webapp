@@ -8,12 +8,12 @@ import { Trash2 } from 'lucide-react';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
-type App = any;
-type Version = string;
+import { unwrapSuccess } from '@app/api/unwrap';
+import type { EnrichedApp, AppVersion } from '@features/apps/types';
 
 interface UninstallButtonProps {
-  app: App;
-  selectedVersion: Version;
+  app: EnrichedApp;
+  selectedVersion: AppVersion;
   displayState?: string;
   variant?: 'button' | 'icon' | 'menuItem';
   onUninstallComplete?: (success: boolean, message: string, error?: string) => void;
@@ -27,17 +27,21 @@ export default function UninstallButton({ app, selectedVersion, displayState, va
   const [uninstalling, setUninstalling] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const uninstallApp = async (app: App) => {
+  const uninstallApp = async (appToUninstall: EnrichedApp) => {
     onMenuClose?.();
     setUninstalling(true);
     try {
-      const resp = await deleteApp({ app: app.appKey.name, params: { version: selectedVersion.version } });
-      await fetchQuest(resp.data?.jobId);
-      const quest = await waitForQuest(resp.data?.jobId);
-      if (questStateFinishedOk(quest.state)) { qc.invalidateQueries(); onUninstallComplete?.(true, `${app.title} successfully uninstalled.`); }
-      else { onUninstallComplete?.(false, `Failed to uninstall ${app.title}.`, quest.result || quest.detail || 'Quest failed'); }
-    } catch (error: any) {
-      onUninstallComplete?.(false, `Failed to uninstall ${app.title}.`, error?.response?.data?.message || error?.message || 'Unknown error');
+      const resp = await deleteApp({ app: appToUninstall.appKey.name, params: { version: selectedVersion.version } });
+      const successData = unwrapSuccess(resp);
+      const jobId = successData?.jobId;
+      if (!jobId) throw new Error('No jobId in uninstall response');
+      await fetchQuest(jobId);
+      const quest = await waitForQuest(jobId);
+      if (questStateFinishedOk(quest.state)) { qc.invalidateQueries(); onUninstallComplete?.(true, `${appToUninstall.title} successfully uninstalled.`); }
+      else { onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, quest.result || quest.detail || 'Quest failed'); }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, message);
     } finally { setUninstalling(false); setConfirmOpen(false); }
   };
 

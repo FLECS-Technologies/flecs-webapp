@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-type App = any;
-type Version = string;
+import type { EnrichedApp, AppVersion, InstallerState } from '@features/apps/types';
 import ContentDialog from '@app/components/ContentDialog';
 import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
 import { RefreshCw } from 'lucide-react';
-import { Quest } from '@generated/core/schemas';
+import type { Quest } from '@generated/core/schemas';
 import MarqueeText from '@app/components/MarqueeText';
 
 interface UpdateButtonProps {
-  app: App;
-  from?: Version;
-  to: Version;
+  app: EnrichedApp;
+  from?: AppVersion;
+  to: AppVersion;
   onInstallComplete?: (success: boolean, message: string, error?: string) => void;
   showSelectedVersion?: boolean;
   fullWidth?: boolean;
-  sx?: any;
-  [key: string]: any;
 }
 
 export default function UpdateButton({
@@ -25,7 +22,6 @@ export default function UpdateButton({
   onInstallComplete,
   showSelectedVersion = false,
   fullWidth,
-  ...rest
 }: UpdateButtonProps): React.ReactElement {
   const [state, setState] = useState<{ updating: boolean; currentQuest: Quest | null }>({
     updating: false,
@@ -60,8 +56,8 @@ export default function UpdateButton({
           app={app}
           version={to.version}
           update={true}
-          onStateChange={(state: any) =>
-            setState({ updating: state.updating, currentQuest: state.currentQuest })
+          onStateChange={(s: InstallerState) =>
+            setState({ updating: s.installing || (s.updating ?? false), currentQuest: s.currentQuest ?? null })
           }
         />
       </ContentDialog>

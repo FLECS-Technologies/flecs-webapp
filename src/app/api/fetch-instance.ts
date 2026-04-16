@@ -1,4 +1,5 @@
 import { getBaseURL } from '@app/api/ApiProvider';
+import { FetchError } from './fetch-error';
 
 // In production: device sets HttpOnly sid cookie → browser sends it automatically → zero JS token storage
 // In dev: Vite proxy is different origin, cookie doesn't work → fallback to Bearer token from localStorage
@@ -17,21 +18,28 @@ export const customInstance = async <T>(url: string, options?: RequestInit): Pro
     signal: options?.signal ?? AbortSignal.timeout(15_000),
   });
 
-  if (response.status === 401) {
-    localStorage.removeItem('flecs_access_token');
-    localStorage.removeItem('flecs_user');
-    _accessToken = undefined;
-    window.location.href = window.location.origin + window.location.pathname;
-    throw new Error('Session expired');
-  }
-
   const ct = response.headers.get('content-type') ?? '';
   const data = ct.includes('json')
     ? await response.json()
     : ct.includes('octet-stream') || ct.includes('tar') || ct.includes('zip')
       ? await response.blob()
       : await response.text();
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('flecs_access_token');
+      localStorage.removeItem('flecs_user');
+      _accessToken = undefined;
+      window.location.href = window.location.origin + window.location.pathname;
+    }
+    throw new FetchError(response.status, data, response.headers);
+  }
+
   return { data, status: response.status, headers: response.headers } as T;
 };
+
+// Orval reads these exports to wire up TError/TBody in generated hooks
+export type ErrorType<E> = FetchError<E>;
+export type BodyType<B> = B;
 
 export default customInstance;

@@ -14,7 +14,14 @@ import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
 import { unwrapSuccess } from '@app/api/unwrap';
+import type { JobMeta } from '@generated/core/schemas';
 import type { EnrichedApp, InstallerState } from '@features/apps/types';
+
+function isJobMeta(data: unknown): data is JobMeta {
+  if (typeof data !== 'object' || data === null) return false;
+  if (!('jobId' in data)) return false;
+  return typeof data.jobId === 'number';
+}
 
 type Mode = 'install' | 'update' | 'sideload';
 type Phase = 'activation' | 'running' | 'success' | 'error';
@@ -59,13 +66,12 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
     return result;
   };
 
-  /** Extract jobId from an orval mutation response via unwrapSuccess */
-  const getJobId = (response: unknown): number => {
-    const data = unwrapSuccess(response as { status: number; data: unknown });
-    const jobId = (data as { jobId?: number } | undefined)?.jobId;
-    if (!jobId) throw new Error('No jobId in response');
-    return jobId;
-  };
+  /** Extract jobId from an orval mutation response. Backends return JobMeta on 202. */
+  function getJobId<T extends { status: number; data: unknown }>(response: T): number {
+    const data = unwrapSuccess(response);
+    if (!isJobMeta(data)) throw new Error('No jobId in response');
+    return data.jobId;
+  }
 
   const runInstall = useCallback(async () => {
     if (ran.current) return;

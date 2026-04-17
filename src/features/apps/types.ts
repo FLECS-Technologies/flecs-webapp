@@ -9,10 +9,12 @@ export interface InstallerState {
 
 export type AppVersion = { version: string; installed: boolean };
 
-/** Enriched app = device-installed app + marketplace metadata + instances */
-export interface EnrichedApp extends Omit<InstalledApp, 'status'> {
-  /** Widened to include synthetic 'installing' status for phantom entries */
-  status: AppStatus | 'installing';
+/** Enriched app = device-installed app + optional marketplace metadata + optional instance state.
+ *  Every enriched field is optional — callers already guard with `?? []` or `?.` — so a marketplace
+ *  card (with only appKey/title/versions known) structurally satisfies EnrichedApp without casts. */
+export interface EnrichedApp extends Omit<Partial<InstalledApp>, 'status' | 'appKey'> {
+  appKey: InstalledApp['appKey'];
+  status?: AppStatus | 'installing';
   avatar?: string;
   title?: string;
   author?: string;
@@ -21,9 +23,9 @@ export interface EnrichedApp extends Omit<InstalledApp, 'status'> {
   permalink?: string;
   purchasable?: boolean;
   documentationUrl?: string;
-  instances: AppInstance[];
-  installedVersions: string[];
-  versions: AppVersion[];
+  instances?: AppInstance[];
+  installedVersions?: string[];
+  versions?: AppVersion[];
   /** Transient quest metadata attached by the InstalledApps page for "installing" phantom entries */
   _quest?: { description: string; progress?: number; state: QuestState };
 }

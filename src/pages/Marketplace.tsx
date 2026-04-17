@@ -4,6 +4,7 @@ import { useAppList } from '@features/apps/app-queries';
 import { useMarketplaceFilters } from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import type { Product } from '@generated/console/schemas';
+import { AppStatus } from '@generated/core/schemas';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/Card';
@@ -125,7 +126,7 @@ export default function Marketplace() {
         author={getAuthor(app)}
         short_description={getShortDescription(app)}
         description={getDescription(app)}
-        status={matchedApp?.status || 'uninstalled'}
+        status={matchedApp?.status ?? AppStatus.not_installed}
         availability={app.stock_status}
         relatedLinks={getCustomLinks(app)}
         requirement={getRequirement(app)}

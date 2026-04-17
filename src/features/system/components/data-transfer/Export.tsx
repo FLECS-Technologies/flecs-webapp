@@ -24,7 +24,7 @@ const Export: React.FC<ExportProps> = (props) => {
     setExporting(true);
     try {
       const apps = (appList || []).map((app) => ({ name: app.appKey.name, version: app.appKey.version }));
-      const instances = (appList || []).map((app) => app.instances.map((i) => i.instanceId)).flat();
+      const instances = (appList || []).map((app) => (app.instances ?? []).map((i) => i.instanceId)).flat();
       const authProviderInstanceId = await getAuthCoreProvider();
       if (authProviderInstanceId) { const filtered = instances.filter((id) => id !== authProviderInstanceId); instances.length = 0; instances.push(...filtered); }
       const exportQuest = await postExports({ apps, instances });

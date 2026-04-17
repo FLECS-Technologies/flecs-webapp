@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { AppVersion, EnrichedApp } from '@features/apps/types';
+import type { AppVersion } from '@features/apps/types';
 import type { ProductCategory } from '@generated/console/schemas';
-import type { AppKey, AppInstance } from '@generated/core/schemas';
+import type { AppKey, AppInstance, AppStatus } from '@generated/core/schemas';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import FullCard from './FullCard';
 import { Check, AlertTriangle } from 'lucide-react';
@@ -16,7 +16,7 @@ export interface MarketplaceCardProps {
   author?: string;
   short_description?: string;
   description?: string;
-  status?: string;
+  status?: AppStatus | 'installing';
   availability?: string;
   relatedLinks?: string[];
   requirement?: string[];
@@ -64,7 +64,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
           ) : !installable ? (
             <button className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-50 cursor-not-allowed inline-flex items-center justify-center gap-2" disabled><AlertTriangle size={18} /> Not compatible</button>
           ) : (
-            <InstallButton app={props as unknown as EnrichedApp} version={latestVersion} disabled={false} fullWidth />
+            <InstallButton app={props} version={latestVersion} disabled={false} fullWidth />
           )}
         </div>
       </div>

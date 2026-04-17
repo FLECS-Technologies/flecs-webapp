@@ -9,7 +9,7 @@ import { EditorButtons } from '@features/apps/components/actions/EditorButtons';
 import UninstallButton from '@features/apps/components/actions/UninstallButton';
 import InstallButton from '@features/apps/components/actions/InstallButton';
 import UpdateButton from '@features/apps/components/actions/UpdateButton';
-import type { AppVersion, EnrichedApp } from '@features/apps/types';
+import type { AppVersion } from '@features/apps/types';
 import type { MarketplaceCardProps } from './Card';
 import type { ProductCategory } from '@generated/console/schemas';
 
@@ -27,8 +27,6 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
   const selectedNotInstalled = installed && !selectedVersion?.installed;
   const rating = parseFloat(app.average_rating || '0');
   const isFree = !app.price || parseFloat(app.price) === 0;
-  const enrichedApp = app as unknown as EnrichedApp;
-
   if (!open) return null;
 
   return (
@@ -84,14 +82,14 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           )}
 
           {!installed && (
-            <InstallButton app={enrichedApp} version={selectedVersion} disabled={!installable || blackListed} showSelectedVersion fullWidth />
+            <InstallButton app={app} version={selectedVersion} disabled={!installable || blackListed} showSelectedVersion fullWidth />
           )}
 
           {installed && (
             <div className="flex flex-wrap gap-2">
               {app.instances?.[0] && <EditorButtons instance={app.instances[0]} />}
-              {selectedNotInstalled && <UpdateButton app={enrichedApp} to={selectedVersion} showSelectedVersion />}
-              <UninstallButton app={enrichedApp} selectedVersion={selectedVersion} variant="button"
+              {selectedNotInstalled && <UpdateButton app={app} to={selectedVersion} showSelectedVersion />}
+              <UninstallButton app={app} selectedVersion={selectedVersion} variant="button"
                 onUninstallComplete={(success: boolean, msg: string, err?: string) => success ? toast.success(msg) : toast.error(msg, { description: err })} />
             </div>
           )}

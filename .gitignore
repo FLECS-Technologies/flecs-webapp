@@ -5,3 +5,9 @@ out
 src/assets/third-party-licenses.txt
 src/assets/sbom.json
 generated/
+
+# macOS Finder metadata
+.DS_Store
+
+# Local planning docs (PRDs, audits) — keep out of the repo
+docs/

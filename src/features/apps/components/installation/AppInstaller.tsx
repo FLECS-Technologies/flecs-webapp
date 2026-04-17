@@ -62,7 +62,9 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
   const questStep = async (jobId: number) => {
     onStateChange?.({ installing: true });
     const result = await waitForQuest(jobId);
-    if (!questStateFinishedOk(result.state)) throw new Error(result.description || 'Quest failed');
+    if (!questStateFinishedOk(result.state)) {
+      throw new Error(result.result || result.detail || result.description || 'Quest failed');
+    }
     return result;
   };
 
@@ -81,12 +83,15 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
 
     try {
       if (mode === 'install') {
+        if (!app?.appKey?.name || !version) throw new Error('Missing app name or version');
+        const appKey = { name: app.appKey.name, version };
+
         setMessage('Installing app...');
-        const r = await installApp({ data: { appKey: { name: app?.appKey?.name || app?.appKey?.name || '', version: version! } } });
+        const r = await installApp({ data: { appKey } });
         await questStep(getJobId(r));
 
         setMessage('Creating instance...');
-        const cr = await createInstance({ data: { appKey: { name: app?.appKey?.name || '', version: version! } } });
+        const cr = await createInstance({ data: { appKey } });
         const createResult = await questStep(getJobId(cr));
 
         if (createResult.result) {
@@ -102,19 +107,23 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
         await questStep(getJobId(r));
 
       } else if (mode === 'update') {
+        if (!app?.appKey?.name || !version || !fromVersion) {
+          throw new Error('Missing app, target version, or source version for update');
+        }
+        const appName = app.appKey.name;
+
         setMessage('Installing new version...');
-        const r = await installApp({ data: { appKey: { name: app!.appKey.name, version: version! } } });
+        const r = await installApp({ data: { appKey: { name: appName, version } } });
         await questStep(getJobId(r));
 
         setMessage('Migrating instances...');
-        const instances = app?.instances || [];
-        for (const inst of instances) {
-          const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version! } });
+        for (const inst of app.instances ?? []) {
+          const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version } });
           await questStep(getJobId(pr));
         }
 
         setMessage('Removing old version...');
-        const dr = await deleteApp({ app: app!.appKey.name, params: { version: fromVersion! } });
+        const dr = await deleteApp({ app: appName, params: { version: fromVersion } });
         await questStep(getJobId(dr));
       }
 

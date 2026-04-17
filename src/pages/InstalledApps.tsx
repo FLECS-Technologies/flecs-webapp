@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { FileCode2, FolderUp, PackagePlus, RefreshCw } from 'lucide-react';
-import Yaml from 'js-yaml';
+import { toast } from 'sonner';
 import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';
 import { useGetQuests } from '@generated/core/quests/quests';
@@ -46,7 +46,7 @@ export default function InstalledApps() {
   const { data: pingData } = useGetSystemPing({ query: { retry: false, refetchInterval: 30_000 } });
   const { data: questsData } = useGetQuests({ query: { refetchInterval: 2000 } });
   const ping = !!pingData;
-  const [sideloadDoc, setSideloadDoc] = useState<EnrichedApp | null>(null);
+  const [sideloadManifest, setSideloadManifest] = useState<string | null>(null);
   const [sideloadPickerOpen, setSideloadPickerOpen] = useState(false);
   const [sideloadRunning, setSideloadRunning] = useState(false);
   const [updateAllOpen, setUpdateAllOpen] = useState(false);
@@ -81,14 +81,37 @@ export default function InstalledApps() {
   const appsWithUpdates = getAppsWithUpdates(installedApps);
   const updateCount = appsWithUpdates.length;
 
-  const handleSideloadFile = (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const doc = Yaml.load(ev.target?.result as string) as EnrichedApp; setSideloadDoc(doc); setSideloadPickerOpen(false); setSideloadRunning(true); } catch (err) { console.error('Failed to parse sideload file:', err); } }; reader.readAsText(file); e.target.value = ''; };
+  const handleSideloadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    const MAX_BYTES = 1 * 1024 * 1024;
+    if (file.size > MAX_BYTES) {
+      toast.error(`Manifest too large (${Math.round(file.size / 1024)} KiB, max ${MAX_BYTES / 1024} KiB).`);
+      return;
+    }
+
+    try {
+      const raw = await file.text();
+      if (!raw.trim()) {
+        toast.error('Manifest file is empty.');
+        return;
+      }
+      setSideloadManifest(raw);
+      setSideloadPickerOpen(false);
+      setSideloadRunning(true);
+    } catch (err) {
+      toast.error('Failed to read file', { description: err instanceof Error ? err.message : String(err) });
+    }
+  };
 
   if (!ping) return <div className="py-20 text-center"><p className="text-muted">FLECS services are not ready. Please try again in a moment.</p></div>;
   if (appListError) return <div className="py-20 text-center"><p className="text-error">Failed to load installed apps from the device.</p></div>;
 
   return (
     <div>
-      <input ref={sideloadInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleSideloadFile} />
+      <input ref={sideloadInputRef} type="file" accept=".json,.yaml,.yml" style={{ display: 'none' }} onChange={handleSideloadFile} />
 
       <div className="mb-6">
         <span className="text-xs uppercase tracking-wider text-muted font-semibold">APPS</span>
@@ -124,18 +147,18 @@ export default function InstalledApps() {
 
       <ContentDialog open={sideloadPickerOpen} setOpen={setSideloadPickerOpen} title="Deploy Your Own App">
         <div className="p-2">
-          <p className="text-sm text-muted mb-5">Sideload a private or custom Docker app by uploading its JSON manifest.</p>
+          <p className="text-sm text-muted mb-5">Sideload a private or custom Docker app by uploading its manifest.</p>
           <div className="border-2 border-dashed border-white/10 rounded-xl py-10 px-6 text-center cursor-pointer hover:border-brand hover:bg-brand/3 transition" onClick={() => sideloadInputRef.current?.click()}>
             <FileCode2 size={32} strokeWidth={1.5} style={{ opacity: 0.4, marginBottom: 8, display: 'inline-block' }} />
             <span className="text-sm font-bold block mb-1">Select app manifest</span>
-            <span className="text-xs text-muted">Accepts .json files</span>
+            <span className="text-xs text-muted">Accepts .yaml, .yml, .json (max 1 MiB)</span>
           </div>
           <p className="text-xs text-muted mt-4">The manifest defines the app name, version, Docker image, ports, and other configuration.</p>
         </div>
       </ContentDialog>
 
       <ContentDialog open={sideloadRunning} setOpen={setSideloadRunning} title="Installing Sideloaded App">
-        <InstallationStepper app={sideloadDoc ?? undefined} sideload={true} />
+        <InstallationStepper manifest={sideloadManifest ?? undefined} sideload={true} />
       </ContentDialog>
 
       <ContentDialog open={updateAllOpen} setOpen={setUpdateAllOpen} title={`Update ${updateCount} app${updateCount !== 1 ? 's' : ''}`}>

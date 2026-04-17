@@ -22,12 +22,13 @@ type Phase = 'activation' | 'running' | 'success' | 'error';
 interface AppInstallerProps {
   mode: Mode;
   app?: EnrichedApp;
+  manifest?: string;
   version?: string;
   fromVersion?: string;
   onStateChange?: (state: InstallerState) => void;
 }
 
-export default function AppInstaller({ mode, app, version, fromVersion, onStateChange }: AppInstallerProps) {
+export default function AppInstaller({ mode, app, manifest, version, fromVersion, onStateChange }: AppInstallerProps) {
   const [phase, setPhase] = useState<Phase>('activation');
   const [message, setMessage] = useState('');
   const ran = useRef(false);
@@ -89,8 +90,9 @@ export default function AppInstaller({ mode, app, version, fromVersion, onStateC
         }
 
       } else if (mode === 'sideload') {
+        if (!manifest) throw new Error('No manifest provided');
         setMessage('Sideloading app...');
-        const r = await sideloadApp({ data: app as unknown as Parameters<typeof sideloadApp>[0]['data'] });
+        const r = await sideloadApp({ data: { manifest } });
         await questStep(getJobId(r));
 
       } else if (mode === 'update') {
@@ -117,7 +119,7 @@ export default function AppInstaller({ mode, app, version, fromVersion, onStateC
       setPhase('error');
       setMessage(err instanceof Error ? err.message : 'Installation failed');
     }
-  }, [mode, app, version, fromVersion]);
+  }, [mode, app, manifest, version, fromVersion]);
 
   // Phase: Activation check
   if (phase === 'activation' && !activated) {

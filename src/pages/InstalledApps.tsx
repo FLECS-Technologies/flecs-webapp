@@ -111,7 +111,7 @@ export default function InstalledApps() {
 
   return (
     <div>
-      <input ref={sideloadInputRef} type="file" accept=".json,.yaml,.yml" style={{ display: 'none' }} onChange={handleSideloadFile} />
+      <input ref={sideloadInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleSideloadFile} />
 
       <div className="mb-6">
         <span className="text-xs uppercase tracking-wider text-muted font-semibold">APPS</span>
@@ -151,7 +151,7 @@ export default function InstalledApps() {
           <div className="border-2 border-dashed border-white/10 rounded-xl py-10 px-6 text-center cursor-pointer hover:border-brand hover:bg-brand/3 transition" onClick={() => sideloadInputRef.current?.click()}>
             <FileCode2 size={32} strokeWidth={1.5} style={{ opacity: 0.4, marginBottom: 8, display: 'inline-block' }} />
             <span className="text-sm font-bold block mb-1">Select app manifest</span>
-            <span className="text-xs text-muted">Accepts .yaml, .yml, .json (max 1 MiB)</span>
+            <span className="text-xs text-muted">Accepts .json (max 1 MiB)</span>
           </div>
           <p className="text-xs text-muted mt-4">The manifest defines the app name, version, Docker image, ports, and other configuration.</p>
         </div>

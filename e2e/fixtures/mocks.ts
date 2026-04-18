@@ -8,7 +8,7 @@ import type {
   InstalledApp,
   AppInstance,
   AppStatus,
-  GetSystemInfo200,
+  SystemInfo,
   Quest,
   QuestState,
   JobMeta,
@@ -16,14 +16,13 @@ import type {
 import type { Product } from '@generated/console/schemas';
 
 export const fixtures = {
-  systemInfo: (override: Partial<GetSystemInfo200['data']> = {}): GetSystemInfo200 => ({
-    status: 'OK',
-    data: {
-      arch: 'arm64',
-      platform: 'Distroless',
-      hostname: 'localhost',
-      ...override,
-    },
+  // Core API returns SystemInfo as the raw body — customInstance wraps it into { data, status, headers }.
+  systemInfo: (override: Partial<SystemInfo> = {}): SystemInfo => ({
+    arch: 'arm64',
+    platform: 'Distroless',
+    distro: { name: 'Distroless', version: 'N/A', codename: 'smoke', id: 'distroless' },
+    kernel: { version: 'N/A', machine: 'arm64', build: '1' },
+    ...override,
   }),
 
   installedApp: (override: Partial<InstalledApp> = {}): InstalledApp => ({

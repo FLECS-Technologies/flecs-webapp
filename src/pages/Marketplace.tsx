@@ -35,20 +35,22 @@ import {
   getDescription,
 } from '@features/marketplace/api/product-service';
 
+// Shape mirrors MarketplaceCard (icon centered, title + author + description stacked, price,
+// action bar at bottom) so the loading state doesn't reflow when cards arrive.
 function SkeletonCard() {
   return (
     <div className="flex flex-col rounded-2xl border border-white/10 overflow-hidden">
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="animate-pulse bg-white/10 rounded-xl w-16 h-16 mb-5" />
-        <div className="animate-pulse bg-white/10 rounded h-5 w-[55%]" />
-        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[35%] mt-1" />
-        <div className="animate-pulse bg-white/10 rounded h-4 w-[90%] mt-3" />
-        <div className="animate-pulse bg-white/10 rounded h-4 w-[70%] mt-1" />
-        <div className="flex items-center mt-auto pt-4">
-          <div className="animate-pulse bg-white/10 rounded-lg w-18 h-7" />
-          <div className="flex-1" />
-          <div className="animate-pulse bg-white/10 rounded h-4 w-8" />
-        </div>
+      <div className="p-6 pt-8 flex-1 flex flex-col items-center min-h-[260px]">
+        <div className="animate-pulse bg-white/10 rounded-xl w-[72px] h-[72px] mb-4" />
+        <div className="animate-pulse bg-white/10 rounded h-4 w-[60%] mb-1.5" />
+        <div className="animate-pulse bg-white/10 rounded h-3 w-[40%] mb-3" />
+        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[90%] mb-1" />
+        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[70%]" />
+        <div className="flex-1 min-h-4" />
+        <div className="animate-pulse bg-white/10 rounded h-3 w-10 mt-4" />
+      </div>
+      <div className="px-5 py-4 bg-white/2 border-t border-white/10">
+        <div className="animate-pulse bg-white/10 rounded-xl h-11 w-full" />
       </div>
     </div>
   );
@@ -285,7 +287,7 @@ export default function Marketplace() {
       {/* Skeleton loading */}
       {isLoading && (
         <MarketplaceGrid>
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             // eslint-disable-next-line react/no-array-index-key -- static skeleton, never re-ordered
             <SkeletonCard key={i} />
           ))}

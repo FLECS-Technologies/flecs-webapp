@@ -19,26 +19,36 @@
 import React, { useRef } from 'react';
 import LoadButton from './LoadButton';
 
-const FileOpen = (props) => {
+interface FileOpenProps extends Omit<React.ComponentProps<'button'>, 'onClick'> {
+  buttonText?: string;
+  buttonIcon?: React.ReactNode;
+  accept?: string;
+  loading?: boolean;
+  onConfirm: (data: string | File) => void;
+  wholeFile?: boolean;
+}
+
+const FileOpen: React.FC<FileOpenProps> = (props) => {
   const {
     buttonText,
     buttonIcon,
     accept,
     loading,
-    /* setFile , */ onConfirm,
+    onConfirm,
     disabled,
     wholeFile,
     ...buttonProps
   } = props;
-  const inputFile = useRef(null);
+  const inputFile = useRef<HTMLInputElement>(null);
 
-  const handleFileOpen = (e) => {
-    const { files } = e.target;
+  const handleFileOpen = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
     if (files && files.length && !wholeFile) {
       e.preventDefault();
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        onConfirm(e.target.result);
+      reader.onload = (ev) => {
+        const result = ev.target?.result;
+        if (typeof result === 'string') onConfirm(result);
       };
       reader.readAsText(files[0]);
     } else if (files && files.length) {
@@ -47,13 +57,12 @@ const FileOpen = (props) => {
   };
 
   const onButtonClick = () => {
-    inputFile.current.click();
+    inputFile.current?.click();
   };
 
-  const onClick = (e) => {
-    if (e.target.value) {
-      e.target.value = null;
-    }
+  const onClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (target.value) target.value = '';
   };
 
   return (

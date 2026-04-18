@@ -6,7 +6,7 @@ export const resetCompletionStepState = () => { hasBeenRendered = false; };
 
 const CompletionStepComponent: React.FC<{ onNext?: () => void; onPrevious?: () => void; onComplete?: () => void; isLoading?: boolean; error?: string }> = ({ onComplete }) => {
   const navigate = useNavigate();
-  useEffect(() => { if (!hasBeenRendered) { hasBeenRendered = true; navigate('/device-login'); onComplete(); } }, [onComplete]);
+  useEffect(() => { if (!hasBeenRendered) { hasBeenRendered = true; navigate('/device-login'); onComplete?.(); } }, [onComplete]);
   return (
     <div className="max-w-3xl mx-auto py-8 text-center">
       <h4 className="text-2xl font-semibold mb-4">Onboarding Complete!</h4>

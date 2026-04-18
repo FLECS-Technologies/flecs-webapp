@@ -16,7 +16,18 @@ const KEYS = {
   CODE_VERIFIER: 'flecs_code_verifier',
 } as const;
 
-interface User { sub: string; name?: string; email?: string; access_token?: string; }
+// Standard OIDC claims — optional because they only populate after JWT decode
+// (which the profile page opportunistically reads; absent claims render as "—").
+interface User {
+  sub: string;
+  name?: string;
+  email?: string;
+  access_token?: string;
+  preferred_username?: string;
+  exp?: number;
+  realm_access?: { roles?: string[] };
+  resource_access?: Record<string, { roles?: string[] }>;
+}
 
 interface AuthContextValue {
   isAuthenticated: boolean;

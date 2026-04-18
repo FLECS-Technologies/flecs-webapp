@@ -3,7 +3,7 @@ import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { useQuestActions, useQuestPolling } from '@features/notifications/quests/hooks';
 import { useQuestStore, getQuest } from '@stores/quests';
 import { QuestItem, questFinished } from '@features/notifications/quests/QuestItem';
-import { QuestState } from '@generated/schemas';
+import { QuestState } from '@generated/core/schemas';
 
 export default function JobsRail() {
   const mainQuestIds = useQuestStore((s) => s.mainQuestIds);

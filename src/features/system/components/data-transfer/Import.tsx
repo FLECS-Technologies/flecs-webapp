@@ -34,16 +34,16 @@ export default function Import(props: React.ComponentProps<'button'>) {
   const { ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
 
-  const handleFileUpload = (file: File) => {
-    if (file) {
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar')) {
-        handleTarFile(file);
-      } else if (fileName.endsWith('.json')) {
-        handleJsonFile(file);
-      } else {
-        toast.error('Unsupported file type. Please upload a .tar, .tar.gz or .json file.');
-      }
+  const handleFileUpload = (file: string | File) => {
+    // wholeFile=true on <FileOpen /> guarantees File, not string; narrow for TS.
+    if (typeof file === 'string' || !file) return;
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar')) {
+      handleTarFile(file);
+    } else if (fileName.endsWith('.json')) {
+      handleJsonFile(file);
+    } else {
+      toast.error('Unsupported file type. Please upload a .tar, .tar.gz or .json file.');
     }
   };
 

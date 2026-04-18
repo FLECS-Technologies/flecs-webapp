@@ -22,18 +22,23 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // The parent EditorButtons only renders this component when `instance.editors`
+  // has at least 2 entries; the guard narrows the type for TS in this scope.
+  const editors = instance.editors ?? [];
+  if (editors.length === 0) return null;
+
   return (
     <div className="relative inline-flex" ref={anchorRef}>
       <div className="inline-flex rounded-lg overflow-hidden">
         <button
-          title={`Open ${instance.editors[selectedIndex].name || 'editor'} in a new tab`}
-          onClick={() => window.open(createUrl(instance.editors[selectedIndex].url))}
+          title={`Open ${editors[selectedIndex].name || 'editor'} in a new tab`}
+          onClick={() => window.open(createUrl(editors[selectedIndex].url))}
           disabled={instance.status !== 'running'}
           className="px-4 py-2 bg-brand text-white font-semibold hover:bg-brand-end transition inline-flex items-center gap-2 disabled:opacity-50"
           aria-label="open-editor"
         >
           <ExternalLink size={16} />
-          {instance.editors[selectedIndex].name || instance.editors[selectedIndex].port}
+          {editors[selectedIndex].name || editors[selectedIndex].port}
         </button>
         <button
           title="Select editor"
@@ -47,7 +52,7 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
       </div>
       {open && (
         <div className="absolute top-full left-0 mt-1 w-full rounded-lg bg-dark-end border border-white/10 shadow-xl z-50 py-1">
-          {instance.editors.map((editor, index) => (
+          {editors.map((editor, index) => (
             <button
               key={editor.port}
               onClick={() => { setSelectedIndex(index); setOpen(false); }}

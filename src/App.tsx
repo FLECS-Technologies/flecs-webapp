@@ -18,7 +18,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Toaster } from 'sonner';
 import Frame from '@app/layout/Frame';
 import { UIRoutes } from './pages/ui-routes';
@@ -35,11 +35,11 @@ const queryClient = new QueryClient({
   },
 });
 
-function ErrorFallback({ error, resetErrorBoundary }) {
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div style={{ padding: 40, textAlign: 'center' }}>
       <h2>Something went wrong</h2>
-      <pre style={{ color: '#FF2E63', whiteSpace: 'pre-wrap' }}>{error.message}</pre>
+      <pre style={{ color: '#FF2E63', whiteSpace: 'pre-wrap' }}>{error instanceof Error ? error.message : String(error)}</pre>
       <button onClick={resetErrorBoundary} style={{ marginTop: 16, padding: '8px 24px' }}>
         Try again
       </button>

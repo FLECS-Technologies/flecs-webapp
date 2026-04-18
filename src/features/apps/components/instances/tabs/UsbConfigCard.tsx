@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, CheckCircle2, Usb } from 'lucide-react';
-import { UsbDevice } from '../UsbConfigTab';
+import { UsbDevice } from './UsbConfigTab';
 
 interface UsbConfigCardProps { device: UsbDevice; onEnable: (port: string, enabled: boolean) => void; }
 

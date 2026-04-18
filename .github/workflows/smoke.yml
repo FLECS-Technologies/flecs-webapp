@@ -29,7 +29,7 @@ jobs:
         run: npm run generate
 
       - name: Run smoke suite
-        run: npx playwright test --grep @smoke
+        run: npm run test:e2e:smoke
 
       - name: Upload trace artifacts on failure
         if: failure()

@@ -16,6 +16,7 @@ import { VersionSelector } from '@app/components/VersionSelector';
 import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { getErrorMessage } from '@app/api/fetch-error';
 
 import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postInstancesCreate, postInstancesInstanceIdStart, postInstancesInstanceIdStop } from '@generated/core/instances/instances';
@@ -66,14 +67,14 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const runInstanceAction = async (action: () => Promise<{ data: unknown; status: number }>, successMsg: string, failMsg: string) => {
     setBusy(true); setMenuAnchor(false);
     try { const resp = await action(); const jobId = extractJobId(resp); const result = await waitForQuest(jobId); if (questStateFinishedOk(result.state)) toast.success(successMsg); else throw new Error(result.description); }
-    catch (err: unknown) { toast.error(failMsg, { description: err instanceof Error ? err.message : String(err) }); }
+    catch (err: unknown) { toast.error(failMsg, { description: getErrorMessage(err) }); }
     finally { qc.invalidateQueries(); setBusy(false); }
   };
 
   const handleCreateAndStart = async () => {
     setBusy(true); setMenuAnchor(false);
     try { const createQuest = await postInstancesCreate({ appKey: { name: app.appKey.name, version: app.appKey.version } }); const createJobId = unwrapSuccess(createQuest)?.jobId; if (!createJobId) throw new Error('No jobId in create response'); const createResult = await waitForQuest(createJobId); if (questStateFinishedOk(createResult.state) && createResult.result) { const startQuest = await postInstancesInstanceIdStart(createResult.result); const startJobId = unwrapSuccess(startQuest)?.jobId; if (startJobId) await waitForQuest(startJobId); } toast.success(`${app.title} started`); }
-    catch (err: unknown) { toast.error(`Failed to create instance of ${app.title}`, { description: err instanceof Error ? err.message : String(err) }); }
+    catch (err: unknown) { toast.error(`Failed to create instance of ${app.title}`, { description: getErrorMessage(err) }); }
     finally { qc.invalidateQueries(); setBusy(false); }
   };
 
@@ -147,7 +148,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           const jobId = unwrapSuccess(r)?.jobId;
           if (jobId) { const result = await waitForQuest(jobId); if (questStateFinishedOk(result.state)) toast.success(`${app.title} uninstalled`); else toast.error(`Failed to uninstall ${app.title}`); }
           qc.invalidateQueries();
-        } catch (err: unknown) { toast.error(`Failed to uninstall ${app.title}`, { description: err instanceof Error ? err.message : String(err) }); }
+        } catch (err: unknown) { toast.error(`Failed to uninstall ${app.title}`, { description: getErrorMessage(err) }); }
         finally { setBusy(false); }
       }}>
         This will remove {app.title} and all its data from your device.

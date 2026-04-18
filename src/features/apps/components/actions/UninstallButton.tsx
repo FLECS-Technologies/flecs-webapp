@@ -9,6 +9,7 @@ import { useQuestActions } from '@features/notifications/quests/hooks';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { getErrorMessage } from '@app/api/fetch-error';
 import type { EnrichedApp, AppVersion } from '@features/apps/types';
 
 interface UninstallButtonProps {
@@ -40,8 +41,7 @@ export default function UninstallButton({ app, selectedVersion, displayState, va
       if (questStateFinishedOk(quest.state)) { qc.invalidateQueries(); onUninstallComplete?.(true, `${appToUninstall.title} successfully uninstalled.`); }
       else { onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, quest.result || quest.detail || 'Quest failed'); }
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, message);
+      onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, getErrorMessage(error));
     } finally { setUninstalling(false); setConfirmOpen(false); }
   };
 

@@ -8,6 +8,7 @@ import { InstancePortMapping, InstancePortMappingRange, InstancePortMappingSingl
 import { useGetInstancesInstanceIdConfigPorts, usePutInstancesInstanceIdConfigPortsTransportProtocol } from '@generated/core/instances/instances';
 import HelpButton from '@app/layout/HelpButton';
 import { instancedeviceconfig } from '@app/layout/helplinks';
+import { getErrorMessage } from '@app/api/fetch-error';
 
 interface PortsConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 interface PortWithProtocol { protocol: TransportProtocol; port: InstancePortMappingSingle | InstancePortMappingRange; }
@@ -24,7 +25,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange })
 
   const handlePortChange = (index: number, field: keyof InstancePortMappingSingle | keyof InstancePortMappingRange, value: number | { start?: number; end?: number }) => { setPorts((prev) => { const u = [...prev]; const p = u[index]; if ('host_port' in p.port) { p.port = { ...p.port, [field]: value } as InstancePortMappingSingle; } else if ('host_ports' in p.port) { p.port = { ...p.port, [field]: { ...(field in p.port ? (p.port[field as keyof InstancePortMappingRange] as object) : {}), ...(value as object) } } as InstancePortMappingRange; } return u; }); };
   const handleProtocolChange = (index: number, protocol: TransportProtocol) => { setPorts((prev) => { const u = [...prev]; u[index].protocol = protocol; return u; }); };
-  const handleSave = async () => { try { const tcp = ports.filter(p => p.protocol === TransportProtocol.tcp).map(p => p.port); const udp = ports.filter(p => p.protocol === TransportProtocol.udp).map(p => p.port); if (tcp.length > 0) await putPorts({ instanceId, transportProtocol: TransportProtocol.tcp, data: tcp }); if (udp.length > 0) await putPorts({ instanceId, transportProtocol: TransportProtocol.udp, data: udp }); onChange(true); toast.success('Port mappings saved!'); } catch (error) { toast.error((error as Error).message); } };
+  const handleSave = async () => { try { const tcp = ports.filter(p => p.protocol === TransportProtocol.tcp).map(p => p.port); const udp = ports.filter(p => p.protocol === TransportProtocol.udp).map(p => p.port); if (tcp.length > 0) await putPorts({ instanceId, transportProtocol: TransportProtocol.tcp, data: tcp }); if (udp.length > 0) await putPorts({ instanceId, transportProtocol: TransportProtocol.udp, data: udp }); onChange(true); toast.success('Port mappings saved!'); } catch (error) { toast.error(getErrorMessage(error)); } };
   const handleDeletePort = (index: number) => { setPorts(prev => { const u = [...prev]; u.splice(index, 1); return u; }); setSave(true); };
 
   if (isLoading) return <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />;

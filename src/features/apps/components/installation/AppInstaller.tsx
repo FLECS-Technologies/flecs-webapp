@@ -14,6 +14,7 @@ import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { getErrorMessage } from '@app/api/fetch-error';
 import type { JobMeta } from '@generated/core/schemas';
 import type { EnrichedApp, InstallerState } from '@features/apps/types';
 
@@ -132,7 +133,7 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
       qc.invalidateQueries();
     } catch (err: unknown) {
       setPhase('error');
-      setMessage(err instanceof Error ? err.message : 'Installation failed');
+      setMessage(getErrorMessage(err));
     }
   }, [mode, app, manifest, version, fromVersion]);
 

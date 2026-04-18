@@ -5,6 +5,7 @@ import { putConsoleAuthentication } from '@generated/core/console/console';
 import { postDeviceLicenseActivation, getGetDeviceLicenseActivationStatusQueryKey } from '@generated/core/device/device';
 import { useMarketplaceUser } from '@stores/marketplace-user';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { getErrorMessage } from '@app/api/fetch-error';
 import type { AuthResponseData } from '@generated/core/schemas';
 
 /**
@@ -79,7 +80,7 @@ const MarketplaceLogin: React.FC = () => {
     <form onSubmit={handleLogin} className="max-w-md mx-auto mt-8">
       <div className="mb-4"><label className="block text-sm text-muted mb-1">Username</label><input value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand" /></div>
       <div className="mb-4"><label className="block text-sm text-muted mb-1">Password</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand" /></div>
-      {error && <p className="text-error mb-4 text-sm">{(error as Error).message}</p>}
+      {error && <p className="text-error mb-4 text-sm">{getErrorMessage(error)}</p>}
       <button type="submit" disabled={isPending} className="w-full px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50">{isPending ? 'Activating...' : 'Login & Activate'}</button>
     </form>
   );

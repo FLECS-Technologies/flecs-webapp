@@ -1,0 +1,66 @@
+name: E2E Smoke (prod build)
+
+# Runs the production-bundle Playwright project against a docker-compose nginx
+# that mounts our real nginx config. Catches WSTG-CONF-12/14 header regressions
+# that the dev-tier smoke cannot see because Vite does not set security headers.
+#
+# Narrow triggers: only PRs / pushes that touch the production surface.
+# Dev-only changes (e.g. editing a test) should NOT spin up Docker.
+on:
+  pull_request:
+    branches: [main, starship]
+    paths:
+      - 'docker/**'
+      - 'vite.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'e2e/smoke-prod/**'
+      - 'docker-compose.test.yml'
+      - '.github/workflows/smoke-prod.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docker/**'
+      - 'vite.config.ts'
+
+jobs:
+  smoke-prod:
+    name: Playwright smoke-prod (nginx + built bundle)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate orval types
+        run: npm run generate
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Run smoke-prod suite
+        run: npm run test:e2e:smoke-prod
+        env:
+          PW_SMOKE_PROD: 'true'
+
+      - name: Stop test container
+        if: always()
+        run: docker compose -f docker-compose.test.yml down
+
+      - name: Upload trace artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-prod
+          path: playwright-report/
+          retention-days: 7

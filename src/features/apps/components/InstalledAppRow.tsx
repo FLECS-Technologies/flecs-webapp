@@ -113,7 +113,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
         )}
         {/* Menu */}
         <div className="relative" ref={menuRef}>
-          <button ref={btnRef} className="p-1.5 rounded-lg hover:bg-white/10 transition text-muted cursor-pointer" onClick={() => setMenuAnchor(!menuAnchor)} disabled={busy}><MoreHorizontal size={18} /></button>
+          <button ref={btnRef} aria-label={`${app.title} actions`} className="p-1.5 rounded-lg hover:bg-white/10 transition text-muted cursor-pointer" onClick={() => setMenuAnchor(!menuAnchor)} disabled={busy}><MoreHorizontal size={18} /></button>
           {menuAnchor && ReactDOM.createPortal(
             <div ref={menuRef} style={{ position: 'fixed', top: (btnRef.current?.getBoundingClientRect().bottom ?? 0) + 4, right: window.innerWidth - (btnRef.current?.getBoundingClientRect().right ?? 0) }} className="w-48 rounded-xl bg-surface-raised border border-border shadow-xl z-[9999] py-1">
               {!instance && <button className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition" onClick={handleCreateAndStart}><Plus size={16} /> Create & Start</button>}

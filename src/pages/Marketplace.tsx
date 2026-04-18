@@ -55,9 +55,10 @@ function SkeletonCard() {
 }
 
 export default function Marketplace() {
-  const { appList, products, isLoading } = useAppList();
-  const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const { appList, products, isLoading: isAppListLoading } = useAppList();
+  const { data: infoResponse, isPending: isInfoPending } = useGetSystemInfo({ query: { staleTime: 60_000 } });
   const arch = infoResponse?.data?.arch;
+  const isLoading = isAppListLoading || isInfoPending;
   const {
     filterParams,
     isSearchEnabled,

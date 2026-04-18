@@ -23,7 +23,7 @@ function combineAppList(results: [
   UseQueryResult<getInstancesResponse>,
 ]) {
   const [pRes, aRes, iRes] = results;
-  const isLoading = aRes.isPending;
+  const isLoading = pRes.isPending || aRes.isPending || iRes.isPending;
   const isError = results.some((r) => r.isError);
 
   if (isLoading) return { appList: undefined, products: [] as Product[], isLoading, isError };

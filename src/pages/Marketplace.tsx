@@ -286,6 +286,7 @@ export default function Marketplace() {
       {isLoading && (
         <MarketplaceGrid>
           {Array.from({ length: 6 }).map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key -- static skeleton, never re-ordered
             <SkeletonCard key={i} />
           ))}
         </MarketplaceGrid>

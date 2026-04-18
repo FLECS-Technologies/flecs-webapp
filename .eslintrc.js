@@ -21,6 +21,7 @@ module.exports = {
     'no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
+    'react/no-array-index-key': 'error',
     // Enforce dependency direction: app → pages → features → shared
     'import/no-restricted-paths': ['error', {
       zones: [

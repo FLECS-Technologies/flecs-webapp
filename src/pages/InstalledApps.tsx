@@ -20,6 +20,7 @@ function RowSkeleton() {
   return (
     <div className="rounded-xl border border-white/10 overflow-hidden">
       {[0, 1, 2].map(i => (
+        // eslint-disable-next-line react/no-array-index-key -- static skeleton, never re-ordered
         <div key={i} className={i > 0 ? 'border-t border-white/10' : ''}>
           <div className="flex items-center gap-4 px-5 py-3">
             <div className="animate-pulse bg-white/10 rounded-lg w-12 h-12" />

@@ -7,11 +7,14 @@ let _accessToken: string | undefined;
 export const setAuthToken = (token: string | undefined) => { _accessToken = token; };
 
 export const customInstance = async <T>(url: string, options?: RequestInit): Promise<T> => {
+  // Only force JSON Content-Type for string bodies. FormData/Blob need the
+  // browser to set multipart/octet-stream with the correct boundary.
+  const isJsonBody = typeof options?.body === 'string';
   const response = await fetch(`${getBaseURL()}${url}`, {
     ...options,
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),
       ...(options?.headers as Record<string, string>),
       ...(_accessToken ? { Authorization: `Bearer ${_accessToken}` } : {}),
     },

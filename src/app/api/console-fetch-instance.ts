@@ -3,9 +3,15 @@ import { FetchError } from './fetch-error';
 const BASE_URL = import.meta.env.VITE_CONSOLE_URL || 'https://console.flecs.tech';
 
 export const customInstance = async <T>(url: string, options?: RequestInit): Promise<T> => {
+  // Only force JSON Content-Type for string bodies. FormData/Blob need the
+  // browser to set multipart/octet-stream with the correct boundary.
+  const isJsonBody = typeof options?.body === 'string';
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
-    headers: { 'Content-Type': 'application/json', ...(options?.headers as Record<string, string>) },
+    headers: {
+      ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),
+      ...(options?.headers as Record<string, string>),
+    },
     signal: options?.signal ?? AbortSignal.timeout(15_000),
   });
 

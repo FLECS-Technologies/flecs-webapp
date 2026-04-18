@@ -66,8 +66,8 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           {/* Category tags */}
           {app.categories && app.categories.length > 0 && (
             <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-              {app.categories.map((c: ProductCategory, i: number) => (
-                <span key={c.id || i} className="px-2 py-0.5 rounded-full text-[11px] text-muted border border-border">{c.name}</span>
+              {app.categories.map((c: ProductCategory) => (
+                <span key={c.id} className="px-2 py-0.5 rounded-full text-[11px] text-muted border border-border">{c.name}</span>
               ))}
             </div>
           )}

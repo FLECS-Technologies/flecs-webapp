@@ -14,7 +14,7 @@ const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange 
   return (
     <div>
       {editors.length === 0 ? <p className="text-sm text-muted">App has no editors.</p> : (
-        <div className="flex flex-col gap-4">{editors.map((editor, index) => <EditorConfigCard key={index} instanceId={instanceId} editor={editor} />)}</div>
+        <div className="flex flex-col gap-4">{editors.map((editor) => <EditorConfigCard key={editor.port} instanceId={instanceId} editor={editor} />)}</div>
       )}
     </div>
   );

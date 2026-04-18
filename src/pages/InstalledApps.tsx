@@ -162,7 +162,7 @@ export default function InstalledApps() {
       </ContentDialog>
 
       <ContentDialog open={updateAllOpen} setOpen={setUpdateAllOpen} title={`Update ${updateCount} app${updateCount !== 1 ? 's' : ''}`}>
-        <div className="flex flex-col gap-4 p-2">{appsWithUpdates.map(app => { const v = createVersions(app.versions || [], app.installedVersions || []); const l = getLatestVersion(v); if (!l) return null; return <div key={app.appKey?.name}><InstallationStepper app={app} version={l.version} update={true} /></div>; })}</div>
+        <div className="flex flex-col gap-4 p-2">{appsWithUpdates.map(app => { const v = createVersions(app.versions || [], app.installedVersions || []); const l = getLatestVersion(v); if (!l) return null; return <div key={`${app.appKey?.name}\u0000${app.appKey?.version}`}><InstallationStepper app={app} version={l.version} update={true} /></div>; })}</div>
       </ContentDialog>
     </div>
   );

@@ -7,8 +7,12 @@ import EnvironmentVariableCard from './EnvironmentVariableCard';
 
 interface EnvironmentConfigTabProps { instanceId: string; onChange: (hasChanges: boolean) => void; }
 
+// Client-side row identity — stable across edits so React reconciliation keeps input focus
+// on the correct row even after additions/deletions. Stripped before PUT.
+type EnvRow = InstanceEnvironmentVariable & { _rowId: string };
+
 const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId, onChange }) => {
-  const [envVars, setEnvVars] = useState<InstanceEnvironmentVariable[]>([]);
+  const [envVars, setEnvVars] = useState<EnvRow[]>([]);
   const [savedSnapshot, setSavedSnapshot] = useState<InstanceEnvironmentVariable[]>([]);
   const [newIndices, setNewIndices] = useState<Set<number>>(new Set());
   const [modifiedIndices, setModifiedIndices] = useState<Set<number>>(new Set());
@@ -17,10 +21,10 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
   const { mutateAsync: deleteVariable } = useDeleteInstancesInstanceIdConfigEnvironmentVariableName();
   const hasChanges = newIndices.size > 0 || modifiedIndices.size > 0;
 
-  useEffect(() => { if (envResponse?.data) { const d = envResponse.data as InstanceEnvironmentVariable[]; if (Array.isArray(d)) { setEnvVars(d); setSavedSnapshot(d.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); } } }, [envResponse]);
+  useEffect(() => { if (envResponse?.data) { const d = envResponse.data as InstanceEnvironmentVariable[]; if (Array.isArray(d)) { setEnvVars(d.map(e => ({ ...e, _rowId: crypto.randomUUID() }))); setSavedSnapshot(d.map(e => ({ ...e }))); setNewIndices(new Set()); setModifiedIndices(new Set()); } } }, [envResponse]);
   useEffect(() => { onChange(hasChanges); }, [hasChanges]);
 
-  const handleAdd = () => { setEnvVars(prev => { const next = [...prev, { name: '', value: '' }]; setNewIndices(s => new Set(s).add(next.length - 1)); return next; }); };
+  const handleAdd = () => { setEnvVars(prev => { const next: EnvRow[] = [...prev, { name: '', value: '', _rowId: crypto.randomUUID() }]; setNewIndices(s => new Set(s).add(next.length - 1)); return next; }); };
   const handleChange = useCallback((index: number, key: string, value: string) => { setEnvVars(prev => prev.map((env, i) => i === index ? { ...env, [key]: value } : env)); setModifiedIndices(prev => { const next = new Set(prev); next.add(index); return next; }); }, []);
 
   const reindex = (prev: Set<number>, index: number) => { const next = new Set<number>(); prev.forEach(i => { if (i < index) next.add(i); else if (i > index) next.add(i - 1); }); return next; };
@@ -52,9 +56,9 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
         <>
           <div className="border border-white/10 rounded-xl overflow-hidden mb-4">
             {envVars.map((env, index) => (
-              <React.Fragment key={index}>
+              <React.Fragment key={env._rowId}>
                 {index > 0 && <hr className="border-white/10" />}
-                <EnvironmentVariableCard env={{ ...env, value: env.value || '' }} index={index} isNew={newIndices.has(index)} isModified={modifiedIndices.has(index) && !newIndices.has(index)} onChange={handleChange} onDelete={handleDelete} />
+                <EnvironmentVariableCard env={{ name: env.name, value: env.value || '' }} index={index} isNew={newIndices.has(index)} isModified={modifiedIndices.has(index) && !newIndices.has(index)} onChange={handleChange} onDelete={handleDelete} />
               </React.Fragment>
             ))}
           </div>

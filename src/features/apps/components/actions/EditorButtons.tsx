@@ -49,7 +49,7 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
         <div className="absolute top-full left-0 mt-1 w-full rounded-lg bg-dark-end border border-white/10 shadow-xl z-50 py-1">
           {instance.editors.map((editor, index) => (
             <button
-              key={index}
+              key={editor.port}
               onClick={() => { setSelectedIndex(index); setOpen(false); }}
               className={`w-full px-3 py-2 text-sm text-left hover:bg-white/5 transition ${index === selectedIndex ? 'bg-white/5' : ''}`}
             >

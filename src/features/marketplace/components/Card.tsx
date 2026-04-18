@@ -7,6 +7,7 @@ import { useGetSystemInfo } from '@generated/core/system/system';
 import FullCard from './FullCard';
 import { Check, AlertTriangle } from 'lucide-react';
 import InstallButton from '@features/apps/components/actions/InstallButton';
+import { isArchCompatible } from '@features/marketplace/api/product-service';
 
 export interface MarketplaceCardProps {
   app?: string;
@@ -40,7 +41,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
   const installed = props.status === 'installed';
   const versionsArray = props.versions ?? [];
   const [latestVersion] = useState<AppVersion>(versionsArray[0] ?? { version: '', installed: false });
-  const installable = props.requirement && systemInfo?.arch && props.requirement.includes(systemInfo.arch);
+  const installable = isArchCompatible(props.requirement, systemInfo?.arch);
   const [fullCardOpen, setFullCardOpen] = useState(false);
   const plainDescription = (props.short_description || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
   const isFree = !props.price || parseFloat(props.price) === 0;

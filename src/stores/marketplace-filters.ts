@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product, ProductCategory } from '@generated/console/schemas';
-import { getRequirement } from '@features/marketplace/api/product-service';
+import { getRequirement, isArchCompatible } from '@features/marketplace/api/product-service';
 
 interface Category {
   id: number;
@@ -50,10 +50,7 @@ function searchProducts(products: Product[], search: string, isSearchEnabled: bo
 
 function filterByCompatibility(products: Product[], compatible: boolean, arch: string | undefined): Product[] {
   if (!compatible || !arch) return products;
-  return products.filter((p) => {
-    const req = getRequirement(p);
-    return req && req.length > 0 && req.includes(arch);
-  });
+  return products.filter((p) => isArchCompatible(getRequirement(p), arch));
 }
 
 function filterByPrice(products: Product[], freeOnly: boolean): Product[] {

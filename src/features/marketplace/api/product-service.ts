@@ -65,3 +65,17 @@ export const getAverageRating = (app: WCProduct) => app?.average_rating;
 export const getRatingCount = (app: WCProduct) => app?.rating_count;
 export const getRequirement = (app: WCProduct) => attr(app, 'archs');
 export const getVersion = (app: WCProduct) => meta(app, 'port-version');
+
+/**
+ * Single source of truth for arch compatibility — used by the compatibility filter
+ * and by every card that shows install/not-compatible state. Case-insensitive match
+ * against the device's arch so "arm64" and "ARM64" resolve the same.
+ */
+export function isArchCompatible(
+  requirement: string[] | undefined,
+  arch: string | undefined,
+): boolean {
+  if (!arch || !requirement || requirement.length === 0) return false;
+  const normalized = arch.toLowerCase();
+  return requirement.some((r) => r.toLowerCase() === normalized);
+}

@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import parse from 'html-react-parser';
 import { X, CheckCircle2, RefreshCw, Star, BookOpen, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useGetSystemInfo } from '@generated/core/system/system';
-import { isBlacklisted } from '@features/marketplace/api/product-service';
+import { isBlacklisted, isArchCompatible } from '@features/marketplace/api/product-service';
 import { VersionSelector } from '@app/components/VersionSelector';
 import { EditorButtons } from '@features/apps/components/actions/EditorButtons';
 import UninstallButton from '@features/apps/components/actions/UninstallButton';
@@ -21,7 +21,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
   const installed = app.status === 'installed';
   const versions: AppVersion[] = app.versions ?? [];
   const [selectedVersion, setSelectedVersion] = useState<AppVersion>(versions[0] ?? { version: '', installed: false });
-  const installable = app.requirement && systemInfo?.arch && app.requirement.includes(systemInfo.arch);
+  const installable = isArchCompatible(app.requirement, systemInfo?.arch);
   const blackListed = isBlacklisted(systemInfo, app.blacklist);
   const updateAvailable = versions.length > 0 && !versions[0]?.installed && installed;
   const selectedNotInstalled = installed && !selectedVersion?.installed;

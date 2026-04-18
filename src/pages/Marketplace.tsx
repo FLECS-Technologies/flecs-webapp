@@ -136,7 +136,7 @@ export default function Marketplace() {
     const matchedApp = appList?.find((o) => o?.appKey?.name === rdName);
     return (
       <Card
-        key={rdName ?? app?.id}
+        key={app.id ?? rdName}
         app={rdName}
         appKey={{ name: rdName ?? '', version: matchedApp?.appKey?.version ?? '' }}
         avatar={getAppIcon(app)}

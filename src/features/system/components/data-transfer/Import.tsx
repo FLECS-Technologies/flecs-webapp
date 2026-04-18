@@ -26,6 +26,7 @@ import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { postDeviceOnboarding } from '@generated/core/device/device';
 import { postImports } from '@generated/core/flecsport/flecsport';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { getErrorMessage } from '@app/api/fetch-error';
 
 export default function Import(props: React.ComponentProps<'button'>) {
   const qc = useQueryClient();
@@ -63,8 +64,7 @@ export default function Import(props: React.ComponentProps<'button'>) {
 
       toast.success('Importing finished successfully');
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
-      toast.error('Import failed', { description: msg });
+      toast.error('Import failed', { description: getErrorMessage(error) });
     } finally {
       setImporting(false);
       qc.invalidateQueries();
@@ -85,8 +85,7 @@ export default function Import(props: React.ComponentProps<'button'>) {
 
       toast.success('Importing finished successfully');
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
-      toast.error('Import failed', { description: msg });
+      toast.error('Import failed', { description: getErrorMessage(error) });
     } finally {
       setImporting(false);
       qc.invalidateQueries();

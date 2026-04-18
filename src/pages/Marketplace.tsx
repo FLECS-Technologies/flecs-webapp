@@ -1,7 +1,14 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppList } from '@features/apps/app-queries';
-import { useMarketplaceFilters } from '@stores/marketplace-filters';
+import {
+  useMarketplaceFilters,
+  searchProducts,
+  filterByCompatibility,
+  filterByPrice,
+  filterByCategories,
+  getUniqueCategories,
+} from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import type { Product } from '@generated/console/schemas';
 import { AppStatus } from '@generated/core/schemas';
@@ -52,8 +59,8 @@ export default function Marketplace() {
   const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
   const arch = infoResponse?.data?.arch;
   const {
-    categories,
     filterParams,
+    isSearchEnabled,
     setCategoryFilter,
     setSearchFilter,
     setCompatibleFilter,
@@ -61,8 +68,6 @@ export default function Marketplace() {
     setPageSize,
     setPage,
     page,
-    finalProducts,
-    applyFilters,
   } = useMarketplaceFilters();
 
   const [filterOpen, setFilterOpen] = useState(false);
@@ -86,12 +91,24 @@ export default function Marketplace() {
     return () => document.removeEventListener('mousedown', handler);
   }, [filterOpen]);
 
-  // Re-apply filters whenever products or filter params change
-  useEffect(() => {
-    if (products && products.length > 0) {
-      applyFilters(products, arch);
-    }
-  }, [products, filterParams, applyFilters, arch]);
+  // Derive filtered products at render time. Base filters (compat/price/search)
+  // run first so the category dropdown can list every category visible within
+  // the current compat/price/search scope, regardless of which categories are
+  // currently hidden.
+  const baseFiltered = useMemo(() => {
+    const list = products ?? [];
+    const byCompat = filterByCompatibility(list, filterParams.compatible, arch);
+    const byPrice = filterByPrice(byCompat, filterParams.freeOnly);
+    const bySearch = searchProducts(byPrice, filterParams.search ?? '', isSearchEnabled);
+    return bySearch;
+  }, [products, filterParams.compatible, filterParams.freeOnly, filterParams.search, isSearchEnabled, arch]);
+
+  const finalProducts = useMemo(
+    () => filterByCategories(baseFiltered, filterParams.hiddenCategories),
+    [baseFiltered, filterParams.hiddenCategories],
+  );
+
+  const categories = useMemo(() => getUniqueCategories(baseFiltered), [baseFiltered]);
 
   const totalApps = products?.length ?? 0;
   const hiddenCount = filterParams.hiddenCategories?.length ?? 0;

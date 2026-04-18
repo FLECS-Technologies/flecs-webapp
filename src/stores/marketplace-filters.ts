@@ -3,13 +3,13 @@ import { persist } from 'zustand/middleware';
 import type { Product, ProductCategory } from '@generated/console/schemas';
 import { getRequirement, isArchCompatible } from '@features/marketplace/api/product-service';
 
-interface Category {
+export interface Category {
   id: number;
   name: string;
   count: number;
 }
 
-interface FilterParams {
+export interface FilterParams {
   hiddenCategories: number[];
   search: string | undefined;
   compatible: boolean;
@@ -18,12 +18,10 @@ interface FilterParams {
 }
 
 interface MarketplaceFiltersState {
-  // State
+  // UI-only state — never mirrors server data
   filterParams: FilterParams;
-  categories: Category[];
   showFilter: boolean;
   isSearchEnabled: boolean;
-  finalProducts: Product[];
   page: number;
 
   // Actions
@@ -35,10 +33,12 @@ interface MarketplaceFiltersState {
   setPage: (page: number) => void;
   toggleFilter: () => void;
   setIsSearchEnabled: (val: boolean) => void;
-  applyFilters: (loadedProducts: Product[], arch?: string) => void;
 }
 
-function searchProducts(products: Product[], search: string, isSearchEnabled: boolean): Product[] {
+// ── Pure filter helpers — imported by the Marketplace page for useMemo derivation.
+// Server state (products, arch) is never stored here; we only transform it. ──
+
+export function searchProducts(products: Product[], search: string, isSearchEnabled: boolean): Product[] {
   if (!search || !isSearchEnabled) return products;
   const query = search.toLowerCase();
   return products.filter(
@@ -48,12 +48,13 @@ function searchProducts(products: Product[], search: string, isSearchEnabled: bo
   );
 }
 
-function filterByCompatibility(products: Product[], compatible: boolean, arch: string | undefined): Product[] {
-  if (!compatible || !arch) return products;
+export function filterByCompatibility(products: Product[], compatible: boolean, arch: string | undefined): Product[] {
+  if (!compatible) return products;
+  if (!arch) return [];
   return products.filter((p) => isArchCompatible(getRequirement(p), arch));
 }
 
-function filterByPrice(products: Product[], freeOnly: boolean): Product[] {
+export function filterByPrice(products: Product[], freeOnly: boolean): Product[] {
   if (!freeOnly) return products;
   return products.filter((p) => {
     const price = p.price;
@@ -67,23 +68,16 @@ function isCategoryHidden(productCategories: ProductCategory[] | undefined, hidd
   return categoryId !== undefined && hiddenCategories.includes(categoryId);
 }
 
-function filterByCategories(products: Product[], hiddenCategories: number[]): Product[] {
+export function filterByCategories(products: Product[], hiddenCategories: number[]): Product[] {
   if (hiddenCategories.length === 0) return products;
   return products.filter((p) => !isCategoryHidden(p.categories, hiddenCategories));
-}
-
-function getIntersection(...arrays: Product[][]): Product[] {
-  if (arrays.length < 2) return arrays[0] ?? [];
-  return arrays[0].filter((item) =>
-    arrays.slice(1).every((arr) => arr.some((p) => p.id === item.id)),
-  );
 }
 
 function getCleanName(name: string): string {
   return name.includes('&amp;') ? name.replace('&amp;', '&') : name;
 }
 
-function getUniqueCategories(products: Product[]): Category[] {
+export function getUniqueCategories(products: Product[]): Category[] {
   const uniqueCategories: Category[] = [];
   products.forEach((product) => {
     product.categories?.forEach((category) => {
@@ -105,14 +99,14 @@ function getUniqueCategories(products: Product[]): Category[] {
   return uniqueCategories;
 }
 
+// ── Store — UI state only ──
+
 export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       filterParams: { hiddenCategories: [], search: undefined, compatible: false, freeOnly: false, pageSize: 100 },
-      categories: [],
       showFilter: false,
       isSearchEnabled: true,
-      finalProducts: [],
       page: 0,
 
       setSearchFilter: (e) => {
@@ -162,23 +156,6 @@ export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
       },
 
       setIsSearchEnabled: (val) => set({ isSearchEnabled: val }),
-
-      applyFilters: (loadedProducts, arch) => {
-        if (!loadedProducts || loadedProducts.length === 0) return;
-
-        const { filterParams, isSearchEnabled } = get();
-
-        const byCompatible = filterByCompatibility(loadedProducts, filterParams.compatible, arch);
-        const byCategories = filterByCategories(loadedProducts, filterParams.hiddenCategories);
-        const bySearch = searchProducts(loadedProducts, filterParams.search ?? '', isSearchEnabled);
-        const byPrice = filterByPrice(loadedProducts, filterParams.freeOnly);
-
-        const finalProducts = getIntersection(byCompatible, byCategories, bySearch, byPrice);
-        const forCategories = getIntersection(byCompatible, bySearch, byPrice);
-        const categories = getUniqueCategories(forCategories);
-
-        set({ finalProducts, categories });
-      },
     }),
     {
       name: 'marketplace-filters',

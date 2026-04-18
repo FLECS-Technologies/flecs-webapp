@@ -116,12 +116,12 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           {(app.documentationUrl || app.permalink) && (
             <div className="px-6 pb-5 flex gap-2">
               {app.documentationUrl && (
-                <a href={app.documentationUrl} target="_blank" rel="noopener" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition">
+                <a href={app.documentationUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition">
                   <BookOpen size={13} /> Docs
                 </a>
               )}
               {app.permalink && (
-                <a href={app.permalink} target="_blank" rel="noopener" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition">
+                <a href={app.permalink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition">
                   <ExternalLink size={13} /> Store
                 </a>
               )}

@@ -18,7 +18,7 @@ const VersionsTable: React.FC<VersionsTableProps> = ({ coreVersion = {}, webappV
     <table data-testid="versions-table" className="w-full text-sm">
       <thead><tr className="border-b border-white/10"><td className="px-4 py-2 font-semibold" colSpan={3}>Versions</td></tr></thead>
       <tbody>{versions.map(({ component, version, sbom }) => (
-        <tr key={`${component}-${version}`}><td className="px-4 py-2">{component}</td><td className="px-4 py-2">{version || 'N/A'}</td><td className="px-4 py-2">{sbom && <a href={sbom} target="_blank" className="text-brand hover:underline inline-flex items-center gap-1 text-xs">SBOM <ExternalLink size={12} /></a>}</td></tr>
+        <tr key={`${component}-${version}`}><td className="px-4 py-2">{component}</td><td className="px-4 py-2">{version || 'N/A'}</td><td className="px-4 py-2">{sbom && <a href={sbom} target="_blank" rel="noopener noreferrer" className="text-brand hover:underline inline-flex items-center gap-1 text-xs">SBOM <ExternalLink size={12} /></a>}</td></tr>
       ))}</tbody>
     </table>
   );

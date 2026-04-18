@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import ReactDOM from 'react-dom';
-import { ExternalLink, MoreHorizontal, Play, Plus, Square, Settings, Info, Trash2, BookOpen, RefreshCw } from 'lucide-react';
+import { ExternalLink, MoreHorizontal, Play, Plus, Square, Settings, Info, Trash2, BookOpen, RefreshCw, Package } from 'lucide-react';
 import type { EnrichedApp, AppVersion } from '@features/apps/types';
 import type { AppInstance } from '@generated/core/schemas';
 import AppStatusDot from './AppStatusDot';
@@ -82,9 +82,9 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   return (
     <>
       <div className="flex items-center gap-4 px-5 py-3 hover:bg-white/3 transition">
-        {/* Avatar */}
-        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-lg font-bold border border-white/10 overflow-hidden shrink-0">
-          {app.avatar ? <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" /> : app.title?.charAt(0).toUpperCase()}
+        {/* Avatar — image from marketplace, generic package icon for sideloaded apps */}
+        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-muted border border-white/10 overflow-hidden shrink-0">
+          {app.avatar ? <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" /> : <Package size={22} />}
         </div>
         {/* Identity */}
         <div className="flex-1 min-w-0">

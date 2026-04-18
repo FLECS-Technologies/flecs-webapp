@@ -32,13 +32,16 @@ function combineAppList(results: [
   const apps: InstalledApp[] = unwrapSuccess(aRes.data) ?? [];
   const instances: AppInstance[] = unwrapSuccess(iRes.data) ?? [];
 
-  // Enrich device apps with marketplace metadata + instances
+  // Enrich device apps with marketplace metadata + instances.
+  // Sideloaded apps have no marketplace match — fall back to the app's own reverse-domain name.
   const appList: EnrichedApp[] = apps.filter((a) => a.appKey.name).map((app) => {
     const mp = products.find((p) => app.appKey.name === getReverseDomainName(p));
     const installedVersions = apps.filter((a2) => a2.appKey.name === app.appKey.name).map((a2) => a2.appKey.version);
     return {
       ...app,
-      ...(mp && { avatar: getAppIcon(mp), title: decodeHtmlEntities(mp.name), author: getAuthor(mp), relatedLinks: getCustomLinks(mp), price: getPrice(mp), permalink: getPermalink(mp), purchasable: getPurchasable(mp), documentationUrl: getDocumentationUrl(mp) }),
+      title: mp ? decodeHtmlEntities(mp.name) : app.appKey.name,
+      author: mp ? getAuthor(mp) : 'Sideloaded',
+      ...(mp && { avatar: getAppIcon(mp), relatedLinks: getCustomLinks(mp), price: getPrice(mp), permalink: getPermalink(mp), purchasable: getPurchasable(mp), documentationUrl: getDocumentationUrl(mp) }),
       instances: instances.filter((i) => i.appKey.name === app.appKey.name && i.appKey.version === app.appKey.version),
       installedVersions,
       versions: (mp ? getVersions(mp) : [])?.map((v: string) => ({ version: v, installed: installedVersions.includes(v) })) ?? [],

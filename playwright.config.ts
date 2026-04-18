@@ -13,7 +13,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: 'https://localhost:5173',
+    baseURL: 'http://localhost:5173',
     ignoreHTTPSErrors: true,
     // Capture traces on first retry — browsable with `npx playwright show-report`.
     trace: 'on-first-retry',
@@ -21,7 +21,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'npm run dev',
-    url: 'https://localhost:5173',
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     ignoreHTTPSErrors: true,
     timeout: 120_000,

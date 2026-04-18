@@ -9,9 +9,25 @@ import { fixtures } from './mocks';
 
 /** Mock the "happy path" that TC01–TC03 need: auth, apps, marketplace, system info. */
 export async function mockHappyPath(page: Page): Promise<void> {
-  // Auth provider config — returns empty so AuthGate doesn't prompt OAuth
+  // Auth provider config — must have a valid `core` provider, otherwise
+  // OnboardingGuard redirects to /onboarding and the app never renders.
   await page.route('**/api/v2/providers/auth', (route) =>
-    route.fulfill({ json: { providers: {}, defaults: {} }, status: 200 }),
+    route.fulfill({
+      json: {
+        core: 'smoke-core-provider',
+        default: 'smoke-core-provider',
+        providers: {
+          'smoke-core-provider': {
+            id: 'smoke-core-provider',
+            name: 'Smoke Test Provider',
+            kind: 'fence',
+            issuer_url: 'http://localhost:5173',
+            properties: {},
+          },
+        },
+      },
+      status: 200,
+    }),
   );
 
   // System info (arch used by compat filter)

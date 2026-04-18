@@ -15,6 +15,12 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     ignoreHTTPSErrors: true,
+    // Block Service Workers: page.route() does NOT intercept requests handled
+    // by a Service Worker. If we ever install one (MSW browser worker, PWA
+    // caching, etc.), it would silently bypass our test mocks and reach the
+    // Vite proxy → local VM. Block keeps the in-browser interception guarantee
+    // explicit. See https://playwright.dev/docs/service-workers
+    serviceWorkers: 'block',
     // Capture traces on first retry — browsable with `npx playwright show-report`.
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

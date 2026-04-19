@@ -61,7 +61,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
         </div>
         <div onClick={(e) => e.stopPropagation()} className="px-5 py-4 bg-white/2 border-t border-white/10">
           {installed ? (
-            <button className="w-full px-4 py-3 border border-success text-success rounded-xl font-bold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2" onClick={() => setFullCardOpen(true)}><Check size={18} /> Installed</button>
+            <button className="w-full px-4 py-3 border border-success text-success rounded-xl font-semibold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2" onClick={() => setFullCardOpen(true)}><Check size={18} /> Installed</button>
           ) : !installable ? (
             <button onClick={() => setFullCardOpen(true)} className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-60 cursor-pointer inline-flex items-center justify-center gap-2 border border-white/10 hover:bg-white/5 transition"><AlertTriangle size={18} /> Not compatible</button>
           ) : (

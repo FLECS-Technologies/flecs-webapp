@@ -31,7 +31,7 @@ export default function InstallButton({
   return (
     <React.Fragment>
       <button
-        className={`px-4 py-2 bg-success text-white rounded-lg font-semibold hover:bg-success/80 transition inline-flex items-center gap-2 ${fullWidth ? 'w-full justify-center' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`px-4 py-3 bg-success text-white rounded-xl font-semibold text-base hover:bg-success/80 transition inline-flex items-center gap-2 ${fullWidth ? 'w-full justify-center' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={() => !disabled && setInstallAppOpen(true)}
         data-testid="install-app-button"
         disabled={disabled || state.installing}

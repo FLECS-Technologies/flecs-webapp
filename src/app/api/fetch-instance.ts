@@ -1,8 +1,10 @@
 import { getBaseURL } from '@app/api/ApiProvider';
 import { FetchError } from './fetch-error';
 
-// In production: device sets HttpOnly sid cookie → browser sends it automatically → zero JS token storage
-// In dev: Vite proxy is different origin, cookie doesn't work → fallback to Bearer token from localStorage
+// Token is stored in localStorage by AuthProvider (OAuth PKCE → upstream Keycloak).
+// flecs-core only accepts Authorization: Bearer <jwt> — no cookie session exists
+// (verified against codeberg.org/flecs-tech/flecs-core src/wall/watch.rs).
+// XSS → token theft risk is mitigated by CSP + DOMPurify, not by storage choice.
 let _accessToken: string | undefined;
 export const setAuthToken = (token: string | undefined) => { _accessToken = token; };
 
@@ -12,7 +14,6 @@ export const customInstance = async <T>(url: string, options?: RequestInit): Pro
   const isJsonBody = typeof options?.body === 'string';
   const response = await fetch(`${getBaseURL()}${url}`, {
     ...options,
-    credentials: 'include',
     headers: {
       ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),
       ...(options?.headers as Record<string, string>),

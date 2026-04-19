@@ -1,6 +1,8 @@
 /**
- * OAuth provider — token in localStorage (persists across tabs).
- * Code verifier in sessionStorage (one-time use, dies with tab = secure).
+ * OAuth PKCE flow; access_token persisted in localStorage.
+ * XSS → token theft risk is mitigated by CSP + DOMPurify (not by storage choice).
+ * flecs-core has no cookie-session path (see src/app/api/fetch-instance.ts).
+ * Code verifier is in sessionStorage (one-time use, dies with tab).
  */
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

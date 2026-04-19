@@ -44,7 +44,10 @@ function parseInstallQuest(desc: string) {
 export default function InstalledApps() {
   const { appList, isLoading: appListLoading, isError: appListError } = useAppList();
   const { data: pingData } = useGetSystemPing({ query: { retry: false, refetchInterval: 30_000 } });
-  const { data: questsData } = useGetQuests({ query: { refetchInterval: 2000 } });
+  // Read from the shared /quests cache. Polling is driven by useQuestPolling
+  // in JobsRail (globally mounted in Frame) — adding another refetchInterval
+  // here would force the shared query to 2s even when nothing is active.
+  const { data: questsData } = useGetQuests();
   const ping = !!pingData;
   const [sideloadManifest, setSideloadManifest] = useState<string | null>(null);
   const [sideloadPickerOpen, setSideloadPickerOpen] = useState(false);

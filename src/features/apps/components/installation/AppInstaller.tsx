@@ -40,6 +40,7 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
   const [phase, setPhase] = useState<Phase>('activation');
   const [message, setMessage] = useState('');
   const ran = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
   const qc = useQueryClient();
 
   // Generated hooks — zero wrappers
@@ -55,14 +56,12 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
 
-  // Auto-advance past activation when device is activated
-  useEffect(() => {
-    if (activated && phase === 'activation') runInstall();
-  }, [activated, phase]);
+  // Abort any in-flight quest polling on unmount so QueryObservers don't leak.
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const questStep = async (jobId: number) => {
     onStateChange?.({ installing: true });
-    const result = await waitForQuest(jobId);
+    const result = await waitForQuest(jobId, abortRef.current?.signal);
     if (!questStateFinishedOk(result.state)) {
       throw new Error(result.result || result.detail || result.description || 'Quest failed');
     }
@@ -79,6 +78,7 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
   const runInstall = useCallback(async () => {
     if (ran.current) return;
     ran.current = true;
+    abortRef.current = new AbortController();
     setPhase('running');
     setMessage('Installing...');
 
@@ -117,10 +117,24 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
         const r = await installApp({ data: { appKey: { name: appName, version } } });
         await questStep(getJobId(r));
 
-        setMessage('Migrating instances...');
-        for (const inst of app.instances ?? []) {
-          const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version } });
-          await questStep(getJobId(pr));
+        // Parallelize instance migrations. Cap enforces a defensive bound
+        // against runaway manifests (WSTG-BUSL-07); 100 covers any realistic
+        // single-device deployment and is renegotiable if the product changes.
+        const instances = app.instances ?? [];
+        if (instances.length > 100) {
+          throw new Error(`Too many instances to migrate in one pass (${instances.length}). Reduce in batches.`);
+        }
+        setMessage(`Migrating ${instances.length} instance${instances.length === 1 ? '' : 's'}...`);
+        const results = await Promise.allSettled(
+          instances.map(async (inst) => {
+            const pr = await patchInstance({ instanceId: inst.instanceId, data: { to: version } });
+            await questStep(getJobId(pr));
+          }),
+        );
+        const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
+        if (failures.length > 0) {
+          const detail = failures.map((f) => getErrorMessage(f.reason)).join('; ');
+          throw new Error(`${failures.length} of ${results.length} instance migrations failed: ${detail}`);
         }
 
         setMessage('Removing old version...');
@@ -135,7 +149,12 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
       setPhase('error');
       setMessage(getErrorMessage(err));
     }
-  }, [mode, app, manifest, version, fromVersion]);
+  }, [mode, app, manifest, version, fromVersion, installApp, sideloadApp, deleteApp, patchInstance, createInstance, startInstance, qc]);
+
+  // Auto-advance past activation when device is activated
+  useEffect(() => {
+    if (activated && phase === 'activation') runInstall();
+  }, [activated, phase, runInstall]);
 
   // Phase: Activation check
   if (phase === 'activation' && !activated) {

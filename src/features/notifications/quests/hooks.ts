@@ -7,9 +7,17 @@ import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import type { Quest } from '@generated/core/schemas';
 import { QuestState } from '@generated/core/schemas';
-import { useGetQuests, useDeleteQuestsId, getQuestsId } from '@generated/core/quests/quests';
-import { useQueryClient } from '@tanstack/react-query';
+import {
+  useGetQuests,
+  useDeleteQuestsId,
+  getQuestsId,
+  getGetQuestsIdQueryOptions,
+  type getQuestsIdResponse,
+  type GetQuestsIdQueryError,
+} from '@generated/core/quests/quests';
+import { QueryObserver, useQueryClient } from '@tanstack/react-query';
 import { useQuestStore, addQuest, getQuest } from '@stores/quests';
+import { unwrapSuccess } from '@app/api/unwrap';
 
 const isFinished = (q: Quest) => q.state !== QuestState.failing && q.state !== QuestState.ongoing && q.state !== QuestState.pending;
 
@@ -44,20 +52,67 @@ export function useQuestActions() {
   const qc = useQueryClient();
   const { mutateAsync: deleteQuest } = useDeleteQuestsId();
 
-  const waitForQuest = useCallback(async (questId: number): Promise<Quest> => {
-    return new Promise((resolve, reject) => {
-      const check = async () => {
-        try {
-          const res = await getQuestsId(questId);
-          const quest = res.data as Quest;
-          addQuest(quest);
-          if (isFinished(quest)) { resolve(quest); return; }
-          setTimeout(check, 500);
-        } catch (e) { reject(e); }
-      };
-      check();
-    });
-  }, []);
+  /**
+   * Await a quest to finish. Uses a TanStack QueryObserver on the orval-generated
+   * query options, so polling stops when refetchInterval returns false — no
+   * manual setTimeout recursion, no hardcoded timeout. The optional AbortSignal
+   * lets the caller cancel (e.g., on install-dialog unmount) without leaking
+   * the observer.
+   */
+  const waitForQuest = useCallback(
+    (questId: number, signal?: AbortSignal): Promise<Quest> => {
+      return new Promise<Quest>((resolve, reject) => {
+        if (signal?.aborted) {
+          reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+          return;
+        }
+
+        const observer = new QueryObserver<
+          getQuestsIdResponse,
+          GetQuestsIdQueryError,
+          getQuestsIdResponse
+        >(
+          qc,
+          getGetQuestsIdQueryOptions(questId, {
+            query: {
+              refetchInterval: (q) => {
+                const quest = unwrapSuccess(q.state.data) as Quest | undefined;
+                return quest && isFinished(quest) ? false : 500;
+              },
+              staleTime: 0,
+            },
+          }),
+        );
+
+        const cleanup = () => {
+          unsub();
+          observer.destroy();
+          signal?.removeEventListener('abort', onAbort);
+        };
+        const onAbort = () => {
+          cleanup();
+          reject(signal?.reason ?? new DOMException('Aborted', 'AbortError'));
+        };
+
+        const unsub = observer.subscribe((result) => {
+          const quest = unwrapSuccess(result.data) as Quest | undefined;
+          if (quest) addQuest(quest);
+          if (quest && isFinished(quest)) {
+            cleanup();
+            resolve(quest);
+            return;
+          }
+          if (result.isError) {
+            cleanup();
+            reject(result.error);
+          }
+        });
+
+        signal?.addEventListener('abort', onAbort);
+      });
+    },
+    [qc],
+  );
 
   const clearQuests = useCallback(async () => {
     const ids = useQuestStore.getState().mainQuestIds;

@@ -56,8 +56,12 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
 
-  // Abort any in-flight quest polling on unmount so QueryObservers don't leak.
-  useEffect(() => () => abortRef.current?.abort(), []);
+  // NOTE: We intentionally do NOT abort the signal on unmount. The running
+  // dialog tells the user "Installation continues in the background", and
+  // StrictMode's dev-only double-cleanup would otherwise kill the install
+  // as a false negative. The QueryObserver self-destroys when the quest
+  // finishes (see waitForQuest cleanup path). abortRef stays wired so a
+  // future explicit Cancel button can trigger it + DELETE /quests/{id}.
 
   const questStep = async (jobId: number) => {
     onStateChange?.({ installing: true });

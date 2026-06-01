@@ -2,7 +2,9 @@ import { defineConfig } from 'orval';
 
 export default defineConfig({
   core: {
-    input: { target: 'https://codeberg.org/flecs-tech/flecs-core/raw/branch/main/api/openapi.yaml' },
+    input: {
+      target: 'https://codeberg.org/flecs-tech/flecs-core/raw/branch/main/api/openapi.yaml',
+    },
     output: {
       target: './generated/core',
       client: 'react-query',
@@ -17,7 +19,9 @@ export default defineConfig({
     },
   },
   marketplace: {
-    input: { target: 'https://codeberg.org/flecs-tech/console-api/raw/branch/main/api/openapi.yaml' },
+    input: {
+      target: 'https://codeberg.org/flecs-tech/console-api/raw/branch/main/api/openapi.yaml',
+    },
     output: {
       target: './generated/console',
       client: 'react-query',

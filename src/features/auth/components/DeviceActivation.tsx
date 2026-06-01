@@ -1,7 +1,11 @@
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import MarketplaceLogin from '@features/marketplace/components/MarketplaceLogin';
 import { useMarketplaceUser } from '@stores/marketplace-user';
-import { useGetDeviceLicenseActivationStatus, usePostDeviceLicenseActivation, getGetDeviceLicenseActivationStatusQueryKey } from '@generated/core/device/device';
+import {
+  useGetDeviceLicenseActivationStatus,
+  usePostDeviceLicenseActivation,
+  getGetDeviceLicenseActivationStatusQueryKey,
+} from '@generated/core/device/device';
 import { useQueryClient } from '@tanstack/react-query';
 import { unwrapSuccess } from '@app/api/unwrap';
 
@@ -9,20 +13,28 @@ export default function DeviceActivation({ variant }: { variant?: string }) {
   const qc = useQueryClient();
   const { user } = useMarketplaceUser();
   const { data, isLoading } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
-  const { mutate: activate, isPending: activating, isError } = usePostDeviceLicenseActivation({
-    mutation: { onSuccess: () => qc.invalidateQueries({ queryKey: getGetDeviceLicenseActivationStatusQueryKey() }) },
+  const {
+    mutate: activate,
+    isPending: activating,
+    isError,
+  } = usePostDeviceLicenseActivation({
+    mutation: {
+      onSuccess: () =>
+        qc.invalidateQueries({ queryKey: getGetDeviceLicenseActivationStatusQueryKey() }),
+    },
   });
 
   const activated = unwrapSuccess(data)?.isValid ?? false;
 
   if (isLoading) return <p className="text-sm text-muted">Checking license...</p>;
 
-  if (activated) return (
-    <div className="flex items-center gap-2">
-      <CheckCircle2 size={20} className="text-success" />
-      <span className="text-sm">Device is activated!</span>
-    </div>
-  );
+  if (activated)
+    return (
+      <div className="flex items-center gap-2">
+        <CheckCircle2 size={20} className="text-success" />
+        <span className="text-sm">Device is activated!</span>
+      </div>
+    );
 
   // Not activated — show marketplace login or retry button
   return (
@@ -38,8 +50,18 @@ export default function DeviceActivation({ variant }: { variant?: string }) {
       ) : (
         <div className="flex items-center gap-4">
           <AlertCircle size={20} />
-          <span className="text-sm">{activating ? 'Activating...' : isError ? 'Activation failed. Try again.' : 'Device is not activated!'}</span>
-          <button onClick={() => activate()} disabled={activating} className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50">
+          <span className="text-sm">
+            {activating
+              ? 'Activating...'
+              : isError
+                ? 'Activation failed. Try again.'
+                : 'Device is not activated!'}
+          </span>
+          <button
+            onClick={() => activate()}
+            disabled={activating}
+            className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50"
+          >
             Activate Device
           </button>
         </div>

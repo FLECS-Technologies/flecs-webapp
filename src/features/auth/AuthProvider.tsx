@@ -8,7 +8,10 @@ import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as oauth from 'oauth4webapi';
 import { getProvidersAuth } from '@generated/core/experimental/experimental';
-import type { AuthProvidersAndDefaults, AuthProvider as AuthProviderType } from '@generated/core/schemas';
+import type {
+  AuthProvidersAndDefaults,
+  AuthProvider as AuthProviderType,
+} from '@generated/core/schemas';
 import { extractCoreProviderId } from '@features/onboarding/OnboardingGuard';
 import { setAuthToken } from '@app/api/fetch-instance';
 
@@ -75,7 +78,9 @@ function useAuthConfig() {
           code_challenge_methods_supported: ['S256'],
         } as oauth.AuthorizationServer,
         client: { client_id: props.client_id || 'flecs' } as oauth.Client,
-        redirectUri: props.redirect_uri || `${window.location.origin}${window.location.pathname}#/oauth/callback`,
+        redirectUri:
+          props.redirect_uri ||
+          `${window.location.origin}${window.location.pathname}#/oauth/callback`,
         scope: props.scope || (provider.kind === 'oauth' ? 'api:read' : 'openid email'),
         props,
       };
@@ -145,7 +150,10 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
 
     if (result.access_token) {
       localStorage.setItem(KEYS.ACCESS_TOKEN, result.access_token);
-      localStorage.setItem(KEYS.USER, JSON.stringify({ sub: result.sub || 'user', access_token: result.access_token }));
+      localStorage.setItem(
+        KEYS.USER,
+        JSON.stringify({ sub: result.sub || 'user', access_token: result.access_token }),
+      );
       setAuthToken(result.access_token);
     }
 
@@ -162,9 +170,16 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
   }, [config, queryClient]);
 
   const value: AuthContextValue = {
-    isAuthenticated, isLoading: configLoading, user: storedUser, error: configError as Error | null,
-    signIn, signOut, handleOAuthCallback, isConfigReady: !!config,
-    clearError: () => {}, refreshAuthState: async () => {},
+    isAuthenticated,
+    isLoading: configLoading,
+    user: storedUser,
+    error: configError as Error | null,
+    signIn,
+    signOut,
+    handleOAuthCallback,
+    isConfigReady: !!config,
+    clearError: () => {},
+    refreshAuthState: async () => {},
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

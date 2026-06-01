@@ -57,7 +57,10 @@ export default function UpdateButton({
           version={to.version}
           update={true}
           onStateChange={(s: InstallerState) =>
-            setState({ updating: s.installing || (s.updating ?? false), currentQuest: s.currentQuest ?? null })
+            setState({
+              updating: s.installing || (s.updating ?? false),
+              currentQuest: s.currentQuest ?? null,
+            })
           }
         />
       </ContentDialog>

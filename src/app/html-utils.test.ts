@@ -25,7 +25,9 @@ describe('sanitizeHtml — XSS sink defense', () => {
   });
 
   it('removes disallowed tags (<img>, <iframe>, <object>, <svg>)', () => {
-    const out = sanitizeHtml('<iframe src="evil"></iframe><img src="x"><object data="evil"></object>');
+    const out = sanitizeHtml(
+      '<iframe src="evil"></iframe><img src="x"><object data="evil"></object>',
+    );
     expect(out).not.toContain('<iframe');
     expect(out).not.toContain('<img');
     expect(out).not.toContain('<object');
@@ -50,7 +52,9 @@ describe('sanitizeHtml — XSS sink defense', () => {
   });
 
   it('preserves <a href target rel> — our explicit whitelist for marketplace links', () => {
-    const out = sanitizeHtml('<a href="https://example.com" target="_blank" rel="noopener">doc</a>');
+    const out = sanitizeHtml(
+      '<a href="https://example.com" target="_blank" rel="noopener">doc</a>',
+    );
     expect(out).toContain('href="https://example.com"');
     expect(out).toContain('target="_blank"');
     expect(out).toContain('rel="noopener"');

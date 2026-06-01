@@ -38,17 +38,24 @@ interface MarketplaceFiltersState {
 // ── Pure filter helpers — imported by the Marketplace page for useMemo derivation.
 // Server state (products, arch) is never stored here; we only transform it. ──
 
-export function searchProducts(products: Product[], search: string, isSearchEnabled: boolean): Product[] {
+export function searchProducts(
+  products: Product[],
+  search: string,
+  isSearchEnabled: boolean,
+): Product[] {
   if (!search || !isSearchEnabled) return products;
   const query = search.toLowerCase();
   return products.filter(
     (p) =>
-      p.short_description?.toLowerCase().includes(query) ||
-      p.name?.toLowerCase().includes(query),
+      p.short_description?.toLowerCase().includes(query) || p.name?.toLowerCase().includes(query),
   );
 }
 
-export function filterByCompatibility(products: Product[], compatible: boolean, arch: string | undefined): Product[] {
+export function filterByCompatibility(
+  products: Product[],
+  compatible: boolean,
+  arch: string | undefined,
+): Product[] {
   if (!compatible) return products;
   if (!arch) return [];
   return products.filter((p) => isArchCompatible(getRequirement(p), arch));
@@ -62,7 +69,10 @@ export function filterByPrice(products: Product[], freeOnly: boolean): Product[]
   });
 }
 
-function isCategoryHidden(productCategories: ProductCategory[] | undefined, hiddenCategories: number[]): boolean {
+function isCategoryHidden(
+  productCategories: ProductCategory[] | undefined,
+  hiddenCategories: number[],
+): boolean {
   const filtered = productCategories?.filter((p) => p.id !== 27);
   const categoryId = filtered?.map((p) => p.id)[0];
   return categoryId !== undefined && hiddenCategories.includes(categoryId);
@@ -104,7 +114,13 @@ export function getUniqueCategories(products: Product[]): Category[] {
 export const useMarketplaceFilters = create<MarketplaceFiltersState>()(
   persist(
     (set) => ({
-      filterParams: { hiddenCategories: [], search: undefined, compatible: false, freeOnly: false, pageSize: 100 },
+      filterParams: {
+        hiddenCategories: [],
+        search: undefined,
+        compatible: false,
+        freeOnly: false,
+        pageSize: 100,
+      },
       showFilter: false,
       isSearchEnabled: true,
       page: 0,

@@ -56,14 +56,10 @@ export default function Profile() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold">
-                {user?.preferred_username || 'Anonymous'}
-              </h1>
+              <h1 className="text-xl font-bold">{user?.preferred_username || 'Anonymous'}</h1>
               <span
                 className={`mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-                  auth.isAuthenticated
-                    ? 'bg-success/20 text-success'
-                    : 'bg-error/20 text-error'
+                  auth.isAuthenticated ? 'bg-success/20 text-success' : 'bg-error/20 text-error'
                 }`}
               >
                 {auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
@@ -137,9 +133,7 @@ export default function Profile() {
               <p className="text-sm text-muted w-40 shrink-0">Authentication Status:</p>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                  auth.isAuthenticated
-                    ? 'bg-success/20 text-success'
-                    : 'bg-error/20 text-error'
+                  auth.isAuthenticated ? 'bg-success/20 text-success' : 'bg-error/20 text-error'
                 }`}
               >
                 {auth.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}

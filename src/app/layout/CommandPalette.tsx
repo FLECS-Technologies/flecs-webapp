@@ -39,10 +39,38 @@ export default function CommandPalette() {
 
   const commands: CommandItem[] = useMemo(
     () => [
-      { id: 'apps', label: 'Apps', description: 'Installed applications', icon: <LayoutGrid size={18} />, action: () => go('/'), category: 'Navigation' },
-      { id: 'marketplace', label: 'Marketplace', description: 'Browse and install apps', icon: <Store size={18} />, action: () => go('/marketplace'), category: 'Navigation' },
-      { id: 'system', label: 'System', description: 'Device info, license, exports', icon: <Settings size={18} />, action: () => go('/system'), category: 'Navigation' },
-      { id: 'licenses', label: 'Open Source Licenses', description: 'Third-party licenses', icon: <FileText size={18} />, action: () => go('/open-source'), category: 'Navigation' },
+      {
+        id: 'apps',
+        label: 'Apps',
+        description: 'Installed applications',
+        icon: <LayoutGrid size={18} />,
+        action: () => go('/'),
+        category: 'Navigation',
+      },
+      {
+        id: 'marketplace',
+        label: 'Marketplace',
+        description: 'Browse and install apps',
+        icon: <Store size={18} />,
+        action: () => go('/marketplace'),
+        category: 'Navigation',
+      },
+      {
+        id: 'system',
+        label: 'System',
+        description: 'Device info, license, exports',
+        icon: <Settings size={18} />,
+        action: () => go('/system'),
+        category: 'Navigation',
+      },
+      {
+        id: 'licenses',
+        label: 'Open Source Licenses',
+        description: 'Third-party licenses',
+        icon: <FileText size={18} />,
+        action: () => go('/open-source'),
+        category: 'Navigation',
+      },
     ],
     [go],
   );
@@ -110,10 +138,7 @@ export default function CommandPalette() {
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-[1300]"
-        onClick={() => setOpen(false)}
-      />
+      <div className="fixed inset-0 bg-black/50 z-[1300]" onClick={() => setOpen(false)} />
 
       {/* Dialog */}
       <div

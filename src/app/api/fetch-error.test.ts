@@ -48,7 +48,11 @@ describe('getErrorMessage', () => {
   });
 
   it('ignores non-string values in known fields (defensive against malformed bodies)', () => {
-    const err = new FetchError(500, { additionalInfo: 42, additional_info: { nested: true } }, new Headers());
+    const err = new FetchError(
+      500,
+      { additionalInfo: 42, additional_info: { nested: true } },
+      new Headers(),
+    );
     expect(getErrorMessage(err)).toBe('HTTP 500');
   });
 

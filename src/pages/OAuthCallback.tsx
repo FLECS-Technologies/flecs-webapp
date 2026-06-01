@@ -12,15 +12,18 @@ export default function OAuthCallback() {
     handleOAuthCallback().catch((e) => setError(e?.message || 'Auth failed'));
   }, [isConfigReady, handleOAuthCallback]);
 
-  if (error) return (
-    <div className="flex justify-center items-center min-h-screen text-center">
-      <div>
-        <p className="text-error font-semibold">Authentication Failed</p>
-        <p className="mt-2 text-sm text-muted">{error}</p>
-        <a href="/" className="mt-4 inline-block text-brand text-sm hover:underline">Return home</a>
+  if (error)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-center">
+        <div>
+          <p className="text-error font-semibold">Authentication Failed</p>
+          <p className="mt-2 text-sm text-muted">{error}</p>
+          <a href="/" className="mt-4 inline-block text-brand text-sm hover:underline">
+            Return home
+          </a>
+        </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <div className="flex justify-center items-center min-h-screen text-center">

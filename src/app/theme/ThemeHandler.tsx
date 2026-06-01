@@ -60,9 +60,7 @@ export const ThemeHandler: React.FC<ThemeHandlerProps> = ({ children }) => {
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, setDarkMode }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ isDarkMode, setDarkMode }}>{children}</ThemeContext.Provider>
   );
 };
 

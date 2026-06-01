@@ -58,7 +58,9 @@ function SkeletonCard() {
 
 export default function Marketplace() {
   const { appList, products, isLoading: isAppListLoading } = useAppList();
-  const { data: infoResponse, isPending: isInfoPending } = useGetSystemInfo({ query: { staleTime: 60_000 } });
+  const { data: infoResponse, isPending: isInfoPending } = useGetSystemInfo({
+    query: { staleTime: 60_000 },
+  });
   const arch = infoResponse?.data?.arch;
   const isLoading = isAppListLoading || isInfoPending;
   const {
@@ -104,7 +106,14 @@ export default function Marketplace() {
     const byPrice = filterByPrice(byCompat, filterParams.freeOnly);
     const bySearch = searchProducts(byPrice, filterParams.search ?? '', isSearchEnabled);
     return bySearch;
-  }, [products, filterParams.compatible, filterParams.freeOnly, filterParams.search, isSearchEnabled, arch]);
+  }, [
+    products,
+    filterParams.compatible,
+    filterParams.freeOnly,
+    filterParams.search,
+    isSearchEnabled,
+    arch,
+  ]);
 
   const finalProducts = useMemo(
     () => filterByCategories(baseFiltered, filterParams.hiddenCategories),
@@ -150,7 +159,10 @@ export default function Marketplace() {
         availability={app.stock_status}
         relatedLinks={getCustomLinks(app)}
         requirement={getRequirement(app)}
-        versions={(getVersions(app) ?? []).map((v: string) => ({ version: v, installed: matchedApp?.installedVersions?.includes(v) ?? false }))}
+        versions={(getVersions(app) ?? []).map((v: string) => ({
+          version: v,
+          installed: matchedApp?.installedVersions?.includes(v) ?? false,
+        }))}
         id={getId(app)}
         categories={getCategories(app)}
         average_rating={getAverageRating(app)}
@@ -187,7 +199,9 @@ export default function Marketplace() {
         />
         {filterParams.search && (
           <button
-            onClick={() => setSearchFilter({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
+            onClick={() =>
+              setSearchFilter({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)
+            }
             className="p-1 rounded-full hover:bg-white/10 transition"
           >
             <X size={16} className="opacity-50" />
@@ -296,9 +310,7 @@ export default function Marketplace() {
 
       {!isLoading && productCards.length === 0 && <MarketplaceEmpty />}
 
-      {!isLoading && productCards.length > 0 && (
-        <MarketplaceGrid>{productCards}</MarketplaceGrid>
-      )}
+      {!isLoading && productCards.length > 0 && <MarketplaceGrid>{productCards}</MarketplaceGrid>}
 
       {/* Pagination footer */}
       {!isLoading && totalFiltered > 0 && (

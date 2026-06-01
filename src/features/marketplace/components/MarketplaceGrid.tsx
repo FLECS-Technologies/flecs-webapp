@@ -1,4 +1,6 @@
-interface MarketplaceGridProps { children: React.ReactNode; }
+interface MarketplaceGridProps {
+  children: React.ReactNode;
+}
 
 export default function MarketplaceGrid({ children }: MarketplaceGridProps) {
   return (

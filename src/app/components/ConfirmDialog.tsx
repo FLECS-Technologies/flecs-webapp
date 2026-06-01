@@ -4,7 +4,15 @@ import { useEffect, useRef } from 'react';
  * Confirm dialog — uses native <dialog> element.
  * Focus trapping, ESC to close, backdrop — all built-in. Zero portal hacking.
  */
-const ConfirmDialog = ({ title, children, open, setOpen, onConfirm, confirmLabel, confirmDestructive }: {
+const ConfirmDialog = ({
+  title,
+  children,
+  open,
+  setOpen,
+  onConfirm,
+  confirmLabel,
+  confirmDestructive,
+}: {
   title: string;
   children: React.ReactNode;
   open: boolean;
@@ -24,7 +32,9 @@ const ConfirmDialog = ({ title, children, open, setOpen, onConfirm, confirmLabel
     <dialog
       ref={ref}
       onClose={() => setOpen(false)}
-      onClick={(e) => { if (e.target === ref.current) setOpen(false); }}
+      onClick={(e) => {
+        if (e.target === ref.current) setOpen(false);
+      }}
       className="backdrop:bg-black/60 bg-transparent p-0 m-auto max-w-md w-full open:flex open:items-center open:justify-center"
     >
       <div className="bg-surface-raised rounded-2xl p-6 w-full shadow-2xl border border-border mx-4">
@@ -39,7 +49,10 @@ const ConfirmDialog = ({ title, children, open, setOpen, onConfirm, confirmLabel
           </button>
           <button
             className={`px-4 py-2 text-sm font-semibold rounded-lg transition cursor-pointer ${confirmDestructive ? 'bg-error text-white hover:bg-error/80' : 'bg-brand text-white hover:bg-brand-end'}`}
-            onClick={() => { setOpen(false); onConfirm(); }}
+            onClick={() => {
+              setOpen(false);
+              onConfirm();
+            }}
             autoFocus
           >
             {confirmLabel || 'Confirm'}

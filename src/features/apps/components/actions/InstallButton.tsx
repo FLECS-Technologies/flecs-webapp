@@ -54,7 +54,7 @@ export default function InstallButton({
       >
         <InstallationStepper
           app={app}
-          version={typeof version === "string" ? version : version?.version}
+          version={typeof version === 'string' ? version : version?.version}
           onStateChange={(s: InstallerState) =>
             setState({ installing: s.installing, currentQuest: s.currentQuest ?? null })
           }

@@ -3,7 +3,6 @@ import { Menu as MenuIcon } from 'lucide-react';
 import { useUIStore } from '@stores/ui';
 import FLECSLogo from './FLECSLogo';
 
-
 export default function MobileBar() {
   const [isMobile, setIsMobile] = useState(false);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);

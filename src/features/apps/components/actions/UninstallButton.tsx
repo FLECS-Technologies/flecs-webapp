@@ -21,7 +21,14 @@ interface UninstallButtonProps {
   onMenuClose?: () => void;
 }
 
-export default function UninstallButton({ app, selectedVersion, displayState, variant = 'button', onUninstallComplete, onMenuClose }: UninstallButtonProps): React.ReactElement | null {
+export default function UninstallButton({
+  app,
+  selectedVersion,
+  displayState,
+  variant = 'button',
+  onUninstallComplete,
+  onMenuClose,
+}: UninstallButtonProps): React.ReactElement | null {
   const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
@@ -32,17 +39,35 @@ export default function UninstallButton({ app, selectedVersion, displayState, va
     onMenuClose?.();
     setUninstalling(true);
     try {
-      const resp = await deleteApp({ app: appToUninstall.appKey.name, params: { version: selectedVersion.version } });
+      const resp = await deleteApp({
+        app: appToUninstall.appKey.name,
+        params: { version: selectedVersion.version },
+      });
       const successData = unwrapSuccess(resp);
       const jobId = successData?.jobId;
       if (!jobId) throw new Error('No jobId in uninstall response');
       await fetchQuest(jobId);
       const quest = await waitForQuest(jobId);
-      if (questStateFinishedOk(quest.state)) { qc.invalidateQueries(); onUninstallComplete?.(true, `${appToUninstall.title} successfully uninstalled.`); }
-      else { onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, quest.result || quest.detail || 'Quest failed'); }
+      if (questStateFinishedOk(quest.state)) {
+        qc.invalidateQueries();
+        onUninstallComplete?.(true, `${appToUninstall.title} successfully uninstalled.`);
+      } else {
+        onUninstallComplete?.(
+          false,
+          `Failed to uninstall ${appToUninstall.title}.`,
+          quest.result || quest.detail || 'Quest failed',
+        );
+      }
     } catch (error: unknown) {
-      onUninstallComplete?.(false, `Failed to uninstall ${appToUninstall.title}.`, getErrorMessage(error));
-    } finally { setUninstalling(false); setConfirmOpen(false); }
+      onUninstallComplete?.(
+        false,
+        `Failed to uninstall ${appToUninstall.title}.`,
+        getErrorMessage(error),
+      );
+    } finally {
+      setUninstalling(false);
+      setConfirmOpen(false);
+    }
   };
 
   if (!app.installedVersions?.includes(selectedVersion.version)) return null;
@@ -50,15 +75,46 @@ export default function UninstallButton({ app, selectedVersion, displayState, va
   return (
     <>
       {variant === 'menuItem' ? (
-        <button data-testid="uninstall-button" disabled={uninstalling} onClick={() => { onMenuClose?.(); setTimeout(() => setConfirmOpen(true), 50); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-white/5 transition">
-          <Trash2 size={16} /><span className="flex-1 text-left">Uninstall</span>
+        <button
+          data-testid="uninstall-button"
+          disabled={uninstalling}
+          onClick={() => {
+            onMenuClose?.();
+            setTimeout(() => setConfirmOpen(true), 50);
+          }}
+          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-white/5 transition"
+        >
+          <Trash2 size={16} />
+          <span className="flex-1 text-left">Uninstall</span>
         </button>
       ) : variant === 'icon' ? (
-        <LoadIconButton data-testid="uninstall-button" icon={<Trash2 size={18} />} onClick={() => setConfirmOpen(true)} loading={uninstalling} disabled={uninstalling} />
+        <LoadIconButton
+          data-testid="uninstall-button"
+          icon={<Trash2 size={18} />}
+          onClick={() => setConfirmOpen(true)}
+          loading={uninstalling}
+          disabled={uninstalling}
+        />
       ) : (
-        <LoadButton text="Uninstall" variant="outlined" label="uninstall-app-button" disabled={uninstalling} color="error" onClick={() => setConfirmOpen(true)} displaystate={displayState} loading={uninstalling} />
+        <LoadButton
+          text="Uninstall"
+          variant="outlined"
+          label="uninstall-app-button"
+          disabled={uninstalling}
+          color="error"
+          onClick={() => setConfirmOpen(true)}
+          displaystate={displayState}
+          loading={uninstalling}
+        />
       )}
-      <ConfirmDialog title={`Uninstall ${app.title}?`} open={confirmOpen} setOpen={setConfirmOpen} onConfirm={() => uninstallApp(app)} confirmLabel="Uninstall" confirmDestructive>
+      <ConfirmDialog
+        title={`Uninstall ${app.title}?`}
+        open={confirmOpen}
+        setOpen={setConfirmOpen}
+        onConfirm={() => uninstallApp(app)}
+        confirmLabel="Uninstall"
+        confirmDestructive
+      >
         This will remove the app and all its data from your device.
       </ConfirmDialog>
     </>

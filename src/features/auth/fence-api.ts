@@ -32,7 +32,9 @@ export function useSuperAdminExists() {
     queryKey: ['super-admin'],
     queryFn: async () => {
       const base = await getFenceBaseURL();
-      const res = await fetch(`${base}/users/super-admin`).catch(() => ({ status: 502 }) as Response);
+      const res = await fetch(`${base}/users/super-admin`).catch(
+        () => ({ status: 502 }) as Response,
+      );
       if (res.status === 404 || res.status === 502) return false;
       if (!('ok' in res) || !res.ok) throw new Error(`Fence check failed (${res.status})`);
       return true;

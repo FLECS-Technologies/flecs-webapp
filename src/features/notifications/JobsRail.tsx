@@ -36,7 +36,11 @@ export default function JobsRail() {
           {running > 0 ? `${running} running` : 'All done'}
         </span>
         <span className="text-xs text-muted">{total}</span>
-        {expanded ? <ChevronDown size={16} className="text-muted" /> : <ChevronUp size={16} className="text-muted" />}
+        {expanded ? (
+          <ChevronDown size={16} className="text-muted" />
+        ) : (
+          <ChevronUp size={16} className="text-muted" />
+        )}
       </button>
 
       {/* Expanded quest list */}
@@ -49,7 +53,10 @@ export default function JobsRail() {
           </div>
           <div className="flex justify-end px-3 py-2 border-t border-border">
             <button
-              onClick={(e) => { e.stopPropagation(); clearQuests(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                clearQuests();
+              }}
               className="flex items-center gap-1.5 text-xs text-muted hover:text-text-primary transition"
             >
               <Trash2 size={12} /> Clear finished

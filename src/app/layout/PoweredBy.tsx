@@ -45,9 +45,7 @@ const PoweredByFLECS: React.FC = () => {
           className="inline-flex items-center no-underline px-3 py-1.5 rounded-lg border border-brand bg-dark-end hover:bg-dark transition"
         >
           <FLECSLogo />
-          <span className="ml-2 text-sm transition">
-            powered by FLECS
-          </span>
+          <span className="ml-2 text-sm transition">powered by FLECS</span>
         </a>
       )}
     </div>

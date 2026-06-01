@@ -24,7 +24,9 @@ const XSS_PAYLOAD = [
 ].join('');
 
 test.describe('@smoke TC18 — stored XSS guard on marketplace description', () => {
-  test('malicious description does not execute script or leave event handlers in DOM', async ({ page }) => {
+  test('malicious description does not execute script or leave event handlers in DOM', async ({
+    page,
+  }) => {
     const dialogs: string[] = [];
     page.on('dialog', (d) => {
       dialogs.push(d.message());
@@ -66,7 +68,9 @@ test.describe('@smoke TC18 — stored XSS guard on marketplace description', () 
 
     // Assertion 2 — window-global sentinel never assigned (catches scripts that
     // ran silently without dialogs).
-    const executed = await page.evaluate(() => (window as unknown as { __xss_executed__?: boolean }).__xss_executed__);
+    const executed = await page.evaluate(
+      () => (window as unknown as { __xss_executed__?: boolean }).__xss_executed__,
+    );
     expect(executed).toBeUndefined();
 
     // Assertion 3 — no onerror/onclick/onload attributes survived in the DOM.

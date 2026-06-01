@@ -74,9 +74,7 @@ export default function Avatar() {
         >
           <div className="px-4 py-2 border-b border-white/10">
             <p className="text-xs text-muted">Signed in as</p>
-            <p className="text-xs font-semibold">
-              {user.user?.preferred_username || 'anonymous'}
-            </p>
+            <p className="text-xs font-semibold">{user.user?.preferred_username || 'anonymous'}</p>
           </div>
           <button
             onClick={handleProfile}

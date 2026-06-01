@@ -39,7 +39,9 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div style={{ padding: 40, textAlign: 'center' }}>
       <h2>Something went wrong</h2>
-      <pre style={{ color: '#FF2E63', whiteSpace: 'pre-wrap' }}>{error instanceof Error ? error.message : String(error)}</pre>
+      <pre style={{ color: '#FF2E63', whiteSpace: 'pre-wrap' }}>
+        {error instanceof Error ? error.message : String(error)}
+      </pre>
       <button onClick={resetErrorBoundary} style={{ marginTop: 16, padding: '8px 24px' }}>
         Try again
       </button>
@@ -52,8 +54,19 @@ export default function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <QueryClientProvider client={queryClient}>
         <ThemeHandler>
-          <Toaster position="top-right" richColors closeButton theme="dark"
-            toastOptions={{ style: { background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' } }} />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: 'var(--color-surface-raised)',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text-primary)',
+              },
+            }}
+          />
           <Providers>
             <Frame>
               <UIRoutes />

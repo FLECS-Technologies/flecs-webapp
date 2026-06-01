@@ -10,7 +10,14 @@ interface InstallationStepperProps {
   onStateChange?: (state: InstallerState) => void;
 }
 
-export default function InstallationStepper({ app, manifest, version, sideload, update, onStateChange }: InstallationStepperProps) {
+export default function InstallationStepper({
+  app,
+  manifest,
+  version,
+  sideload,
+  update,
+  onStateChange,
+}: InstallationStepperProps) {
   const mode = sideload ? 'sideload' : update ? 'update' : 'install';
   return (
     <AppInstaller

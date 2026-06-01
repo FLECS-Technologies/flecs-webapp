@@ -40,39 +40,73 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
   const systemInfo = infoResponse?.data;
   const installed = props.status === 'installed';
   const versionsArray = props.versions ?? [];
-  const [latestVersion] = useState<AppVersion>(versionsArray[0] ?? { version: '', installed: false });
+  const [latestVersion] = useState<AppVersion>(
+    versionsArray[0] ?? { version: '', installed: false },
+  );
   const installable = isArchCompatible(props.requirement, systemInfo?.arch);
   const [fullCardOpen, setFullCardOpen] = useState(false);
-  const plainDescription = (props.short_description || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
+  const plainDescription = (props.short_description || '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'");
   const isFree = !props.price || parseFloat(props.price) === 0;
 
   return (
     <>
-      <div data-testid="app-card" className="flex flex-col rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-transparent" onClick={() => setFullCardOpen(true)}>
+      <div
+        data-testid="app-card"
+        className="flex flex-col rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-transparent"
+        onClick={() => setFullCardOpen(true)}
+      >
         <div className="p-6 pt-8 flex-1 flex flex-col items-center min-h-[260px]">
           <div className="w-[72px] h-[72px] rounded-xl bg-white/5 flex items-center justify-center text-2xl font-bold border border-white/10 overflow-hidden mb-4 transition-transform duration-300 card-icon">
-            {props.avatar ? <img src={props.avatar} alt={props.title} className="w-full h-full object-cover" /> : props.title?.charAt(0).toUpperCase()}
+            {props.avatar ? (
+              <img src={props.avatar} alt={props.title} className="w-full h-full object-cover" />
+            ) : (
+              props.title?.charAt(0).toUpperCase()
+            )}
           </div>
           <span className="text-base font-bold text-center break-words mb-1">{props.title}</span>
           {props.author && <span className="text-xs text-muted">{props.author}</span>}
-          <p className="text-sm text-muted mt-3 text-center line-clamp-2">{plainDescription || 'No description available'}</p>
+          <p className="text-sm text-muted mt-3 text-center line-clamp-2">
+            {plainDescription || 'No description available'}
+          </p>
           <div className="flex-1 min-h-4" />
-          <span className={`text-xs font-semibold mt-4 ${isFree ? 'text-success' : 'text-muted'}`}>{isFree ? 'Free' : `$${props.price}`}</span>
+          <span className={`text-xs font-semibold mt-4 ${isFree ? 'text-success' : 'text-muted'}`}>
+            {isFree ? 'Free' : `$${props.price}`}
+          </span>
         </div>
-        <div onClick={(e) => e.stopPropagation()} className="px-5 py-4 bg-white/2 border-t border-white/10">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="px-5 py-4 bg-white/2 border-t border-white/10"
+        >
           {installed ? (
-            <button className="w-full px-4 py-3 border border-success text-success rounded-xl font-semibold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2" onClick={() => setFullCardOpen(true)}><Check size={18} /> Installed</button>
+            <button
+              className="w-full px-4 py-3 border border-success text-success rounded-xl font-semibold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2"
+              onClick={() => setFullCardOpen(true)}
+            >
+              <Check size={18} /> Installed
+            </button>
           ) : !installable ? (
-            <button onClick={() => setFullCardOpen(true)} className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-60 cursor-pointer inline-flex items-center justify-center gap-2 border border-white/10 hover:bg-white/5 transition"><AlertTriangle size={18} /> Not compatible</button>
+            <button
+              onClick={() => setFullCardOpen(true)}
+              className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-60 cursor-pointer inline-flex items-center justify-center gap-2 border border-white/10 hover:bg-white/5 transition"
+            >
+              <AlertTriangle size={18} /> Not compatible
+            </button>
           ) : (
             <InstallButton app={props} version={latestVersion} disabled={false} fullWidth />
           )}
         </div>
       </div>
-      {fullCardOpen && createPortal(
-        <FullCard app={props} open={fullCardOpen} onClose={() => setFullCardOpen(false)} />,
-        document.body
-      )}
+      {fullCardOpen &&
+        createPortal(
+          <FullCard app={props} open={fullCardOpen} onClose={() => setFullCardOpen(false)} />,
+          document.body,
+        )}
     </>
   );
 }

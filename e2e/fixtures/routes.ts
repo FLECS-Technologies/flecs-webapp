@@ -59,9 +59,7 @@ export async function mockHappyPath(page: Page): Promise<void> {
   );
 
   // Exports list (System page Exports tab + download ribbon)
-  await page.route('**/api/v2/exports', (route) =>
-    route.fulfill({ json: [], status: 200 }),
-  );
+  await page.route('**/api/v2/exports', (route) => route.fulfill({ json: [], status: 200 }));
 
   // Installed apps
   await page.route('**/api/v2/apps', (route) =>
@@ -74,9 +72,7 @@ export async function mockHappyPath(page: Page): Promise<void> {
   );
 
   // Quests
-  await page.route('**/api/v2/quests', (route) =>
-    route.fulfill({ json: [], status: 200 }),
-  );
+  await page.route('**/api/v2/quests', (route) => route.fulfill({ json: [], status: 200 }));
 
   // License activation (already active — skips DeviceActivation UI)
   await page.route('**/api/v2/device/license/activation/status', (route) =>

@@ -6,7 +6,9 @@ import { FetchError } from './fetch-error';
 // (verified against codeberg.org/flecs-tech/flecs-core src/wall/watch.rs).
 // XSS → token theft risk is mitigated by CSP + DOMPurify, not by storage choice.
 let _accessToken: string | undefined;
-export const setAuthToken = (token: string | undefined) => { _accessToken = token; };
+export const setAuthToken = (token: string | undefined) => {
+  _accessToken = token;
+};
 
 export const customInstance = async <T>(url: string, options?: RequestInit): Promise<T> => {
   // Only force JSON Content-Type for string bodies. FormData/Blob need the

@@ -57,6 +57,10 @@ for (const v of violations) {
   console.error(`  ${v.file}:${v.line}  [${v.label}]`);
   console.error(`    ${v.text}\n`);
 }
-console.error('Fix by using generated types (orval), runtime guards (zod/instanceof), or correcting the data flow.');
-console.error('If truly unavoidable, annotate the line with `// check-casts-disable` and explain why.');
+console.error(
+  'Fix by using generated types (orval), runtime guards (zod/instanceof), or correcting the data flow.',
+);
+console.error(
+  'If truly unavoidable, annotate the line with `// check-casts-disable` and explain why.',
+);
 process.exit(1);

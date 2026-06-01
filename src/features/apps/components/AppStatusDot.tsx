@@ -1,5 +1,3 @@
-
-
 const statusConfig: Record<string, { color: string; label: string }> = {
   running: { color: 'var(--color-success)', label: 'Running' },
   stopped: { color: 'var(--color-muted)', label: 'Stopped' },

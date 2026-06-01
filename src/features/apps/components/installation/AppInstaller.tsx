@@ -7,8 +7,16 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePostAppsInstall, useDeleteAppsApp, usePostAppsSideload } from '@generated/core/apps/apps';
-import { usePostInstancesCreate, usePostInstancesInstanceIdStart, usePatchInstancesInstanceId } from '@generated/core/instances/instances';
+import {
+  usePostAppsInstall,
+  useDeleteAppsApp,
+  usePostAppsSideload,
+} from '@generated/core/apps/apps';
+import {
+  usePostInstancesCreate,
+  usePostInstancesInstanceIdStart,
+  usePatchInstancesInstanceId,
+} from '@generated/core/instances/instances';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
@@ -36,7 +44,14 @@ interface AppInstallerProps {
   onStateChange?: (state: InstallerState) => void;
 }
 
-export default function AppInstaller({ mode, app, manifest, version, fromVersion, onStateChange }: AppInstallerProps) {
+export default function AppInstaller({
+  mode,
+  app,
+  manifest,
+  version,
+  fromVersion,
+  onStateChange,
+}: AppInstallerProps) {
   const [phase, setPhase] = useState<Phase>('activation');
   const [message, setMessage] = useState('');
   const ran = useRef(false);
@@ -104,13 +119,11 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
           const sr = await startInstance({ instanceId: createResult.result });
           await questStep(getJobId(sr));
         }
-
       } else if (mode === 'sideload') {
         if (!manifest) throw new Error('No manifest provided');
         setMessage('Sideloading app...');
         const r = await sideloadApp({ data: { manifest } });
         await questStep(getJobId(r));
-
       } else if (mode === 'update') {
         if (!app?.appKey?.name || !version || !fromVersion) {
           throw new Error('Missing app, target version, or source version for update');
@@ -126,7 +139,9 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
         // single-device deployment and is renegotiable if the product changes.
         const instances = app.instances ?? [];
         if (instances.length > 100) {
-          throw new Error(`Too many instances to migrate in one pass (${instances.length}). Reduce in batches.`);
+          throw new Error(
+            `Too many instances to migrate in one pass (${instances.length}). Reduce in batches.`,
+          );
         }
         setMessage(`Migrating ${instances.length} instance${instances.length === 1 ? '' : 's'}...`);
         const results = await Promise.allSettled(
@@ -138,7 +153,9 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
         const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
         if (failures.length > 0) {
           const detail = failures.map((f) => getErrorMessage(f.reason)).join('; ');
-          throw new Error(`${failures.length} of ${results.length} instance migrations failed: ${detail}`);
+          throw new Error(
+            `${failures.length} of ${results.length} instance migrations failed: ${detail}`,
+          );
         }
 
         setMessage('Removing old version...');
@@ -147,13 +164,32 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
       }
 
       setPhase('success');
-      setMessage(mode === 'install' ? 'App installed!' : mode === 'update' ? 'App updated!' : 'App sideloaded!');
+      setMessage(
+        mode === 'install'
+          ? 'App installed!'
+          : mode === 'update'
+            ? 'App updated!'
+            : 'App sideloaded!',
+      );
       qc.invalidateQueries();
     } catch (err: unknown) {
       setPhase('error');
       setMessage(getErrorMessage(err));
     }
-  }, [mode, app, manifest, version, fromVersion, installApp, sideloadApp, deleteApp, patchInstance, createInstance, startInstance, qc]);
+  }, [
+    mode,
+    app,
+    manifest,
+    version,
+    fromVersion,
+    installApp,
+    sideloadApp,
+    deleteApp,
+    patchInstance,
+    createInstance,
+    startInstance,
+    qc,
+  ]);
 
   // Auto-advance past activation when device is activated
   useEffect(() => {
@@ -176,7 +212,9 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
       <div className="flex flex-col items-center gap-4 py-8">
         <div className="animate-spin h-8 w-8 border-2 border-brand border-t-transparent rounded-full" />
         <p className="text-sm">{message}</p>
-        <p className="text-xs text-muted">You can close this window. Installation continues in the background.</p>
+        <p className="text-xs text-muted">
+          You can close this window. Installation continues in the background.
+        </p>
       </div>
     );
   }
@@ -196,7 +234,13 @@ export default function AppInstaller({ mode, app, manifest, version, fromVersion
     <div className="flex flex-col items-center gap-4 py-8">
       <AlertCircle size={40} className="text-error" />
       <p className="text-sm text-error">{message}</p>
-      <button onClick={() => { ran.current = false; setPhase('activation'); }} className="flex items-center gap-2 px-4 py-2 border border-brand text-brand rounded-lg hover:bg-brand/10 transition">
+      <button
+        onClick={() => {
+          ran.current = false;
+          setPhase('activation');
+        }}
+        className="flex items-center gap-2 px-4 py-2 border border-brand text-brand rounded-lg hover:bg-brand/10 transition"
+      >
         <RotateCcw size={16} /> Retry
       </button>
     </div>

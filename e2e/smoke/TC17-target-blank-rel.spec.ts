@@ -32,7 +32,9 @@ test.describe('@smoke TC17 — target blank rel hygiene', () => {
           .map(({ href, rel }) => `${href} rel="${rel}"`),
       );
 
-      expect(offenders, `route ${route}: anchors missing rel:\n${offenders.join('\n')}`).toEqual([]);
+      expect(offenders, `route ${route}: anchors missing rel:\n${offenders.join('\n')}`).toEqual(
+        [],
+      );
     }
   });
 });

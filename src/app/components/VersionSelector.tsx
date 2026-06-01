@@ -8,14 +8,20 @@ interface VersionSelectorProps {
   setSelectedVersion: (v: AppVersion) => void;
 }
 
-export function VersionSelector({ availableVersions, selectedVersion, setSelectedVersion }: VersionSelectorProps) {
+export function VersionSelector({
+  availableVersions,
+  selectedVersion,
+  setSelectedVersion,
+}: VersionSelectorProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const hasUpdate = availableVersions.length > 0 && !availableVersions[0]?.installed;
 
   useEffect(() => {
     if (!open) return;
-    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
@@ -30,9 +36,16 @@ export function VersionSelector({ availableVersions, selectedVersion, setSelecte
       >
         <span>{selectedVersion?.version || 'Select version'}</span>
         <div className="flex items-center gap-1.5">
-          {selectedVersion?.installed && <span className="text-[11px] text-muted px-1.5 py-0.5 rounded bg-surface-hover">installed</span>}
+          {selectedVersion?.installed && (
+            <span className="text-[11px] text-muted px-1.5 py-0.5 rounded bg-surface-hover">
+              installed
+            </span>
+          )}
           {hasUpdate && <Sparkles size={13} className="text-brand" />}
-          <ChevronDown size={15} className={`text-muted transition-transform ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            size={15}
+            className={`text-muted transition-transform ${open ? 'rotate-180' : ''}`}
+          />
         </div>
       </button>
       {open && (
@@ -40,7 +53,10 @@ export function VersionSelector({ availableVersions, selectedVersion, setSelecte
           {availableVersions.map((v) => (
             <button
               key={v.version}
-              onClick={() => { setSelectedVersion(v); setOpen(false); }}
+              onClick={() => {
+                setSelectedVersion(v);
+                setOpen(false);
+              }}
               className={`w-full flex items-center justify-between px-3 py-2 text-sm transition cursor-pointer ${v.version === selectedVersion?.version ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'}`}
             >
               <span>{v.version}</span>

@@ -1,4 +1,10 @@
-import type { AppStatus, InstalledApp, AppInstance, Quest, QuestState } from '@generated/core/schemas';
+import type {
+  AppStatus,
+  InstalledApp,
+  AppInstance,
+  Quest,
+  QuestState,
+} from '@generated/core/schemas';
 
 /** State callback shape emitted by AppInstaller / InstallationStepper */
 export interface InstallerState {

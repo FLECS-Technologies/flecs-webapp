@@ -19,7 +19,10 @@ import { QueryObserver, useQueryClient } from '@tanstack/react-query';
 import { useQuestStore, addQuest, getQuest } from '@stores/quests';
 import { unwrapSuccess } from '@app/api/unwrap';
 
-const isFinished = (q: Quest) => q.state !== QuestState.failing && q.state !== QuestState.ongoing && q.state !== QuestState.pending;
+const isFinished = (q: Quest) =>
+  q.state !== QuestState.failing &&
+  q.state !== QuestState.ongoing &&
+  q.state !== QuestState.pending;
 
 /** Live quest polling with auto-toast on completion */
 export function useQuestPolling() {
@@ -121,5 +124,12 @@ export function useQuestActions() {
     qc.invalidateQueries({ queryKey: ['/quests'] });
   }, [deleteQuest, qc]);
 
-  return { waitForQuest, clearQuests, fetchQuest: async (id: number) => { const r = await getQuestsId(id); addQuest(r.data as Quest); } };
+  return {
+    waitForQuest,
+    clearQuests,
+    fetchQuest: async (id: number) => {
+      const r = await getQuestsId(id);
+      addQuest(r.data as Quest);
+    },
+  };
 }

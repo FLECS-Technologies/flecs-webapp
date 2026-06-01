@@ -106,16 +106,30 @@ export default tseslint.config(
       '@tanstack/query/infinite-query-property-order': 'error',
 
       // Architecture — enforce dependency direction: app → pages → features
-      'import/no-restricted-paths': ['error', {
-        zones: [
-          { target: './src/features', from: './src/pages', message: 'features/ cannot import from pages/' },
-          { target: './src/features', from: './src/app', message: 'features/ cannot import from app/' },
-          { target: './src/pages', from: './src/app', message: 'pages/ cannot import from app/' },
-        ],
-      }],
+      'import/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/features',
+              from: './src/pages',
+              message: 'features/ cannot import from pages/',
+            },
+            {
+              target: './src/features',
+              from: './src/app',
+              message: 'features/ cannot import from app/',
+            },
+            { target: './src/pages', from: './src/app', message: 'pages/ cannot import from app/' },
+          ],
+        },
+      ],
 
       // ── WARNINGS: historical debt, clean up opportunistically ─────────
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-empty-object-type': 'warn',
       'react/no-unescaped-entities': 'warn',
       'react-hooks/exhaustive-deps': 'warn',

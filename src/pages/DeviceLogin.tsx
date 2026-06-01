@@ -42,31 +42,78 @@ export default function DeviceLogin() {
 
           {mode === 'error' && (
             <div className="w-full">
-              <div className="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 mb-4 text-sm">Device not reachable</div>
-              <button onClick={() => refetch()} className="w-full px-4 py-3 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition">Retry</button>
+              <div className="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 mb-4 text-sm">
+                Device not reachable
+              </div>
+              <button
+                onClick={() => refetch()}
+                className="w-full px-4 py-3 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition"
+              >
+                Retry
+              </button>
             </div>
           )}
 
           {mode === 'login' && (
             <>
               <p className="text-base text-center text-muted">Please authenticate to continue</p>
-              <button onClick={handleLogin} className="w-full px-4 py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition">Login</button>
+              <button
+                onClick={handleLogin}
+                className="w-full px-4 py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition"
+              >
+                Login
+              </button>
             </>
           )}
 
           {mode === 'signup' && (
-            <form onSubmit={(e) => { e.preventDefault(); handleSignup(); }} className="w-full flex flex-col gap-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSignup();
+              }}
+              className="w-full flex flex-col gap-4"
+            >
               <p className="text-sm text-center text-muted">Create the first admin account</p>
-              {error && <div className="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm">{error}</div>}
-              <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand" />
+              {error && (
+                <div className="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm">
+                  {error}
+                </div>
+              )}
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username"
+                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+              />
               <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand pr-10" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-2 p-1 text-muted hover:text-white">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-2 p-1 text-muted hover:text-white"
+                >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <input type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand" />
-              <button type="submit" disabled={isPending} className="w-full px-4 py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
+                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+              />
+              <button
+                type="submit"
+                disabled={isPending}
+                className="w-full px-4 py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition disabled:opacity-50"
+              >
                 {isPending ? 'Creating...' : 'Create Account & Login'}
               </button>
             </form>

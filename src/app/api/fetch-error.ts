@@ -34,8 +34,10 @@ export function getErrorMessage(error: unknown): string {
 
 function extractServerMessage(data: unknown): string | undefined {
   if (typeof data !== 'object' || data === null) return undefined;
-  if ('additionalInfo' in data && typeof data.additionalInfo === 'string') return data.additionalInfo;
-  if ('additional_info' in data && typeof data.additional_info === 'string') return data.additional_info;
+  if ('additionalInfo' in data && typeof data.additionalInfo === 'string')
+    return data.additionalInfo;
+  if ('additional_info' in data && typeof data.additional_info === 'string')
+    return data.additional_info;
   if ('message' in data && typeof data.message === 'string') return data.message;
   return undefined;
 }

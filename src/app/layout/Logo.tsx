@@ -1,8 +1,5 @@
 import React from 'react';
-import WhiteLabelLogo, {
-  useWhiteLabelLogo,
-  showPoweredBy,
-} from '@app/theme/WhiteLabelLogo';
+import WhiteLabelLogo, { useWhiteLabelLogo, showPoweredBy } from '@app/theme/WhiteLabelLogo';
 import FLECSLogo from './FLECSLogo';
 
 const Logo: React.FC = () => {

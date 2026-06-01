@@ -1,41 +1,41 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ── FLECS Design Tokens ── */
 /* Per Tailwind v4 best practices: all tokens in CSS, semantic names by role */
 @theme {
   /* Brand primitives */
-  --color-brand: #FF2E63;
-  --color-brand-end: #FF6B8A;
-  --color-dark: #0B0B18;
-  --color-dark-end: #1A1A2E;
-  --color-muted: #6B7280;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-accent: #73A9CA;
+  --color-brand: #ff2e63;
+  --color-brand-end: #ff6b8a;
+  --color-dark: #0b0b18;
+  --color-dark-end: #1a1a2e;
+  --color-muted: #6b7280;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-accent: #73a9ca;
 
   /* Semantic surfaces */
-  --color-surface: #0B0B18;
-  --color-surface-raised: #1A1A2E;
-  --color-surface-overlay: #1E1E34;
+  --color-surface: #0b0b18;
+  --color-surface-raised: #1a1a2e;
+  --color-surface-overlay: #1e1e34;
   --color-surface-hover: rgba(255, 255, 255, 0.05);
 
   /* Semantic borders */
-  --color-border: rgba(255, 255, 255, 0.10);
-  --color-border-strong: rgba(255, 255, 255, 0.20);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.2);
 
   /* Semantic text */
-  --color-text-primary: #F3F4F6;
-  --color-text-secondary: #9CA3AF;
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #9ca3af;
 
   /* Typography */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ── Font face ── */
 @font-face {
-  font-family: "Inter";
-  src: url("./assets/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-family: 'Inter';
+  src: url('./assets/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;

@@ -25,10 +25,14 @@ test.describe('@smoke TC05 — sideload wire format', () => {
 
     // InstalledApps is the root route (see ui-routes.tsx).
     await page.goto('/');
-    await page.getByRole('button', { name: /upload manifest/i }).first().click();
+    await page
+      .getByRole('button', { name: /upload manifest/i })
+      .first()
+      .click();
 
     const manifestText = JSON.stringify({
-      $schema: 'https://raw.githubusercontent.com/FLECS-Technologies/app-sdk/main/manifest.schema.json',
+      $schema:
+        'https://raw.githubusercontent.com/FLECS-Technologies/app-sdk/main/manifest.schema.json',
       _schemaVersion: '2.0.0',
       app: 'tech.flecs.wire',
       version: '1.0.0',

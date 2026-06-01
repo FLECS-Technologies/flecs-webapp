@@ -26,7 +26,11 @@ const { PostAppsSideloadBody } = await import('@generated/core/schemas/postAppsS
 describe('POST /apps/sideload wire format', () => {
   beforeEach(() => {
     customInstanceMock.mockReset();
-    customInstanceMock.mockResolvedValue({ data: { jobId: 42 }, status: 202, headers: new Headers() });
+    customInstanceMock.mockResolvedValue({
+      data: { jobId: 42 },
+      status: 202,
+      headers: new Headers(),
+    });
   });
 
   it('sends a JSON body of {"manifest": "<raw text>"} — not a parsed object', async () => {

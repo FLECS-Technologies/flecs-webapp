@@ -28,7 +28,9 @@ export default function MarqueeText({ text, speed = 50 }: MarqueeTextProps): Rea
         className="inline-flex whitespace-nowrap"
         style={{ animation: overflow ? `marquee ${duration}s linear infinite` : 'none' }}
       >
-        <span ref={textRef} className={overflow ? 'pr-4' : ''}>{text}</span>
+        <span ref={textRef} className={overflow ? 'pr-4' : ''}>
+          {text}
+        </span>
         {overflow && <span className="pr-4">{text}</span>}
       </div>
       <style>{`@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>

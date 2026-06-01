@@ -27,7 +27,12 @@ export default function OnboardingGuard({ children }: { children: React.ReactNod
   });
 
   useEffect(() => {
-    if (!isLoading && needsOnboarding && !hasRedirected.current && location.pathname !== '/onboarding') {
+    if (
+      !isLoading &&
+      needsOnboarding &&
+      !hasRedirected.current &&
+      location.pathname !== '/onboarding'
+    ) {
       hasRedirected.current = true;
       navigate('/onboarding');
     }

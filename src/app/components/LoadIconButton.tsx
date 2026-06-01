@@ -11,7 +11,14 @@ interface LoadIconButtonProps {
   label?: string;
 }
 
-const LoadIconButton: React.FC<LoadIconButtonProps> = ({ icon, disabled, onClick, displaystate, loading, label }) => {
+const LoadIconButton: React.FC<LoadIconButtonProps> = ({
+  icon,
+  disabled,
+  onClick,
+  displaystate,
+  loading,
+  label,
+}) => {
   return (
     <div className="relative">
       <button

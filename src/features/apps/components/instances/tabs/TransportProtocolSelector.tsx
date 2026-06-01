@@ -8,7 +8,10 @@ interface TransportProtocolSelectorProps {
   sx?: object;
 }
 
-const TransportProtocolSelector: React.FC<TransportProtocolSelectorProps> = ({ value, onChange }) => {
+const TransportProtocolSelector: React.FC<TransportProtocolSelectorProps> = ({
+  value,
+  onChange,
+}) => {
   return (
     <select
       aria-label="Transport Protocol"

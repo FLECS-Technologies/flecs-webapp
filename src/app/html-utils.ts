@@ -8,7 +8,6 @@ export function decodeHtmlEntities(str: string) {
   return txt.value;
 }
 
-
 export function sanitizeHtml(html: string): string {
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [

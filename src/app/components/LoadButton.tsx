@@ -26,7 +26,8 @@ const LoadButton: React.FC<LoadButtonProps> = (props) => {
     ...buttonProps
   } = props;
 
-  const base = 'px-4 py-2 rounded-lg font-semibold transition text-sm inline-flex items-center gap-2';
+  const base =
+    'px-4 py-2 rounded-lg font-semibold transition text-sm inline-flex items-center gap-2';
   const colorMap: Record<string, string> = {
     error: 'border border-error text-error hover:bg-error/10',
     success: 'border border-success text-success hover:bg-success/10',

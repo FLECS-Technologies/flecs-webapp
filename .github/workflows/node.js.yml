@@ -31,5 +31,5 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
-      - run: npm run build:test --if-present
+      - run: npm run build
       - run: npm test

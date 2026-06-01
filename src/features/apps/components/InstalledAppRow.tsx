@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect, type CSSProperties } from 'react';
 import { toast } from 'sonner';
 import ReactDOM from 'react-dom';
 import {
@@ -73,6 +73,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           ? 'Stopped'
           : (instance.status ?? 'Unknown');
   const [menuAnchor, setMenuAnchor] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<CSSProperties>({ visibility: 'hidden' });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -89,6 +90,31 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Position the portal menu so it stays fully within the viewport: flip it
+  // above the button when there isn't room below, and cap its height as a
+  // safety net so a long menu near a screen edge never gets clipped.
+  useLayoutEffect(() => {
+    if (!menuAnchor) {
+      setMenuStyle({ visibility: 'hidden' });
+      return;
+    }
+    const btn = btnRef.current;
+    const menu = menuRef.current;
+    if (!btn || !menu) return;
+    const rect = btn.getBoundingClientRect();
+    const margin = 8;
+    const spaceBelow = window.innerHeight - rect.bottom - margin;
+    const spaceAbove = rect.top - margin;
+    const openUp = menu.offsetHeight > spaceBelow && spaceAbove > spaceBelow;
+    setMenuStyle({
+      position: 'fixed',
+      right: window.innerWidth - rect.right,
+      maxHeight: Math.max(openUp ? spaceAbove : spaceBelow, 0),
+      overflowY: 'auto',
+      ...(openUp ? { bottom: window.innerHeight - rect.top + 4 } : { top: rect.bottom + 4 }),
+    });
+  }, [menuAnchor]);
 
   /** Extract jobId from a 202 response (mutator throws on non-2xx, so data is always success variant) */
   const extractJobId = (resp: { data: unknown; status: number }): number => {
@@ -199,7 +225,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           </button>
         )}
         {/* Menu */}
-        <div className="relative" ref={menuRef}>
+        <div className="relative">
           <button
             ref={btnRef}
             aria-label={`${app.title} actions`}
@@ -213,11 +239,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             ReactDOM.createPortal(
               <div
                 ref={menuRef}
-                style={{
-                  position: 'fixed',
-                  top: (btnRef.current?.getBoundingClientRect().bottom ?? 0) + 4,
-                  right: window.innerWidth - (btnRef.current?.getBoundingClientRect().right ?? 0),
-                }}
+                style={menuStyle}
                 className="w-48 rounded-xl bg-surface-raised border border-border shadow-xl z-[9999] py-1"
               >
                 {!instance && (

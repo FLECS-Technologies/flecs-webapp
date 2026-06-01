@@ -11,11 +11,11 @@ ci:
 
 .PHONY: dev-build
 dev-build: ci
-	@npm run build:test --if-present
+	@npm run build:dev
 
 .PHONY: build
 build: ci
-	@npm run build:production --if-present
+	@npm run build
 
 special_%:
 	@./special/$*.sh

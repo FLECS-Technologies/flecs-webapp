@@ -47,11 +47,11 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
   const [fullCardOpen, setFullCardOpen] = useState(false);
   const plainDescription = (props.short_description || '')
     .replace(/<[^>]*>/g, '')
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'");
+    .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, '&');
   const isFree = !props.price || parseFloat(props.price) === 0;
 
   return (

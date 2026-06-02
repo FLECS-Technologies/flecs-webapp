@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import {
   Search,
   Download,
@@ -11,11 +11,14 @@ import {
   Moon,
   PanelLeftClose,
   ChevronDown,
+  ExternalLink,
+  MoreHorizontal,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUIStore } from '@stores/ui';
-import { useGetApps } from '@generated/core/apps/apps';
-import { useGetApiV2ProductsApps } from '@generated/console/products/products';
+import { useAppList } from '@features/apps/app-queries';
+import { flattenEditors } from '@features/apps/editor-nav';
+import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useDarkMode } from '@app/theme/ThemeHandler';
@@ -53,6 +56,9 @@ const NAV = [
   },
 ];
 
+/** Max editor rows shown before the "All editors" overflow link */
+const MAX_EDITORS = 8;
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -61,8 +67,7 @@ export default function Sidebar() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
   const toggleCollapsed = useUIStore((s) => s.toggleSidebarCollapsed);
-  const { data: appsRes } = useGetApps({ query: { refetchInterval: 10_000 } });
-  const { data: mpRes } = useGetApiV2ProductsApps(undefined, { query: { staleTime: 300_000 } });
+  const { appList, products } = useAppList();
   const auth = useOAuth4WebApiAuth();
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
@@ -70,10 +75,9 @@ export default function Sidebar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const products = unwrapSuccess(mpRes)?.data?.products ?? [];
-  const installedApps = unwrapSuccess(appsRes) ?? [];
-  const installedCount = installedApps.filter((a) => a?.status === 'installed').length;
+  const installedCount = (appList ?? []).filter((a) => a?.status === 'installed').length;
   const badges: Record<string, number> = { products: products.length, installed: installedCount };
+  const editorItems = flattenEditors(appList);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 899px)');
@@ -137,45 +141,108 @@ export default function Sidebar() {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-2 py-1">
           {NAV.map(({ section, items }) => (
-            <div key={section} className="mb-1">
-              {!isCol && (
-                <p className="px-3 pt-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted">
-                  {section}
-                </p>
+            <Fragment key={section}>
+              <div className="mb-1">
+                {!isCol && (
+                  <p className="px-3 pt-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted">
+                    {section}
+                  </p>
+                )}
+                {isCol && section !== NAV[0].section && <hr className="border-border mx-1 my-2" />}
+                {items.map(({ label, icon: Icon, path, badgeKey }) => {
+                  const active = pathname === path;
+                  const badge = badgeKey ? badges[badgeKey] : undefined;
+                  return (
+                    <button
+                      key={path}
+                      title={isCol ? label : undefined}
+                      onClick={() => {
+                        navigate(path);
+                        if (isMobile) toggleSidebar();
+                      }}
+                      className={`flex items-center w-full rounded-lg mb-0.5 transition-colors cursor-pointer ${isCol ? 'justify-center py-2.5 mx-auto' : 'py-2 px-3 gap-3'} ${active ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'}`}
+                    >
+                      <Icon size={18} className={active ? 'text-brand' : ''} />
+                      {!isCol && (
+                        <span
+                          className={`flex-1 text-left text-[13px] ${active ? 'font-semibold' : 'font-medium'}`}
+                        >
+                          {label}
+                        </span>
+                      )}
+                      {!isCol && badge ? (
+                        <span
+                          className={`text-[11px] font-medium tabular-nums rounded-md px-1.5 py-0.5 ${active ? 'bg-brand/15 text-brand' : 'bg-surface-hover text-muted'}`}
+                        >
+                          {badge}
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Editors — dynamic launcher for editors of running instances.
+                  Section disappears entirely when nothing is running. */}
+              {section === 'Apps' && editorItems.length > 0 && (
+                <div className="mb-1">
+                  {!isCol && (
+                    <p className="px-3 pt-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted">
+                      Editors
+                    </p>
+                  )}
+                  {isCol && <hr className="border-border mx-1 my-2" />}
+                  {editorItems.slice(0, MAX_EDITORS).map((item) => (
+                    <button
+                      key={item.key}
+                      title={isCol ? item.label : `Open ${item.label} in a new tab`}
+                      onClick={() => {
+                        window.open(createUrl(item.url));
+                        if (isMobile) toggleSidebar();
+                      }}
+                      className={`group flex items-center w-full rounded-lg mb-0.5 transition-colors cursor-pointer text-text-secondary hover:bg-surface-hover hover:text-text-primary ${isCol ? 'justify-center py-2.5 mx-auto' : 'py-2 px-3 gap-3'}`}
+                    >
+                      {item.avatar ? (
+                        <img
+                          src={item.avatar}
+                          alt=""
+                          className="w-[18px] h-[18px] rounded shrink-0 object-cover"
+                        />
+                      ) : (
+                        <span className="w-[18px] h-[18px] rounded bg-brand/15 text-brand text-[10px] font-bold flex items-center justify-center shrink-0">
+                          {item.label[0]?.toUpperCase()}
+                        </span>
+                      )}
+                      {!isCol && (
+                        <>
+                          <span className="flex-1 text-left text-[13px] font-medium truncate">
+                            {item.label}
+                          </span>
+                          <ExternalLink
+                            size={14}
+                            className="text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          />
+                        </>
+                      )}
+                    </button>
+                  ))}
+                  {!isCol && editorItems.length > MAX_EDITORS && (
+                    <button
+                      onClick={() => {
+                        navigate('/');
+                        if (isMobile) toggleSidebar();
+                      }}
+                      className="flex items-center w-full rounded-lg mb-0.5 py-2 px-3 gap-3 transition-colors cursor-pointer text-muted hover:bg-surface-hover hover:text-text-primary"
+                    >
+                      <MoreHorizontal size={18} />
+                      <span className="flex-1 text-left text-[13px] font-medium">
+                        All editors ({editorItems.length})
+                      </span>
+                    </button>
+                  )}
+                </div>
               )}
-              {isCol && section !== NAV[0].section && <hr className="border-border mx-1 my-2" />}
-              {items.map(({ label, icon: Icon, path, badgeKey }) => {
-                const active = pathname === path;
-                const badge = badgeKey ? badges[badgeKey] : undefined;
-                return (
-                  <button
-                    key={path}
-                    title={isCol ? label : undefined}
-                    onClick={() => {
-                      navigate(path);
-                      if (isMobile) toggleSidebar();
-                    }}
-                    className={`flex items-center w-full rounded-lg mb-0.5 transition-colors cursor-pointer ${isCol ? 'justify-center py-2.5 mx-auto' : 'py-2 px-3 gap-3'} ${active ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'}`}
-                  >
-                    <Icon size={18} className={active ? 'text-brand' : ''} />
-                    {!isCol && (
-                      <span
-                        className={`flex-1 text-left text-[13px] ${active ? 'font-semibold' : 'font-medium'}`}
-                      >
-                        {label}
-                      </span>
-                    )}
-                    {!isCol && badge ? (
-                      <span
-                        className={`text-[11px] font-medium tabular-nums rounded-md px-1.5 py-0.5 ${active ? 'bg-brand/15 text-brand' : 'bg-surface-hover text-muted'}`}
-                      >
-                        {badge}
-                      </span>
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
+            </Fragment>
           ))}
         </nav>
 

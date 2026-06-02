@@ -49,7 +49,7 @@ export default function Import(props: ImportProps) {
     } else if (fileName.endsWith('.json')) {
       handleJsonFile(file);
     } else {
-      toast.error('Unsupported file type. Please upload a .tar, .tar.gz or .json file.');
+      toast.error('Unsupported file type. Please select a .tar, .tar.gz or .json file.');
     }
   };
 

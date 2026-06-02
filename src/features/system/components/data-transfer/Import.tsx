@@ -20,6 +20,7 @@ import React from 'react';
 import { toast } from 'sonner';
 import { FolderUp } from 'lucide-react';
 import FileOpen from '@app/components/FileOpen';
+import { useFileDrop } from '@app/components/useFileDrop';
 
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
@@ -28,10 +29,15 @@ import { postImports } from '@generated/core/flecsport/flecsport';
 import { unwrapSuccess } from '@app/api/unwrap';
 import { getErrorMessage } from '@app/api/fetch-error';
 
-export default function Import(props: React.ComponentProps<'button'>) {
+interface ImportProps extends React.ComponentProps<'button'> {
+  /** Render as a drag-and-drop zone (dashed container) instead of a bare button. */
+  dropzone?: boolean;
+}
+
+export default function Import(props: ImportProps) {
   const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
-  const { ...buttonProps } = props;
+  const { dropzone, ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
 
   const handleFileUpload = (file: string | File) => {
@@ -92,7 +98,14 @@ export default function Import(props: React.ComponentProps<'button'>) {
     }
   };
 
-  return (
+  // handleFileUpload validates the extension and toasts on mismatch,
+  // so the dropzone accepts any file and defers validation.
+  const { isDragOver, dropProps } = useFileDrop({
+    onFile: handleFileUpload,
+    disabled: buttonProps.disabled || importing,
+  });
+
+  const button = (
     <FileOpen
       {...buttonProps}
       data-testid="import-apps-button"
@@ -104,5 +117,20 @@ export default function Import(props: React.ComponentProps<'button'>) {
       wholeFile={true}
       disabled={buttonProps.disabled || importing}
     ></FileOpen>
+  );
+
+  if (!dropzone) return button;
+
+  return (
+    <div
+      data-testid="import-dropzone"
+      {...dropProps}
+      className={`px-5 rounded-xl border border-dashed flex items-center gap-4 hover:border-brand hover:bg-brand/3 transition ${isDragOver ? 'border-brand bg-brand/3' : 'border-white/10'}`}
+    >
+      <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-muted shrink-0">
+        <FolderUp size={18} />
+      </div>
+      {button}
+    </div>
   );
 }

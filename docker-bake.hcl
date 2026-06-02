@@ -7,9 +7,9 @@ variable "VERSION_SPECIAL" {
   default = ""
 }
 
-# Named tag applied alongside the versioned one (e.g. "develop", "latest")
+# Named tag applied alongside the versioned one (e.g. "dev", "latest")
 variable "NAMED_TAG" {
-  default = "develop"
+  default = "dev"
 }
 
 group "default" {

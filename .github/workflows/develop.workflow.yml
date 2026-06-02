@@ -11,5 +11,5 @@ jobs:
     with:
       make_target: dev-build
       version_suffix: '-dev'
-      named_tag: develop
+      named_tag: dev
     secrets: inherit

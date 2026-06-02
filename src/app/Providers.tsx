@@ -6,14 +6,17 @@ import DeviceLogin from '@pages/DeviceLogin';
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useOAuth4WebApiAuth();
   if (window.location.hash.includes('/oauth/callback')) return <>{children}</>;
+  // Auth state is known synchronously (localStorage) — render the app immediately.
+  // isLoading only tracks the auth-config fetch, which signIn needs but the app doesn't;
+  // gating on it flashed a spinner on every reload and after the OAuth redirect.
+  if (isAuthenticated) return <>{children}</>;
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin h-6 w-6 border-2 border-brand border-t-transparent rounded-full" />
       </div>
     );
-  if (!isAuthenticated) return <DeviceLogin />;
-  return <>{children}</>;
+  return <DeviceLogin />;
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {

@@ -70,6 +70,8 @@
     "dev": "vite",
     "dev:staging": "vite --mode staging",
     "prebuild": "npm run generate",
+    "prebuild:dev": "npm run generate",
+    "prebuild:staging": "npm run generate",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "build:staging": "vite build --mode staging",

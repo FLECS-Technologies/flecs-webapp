@@ -73,6 +73,7 @@
     "build": "vite build",
     "build:staging": "vite build --mode staging",
     "preview": "vite preview",
+    "pretest": "npm run generate",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

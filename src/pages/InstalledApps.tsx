@@ -8,6 +8,7 @@ import { QuestState } from '@generated/core/schemas';
 import type { Quest } from '@generated/core/schemas';
 import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';
+import RowSkeleton from '@features/apps/components/RowSkeleton';
 import ContentDialog from '@app/components/ContentDialog';
 import { useFileDrop } from '@app/components/useFileDrop';
 import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
@@ -17,27 +18,6 @@ import type { EnrichedApp, AppVersion } from '@features/apps/types';
 import { unwrapSuccess } from '@app/api/unwrap';
 const getLatestVersion = (versions: AppVersion[]) => versions?.[0];
 const createVersions = (v: AppVersion[], _installed?: string[]) => v;
-
-function RowSkeleton() {
-  return (
-    <div className="rounded-xl border border-white/10 overflow-hidden">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className={i > 0 ? 'border-t border-white/10' : ''}>
-          <div className="flex items-center gap-4 px-5 py-3">
-            <div className="animate-pulse bg-white/10 rounded-lg w-12 h-12" />
-            <div className="flex-1">
-              <div className="animate-pulse bg-white/10 rounded h-5 w-[35%]" />
-              <div className="animate-pulse bg-white/10 rounded h-3.5 w-[45%] mt-1" />
-              <div className="animate-pulse bg-white/10 rounded h-3 w-[15%] mt-1" />
-            </div>
-            <div className="animate-pulse bg-white/10 rounded-lg w-[72px] h-8" />
-            <div className="animate-pulse bg-white/10 rounded-full w-7 h-7" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function getAppsWithUpdates(apps: EnrichedApp[]) {
   return apps.filter((app) => {
@@ -56,12 +36,15 @@ function parseInstallQuest(desc: string) {
 
 export default function InstalledApps() {
   const { appList, isLoading: appListLoading, isError: appListError } = useAppList();
-  const { data: pingData } = useGetSystemPing({ query: { retry: false, refetchInterval: 30_000 } });
+  const { data: pingData, isLoading: pingLoading } = useGetSystemPing({
+    query: { retry: false, refetchInterval: 30_000 },
+  });
   // Read from the shared /quests cache. Polling is driven by useQuestPolling
   // in JobsRail (globally mounted in Frame) — adding another refetchInterval
   // here would force the shared query to 2s even when nothing is active.
   const { data: questsData } = useGetQuests();
   const ping = !!pingData;
+  const isLoading = appListLoading || pingLoading;
   const [sideloadManifest, setSideloadManifest] = useState<string | null>(null);
   const [sideloadPickerOpen, setSideloadPickerOpen] = useState(false);
   const [sideloadRunning, setSideloadRunning] = useState(false);
@@ -155,7 +138,10 @@ export default function InstalledApps() {
     };
   }, []);
 
-  if (!ping)
+  // Only surface "not ready" once the ping has actually settled without a pong.
+  // While it's still in flight we fall through to the skeleton, so a reload goes
+  // straight from skeleton to data — no "services not ready" flash in between.
+  if (!pingLoading && !ping)
     return (
       <div className="py-20 text-center">
         <p className="text-muted">FLECS services are not ready. Please try again in a moment.</p>
@@ -233,9 +219,9 @@ export default function InstalledApps() {
         </div>
       )}
 
-      {appListLoading && ping && allApps.length === 0 ? (
+      {isLoading && allApps.length === 0 ? (
         <RowSkeleton />
-      ) : allApps.length === 0 && !appListLoading ? (
+      ) : allApps.length === 0 ? (
         <div className="rounded-xl border border-white/10">
           <EmptyApps onSideload={() => setSideloadPickerOpen(true)} />
         </div>

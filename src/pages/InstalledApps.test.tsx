@@ -31,6 +31,21 @@ describe('Installed Apps', () => {
     });
   });
 
+  it('shows the skeleton while loading, never the "not ready" flash, then the data', async () => {
+    // Regression: ping/app-list are in-flight on first render. The page must show
+    // the skeleton — not "FLECS services are not ready" — so a reload goes straight
+    // from skeleton to data with nothing flashing in between.
+    const { container } = renderWithProviders(<InstalledApps />, { route: '/' });
+
+    expect(screen.queryByText(/not ready/i)).toBeNull();
+    expect(container.querySelector('.animate-pulse')).toBeTruthy();
+
+    await waitFor(() => {
+      expect(screen.getByText(/installed apps/i)).toBeTruthy();
+    });
+    expect(screen.queryByText(/not ready/i)).toBeNull();
+  });
+
   it('starts the sideload stepper when a manifest is dropped on the deploy card', async () => {
     renderWithProviders(<InstalledApps />, { route: '/' });
     const card = await screen.findByTestId('sideload-dropzone');

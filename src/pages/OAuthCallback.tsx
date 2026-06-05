@@ -1,36 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
+import RowSkeleton from '@features/apps/components/RowSkeleton';
 
 export default function OAuthCallback() {
   const { handleOAuthCallback, isConfigReady } = useOAuth4WebApiAuth();
-  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const ran = useRef(false);
 
   useEffect(() => {
     if (!isConfigReady || ran.current) return;
     ran.current = true;
-    handleOAuthCallback().catch((e) => setError(e?.message || 'Auth failed'));
-  }, [isConfigReady, handleOAuthCallback]);
+    // On success handleOAuthCallback reloads into the app, which keeps showing its
+    // skeleton until data lands — so the whole sign-in reads as one loading state.
+    // On failure, drop back to the login screen instead of a dead-end error page.
+    handleOAuthCallback().catch((e) => {
+      toast.error(e?.message || 'Sign in failed. Please try again.');
+      navigate('/', { replace: true });
+    });
+  }, [isConfigReady, handleOAuthCallback, navigate]);
 
-  if (error)
-    return (
-      <div className="flex justify-center items-center min-h-screen text-center">
-        <div>
-          <p className="text-error font-semibold">Authentication Failed</p>
-          <p className="mt-2 text-sm text-muted">{error}</p>
-          <a href="/" className="mt-4 inline-block text-brand text-sm hover:underline">
-            Return home
-          </a>
-        </div>
-      </div>
-    );
-
-  return (
-    <div className="flex justify-center items-center min-h-screen text-center">
-      <div>
-        <div className="animate-spin h-6 w-6 border-2 border-brand border-t-transparent rounded-full mx-auto" />
-        <p className="mt-4 text-sm">Completing sign in...</p>
-      </div>
-    </div>
-  );
+  // No separate "Completing sign in" screen — render the same skeleton the app
+  // lands on, so there is no flicker between auth and the loaded page.
+  return <RowSkeleton />;
 }

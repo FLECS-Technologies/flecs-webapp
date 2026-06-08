@@ -1,10 +1,16 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import OnboardingGuard from '@features/onboarding/OnboardingGuard';
 import DeviceLogin from '@pages/DeviceLogin';
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useOAuth4WebApiAuth();
+  const location = useLocation();
+  // Onboarding configures the first auth provider, so it must stay reachable
+  // before any login is possible. Gating it behind auth leaves no way out of
+  // the unauthenticated state. Allow it through, like the OAuth callback below.
+  if (location.pathname === '/onboarding') return <>{children}</>;
   if (window.location.hash.includes('/oauth/callback')) return <>{children}</>;
   if (isLoading)
     return (

@@ -19,36 +19,14 @@
 import FLECSLogo from './FLECSLogo';
 import { useTenant } from '@app/theme/TenantContext';
 
-export default function PoweredByFLECS({ collapsed }: { collapsed?: boolean }) {
+export default function PoweredByFLECS() {
   const { features } = useTenant();
   if (!features.powered_by_flecs) return null;
 
-  if (collapsed) {
-    return (
-      <div className="flex justify-center py-2 border-t border-border">
-        <a
-          href="https://flecs.tech"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Powered by FLECS"
-        >
-          <FLECSLogo />
-        </a>
-      </div>
-    );
-  }
-
   return (
-    <div className="px-3 py-2 border-t border-border">
-      <a
-        href="https://flecs.tech"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-hover transition text-muted hover:text-text-primary"
-      >
-        <FLECSLogo />
-        <span className="text-xs">powered by FLECS</span>
-      </a>
+    <div className="flex items-center gap-2 px-4 py-2.5 text-muted">
+      <FLECSLogo />
+      <span className="text-[11px]">powered by FLECS</span>
     </div>
   );
 }

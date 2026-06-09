@@ -249,8 +249,6 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <PoweredByFLECS collapsed={isCol} />
-
         {/* Profile */}
         <div ref={profileRef} className="relative shrink-0 border-t border-border">
           <button
@@ -322,8 +320,7 @@ export default function Sidebar() {
                 </button>
               )}
               <hr className="border-border my-1" />
-              {auth.isAuthenticated ? (
-                <button
+              {auth.isAuthenticated ? (                <button
                   onClick={() => auth.signOut()}
                   className="flex items-center gap-3 w-full px-4 py-2 text-[13px] text-error hover:bg-surface-hover transition cursor-pointer"
                 >
@@ -340,6 +337,7 @@ export default function Sidebar() {
                   <LogIn size={15} /> Sign in
                 </button>
               )}
+              <PoweredByFLECS />
             </div>
           )}
         </div>

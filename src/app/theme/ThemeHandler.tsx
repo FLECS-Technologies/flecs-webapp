@@ -46,6 +46,12 @@ export const ThemeHandler: React.FC<ThemeHandlerProps> = ({ children }) => {
     localStorage.setItem('preferred-theme', darkMode ? 'dark' : 'light');
   };
 
+  // Keep <html class="dark"> in sync with state
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
+
+  // Follow OS preference changes when the user has no explicit override
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent): void => {

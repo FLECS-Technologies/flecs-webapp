@@ -24,6 +24,7 @@ import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/devi
 import { useDarkMode } from '@app/theme/ThemeHandler';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
+import PoweredByFLECS from './PoweredBy';
 import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
@@ -247,6 +248,8 @@ export default function Sidebar() {
             </Fragment>
           ))}
         </nav>
+
+        <PoweredByFLECS collapsed={isCol} />
 
         {/* Profile */}
         <div ref={profileRef} className="relative shrink-0 border-t border-border">

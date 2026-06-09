@@ -16,43 +16,39 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import FLECSLogo from './FLECSLogo';
-import { useSearchParams } from 'react-router-dom';
 import { useTenant } from '@app/theme/TenantContext';
 
-const PoweredByFLECS: React.FC = () => {
+export default function PoweredByFLECS({ collapsed }: { collapsed?: boolean }) {
   const { features } = useTenant();
-  const [visible, setIsVisible] = React.useState(true);
-  const [searchParams] = useSearchParams();
   if (!features.powered_by_flecs) return null;
 
-  React.useEffect(() => {
-    const hideAppBar = searchParams.get('hideappbar');
-    if (hideAppBar?.toLowerCase() === 'true') {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  }, [searchParams]);
-
-  return (
-    <div>
-      {visible && (
+  if (collapsed) {
+    return (
+      <div className="flex justify-center py-2 border-t border-border">
         <a
-          aria-label="powered-by-link"
-          role="link"
           href="https://flecs.tech"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center no-underline px-3 py-1.5 rounded-lg border border-brand bg-surface-raised hover:bg-surface-hover transition"
+          aria-label="Powered by FLECS"
         >
           <FLECSLogo />
-          <span className="ml-2 text-sm transition">powered by FLECS</span>
         </a>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-3 py-2 border-t border-border">
+      <a
+        href="https://flecs.tech"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-hover transition text-muted hover:text-text-primary"
+      >
+        <FLECSLogo />
+        <span className="text-xs">powered by FLECS</span>
+      </a>
     </div>
   );
-};
-
-export default PoweredByFLECS;
+}

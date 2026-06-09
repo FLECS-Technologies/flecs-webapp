@@ -1,50 +1,55 @@
 @import 'tailwindcss';
 
 /* ── Dark mode: class-based via Tailwind v4 @custom-variant ── */
-/* Activates dark: utilities when .dark is present on any ancestor element */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ── Tenant-overrideable brand tokens ── */
-/* Replaced at deploy time by Docker layer: COPY brands/<slug>/theme.css /html/theme.css */
+/* Only --brand-primary and --brand-end need to be set in /theme.css.
+   All surface, border and text tokens are derived automatically. */
 :root {
   --brand-primary: #ff2e63;
-  --brand-end: #ff6b8a;
+  --brand-end:     #ff6b8a;
+
+  /* Surfaces: same hue as brand, very high lightness, barely-there chroma */
+  --surface:         oklch(from var(--brand-primary) 0.975 0.010 h);
+  --surface-raised:  oklch(from var(--brand-primary) 0.995 0.005 h);
+  --surface-overlay: oklch(from var(--brand-primary) 0.960 0.015 h);
+  --surface-subtle:  rgba(11, 11, 24, 0.02);
+  --surface-hover:   rgba(11, 11, 24, 0.04);
+
+  --border:          rgba(11, 11, 24, 0.08);
+  --border-strong:   rgba(11, 11, 24, 0.16);
+
+  --text-primary:    #0b0b18;
+  --text-secondary:  #4b5563;
 }
 
-/* @theme inline: Tailwind utilities reference the CSS var at paint time,
-   so a later /theme.css stylesheet can override --brand-* without a rebuild. */
+/* ── @theme inline ── */
+/* Tailwind utilities reference the CSS var at paint time, so
+   /theme.css overriding --brand-primary cascades everywhere. */
 @theme inline {
-  --color-brand: var(--brand-primary);
-  --color-brand-end: var(--brand-end);
+  --color-brand:           var(--brand-primary);
+  --color-brand-end:       var(--brand-end);
+  --color-surface:         var(--surface);
+  --color-surface-raised:  var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-subtle:  var(--surface-subtle);
+  --color-surface-hover:   var(--surface-hover);
+  --color-border:          var(--border);
+  --color-border-strong:   var(--border-strong);
+  --color-text-primary:    var(--text-primary);
+  --color-text-secondary:  var(--text-secondary);
 }
 
-/* ── FLECS Design Tokens ── */
-/* Semantic tokens default to light mode; .dark overrides are in @layer base below. */
+/* ── Static design tokens ── */
 @theme {
-  --color-dark: #0b0b18;
-  --color-dark-end: #1a1a2e;
-  --color-muted: #6b7280;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-accent: #73a9ca;
-
-  /* Semantic surfaces — light mode defaults */
-  --color-surface: #f9f8ff;
-  --color-surface-raised: #ffffff;
-  --color-surface-overlay: #f0effe;
-  --color-surface-subtle: rgba(11, 11, 24, 0.02);
-  --color-surface-hover: rgba(11, 11, 24, 0.04);
-
-  /* Semantic borders — light mode defaults */
-  --color-border: rgba(11, 11, 24, 0.08);
-  --color-border-strong: rgba(11, 11, 24, 0.16);
-
-  /* Semantic text — light mode defaults */
-  --color-text-primary: #0b0b18;
-  --color-text-secondary: #4b5563;
-
-  /* Typography */
+  --color-dark:      #0b0b18;
+  --color-dark-end:  #1a1a2e;
+  --color-muted:     #6b7280;
+  --color-success:   #10b981;
+  --color-warning:   #f59e0b;
+  --color-error:     #ef4444;
+  --color-accent:    #73a9ca;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -66,20 +71,18 @@
   .dark {
     color-scheme: dark;
 
-    /* Semantic surfaces — dark overrides */
-    --color-surface: #0b0b18;
-    --color-surface-raised: #1a1a2e;
-    --color-surface-overlay: #1e1e34;
-    --color-surface-subtle: rgba(255, 255, 255, 0.02);
-    --color-surface-hover: rgba(255, 255, 255, 0.05);
+    /* Surfaces: same hue as brand, very low lightness */
+    --surface:         oklch(from var(--brand-primary) 0.100 0.020 h);
+    --surface-raised:  oklch(from var(--brand-primary) 0.145 0.020 h);
+    --surface-overlay: oklch(from var(--brand-primary) 0.165 0.020 h);
+    --surface-subtle:  rgba(255, 255, 255, 0.02);
+    --surface-hover:   rgba(255, 255, 255, 0.05);
 
-    /* Semantic borders — dark overrides */
-    --color-border: rgba(255, 255, 255, 0.1);
-    --color-border-strong: rgba(255, 255, 255, 0.2);
+    --border:          rgba(255, 255, 255, 0.10);
+    --border-strong:   rgba(255, 255, 255, 0.20);
 
-    /* Semantic text — dark overrides */
-    --color-text-primary: #f3f4f6;
-    --color-text-secondary: #9ca3af;
+    --text-primary:    #f3f4f6;
+    --text-secondary:  #9ca3af;
   }
 
   body {

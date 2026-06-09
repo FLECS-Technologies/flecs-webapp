@@ -5,13 +5,16 @@
     <title>FLECS</title>
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/src/assets/favicon.ico" />
-    <!-- Paint dark before the CSS bundle loads — prevents white flash on reload
-         in browsers without paint holding (Safari). Matches --color-surface. -->
-    <style>
-      html {
-        background-color: #0b0b18;
-      }
-    </style>
+    <!-- Synchronous theme init: applies .dark before first paint to prevent FOUC -->
+    <script>
+      (function () {
+        var t = localStorage.getItem('preferred-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (t == null && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

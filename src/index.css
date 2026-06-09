@@ -1,9 +1,14 @@
 @import 'tailwindcss';
 
+/* ── Dark mode: class-based via Tailwind v4 @custom-variant ── */
+/* Activates dark: utilities when .dark is present on any ancestor element */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ── FLECS Design Tokens ── */
-/* Per Tailwind v4 best practices: all tokens in CSS, semantic names by role */
+/* Primitives are static. Semantic tokens default to light mode;
+   .dark overrides are in @layer base below. */
 @theme {
-  /* Brand primitives */
+  /* Brand primitives — theme-invariant */
   --color-brand: #ff2e63;
   --color-brand-end: #ff6b8a;
   --color-dark: #0b0b18;
@@ -14,19 +19,19 @@
   --color-error: #ef4444;
   --color-accent: #73a9ca;
 
-  /* Semantic surfaces */
-  --color-surface: #0b0b18;
-  --color-surface-raised: #1a1a2e;
-  --color-surface-overlay: #1e1e34;
-  --color-surface-hover: rgba(255, 255, 255, 0.05);
+  /* Semantic surfaces — light mode defaults */
+  --color-surface: #f9f8ff;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #f0effe;
+  --color-surface-hover: rgba(11, 11, 24, 0.04);
 
-  /* Semantic borders */
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-strong: rgba(255, 255, 255, 0.2);
+  /* Semantic borders — light mode defaults */
+  --color-border: rgba(11, 11, 24, 0.08);
+  --color-border-strong: rgba(11, 11, 24, 0.16);
 
-  /* Semantic text */
-  --color-text-primary: #f3f4f6;
-  --color-text-secondary: #9ca3af;
+  /* Semantic text — light mode defaults */
+  --color-text-primary: #0b0b18;
+  --color-text-secondary: #4b5563;
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,6 +48,28 @@
 
 /* ── Base ── */
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+
+    /* Semantic surfaces — dark overrides */
+    --color-surface: #0b0b18;
+    --color-surface-raised: #1a1a2e;
+    --color-surface-overlay: #1e1e34;
+    --color-surface-hover: rgba(255, 255, 255, 0.05);
+
+    /* Semantic borders — dark overrides */
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-border-strong: rgba(255, 255, 255, 0.2);
+
+    /* Semantic text — dark overrides */
+    --color-text-primary: #f3f4f6;
+    --color-text-secondary: #9ca3af;
+  }
+
   body {
     @apply bg-surface text-text-primary font-sans antialiased;
   }

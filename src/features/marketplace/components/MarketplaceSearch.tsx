@@ -13,7 +13,7 @@ export default function MarketplaceSearch({
   onToggleFilter,
 }: MarketplaceSearchProps) {
   return (
-    <div className="flex items-center px-4 py-2 rounded-xl bg-dark-end border border-white/10">
+    <div className="flex items-center px-4 py-2 rounded-xl bg-surface-raised border border-border">
       <Search size={20} style={{ opacity: 0.5, marginRight: 12 }} />
       <input
         autoFocus
@@ -21,10 +21,10 @@ export default function MarketplaceSearch({
         value={value ?? ''}
         onChange={(e) => onSearch(e, e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-        className="flex-1 bg-transparent outline-none text-white placeholder-muted text-sm"
+        className="flex-1 bg-transparent outline-none text-text-primary placeholder-muted text-sm"
       />
       <button
-        className="p-1.5 rounded-lg hover:bg-white/10 transition ml-2"
+        className="p-1.5 rounded-lg hover:bg-surface-hover transition ml-2"
         onClick={onToggleFilter}
       >
         <SlidersHorizontal size={18} />

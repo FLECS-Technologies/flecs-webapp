@@ -65,7 +65,7 @@ const SuperAdminStepComponent: React.FC<{ onNext?: () => void; onComplete?: () =
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
               disabled={isPending}
-              className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand"
+              className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary focus:outline-none focus:border-brand"
             />
             {validationErrors.username && (
               <p className="text-xs text-error mt-1">{validationErrors.username}</p>
@@ -79,7 +79,7 @@ const SuperAdminStepComponent: React.FC<{ onNext?: () => void; onComplete?: () =
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isPending}
-                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand pr-10"
+                className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary focus:outline-none focus:border-brand pr-10"
               />
               <button
                 type="button"
@@ -97,7 +97,7 @@ const SuperAdminStepComponent: React.FC<{ onNext?: () => void; onComplete?: () =
           {password && (
             <div>
               <span className="text-xs text-muted">Strength: {ps.label}</span>
-              <div className="h-1 bg-white/10 rounded mt-1">
+              <div className="h-1 bg-surface-hover rounded mt-1">
                 <div className={`h-full rounded ${ps.color}`} style={{ width: `${ps.score}%` }} />
               </div>
             </div>
@@ -110,7 +110,7 @@ const SuperAdminStepComponent: React.FC<{ onNext?: () => void; onComplete?: () =
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isPending}
-                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand pr-10"
+                className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary focus:outline-none focus:border-brand pr-10"
               />
               <button
                 type="button"

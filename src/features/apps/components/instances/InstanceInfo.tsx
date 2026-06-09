@@ -20,16 +20,16 @@ export default function InstanceInfo({ instance }: InstanceInfoProps) {
 
   return (
     <div className="w-full">
-      <div className="flex gap-1 border-b border-white/10 mb-4">
+      <div className="flex gap-1 border-b border-border mb-4">
         <button
           onClick={() => setTab('1')}
-          className={`px-4 py-2 text-sm font-medium transition rounded-t-lg ${tab === '1' ? 'bg-white/5 text-white' : 'text-muted hover:bg-white/5'}`}
+          className={`px-4 py-2 text-sm font-medium transition rounded-t-lg ${tab === '1' ? 'bg-surface-hover text-white' : 'text-muted hover:bg-surface-hover'}`}
         >
           General
         </button>
         <button
           onClick={() => setTab('2')}
-          className={`px-4 py-2 text-sm font-medium transition rounded-t-lg ${tab === '2' ? 'bg-white/5 text-white' : 'text-muted hover:bg-white/5'}`}
+          className={`px-4 py-2 text-sm font-medium transition rounded-t-lg ${tab === '2' ? 'bg-surface-hover text-white' : 'text-muted hover:bg-surface-hover'}`}
         >
           Log
         </button>
@@ -38,7 +38,7 @@ export default function InstanceInfo({ instance }: InstanceInfoProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="px-4 py-2 font-semibold" colSpan={2}>
                   General information
                 </td>
@@ -46,14 +46,14 @@ export default function InstanceInfo({ instance }: InstanceInfoProps) {
             </thead>
             <tbody>
               {infoRows.map((row) => (
-                <tr key={row.name} className="border-b border-white/10 last:border-0">
+                <tr key={row.name} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">{row.name}</td>
                   <td className="px-4 py-2">{row.info}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <hr className="border-white/10" />
+          <hr className="border-border" />
           <InstanceDetails instance={instance} />
         </div>
       )}

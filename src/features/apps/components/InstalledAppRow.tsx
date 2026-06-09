@@ -173,9 +173,9 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
 
   return (
     <>
-      <div className="flex items-center gap-4 px-5 py-3 hover:bg-white/3 transition">
+      <div className="flex items-center gap-4 px-5 py-3 hover:bg-surface-hover transition">
         {/* Avatar — image from marketplace, generic package icon for sideloaded apps */}
-        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-muted border border-white/10 overflow-hidden shrink-0">
+        <div className="w-12 h-12 rounded-lg bg-surface-hover flex items-center justify-center text-muted border border-border overflow-hidden shrink-0">
           {app.avatar ? (
             <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" />
           ) : (
@@ -219,7 +219,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             title={`Open ${primaryEditor?.name || app.title} in a new tab`}
             disabled={!isRunning}
             onClick={() => primaryEditor && window.open(createUrl(primaryEditor.url))}
-            className="px-4 py-1.5 border border-white/10 rounded-lg text-sm font-semibold hover:border-brand hover:bg-brand/5 transition whitespace-nowrap disabled:opacity-40"
+            className="px-4 py-1.5 border border-border rounded-lg text-sm font-semibold hover:border-brand hover:bg-brand/5 transition whitespace-nowrap disabled:opacity-40"
           >
             Open
           </button>
@@ -229,7 +229,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           <button
             ref={btnRef}
             aria-label={`${app.title} actions`}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition text-muted cursor-pointer"
+            className="p-1.5 rounded-lg hover:bg-surface-hover transition text-muted cursor-pointer"
             onClick={() => setMenuAnchor(!menuAnchor)}
             disabled={busy}
           >
@@ -244,7 +244,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
               >
                 {!instance && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={handleCreateAndStart}
                   >
                     <Plus size={16} /> Create & Start
@@ -252,7 +252,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 )}
                 {instance && isStopped && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() =>
                       runInstanceAction(
                         () => postInstancesInstanceIdStart(instance.instanceId),
@@ -266,7 +266,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 )}
                 {instance && isRunning && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() =>
                       runInstanceAction(
                         () => postInstancesInstanceIdStop(instance.instanceId),
@@ -280,7 +280,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 )}
                 {instance && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() => {
                       setMenuAnchor(false);
                       setSettingsOpen(true);
@@ -291,7 +291,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 )}
                 {instance && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() => {
                       setMenuAnchor(false);
                       setInfoOpen(true);
@@ -302,7 +302,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 )}
                 {app.documentationUrl && (
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-white/5 transition"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() => {
                       setMenuAnchor(false);
                       window.open(app.documentationUrl);
@@ -311,9 +311,9 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                     <BookOpen size={16} /> Documentation
                   </button>
                 )}
-                <hr className="border-white/10 my-1" />
+                <hr className="border-border my-1" />
                 <button
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-white/5 transition cursor-pointer"
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-surface-hover transition cursor-pointer"
                   onClick={() => {
                     setMenuAnchor(false);
                     setConfirmUninstall(true);

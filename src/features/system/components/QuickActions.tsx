@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export default function QuickActions() {
   return (
-    <div className="rounded-xl bg-dark-end p-6 border border-white/10">
+    <div className="rounded-xl bg-surface-raised p-6 border border-border">
       <h6 className="text-base font-semibold mb-4">Quick Actions</h6>
       <div className="flex items-center gap-4 flex-wrap">
         <span title="Export all apps and data from this device">

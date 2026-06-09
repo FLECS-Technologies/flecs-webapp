@@ -35,15 +35,15 @@ export default function SystemInfoCard({
 }: SystemInfoCardProps) {
   if (loading)
     return (
-      <div className="rounded-xl bg-dark-end p-6 border border-white/10">
-        <div className="animate-pulse bg-white/10 rounded h-7 w-40 mb-4" />
-        <div className="animate-pulse bg-white/10 rounded h-6 mb-2" />
-        <div className="animate-pulse bg-white/10 rounded h-6 mb-2" />
-        <div className="animate-pulse bg-white/10 rounded h-6" />
+      <div className="rounded-xl bg-surface-raised p-6 border border-border">
+        <div className="animate-pulse bg-surface-hover rounded h-7 w-40 mb-4" />
+        <div className="animate-pulse bg-surface-hover rounded h-6 mb-2" />
+        <div className="animate-pulse bg-surface-hover rounded h-6 mb-2" />
+        <div className="animate-pulse bg-surface-hover rounded h-6" />
       </div>
     );
   return (
-    <div className="rounded-xl bg-dark-end p-6 border border-white/10">
+    <div className="rounded-xl bg-surface-raised p-6 border border-border">
       <h6 className="text-base font-semibold mb-4">Device</h6>
       <InfoRow icon={<Monitor size={18} />} label="Hostname" value={hostname} />
       {distro && (

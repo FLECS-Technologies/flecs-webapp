@@ -182,9 +182,9 @@ export default function InstalledApps() {
           data-testid="sideload-dropzone"
           onClick={() => setSideloadPickerOpen(true)}
           {...cardDrop.dropProps}
-          className={`flex-1 px-5 py-4 rounded-xl border border-dashed flex items-center gap-4 cursor-pointer hover:border-brand hover:bg-brand/3 transition ${cardDrop.isDragOver ? 'border-brand bg-brand/3' : 'border-white/10'}`}
+          className={`flex-1 px-5 py-4 rounded-xl border border-dashed flex items-center gap-4 cursor-pointer hover:border-brand hover:bg-brand/3 transition ${cardDrop.isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
         >
-          <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-muted shrink-0">
+          <div className="w-11 h-11 rounded-xl bg-surface-hover flex items-center justify-center text-muted shrink-0">
             <PackagePlus size={22} />
           </div>
           <div className="flex-1">
@@ -226,7 +226,7 @@ export default function InstalledApps() {
       {isLoading && allApps.length === 0 ? (
         <RowSkeleton />
       ) : allApps.length === 0 ? (
-        <div className="rounded-xl border border-white/10">
+        <div className="rounded-xl border border-border">
           <EmptyApps onSideload={() => setSideloadPickerOpen(true)} />
         </div>
       ) : (
@@ -250,7 +250,7 @@ export default function InstalledApps() {
           </p>
           <div
             data-testid="sideload-dialog-dropzone"
-            className={`border-2 border-dashed rounded-xl py-10 px-6 text-center cursor-pointer hover:border-brand hover:bg-brand/3 transition ${dialogDrop.isDragOver ? 'border-brand bg-brand/3' : 'border-white/10'}`}
+            className={`border-2 border-dashed rounded-xl py-10 px-6 text-center cursor-pointer hover:border-brand hover:bg-brand/3 transition ${dialogDrop.isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
             onClick={() => sideloadInputRef.current?.click()}
             {...dialogDrop.dropProps}
           >

@@ -5,18 +5,18 @@
  */
 export default function RowSkeleton() {
   return (
-    <div className="rounded-xl border border-white/10 overflow-hidden">
+    <div className="rounded-xl border border-border overflow-hidden">
       {[0, 1, 2].map((i) => (
-        <div key={i} className={i > 0 ? 'border-t border-white/10' : ''}>
+        <div key={i} className={i > 0 ? 'border-t border-border' : ''}>
           <div className="flex items-center gap-4 px-5 py-3">
-            <div className="animate-pulse bg-white/10 rounded-lg w-12 h-12" />
+            <div className="animate-pulse bg-surface-hover rounded-lg w-12 h-12" />
             <div className="flex-1">
-              <div className="animate-pulse bg-white/10 rounded h-5 w-[35%]" />
-              <div className="animate-pulse bg-white/10 rounded h-3.5 w-[45%] mt-1" />
-              <div className="animate-pulse bg-white/10 rounded h-3 w-[15%] mt-1" />
+              <div className="animate-pulse bg-surface-hover rounded h-5 w-[35%]" />
+              <div className="animate-pulse bg-surface-hover rounded h-3.5 w-[45%] mt-1" />
+              <div className="animate-pulse bg-surface-hover rounded h-3 w-[15%] mt-1" />
             </div>
-            <div className="animate-pulse bg-white/10 rounded-lg w-[72px] h-8" />
-            <div className="animate-pulse bg-white/10 rounded-full w-7 h-7" />
+            <div className="animate-pulse bg-surface-hover rounded-lg w-[72px] h-8" />
+            <div className="animate-pulse bg-surface-hover rounded-full w-7 h-7" />
           </div>
         </div>
       ))}

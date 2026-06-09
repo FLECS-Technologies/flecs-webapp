@@ -7,10 +7,10 @@ interface InstalledAppsTableProps {
 
 export default function InstalledAppsTable({ apps }: InstalledAppsTableProps) {
   return (
-    <div className="rounded-xl border border-white/10 overflow-hidden">
+    <div className="rounded-xl border border-border overflow-hidden">
       {apps.map((app, i) => (
         <div key={app.appKey?.name + app.appKey?.version}>
-          {i > 0 && <hr className="border-white/10" />}
+          {i > 0 && <hr className="border-border" />}
           <InstalledAppRow app={app} />
         </div>
       ))}

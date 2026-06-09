@@ -58,7 +58,7 @@ export default function ExportList() {
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b border-white/10">
+        <tr className="border-b border-border">
           <td className="px-4 py-2 font-semibold" colSpan={2}>
             Exports
           </td>
@@ -66,11 +66,11 @@ export default function ExportList() {
       </thead>
       <tbody>
         {exports.map((exportId) => (
-          <tr key={exportId} className="border-b border-white/10">
+          <tr key={exportId} className="border-b border-border">
             <td className="px-4 py-2">{exportId}</td>
             <td className="px-4 py-2 text-right">
               <button
-                className="p-1.5 rounded-lg hover:bg-white/10 transition"
+                className="p-1.5 rounded-lg hover:bg-surface-hover transition"
                 aria-label="download"
                 onClick={() => handleDownload(exportId)}
                 disabled={deleting === exportId}
@@ -78,7 +78,7 @@ export default function ExportList() {
                 <Download size={18} />
               </button>
               <button
-                className="p-1.5 rounded-lg hover:bg-white/10 transition ml-2"
+                className="p-1.5 rounded-lg hover:bg-surface-hover transition ml-2"
                 aria-label="delete"
                 onClick={() => handleDelete(exportId)}
                 disabled={downloading === exportId}

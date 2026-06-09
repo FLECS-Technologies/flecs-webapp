@@ -8,7 +8,7 @@ export default function VolumesTable({ volumes }: VolumesTableProps) {
   return (
     <table data-testid="details-table" className="w-full text-sm" aria-label="instances-details">
       <thead>
-        <tr className="border-b border-white/10">
+        <tr className="border-b border-border">
           <td data-testid="table-header-name" className="px-4 py-2">
             Name
           </td>

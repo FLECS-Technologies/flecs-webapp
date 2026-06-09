@@ -51,7 +51,7 @@ export default function InstanceDetails({ instance }: InstanceDetailsProps) {
       {networkDetails.length > 0 && (
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/10">
+            <tr className="border-b border-border">
               <td className="px-4 py-2 font-semibold" colSpan={2}>
                 Network information
               </td>
@@ -74,7 +74,7 @@ export default function InstanceDetails({ instance }: InstanceDetailsProps) {
       )}
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-border">
             <td className="px-4 py-2 font-semibold" colSpan={2}>
               Storage
             </td>

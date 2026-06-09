@@ -44,14 +44,14 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
           title="Select editor"
           onClick={() => setOpen(!open)}
           disabled={instance.status !== 'running'}
-          className="px-2 py-2 bg-brand text-white hover:bg-brand-end transition border-l border-white/20 disabled:opacity-50"
+          className="px-2 py-2 bg-brand text-white hover:bg-brand-end transition border-l border-border-strong disabled:opacity-50"
           aria-label="select-editor"
         >
           <ChevronDown size={18} />
         </button>
       </div>
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-full rounded-lg bg-dark-end border border-white/10 shadow-xl z-50 py-1">
+        <div className="absolute top-full left-0 mt-1 w-full rounded-lg bg-surface-raised border border-border shadow-xl z-50 py-1">
           {editors.map((editor, index) => (
             <button
               key={editor.port}
@@ -59,7 +59,7 @@ const EditorDropdown: React.FC<OpenButtonsProps> = ({ instance }: OpenButtonsPro
                 setSelectedIndex(index);
                 setOpen(false);
               }}
-              className={`w-full px-3 py-2 text-sm text-left hover:bg-white/5 transition ${index === selectedIndex ? 'bg-white/5' : ''}`}
+              className={`w-full px-3 py-2 text-sm text-left hover:bg-surface-hover transition ${index === selectedIndex ? 'bg-surface-hover' : ''}`}
             >
               {editor.name || 'Editor at port ' + editor.port}
             </button>

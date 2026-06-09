@@ -87,7 +87,7 @@ const MarketplaceLogin: React.FC = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+          className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand"
         />
       </div>
       <div className="mb-4">
@@ -97,7 +97,7 @@ const MarketplaceLogin: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+          className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand"
         />
       </div>
       {error && <p className="text-error mb-4 text-sm">{getErrorMessage(error)}</p>}

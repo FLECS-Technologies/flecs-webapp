@@ -16,7 +16,7 @@ function LicenseInfo() {
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b border-white/10">
+        <tr className="border-b border-border">
           <td className="px-4 py-2 font-semibold" colSpan={2}>
             License information
           </td>
@@ -35,10 +35,10 @@ function LicenseInfo() {
         <tbody>
           <tr>
             <td className="px-4 py-2">
-              <div className="animate-pulse bg-white/10 rounded h-4" />
+              <div className="animate-pulse bg-surface-hover rounded h-4" />
             </td>
             <td className="px-4 py-2">
-              <div className="animate-pulse bg-white/10 rounded h-4" />
+              <div className="animate-pulse bg-surface-hover rounded h-4" />
             </td>
           </tr>
         </tbody>

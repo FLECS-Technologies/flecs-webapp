@@ -116,7 +116,7 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
   return (
     <div>
       {envVars.length === 0 ? (
-        <div className="py-8 text-center border border-dashed border-white/10 rounded-xl mb-4">
+        <div className="py-8 text-center border border-dashed border-border rounded-xl mb-4">
           <p className="text-sm text-muted mb-3">No environment variables configured.</p>
           <button
             onClick={handleAdd}
@@ -127,10 +127,10 @@ const EnvironmentConfigTab: React.FC<EnvironmentConfigTabProps> = ({ instanceId,
         </div>
       ) : (
         <>
-          <div className="border border-white/10 rounded-xl overflow-hidden mb-4">
+          <div className="border border-border rounded-xl overflow-hidden mb-4">
             {envVars.map((env, index) => (
               <React.Fragment key={env._rowId}>
-                {index > 0 && <hr className="border-white/10" />}
+                {index > 0 && <hr className="border-border" />}
                 <EnvironmentVariableCard
                   env={{ name: env.name, value: env.value || '' }}
                   index={index}

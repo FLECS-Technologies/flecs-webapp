@@ -82,9 +82,7 @@ export default function InstalledApps() {
   const allApps = useMemo(() => {
     const combined = [...installedApps, ...installingApps] as EnrichedApp[];
     const c = new Intl.Collator('en', { sensitivity: 'base', usage: 'sort' });
-    return combined.sort((a, b) =>
-      c.compare(a.title ?? a.appKey.name, b.title ?? b.appKey.name),
-    );
+    return combined.sort((a, b) => c.compare(a.title ?? a.appKey.name, b.title ?? b.appKey.name));
   }, [installedApps, installingApps]);
   const appsWithUpdates = getAppsWithUpdates(installedApps);
   const updateCount = appsWithUpdates.length;

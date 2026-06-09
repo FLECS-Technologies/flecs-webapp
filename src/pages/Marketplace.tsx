@@ -8,6 +8,7 @@ import {
   filterByPrice,
   filterByCategories,
   getUniqueCategories,
+  sortByName,
 } from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import type { Product } from '@generated/console/schemas';
@@ -116,7 +117,7 @@ export default function Marketplace() {
   ]);
 
   const finalProducts = useMemo(
-    () => filterByCategories(baseFiltered, filterParams.hiddenCategories),
+    () => sortByName(filterByCategories(baseFiltered, filterParams.hiddenCategories)),
     [baseFiltered, filterParams.hiddenCategories],
   );
 

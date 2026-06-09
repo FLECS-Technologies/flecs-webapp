@@ -337,10 +337,11 @@ export default function Sidebar() {
                   <LogIn size={15} /> Sign in
                 </button>
               )}
-              <PoweredByFLECS />
             </div>
           )}
         </div>
+
+        <PoweredByFLECS collapsed={isCol} />
       </aside>
 
       {/* Spacer */}

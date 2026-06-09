@@ -19,14 +19,22 @@
 import FLECSLogo from './FLECSLogo';
 import { useTenant } from '@app/theme/TenantContext';
 
-export default function PoweredByFLECS() {
+export default function PoweredByFLECS({ collapsed }: { collapsed?: boolean }) {
   const { features } = useTenant();
   if (!features.powered_by_flecs) return null;
 
+  if (collapsed) {
+    return (
+      <div className="flex justify-center py-2 opacity-40">
+        <FLECSLogo />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center gap-2 px-4 py-2.5 text-muted">
+    <div className="flex items-center gap-1.5 px-5 py-2 opacity-40">
       <FLECSLogo />
-      <span className="text-[11px]">powered by FLECS</span>
+      <span className="text-[10px] text-muted tracking-wide">powered by FLECS</span>
     </div>
   );
 }

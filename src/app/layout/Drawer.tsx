@@ -24,6 +24,7 @@ import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/devi
 import { useDarkMode } from '@app/theme/ThemeHandler';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
+import FLECSLogo from './FLECSLogo';
 import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
@@ -130,8 +131,9 @@ export default function Sidebar() {
                     {app_title}
                   </span>
                   {features.powered_by_flecs && (
-                    <span className="block text-[9px] text-muted/60 leading-none mt-0.5 truncate">
-                      powered by FLECS
+                    <span className="flex items-center gap-1 mt-0.5 opacity-40">
+                      <FLECSLogo size={10} logoColor="currentColor" />
+                      <span className="text-[9px] text-muted leading-none">powered by FLECS</span>
                     </span>
                   )}
                 </div>

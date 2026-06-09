@@ -26,7 +26,7 @@ const LoadIconButton: React.FC<LoadIconButtonProps> = ({
         data-testid="icon-button"
         disabled={disabled}
         onClick={() => onClick()}
-        className="p-1.5 rounded-lg hover:bg-white/10 transition"
+        className="p-1.5 rounded-lg hover:bg-surface-hover transition"
         style={{ display: displaystate }}
       >
         {icon}

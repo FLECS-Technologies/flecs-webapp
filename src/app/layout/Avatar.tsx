@@ -58,7 +58,7 @@ export default function Avatar() {
       <button
         aria-label="avatar-button"
         onClick={user?.user ? () => setMenuOpen(!menuOpen) : handleSignIn}
-        className="p-1.5 rounded-lg hover:bg-white/10 transition text-white"
+        className="p-1.5 rounded-lg hover:bg-surface-hover transition text-white"
       >
         {user?.user ? (
           <User size={20} aria-label="user-menu-button" />
@@ -70,21 +70,21 @@ export default function Avatar() {
       {menuOpen && user?.user && (
         <div
           aria-label="user-menu"
-          className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-dark-end border border-white/10 shadow-xl z-50 py-1 overflow-hidden"
+          className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-surface-raised border border-border shadow-xl z-50 py-1 overflow-hidden"
         >
-          <div className="px-4 py-2 border-b border-white/10">
+          <div className="px-4 py-2 border-b border-border">
             <p className="text-xs text-muted">Signed in as</p>
             <p className="text-xs font-semibold">{user.user?.preferred_username || 'anonymous'}</p>
           </div>
           <button
             onClick={handleProfile}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-white/5 transition"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition"
           >
             Profile
           </button>
           <button
             onClick={handleSignout}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-white/5 transition"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition"
           >
             Sign out
           </button>

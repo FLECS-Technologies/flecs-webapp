@@ -19,7 +19,7 @@ export default function SettingsCard({
 }: SettingsCardProps) {
   return (
     <div
-      className={`rounded-xl border overflow-hidden ${danger ? 'border-error' : 'border-white/10'}`}
+      className={`rounded-xl border overflow-hidden ${danger ? 'border-error' : 'border-border'}`}
     >
       {/* Content */}
       <div className={`px-6 pt-6 ${children ? 'pb-6' : 'pb-4'}`}>
@@ -32,7 +32,7 @@ export default function SettingsCard({
       {(footer || footerAction) && (
         <div
           className={`flex items-center px-6 py-3.5 border-t ${
-            danger ? 'border-error bg-error/5' : 'border-white/10 bg-white/[0.02]'
+            danger ? 'border-error bg-error/5' : 'border-border bg-surface-subtle'
           }`}
         >
           {footer && <span className="flex-1 text-xs text-muted">{footer}</span>}

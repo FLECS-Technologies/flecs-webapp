@@ -23,6 +23,7 @@
   --color-surface: #f9f8ff;
   --color-surface-raised: #ffffff;
   --color-surface-overlay: #f0effe;
+  --color-surface-subtle: rgba(11, 11, 24, 0.02);
   --color-surface-hover: rgba(11, 11, 24, 0.04);
 
   /* Semantic borders — light mode defaults */
@@ -59,6 +60,7 @@
     --color-surface: #0b0b18;
     --color-surface-raised: #1a1a2e;
     --color-surface-overlay: #1e1e34;
+    --color-surface-subtle: rgba(255, 255, 255, 0.02);
     --color-surface-hover: rgba(255, 255, 255, 0.05);
 
     /* Semantic borders — dark overrides */

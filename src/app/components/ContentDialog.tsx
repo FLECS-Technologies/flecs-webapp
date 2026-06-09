@@ -17,13 +17,13 @@ function ContentDialog({ title, open, setOpen, actions, children }: ContentDialo
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-dark-end rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-white/10"
+        className="bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b border-white/10">
+        <div className="px-6 py-4 border-b border-border">
           <h3 className="text-lg font-semibold">{title}</h3>
         </div>
-        <div className="flex-1 overflow-auto px-6 py-4 border-b border-white/10">
+        <div className="flex-1 overflow-auto px-6 py-4 border-b border-border">
           {children ?? <p className="text-sm text-muted">No content to display.</p>}
         </div>
         <div className="px-6 py-3 flex justify-end gap-2">

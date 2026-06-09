@@ -19,10 +19,13 @@
 import React from 'react';
 import FLECSLogo from './FLECSLogo';
 import { useSearchParams } from 'react-router-dom';
+import { useTenant } from '@app/theme/TenantContext';
 
 const PoweredByFLECS: React.FC = () => {
+  const { features } = useTenant();
   const [visible, setIsVisible] = React.useState(true);
   const [searchParams] = useSearchParams();
+  if (!features.powered_by_flecs) return null;
 
   React.useEffect(() => {
     const hideAppBar = searchParams.get('hideappbar');

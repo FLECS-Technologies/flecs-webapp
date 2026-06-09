@@ -1,0 +1,9 @@
+/* Tenant brand overrides — replaced by Docker layer per customer.
+   Override any --brand-* variable defined in src/index.css.
+
+   Example:
+   :root {
+     --brand-primary: #1a73e8;
+     --brand-end:     #34a853;
+   }
+*/

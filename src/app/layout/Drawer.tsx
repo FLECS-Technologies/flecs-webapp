@@ -23,7 +23,8 @@ import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useDarkMode } from '@app/theme/ThemeHandler';
 import { unwrapSuccess } from '@app/api/unwrap';
-import FLECSLogo from './FLECSLogo';
+import Logo from './Logo';
+import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
   {
@@ -72,6 +73,7 @@ export default function Sidebar() {
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { isDarkMode, setDarkMode } = useDarkMode();
+  const { app_title } = useTenant();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -117,14 +119,14 @@ export default function Sidebar() {
               onClick={toggleCollapsed}
               className="p-2 rounded-lg hover:bg-surface-hover transition cursor-pointer"
             >
-              <FLECSLogo logoColor="var(--color-brand)" />
+              <Logo />
             </button>
           ) : (
             <>
               <div className="flex items-center gap-2.5 flex-1">
-                <FLECSLogo logoColor="var(--color-brand)" />
+                <Logo />
                 <span className="text-[15px] font-bold tracking-tight text-text-primary">
-                  FLECS
+                  {app_title}
                 </span>
               </div>
               <button

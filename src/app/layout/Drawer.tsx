@@ -24,7 +24,6 @@ import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/devi
 import { useDarkMode } from '@app/theme/ThemeHandler';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
-import PoweredByFLECS from './PoweredBy';
 import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
@@ -74,7 +73,7 @@ export default function Sidebar() {
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { isDarkMode, setDarkMode } = useDarkMode();
-  const { app_title } = useTenant();
+  const { app_title, features } = useTenant();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -126,9 +125,16 @@ export default function Sidebar() {
             <>
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                 <Logo />
-                <span className="text-[15px] font-bold tracking-tight text-text-primary truncate">
-                  {app_title}
-                </span>
+                <div className="flex-1 min-w-0">
+                  <span className="block text-[15px] font-bold tracking-tight text-text-primary truncate leading-tight">
+                    {app_title}
+                  </span>
+                  {features.powered_by_flecs && (
+                    <span className="block text-[9px] text-muted/60 leading-none mt-0.5 truncate">
+                      powered by FLECS
+                    </span>
+                  )}
+                </div>
               </div>
               <button
                 onClick={toggleCollapsed}
@@ -341,7 +347,6 @@ export default function Sidebar() {
           )}
         </div>
 
-        <PoweredByFLECS collapsed={isCol} />
       </aside>
 
       {/* Spacer */}

@@ -123,9 +123,9 @@ export default function Sidebar() {
             </button>
           ) : (
             <>
-              <div className="flex items-center gap-2.5 flex-1">
+              <div className="flex items-center gap-2.5 flex-1 min-w-0">
                 <Logo />
-                <span className="text-[15px] font-bold tracking-tight text-text-primary">
+                <span className="text-[15px] font-bold tracking-tight text-text-primary truncate">
                   {app_title}
                 </span>
               </div>

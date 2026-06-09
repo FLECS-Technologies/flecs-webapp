@@ -58,11 +58,11 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
     <>
       <div
         data-testid="app-card"
-        className="flex flex-col rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-transparent"
+        className="flex flex-col rounded-2xl overflow-hidden border border-border cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-transparent"
         onClick={() => setFullCardOpen(true)}
       >
         <div className="p-6 pt-8 flex-1 flex flex-col items-center min-h-[260px]">
-          <div className="w-[72px] h-[72px] rounded-xl bg-white/5 flex items-center justify-center text-2xl font-bold border border-white/10 overflow-hidden mb-4 transition-transform duration-300 card-icon">
+          <div className="w-[72px] h-[72px] rounded-xl bg-surface-hover flex items-center justify-center text-2xl font-bold border border-border overflow-hidden mb-4 transition-transform duration-300 card-icon">
             {props.avatar ? (
               <img src={props.avatar} alt={props.title} className="w-full h-full object-cover" />
             ) : (
@@ -81,7 +81,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
         </div>
         <div
           onClick={(e) => e.stopPropagation()}
-          className="px-5 py-4 bg-white/2 border-t border-white/10"
+          className="px-5 py-4 bg-surface-subtle border-t border-border"
         >
           {installed ? (
             <button
@@ -93,7 +93,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
           ) : !installable ? (
             <button
               onClick={() => setFullCardOpen(true)}
-              className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-60 cursor-pointer inline-flex items-center justify-center gap-2 border border-white/10 hover:bg-white/5 transition"
+              className="w-full px-4 py-3 rounded-xl font-semibold text-base opacity-60 cursor-pointer inline-flex items-center justify-center gap-2 border border-border hover:bg-surface-hover transition"
             >
               <AlertTriangle size={18} /> Not compatible
             </button>

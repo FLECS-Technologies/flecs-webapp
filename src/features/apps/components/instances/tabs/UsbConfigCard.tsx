@@ -9,7 +9,7 @@ interface UsbConfigCardProps {
 
 const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
   return (
-    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-dark-end border border-white/10">
+    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-surface-raised border border-border">
       <span
         title={`USB device ${device.name} ${device.enabled ? 'enabled in app' : 'disabled in app'}`}
       >

@@ -90,7 +90,7 @@ export default function Profile() {
             )}
             <div className="flex items-center">
               <p className="text-sm text-muted w-40 shrink-0">User ID:</p>
-              <span className="text-sm font-semibold font-mono text-[0.8rem] bg-white/5 px-2 py-0.5 rounded">
+              <span className="text-sm font-semibold font-mono text-[0.8rem] bg-surface-hover px-2 py-0.5 rounded">
                 -
               </span>
             </div>

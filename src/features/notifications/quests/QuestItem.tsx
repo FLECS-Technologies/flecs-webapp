@@ -62,7 +62,7 @@ function Progress({ progress, state }: { progress: QuestProgress; state: QuestSt
   const pct = (100 * progress.current) / (progress.total || progress.current);
   return (
     <div className="w-full mt-1">
-      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-surface-hover rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${progressBg(state)}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="flex justify-between mt-0.5">
@@ -85,7 +85,7 @@ function SubProgress({ subquests, state }: { subquests: Quest[]; state: QuestSta
   const pct = (done / total) * 100;
   return (
     <div className="w-full mt-1">
-      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-surface-hover rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${progressBg(state)}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="flex justify-between mt-0.5 text-[11px] text-muted">

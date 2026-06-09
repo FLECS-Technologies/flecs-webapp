@@ -29,7 +29,7 @@ export default function DeviceLogin() {
   return (
     <div className="max-w-sm mx-auto px-4">
       <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
-        <div className="w-full rounded-xl bg-dark-end p-8 flex flex-col items-center gap-6 shadow-lg">
+        <div className="w-full rounded-xl bg-surface-raised p-8 flex flex-col items-center gap-6 shadow-lg">
           <WhiteLabelLogo logoColor="primary" />
           <h1 className="text-2xl font-semibold text-center text-brand">Welcome</h1>
 
@@ -84,7 +84,7 @@ export default function DeviceLogin() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
-                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+                className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand"
               />
               <div className="relative">
                 <input
@@ -92,7 +92,7 @@ export default function DeviceLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
-                  className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand pr-10"
+                  className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand pr-10"
                 />
                 <button
                   type="button"
@@ -107,7 +107,7 @@ export default function DeviceLogin() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"
-                className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand"
+                className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand"
               />
               <button
                 type="submit"

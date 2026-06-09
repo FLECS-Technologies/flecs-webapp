@@ -43,7 +43,7 @@ export default function InstanceLog({ instance }: InstanceLogProps) {
       >
         <RefreshCw size={16} /> Refresh
       </button>
-      <pre className="font-mono text-sm whitespace-pre-wrap break-all p-4 bg-dark-end rounded-lg border border-white/10 max-h-[400px] overflow-auto">
+      <pre className="font-mono text-sm whitespace-pre-wrap break-all p-4 bg-surface-raised rounded-lg border border-border max-h-[400px] overflow-auto">
         {logText}
       </pre>
     </div>

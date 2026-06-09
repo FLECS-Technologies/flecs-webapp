@@ -80,7 +80,7 @@ export default function Version() {
           <p className="text-center text-sm">Oops... {errorText}</p>
         )}
         {(loadingVersion || loadingLatestVersion) && (
-          <div className="h-1 bg-white/10 rounded">
+          <div className="h-1 bg-surface-hover rounded">
             <div className="h-full bg-brand rounded animate-pulse" style={{ width: '60%' }} />
           </div>
         )}

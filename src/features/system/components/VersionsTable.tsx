@@ -30,7 +30,7 @@ const VersionsTable: React.FC<VersionsTableProps> = ({
   return (
     <table data-testid="versions-table" className="w-full text-sm">
       <thead>
-        <tr className="border-b border-white/10">
+        <tr className="border-b border-border">
           <td className="px-4 py-2 font-semibold" colSpan={3}>
             Versions
           </td>

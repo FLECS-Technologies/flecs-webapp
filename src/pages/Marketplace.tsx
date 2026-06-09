@@ -40,18 +40,18 @@ import {
 // action bar at bottom) so the loading state doesn't reflow when cards arrive.
 function SkeletonCard() {
   return (
-    <div className="flex flex-col rounded-2xl border border-white/10 overflow-hidden">
+    <div className="flex flex-col rounded-2xl border border-border overflow-hidden">
       <div className="p-6 pt-8 flex-1 flex flex-col items-center min-h-[260px]">
-        <div className="animate-pulse bg-white/10 rounded-xl w-[72px] h-[72px] mb-4" />
-        <div className="animate-pulse bg-white/10 rounded h-4 w-[60%] mb-1.5" />
-        <div className="animate-pulse bg-white/10 rounded h-3 w-[40%] mb-3" />
-        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[90%] mb-1" />
-        <div className="animate-pulse bg-white/10 rounded h-3.5 w-[70%]" />
+        <div className="animate-pulse bg-surface-hover rounded-xl w-[72px] h-[72px] mb-4" />
+        <div className="animate-pulse bg-surface-hover rounded h-4 w-[60%] mb-1.5" />
+        <div className="animate-pulse bg-surface-hover rounded h-3 w-[40%] mb-3" />
+        <div className="animate-pulse bg-surface-hover rounded h-3.5 w-[90%] mb-1" />
+        <div className="animate-pulse bg-surface-hover rounded h-3.5 w-[70%]" />
         <div className="flex-1 min-h-4" />
-        <div className="animate-pulse bg-white/10 rounded h-3 w-10 mt-4" />
+        <div className="animate-pulse bg-surface-hover rounded h-3 w-10 mt-4" />
       </div>
-      <div className="px-5 py-4 bg-white/2 border-t border-white/10">
-        <div className="animate-pulse bg-white/10 rounded-xl h-11 w-full" />
+      <div className="px-5 py-4 bg-surface-subtle border-t border-border">
+        <div className="animate-pulse bg-surface-hover rounded-xl h-11 w-full" />
       </div>
     </div>
   );
@@ -188,7 +188,7 @@ export default function Marketplace() {
       </div>
 
       {/* Search bar */}
-      <div className="flex items-center px-5 py-3 rounded-xl border border-white/10 mb-6 transition focus-within:border-brand">
+      <div className="flex items-center px-5 py-3 rounded-xl border border-border mb-6 transition focus-within:border-brand">
         <Search size={20} className="opacity-35 mr-3.5 shrink-0" />
         <input
           type="text"
@@ -203,7 +203,7 @@ export default function Marketplace() {
             onClick={() =>
               setSearchFilter({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)
             }
-            className="p-1 rounded-full hover:bg-white/10 transition"
+            className="p-1 rounded-full hover:bg-surface-hover transition"
           >
             <X size={16} className="opacity-50" />
           </button>
@@ -216,7 +216,7 @@ export default function Marketplace() {
           {totalFiltered} app{totalFiltered !== 1 ? 's' : ''}
         </p>
 
-        <div className="w-px h-5 bg-white/10 mx-1" />
+        <div className="w-px h-5 bg-border mx-1" />
 
         {/* Toggle pills */}
         <button
@@ -224,7 +224,7 @@ export default function Marketplace() {
           className={`h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
             filterParams.compatible
               ? 'bg-brand text-white'
-              : 'border border-white/10 text-muted hover:bg-white/5'
+              : 'border border-border text-muted hover:bg-surface-hover'
           }`}
         >
           Compatible
@@ -234,7 +234,7 @@ export default function Marketplace() {
           className={`h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
             filterParams.freeOnly
               ? 'bg-brand text-white'
-              : 'border border-white/10 text-muted hover:bg-white/5'
+              : 'border border-border text-muted hover:bg-surface-hover'
           }`}
         >
           Free
@@ -248,7 +248,7 @@ export default function Marketplace() {
             className={`inline-flex items-center gap-1.5 h-8 px-3 text-[0.8rem] font-semibold rounded-lg transition ${
               hiddenCount > 0
                 ? 'bg-brand text-white'
-                : 'border border-white/10 text-muted hover:bg-white/5'
+                : 'border border-border text-muted hover:bg-surface-hover'
             }`}
           >
             <SlidersHorizontal size={14} />
@@ -261,7 +261,7 @@ export default function Marketplace() {
           {filterOpen && (
             <div
               ref={filterDropdownRef}
-              className="absolute top-full left-0 mt-2 w-70 rounded-xl bg-dark-end border border-white/10 shadow-xl z-50 p-4"
+              className="absolute top-full left-0 mt-2 w-70 rounded-xl bg-surface-raised border border-border shadow-xl z-50 p-4"
             >
               <p className="text-sm font-bold mb-3">Categories</p>
               <div className="flex flex-col gap-0.5">
@@ -270,7 +270,7 @@ export default function Marketplace() {
                   return (
                     <label
                       key={cat.id}
-                      className="flex items-center gap-2 py-1 px-1 rounded hover:bg-white/5 cursor-pointer"
+                      className="flex items-center gap-2 py-1 px-1 rounded hover:bg-surface-hover cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -291,7 +291,7 @@ export default function Marketplace() {
         {hasFilters && (
           <button
             onClick={clearAllFilters}
-            className="inline-flex items-center gap-1 h-8 px-3 text-[0.8rem] font-medium rounded-lg border border-dashed border-white/10 text-muted hover:bg-white/5 transition"
+            className="inline-flex items-center gap-1 h-8 px-3 text-[0.8rem] font-medium rounded-lg border border-dashed border-border text-muted hover:bg-surface-hover transition"
           >
             Clear all
             <X size={14} />
@@ -322,7 +322,7 @@ export default function Marketplace() {
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="h-8 min-w-[72px] px-2 text-[0.8rem] font-semibold rounded-lg border border-white/10 bg-transparent outline-none"
+              className="h-8 min-w-[72px] px-2 text-[0.8rem] font-semibold rounded-lg border border-border bg-transparent outline-none"
             >
               <option value={20}>20</option>
               <option value={50}>50</option>
@@ -338,14 +338,14 @@ export default function Marketplace() {
             <button
               disabled={safePage === 0}
               onClick={() => setPage(safePage - 1)}
-              className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-lg hover:bg-white/5 transition disabled:opacity-30"
+              className="w-8 h-8 flex items-center justify-center border border-border rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               disabled={safePage >= totalPages - 1}
               onClick={() => setPage(safePage + 1)}
-              className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-lg hover:bg-white/5 transition disabled:opacity-30"
+              className="w-8 h-8 flex items-center justify-center border border-border rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
             >
               <ChevronRight size={16} />
             </button>

@@ -33,12 +33,12 @@ const SinglePortMapping: React.FC<SinglePortMappingProps> = ({
 }) => {
   const [changes, setChanges] = React.useState(false);
   return (
-    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-dark-end border border-white/10 gap-2">
+    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-surface-raised border border-border gap-2">
       <span className="inline-flex items-center justify-center w-6 h-6 mr-2">
         <Circle size={18} />
       </span>
       <input
-        className="flex-1 px-3 py-2 bg-dark rounded-lg border border-white/10 text-white text-sm focus:outline-none focus:border-brand mr-2"
+        className="flex-1 px-3 py-2 bg-surface rounded-lg border border-border text-text-primary text-sm focus:outline-none focus:border-brand mr-2"
         placeholder="Host Port"
         value={port.host_port}
         onChange={(e) => {
@@ -47,7 +47,7 @@ const SinglePortMapping: React.FC<SinglePortMappingProps> = ({
         }}
       />
       <input
-        className="flex-1 px-3 py-2 bg-dark rounded-lg border border-white/10 text-white text-sm focus:outline-none focus:border-brand mr-2"
+        className="flex-1 px-3 py-2 bg-surface rounded-lg border border-border text-text-primary text-sm focus:outline-none focus:border-brand mr-2"
         placeholder="Container Port"
         value={port.container_port}
         onChange={(e) => {
@@ -64,7 +64,7 @@ const SinglePortMapping: React.FC<SinglePortMappingProps> = ({
       />
       <button
         title="Delete Port Mapping"
-        className="p-1.5 rounded-lg hover:bg-white/10 transition"
+        className="p-1.5 rounded-lg hover:bg-surface-hover transition"
         onClick={() => handleDeletePort(index)}
       >
         <Trash2 size={18} />
@@ -72,7 +72,7 @@ const SinglePortMapping: React.FC<SinglePortMappingProps> = ({
       <button
         title="Save Port Mapping"
         aria-label="Save Port Mapping"
-        className="p-1.5 rounded-lg hover:bg-white/10 transition disabled:opacity-30"
+        className="p-1.5 rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
         disabled={!changes}
         onClick={() => {
           handleSavePort(protocol as TransportProtocol, index);

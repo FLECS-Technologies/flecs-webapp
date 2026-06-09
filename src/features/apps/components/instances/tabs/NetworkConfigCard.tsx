@@ -14,7 +14,7 @@ interface NetworkConfigCardProps {
 const NetworkConfigCard: React.FC<NetworkConfigCardProps> = ({ network, onActivationChange }) => {
   const Icon = network.is_connected ? Wifi : WifiOff;
   return (
-    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-dark-end border border-white/10">
+    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-surface-raised border border-border">
       <span
         title={`Adapter ${network.name} ${network.is_connected ? 'connected' : 'not connected'}`}
       >

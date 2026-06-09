@@ -82,7 +82,7 @@ export default function UninstallButton({
             onMenuClose?.();
             setTimeout(() => setConfirmOpen(true), 50);
           }}
-          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-white/5 transition"
+          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-surface-hover transition"
         >
           <Trash2 size={16} />
           <span className="flex-1 text-left">Uninstall</span>

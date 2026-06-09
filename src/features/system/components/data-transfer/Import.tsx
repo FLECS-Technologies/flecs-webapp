@@ -125,9 +125,9 @@ export default function Import(props: ImportProps) {
     <div
       data-testid="import-dropzone"
       {...dropProps}
-      className={`px-5 rounded-xl border border-dashed flex items-center gap-4 hover:border-brand hover:bg-brand/3 transition ${isDragOver ? 'border-brand bg-brand/3' : 'border-white/10'}`}
+      className={`px-5 rounded-xl border border-dashed flex items-center gap-4 hover:border-brand hover:bg-brand/3 transition ${isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
     >
-      <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-muted shrink-0">
+      <div className="w-9 h-9 rounded-lg bg-surface-hover flex items-center justify-center text-muted shrink-0">
         <FolderUp size={18} />
       </div>
       {button}

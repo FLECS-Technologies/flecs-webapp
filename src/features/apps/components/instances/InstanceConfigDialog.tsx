@@ -57,21 +57,21 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div
-        className="bg-dark-end rounded-2xl overflow-hidden flex shadow-2xl border border-white/10 w-full max-w-3xl"
+        className="bg-surface-raised rounded-2xl overflow-hidden flex shadow-2xl border border-border w-full max-w-3xl"
         style={{ height: '70vh', maxHeight: 640 }}
       >
         {/* Sidebar */}
-        <div className="w-[220px] shrink-0 border-r border-white/10 flex flex-col bg-white/2">
+        <div className="w-[220px] shrink-0 border-r border-border flex flex-col bg-surface-subtle">
           <div className="px-4 py-4">
             <span className="text-sm font-bold truncate block">{instanceName}</span>
             <span className="text-xs text-muted">Settings</span>
           </div>
-          <hr className="border-white/10" />
+          <hr className="border-border" />
           <nav className="flex-1 py-1">
             {versionSection && (
               <button
                 onClick={() => setActiveSection('version')}
-                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === 'version' ? 'bg-white/8 font-medium' : 'hover:bg-white/5'}`}
+                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === 'version' ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
               >
                 <GitBranch size={16} /> Version
               </button>
@@ -80,17 +80,17 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
               <button
                 key={key}
                 onClick={() => setActiveSection(key)}
-                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === key ? 'bg-white/8 font-medium' : 'hover:bg-white/5'}`}
+                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === key ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
               >
                 <Icon size={16} /> {label}
               </button>
             ))}
           </nav>
-          <hr className="border-white/10" />
+          <hr className="border-border" />
           <div className="p-3">
             <button
               onClick={handleClose}
-              className={`w-full px-4 py-2 rounded-lg font-semibold text-sm transition ${hasChanges ? 'bg-brand text-white hover:bg-brand-end' : 'border border-white/10 hover:bg-white/5'}`}
+              className={`w-full px-4 py-2 rounded-lg font-semibold text-sm transition ${hasChanges ? 'bg-brand text-white hover:bg-brand-end' : 'border border-border hover:bg-surface-hover'}`}
             >
               {hasChanges ? 'Save & Restart' : 'Close'}
             </button>
@@ -100,7 +100,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
         <div className="flex-1 overflow-auto relative">
           <button
             onClick={handleClose}
-            className="absolute right-3 top-3 z-10 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition"
+            className="absolute right-3 top-3 z-10 p-1.5 rounded-lg bg-surface-hover hover:bg-surface-hover transition"
           >
             <X size={16} />
           </button>
@@ -118,7 +118,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
               {activeSection === 'env' && 'Configure environment variables.'}
               {activeSection === 'editors' && 'Configure editor URLs and reverse proxy.'}
             </p>
-            <hr className="border-white/10 mb-4" />
+            <hr className="border-border mb-4" />
             {activeSection === 'version' && versionSection}
             {activeSection === 'usb' && (
               <UsbConfigTab instanceId={instanceId} onChange={setHasChanges} />

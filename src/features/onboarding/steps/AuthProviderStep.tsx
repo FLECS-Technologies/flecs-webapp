@@ -118,7 +118,7 @@ const AuthProviderStepComponent: React.FC<{
         <div className="flex justify-between mt-8">
           <button
             onClick={onPrevious}
-            className="px-4 py-2 rounded-lg font-semibold hover:bg-white/10 transition"
+            className="px-4 py-2 rounded-lg font-semibold hover:bg-surface-hover transition"
           >
             Previous
           </button>
@@ -153,7 +153,7 @@ const AuthProviderStepComponent: React.FC<{
         <div className="flex justify-between mt-8">
           <button
             onClick={onPrevious}
-            className="px-4 py-2 rounded-lg font-semibold hover:bg-white/10 transition"
+            className="px-4 py-2 rounded-lg font-semibold hover:bg-surface-hover transition"
           >
             Previous
           </button>
@@ -193,7 +193,7 @@ const AuthProviderStepComponent: React.FC<{
         <select
           value={selectedProvider}
           onChange={(e) => setSelectedProvider(e.target.value)}
-          className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white text-sm focus:outline-none focus:border-brand"
+          className="w-full px-3 py-2 bg-surface rounded-lg border border-border text-text-primary text-sm focus:outline-none focus:border-brand"
         >
           {authProviders?.providers &&
             Object.entries(authProviders.providers).map(([id, p]) => (
@@ -207,7 +207,7 @@ const AuthProviderStepComponent: React.FC<{
         <button
           onClick={onPrevious}
           disabled={isLoading}
-          className="px-4 py-2 rounded-lg font-semibold hover:bg-white/10 transition disabled:opacity-50"
+          className="px-4 py-2 rounded-lg font-semibold hover:bg-surface-hover transition disabled:opacity-50"
         >
           Previous
         </button>

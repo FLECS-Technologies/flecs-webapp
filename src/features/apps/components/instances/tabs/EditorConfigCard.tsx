@@ -51,10 +51,10 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId 
   const customUrl = editor_path_prefix ? createCustomUrl('/' + editor_path_prefix) : '';
 
   return (
-    <div className="p-4 rounded-xl border border-white/10">
+    <div className="p-4 rounded-xl border border-border">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-sm font-bold">{editor.name || 'Editor'}</span>
-        <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/5 text-muted">
+        <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface-hover text-muted">
           :{editor.port}
         </span>
       </div>
@@ -68,11 +68,11 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId 
             value={editor_path_prefix}
             placeholder="e.g. apps/my-app"
             onChange={(e) => setEditorPathPrefix(e.target.value)}
-            className="flex-1 px-3 py-2 bg-dark rounded-lg border border-white/10 text-white placeholder-muted focus:outline-none focus:border-brand text-sm font-mono"
+            className="flex-1 px-3 py-2 bg-surface rounded-lg border border-border text-text-primary placeholder-muted focus:outline-none focus:border-brand text-sm font-mono"
           />
           <button
             title="Save"
-            className="p-1.5 rounded-lg hover:bg-white/10 transition disabled:opacity-30"
+            className="p-1.5 rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
             aria-label="put-editor-prefix-button"
             disabled={!editor_path_prefix || editor_path_prefix === current_editor_path_prefix}
             onClick={() => putEditorPrefix(editor.port, editor_path_prefix)}
@@ -81,7 +81,7 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId 
           </button>
           <button
             title="Delete prefix"
-            className="p-1.5 rounded-lg hover:bg-white/10 transition disabled:opacity-30"
+            className="p-1.5 rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
             aria-label="delete-editor-prefix-button"
             disabled={current_editor_path_prefix === undefined}
             onClick={() => deleteEditorPrefix(editor.port)}
@@ -97,7 +97,7 @@ const EditorConfigCard: React.FC<EditorConfigCardProps> = ({ editor, instanceId 
             <p className="text-xs font-mono text-accent break-all flex-1">{customUrl}</p>
             <button
               title="Open in new tab"
-              className="p-1.5 rounded-lg hover:bg-white/10 transition"
+              className="p-1.5 rounded-lg hover:bg-surface-hover transition"
               onClick={() => window.open(customUrl)}
             >
               <ExternalLink size={14} />

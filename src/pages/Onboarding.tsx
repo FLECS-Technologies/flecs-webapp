@@ -29,7 +29,7 @@ export default function Onboarding() {
         {STEPS.map((label, i) => (
           <div
             key={label}
-            className={`flex-1 h-1 rounded ${i <= step ? 'bg-brand' : 'bg-white/10'}`}
+            className={`flex-1 h-1 rounded ${i <= step ? 'bg-brand' : 'bg-surface-hover'}`}
           />
         ))}
       </div>

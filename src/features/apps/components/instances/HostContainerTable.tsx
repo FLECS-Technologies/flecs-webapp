@@ -11,7 +11,7 @@ export default function HostContainerTable({ data }: HostContainerTableProps) {
   return (
     <table data-testid="details-table" className="w-full text-sm" aria-label="instances-details">
       <thead>
-        <tr className="border-b border-white/10">
+        <tr className="border-b border-border">
           <td data-testid="table-header-host" className="px-4 py-2">
             Exposed to the host
           </td>

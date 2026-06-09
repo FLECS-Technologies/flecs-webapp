@@ -42,7 +42,7 @@ const PoweredByFLECS: React.FC = () => {
           href="https://flecs.tech"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center no-underline px-3 py-1.5 rounded-lg border border-brand bg-dark-end hover:bg-dark transition"
+          className="inline-flex items-center no-underline px-3 py-1.5 rounded-lg border border-brand bg-surface-raised hover:bg-surface-hover transition"
         >
           <FLECSLogo />
           <span className="ml-2 text-sm transition">powered by FLECS</span>

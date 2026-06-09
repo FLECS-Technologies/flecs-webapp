@@ -15,7 +15,7 @@ export default function CollapsableRow({ title, children }: CollapsableRowProps)
           <button
             data-testid="expand-button"
             aria-label="expand row"
-            className="p-1 rounded-lg hover:bg-white/10 transition mr-2 inline-flex"
+            className="p-1 rounded-lg hover:bg-surface-hover transition mr-2 inline-flex"
             onClick={() => setOpen(!open)}
           >
             {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

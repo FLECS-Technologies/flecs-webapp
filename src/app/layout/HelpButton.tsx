@@ -15,7 +15,7 @@ const HelpButton: React.FC<HelpButtonProps> = ({ url, label = 'Help', ...props }
     <button
       title={label}
       onClick={handleClick}
-      className="p-1.5 rounded-lg hover:bg-white/10 transition"
+      className="p-1.5 rounded-lg hover:bg-surface-hover transition"
       {...props}
     >
       <HelpCircle size={20} />

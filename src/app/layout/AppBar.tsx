@@ -18,10 +18,10 @@ export default function MobileBar() {
   if (!isMobile) return null;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-dark border-b border-white/8">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-surface border-b border-border">
       <div className="flex items-center gap-2 h-12 px-2">
         <button
-          className="p-1.5 rounded-lg hover:bg-white/10 transition text-muted"
+          className="p-1.5 rounded-lg hover:bg-surface-hover transition text-muted"
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
         >

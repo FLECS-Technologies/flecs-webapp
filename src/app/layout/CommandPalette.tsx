@@ -142,10 +142,10 @@ export default function CommandPalette() {
 
       {/* Dialog */}
       <div
-        className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-lg rounded-xl bg-dark-end border border-white/10 shadow-2xl z-[1301] overflow-hidden"
+        className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-lg rounded-xl bg-surface-raised border border-border shadow-2xl z-[1301] overflow-hidden"
         aria-label="Command palette"
       >
-        <div className="flex items-center px-4 py-3 border-b border-white/10">
+        <div className="flex items-center px-4 py-3 border-b border-border">
           <Search size={20} className="mr-3 opacity-50" />
           <input
             ref={inputRef}
@@ -157,7 +157,7 @@ export default function CommandPalette() {
             onKeyDown={handleKeyDown}
             aria-label="Search commands"
           />
-          <span className="ml-2 px-1.5 py-0.5 rounded border border-white/10 text-[11px] text-muted">
+          <span className="ml-2 px-1.5 py-0.5 rounded border border-border text-[11px] text-muted">
             ESC
           </span>
         </div>
@@ -175,7 +175,7 @@ export default function CommandPalette() {
               aria-selected={index === selectedIndex}
               onClick={item.action}
               className={`flex items-center w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md transition ${
-                index === selectedIndex ? 'bg-brand/15' : 'hover:bg-white/5'
+                index === selectedIndex ? 'bg-brand/15' : 'hover:bg-surface-hover'
               }`}
             >
               <span className="w-9 shrink-0 flex justify-center">{item.icon}</span>

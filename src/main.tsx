@@ -27,6 +27,12 @@ import { TenantContext } from './app/theme/TenantContext';
 const tenant = await loadTenant();
 document.title = tenant.app_title;
 
+// Append /theme.css last so it overrides the Tailwind bundle in both dev and prod
+const themeLink = document.createElement('link');
+themeLink.rel = 'stylesheet';
+themeLink.href = '/theme.css';
+document.head.appendChild(themeLink);
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <TenantContext.Provider value={tenant}>

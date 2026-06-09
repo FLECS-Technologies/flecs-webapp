@@ -38,6 +38,12 @@ interface MarketplaceFiltersState {
 // ── Pure filter helpers — imported by the Marketplace page for useMemo derivation.
 // Server state (products, arch) is never stored here; we only transform it. ──
 
+const collator = new Intl.Collator('en', { sensitivity: 'base', usage: 'sort' });
+
+export function sortByName<T extends { name?: string }>(items: T[]): T[] {
+  return [...items].sort((a, b) => collator.compare(a.name ?? '', b.name ?? ''));
+}
+
 export function searchProducts(
   products: Product[],
   search: string,

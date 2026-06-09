@@ -4,13 +4,23 @@
 /* Activates dark: utilities when .dark is present on any ancestor element */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Tenant-overrideable brand tokens ── */
+/* Replaced at deploy time by Docker layer: COPY brands/<slug>/theme.css /html/theme.css */
+:root {
+  --brand-primary: #ff2e63;
+  --brand-end: #ff6b8a;
+}
+
+/* @theme inline: Tailwind utilities reference the CSS var at paint time,
+   so a later /theme.css stylesheet can override --brand-* without a rebuild. */
+@theme inline {
+  --color-brand: var(--brand-primary);
+  --color-brand-end: var(--brand-end);
+}
+
 /* ── FLECS Design Tokens ── */
-/* Primitives are static. Semantic tokens default to light mode;
-   .dark overrides are in @layer base below. */
+/* Semantic tokens default to light mode; .dark overrides are in @layer base below. */
 @theme {
-  /* Brand primitives — theme-invariant */
-  --color-brand: #ff2e63;
-  --color-brand-end: #ff6b8a;
   --color-dark: #0b0b18;
   --color-dark-end: #1a1a2e;
   --color-muted: #6b7280;

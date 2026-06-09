@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTenant } from '@app/theme/TenantContext';
 import { ArrowRight } from 'lucide-react';
 import AuthProviderStep from '@features/onboarding/steps/AuthProviderStep';
 import SuperAdminStep from '@features/onboarding/steps/SuperAdminStep';
@@ -11,6 +12,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const navigate = useNavigate();
+  const { app_title } = useTenant();
 
   const next = () => {
     if (step < STEPS.length - 1) setStep(step + 1);
@@ -20,7 +22,7 @@ export default function Onboarding() {
   return (
     <div className="max-w-2xl mx-auto py-12 px-4">
       <div className="text-center mb-8">
-        <h4 className="text-2xl font-bold mb-2">Welcome to FLECS</h4>
+        <h4 className="text-2xl font-bold mb-2">Welcome to {app_title}</h4>
         <p className="text-base text-muted">Let's get your device ready in under 30 seconds.</p>
       </div>
 

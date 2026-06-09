@@ -21,11 +21,18 @@ import ReactDOM from 'react-dom/client';
 import { HashRouter as Router } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import { loadTenant } from './tenant';
+import { TenantContext } from './app/theme/TenantContext';
+
+const tenant = await loadTenant();
+document.title = tenant.app_title;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <TenantContext.Provider value={tenant}>
+      <Router>
+        <App />
+      </Router>
+    </TenantContext.Provider>
   </React.StrictMode>,
 );

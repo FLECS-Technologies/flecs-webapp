@@ -1,7 +1,7 @@
 {
   "vendor_id": 1,
-  "app_title": "Nexus Manager",
-  "company_name": "Nexus Industrial",
+  "app_title": "Example Manager",
+  "company_name": "Example Brand",
   "features": {
     "powered_by_flecs": true
   }

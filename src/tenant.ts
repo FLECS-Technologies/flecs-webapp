@@ -8,9 +8,9 @@ export const TenantConfigSchema = z.object({
   company_name: z.string().default('FLECS'),
   features: z
     .object({
-      powered_by_flecs: z.boolean().default(true),
+      powered_by_flecs: z.boolean().default(false),
     })
-    .default({ powered_by_flecs: true }),
+    .default({ powered_by_flecs: false }),
 });
 
 export type TenantConfig = z.infer<typeof TenantConfigSchema>;

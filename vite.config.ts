@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: '',
-    publicDir: env.VITE_BRAND ? `brands/${env.VITE_BRAND}` : 'public',
+    publicDir: env.VITE_MOCK_BRAND === 'true' ? 'brands/example-brand' : 'public',
     plugins: [react(), svgr(), tailwindcss()],
     resolve: {
       alias: {

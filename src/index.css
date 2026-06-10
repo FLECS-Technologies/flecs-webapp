@@ -7,35 +7,35 @@
    /theme.css overrides these at source-order-last so they always win. */
 :root {
   --brand-primary: #ff2e63;
-  --brand-end:     #ff6b8a;
+  --brand-end: #ff6b8a;
 }
 
 /* ── @theme inline ── */
 /* Utilities reference the intermediate var directly at paint time,
    so runtime changes to --surface / --border / etc. propagate. */
 @theme inline {
-  --color-brand:            var(--brand-primary);
-  --color-brand-end:        var(--brand-end);
-  --color-surface:          var(--surface);
-  --color-surface-raised:   var(--surface-raised);
-  --color-surface-overlay:  var(--surface-overlay);
-  --color-surface-subtle:   var(--surface-subtle);
-  --color-surface-hover:    var(--surface-hover);
-  --color-border:           var(--border);
-  --color-border-strong:    var(--border-strong);
-  --color-text-primary:     var(--text-primary);
-  --color-text-secondary:   var(--text-secondary);
+  --color-brand: var(--brand-primary);
+  --color-brand-end: var(--brand-end);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
 }
 
 /* ── Static design tokens ── */
 @theme {
-  --color-dark:     #0b0b18;
+  --color-dark: #0b0b18;
   --color-dark-end: #1a1a2e;
-  --color-muted:    #6b7280;
-  --color-success:  #10b981;
-  --color-warning:  #f59e0b;
-  --color-error:    #ef4444;
-  --color-accent:   #73a9ca;
+  --color-muted: #6b7280;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-accent: #73a9ca;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -56,34 +56,34 @@
     color-scheme: light;
 
     /* Surfaces: brand hue, very high lightness, barely-there chroma */
-    --surface:         oklch(from var(--brand-primary) 0.975 0.010 h);
-    --surface-raised:  oklch(from var(--brand-primary) 0.995 0.005 h);
-    --surface-overlay: oklch(from var(--brand-primary) 0.960 0.015 h);
-    --surface-subtle:  rgba(11, 11, 24, 0.02);
-    --surface-hover:   rgba(11, 11, 24, 0.04);
+    --surface: oklch(from var(--brand-primary) 0.975 0.01 h);
+    --surface-raised: oklch(from var(--brand-primary) 0.995 0.005 h);
+    --surface-overlay: oklch(from var(--brand-primary) 0.96 0.015 h);
+    --surface-subtle: rgba(11, 11, 24, 0.02);
+    --surface-hover: rgba(11, 11, 24, 0.04);
 
-    --border:          rgba(11, 11, 24, 0.08);
-    --border-strong:   rgba(11, 11, 24, 0.16);
+    --border: rgba(11, 11, 24, 0.08);
+    --border-strong: rgba(11, 11, 24, 0.16);
 
-    --text-primary:    #0b0b18;
-    --text-secondary:  #4b5563;
+    --text-primary: #0b0b18;
+    --text-secondary: #4b5563;
   }
 
   .dark {
     color-scheme: dark;
 
     /* Surfaces: brand hue, very low lightness */
-    --surface:         oklch(from var(--brand-primary) 0.100 0.020 h);
-    --surface-raised:  oklch(from var(--brand-primary) 0.145 0.020 h);
-    --surface-overlay: oklch(from var(--brand-primary) 0.165 0.020 h);
-    --surface-subtle:  rgba(255, 255, 255, 0.02);
-    --surface-hover:   rgba(255, 255, 255, 0.05);
+    --surface: oklch(from var(--brand-primary) 0.1 0.02 h);
+    --surface-raised: oklch(from var(--brand-primary) 0.145 0.02 h);
+    --surface-overlay: oklch(from var(--brand-primary) 0.165 0.02 h);
+    --surface-subtle: rgba(255, 255, 255, 0.02);
+    --surface-hover: rgba(255, 255, 255, 0.05);
 
-    --border:          rgba(255, 255, 255, 0.10);
-    --border-strong:   rgba(255, 255, 255, 0.20);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.2);
 
-    --text-primary:    #f3f4f6;
-    --text-secondary:  #9ca3af;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
   }
 
   body {

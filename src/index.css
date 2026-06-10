@@ -8,6 +8,7 @@
 :root {
   --brand-primary: #ff2e63;
   --brand-end: #ff6b8a;
+  --brand-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ── @theme inline ── */
@@ -25,6 +26,7 @@
   --color-border-strong: var(--border-strong);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --font-sans: var(--brand-font);
 }
 
 /* ── Static design tokens ── */
@@ -36,7 +38,6 @@
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   --color-accent: #73a9ca;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ── Font face ── */

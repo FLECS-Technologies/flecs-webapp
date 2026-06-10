@@ -1,12 +1,6 @@
 import { createContext, useContext } from 'react';
-import type { TenantConfig } from '../../tenant';
+import { TenantConfigSchema, type TenantConfig } from '../../tenant';
 
-export const TENANT_DEFAULTS: TenantConfig = {
-  app_title: 'FLECS',
-  company_name: 'FLECS',
-  features: { powered_by_flecs: true },
-};
-
-export const TenantContext = createContext<TenantConfig>(TENANT_DEFAULTS);
+export const TenantContext = createContext<TenantConfig>(TenantConfigSchema.parse({}));
 
 export const useTenant = () => useContext(TenantContext);

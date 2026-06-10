@@ -96,7 +96,7 @@ const Export: React.FC<ExportProps> = (props) => {
       ) : (
         <FolderDown size={16} />
       )}
-      {exporting ? 'Exporting...' : 'Export Config'}
+      {exporting ? 'Exporting...' : 'Export Apps'}
     </button>
   );
 };

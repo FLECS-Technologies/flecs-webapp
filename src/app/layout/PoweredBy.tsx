@@ -1,55 +1,31 @@
-/*
- * Copyright (c) 2024 FLECS Technologies GmbH
- *
- * Created on Tue Oct 08 2024
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import React from 'react';
 import FLECSLogo from './FLECSLogo';
-import { useSearchParams } from 'react-router-dom';
+import { useTenant } from '@app/theme/TenantContext';
 
-const PoweredByFLECS: React.FC = () => {
-  const [visible, setIsVisible] = React.useState(true);
-  const [searchParams] = useSearchParams();
+export default function PoweredByFLECS({ collapsed }: { collapsed?: boolean }) {
+  const { features } = useTenant();
+  if (!features.powered_by_flecs) return null;
 
-  React.useEffect(() => {
-    const hideAppBar = searchParams.get('hideappbar');
-    if (hideAppBar?.toLowerCase() === 'true') {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  }, [searchParams]);
+  if (collapsed) {
+    return (
+      <div className="flex justify-center px-2 py-2 shrink-0">
+        <div
+          className="w-8 h-8 rounded-full border border-border flex items-center justify-center opacity-50 hover:opacity-75 transition-opacity cursor-default"
+          title="Powered by FLECS"
+        >
+          <FLECSLogo size={14} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {visible && (
-        <a
-          aria-label="powered-by-link"
-          role="link"
-          href="https://flecs.tech"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center no-underline px-3 py-1.5 rounded-lg border border-brand bg-surface-raised hover:bg-surface-hover transition"
-        >
-          <FLECSLogo />
-          <span className="ml-2 text-sm transition">powered by FLECS</span>
-        </a>
-      )}
+    <div className="px-3 py-2 shrink-0">
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border opacity-60 hover:opacity-90 transition-opacity cursor-default w-fit">
+        <FLECSLogo size={13} />
+        <span className="text-[10px] font-medium text-muted tracking-wide whitespace-nowrap">
+          powered by FLECS
+        </span>
+      </div>
     </div>
   );
-};
-
-export default PoweredByFLECS;
+}

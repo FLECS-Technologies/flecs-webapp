@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Menu as MenuIcon } from 'lucide-react';
 import { useUIStore } from '@stores/ui';
-import FLECSLogo from './FLECSLogo';
+import Logo from './Logo';
+import { useTenant } from '@app/theme/TenantContext';
 
 export default function MobileBar() {
   const [isMobile, setIsMobile] = useState(false);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const { app_title } = useTenant();
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 899px)');
@@ -27,8 +29,8 @@ export default function MobileBar() {
         >
           <MenuIcon size={22} />
         </button>
-        <FLECSLogo logoColor={'var(--color-brand)'} />
-        <span className="text-sm font-bold text-white">FLECS</span>
+        <Logo />
+        <span className="text-sm font-bold text-text-primary">{app_title}</span>
       </div>
     </header>
   );

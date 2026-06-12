@@ -14,7 +14,8 @@ import {
 } from '@generated/console/products/products';
 import type { getApiV2ProductsAppsResponse } from '@generated/console/products/products';
 import type { InstalledApp, AppInstance } from '@generated/core/schemas';
-import type { Product } from '@generated/console/schemas';
+import type { GetApiV2ProductsAppsParams, Product } from '@generated/console/schemas';
+import { useTenant } from '@app/theme/TenantContext';
 import {
   getReverseDomainName,
   getAppIcon,
@@ -84,11 +85,17 @@ function combineAppList(
 }
 
 export function useAppList() {
+  const { vendor_id } = useTenant();
+  // vendor_id maps to DeviceLicenseManufacturer.id; the console API uses store_id
+  // to scope the marketplace to a vendor's store. Assumed to share the same ID space.
+  const params: GetApiV2ProductsAppsParams | undefined =
+    vendor_id > 0 ? { store_id: vendor_id } : undefined;
+
   return useQueries({
     queries: [
       {
-        queryKey: getGetApiV2ProductsAppsQueryKey(),
-        queryFn: () => getApiV2ProductsApps(),
+        queryKey: getGetApiV2ProductsAppsQueryKey(params),
+        queryFn: () => getApiV2ProductsApps(params),
         staleTime: 300_000,
       },
       { queryKey: getGetAppsQueryKey(), queryFn: () => getApps(), refetchInterval: 10_000 },

@@ -1,0 +1,13 @@
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/font.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --brand-primary: #0d9488;
+  --brand-end: #0f766e;
+  --brand-font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}

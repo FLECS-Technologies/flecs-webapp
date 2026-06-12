@@ -21,11 +21,24 @@ import ReactDOM from 'react-dom/client';
 import { HashRouter as Router } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import { loadTenant } from './tenant';
+import { TenantContext } from './app/theme/TenantContext';
+
+const tenant = await loadTenant();
+document.title = tenant.app_title;
+
+// Append /theme.css last so it overrides the Tailwind bundle in both dev and prod
+const themeLink = document.createElement('link');
+themeLink.rel = 'stylesheet';
+themeLink.href = '/theme.css';
+document.head.appendChild(themeLink);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <TenantContext.Provider value={tenant}>
+      <Router>
+        <App />
+      </Router>
+    </TenantContext.Provider>
   </React.StrictMode>,
 );

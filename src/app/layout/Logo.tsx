@@ -1,42 +1,12 @@
-import React from 'react';
-import WhiteLabelLogo, { useWhiteLabelLogo, showPoweredBy } from '@app/theme/WhiteLabelLogo';
+import { useState } from 'react';
 import FLECSLogo from './FLECSLogo';
 
-const Logo: React.FC = () => {
-  return (
-    <React.Fragment>
-      {!useWhiteLabelLogo && (
-        <React.Fragment>
-          <button className="p-1.5" aria-label="logo" disabled>
-            <FLECSLogo logoColor="white" />
-          </button>
-          <h6 className="text-base font-semibold flex-1">FLECS</h6>
-        </React.Fragment>
-      )}
-      {useWhiteLabelLogo && showPoweredBy && (
-        <React.Fragment>
-          <button className="p-1.5" aria-label="logo" disabled>
-            <WhiteLabelLogo />
-          </button>
-          <span className="text-xs flex-1">
-            powered by
-            <button className="p-1.5" aria-label="FLECS-Logo" disabled>
-              <FLECSLogo logoColor="white" />
-            </button>
-            <span className="text-xs">FLECS</span>
-          </span>
-        </React.Fragment>
-      )}
-      {useWhiteLabelLogo && !showPoweredBy && (
-        <React.Fragment>
-          <button className="p-1.5" aria-label="logo" disabled>
-            <WhiteLabelLogo />
-          </button>
-          <span className="text-xs flex-1" />
-        </React.Fragment>
-      )}
-    </React.Fragment>
-  );
-};
+interface Props {
+  logoColor?: string;
+}
 
-export default Logo;
+export default function Logo({ logoColor = 'var(--color-brand)' }: Props) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <FLECSLogo logoColor={logoColor} />;
+  return <img src="/logo.svg" alt="logo" width={24} height={24} onError={() => setFailed(true)} />;
+}

@@ -8,7 +8,7 @@ export default function QuickActions() {
     <div className="rounded-xl bg-surface-raised p-6 border border-border">
       <h6 className="text-base font-semibold mb-4">Quick Actions</h6>
       <div className="flex items-center gap-4 flex-wrap">
-        <span title="Export all apps and data from this device">
+        <span title="Download apps from this device">
           <Export />
         </span>
         <span title="Import apps from a backup file">

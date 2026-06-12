@@ -109,7 +109,7 @@ export default function Import(props: ImportProps) {
     <FileOpen
       {...buttonProps}
       data-testid="import-apps-button"
-      buttonText="Import Config"
+      buttonText="Import Apps"
       buttonIcon={<FolderUp size={16} />}
       accept=".tar.gz, .tar, .json"
       onConfirm={handleFileUpload}

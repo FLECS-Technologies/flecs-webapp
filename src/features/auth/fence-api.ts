@@ -1,64 +1,50 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAuthProviderURL } from '@app/api/ApiProvider';
-import { getProvidersAuth } from '@generated/core/experimental/experimental';
-import type { AuthProvidersAndDefaults } from '@generated/core/schemas';
-import { extractCoreProviderId } from '@features/onboarding/OnboardingGuard';
+import { z } from 'zod';
 
-// ── Fence base URL (dynamic — resolved from core API at runtime) ──
+export const SuperAdminSchema = z.object({
+  name: z.string(),
+  full_name: z.string(),
+  password: z.string(),
+});
 
-let _cachedBaseURL: string | null = null;
+export type SuperAdmin = z.infer<typeof SuperAdminSchema>;
 
-async function getFenceBaseURL(): Promise<string> {
-  if (_cachedBaseURL) return _cachedBaseURL;
-  const res = await getProvidersAuth();
-  const coreId = extractCoreProviderId(res.data as AuthProvidersAndDefaults);
-  if (!coreId) throw new Error('No auth provider configured');
-  _cachedBaseURL = getAuthProviderURL(coreId);
-  return _cachedBaseURL;
+export const fenceKeys = {
+  superAdmin: (baseURL: string) => ['fence', baseURL, 'super-admin'] as const,
+};
+
+async function fenceFetch(url: string, options?: RequestInit) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Fence error (${res.status})`);
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
-// ── Types ──
-
-export interface SuperAdmin {
-  name: string;
-  full_name: string;
-  password: string;
-}
-
-// ── Hooks (same pattern as orval-generated) ──
-
-export function useSuperAdminExists() {
+export function useSuperAdminExists(baseURL: string | undefined) {
   return useQuery({
-    queryKey: ['super-admin'],
+    queryKey: fenceKeys.superAdmin(baseURL ?? ''),
+    enabled: !!baseURL,
     queryFn: async () => {
-      const base = await getFenceBaseURL();
-      const res = await fetch(`${base}/users/super-admin`).catch(
-        () => ({ status: 502 }) as Response,
-      );
-      if (res.status === 404 || res.status === 502) return false;
-      if (!('ok' in res) || !res.ok) throw new Error(`Fence check failed (${res.status})`);
+      const res = await fetch(`${baseURL}/users/super-admin`);
+      if (res.status === 404) return false;
+      if (!res.ok) throw new Error(`Fence error (${res.status})`);
       return true;
     },
     retry: false,
   });
 }
 
-export function useCreateSuperAdmin() {
+export function useCreateSuperAdmin(baseURL: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (admin: SuperAdmin) => {
-      const base = await getFenceBaseURL();
-      const res = await fetch(`${base}/users/super-admin`, {
+    mutationFn: (body: SuperAdmin) =>
+      fenceFetch(`${baseURL}/users/super-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(admin),
-      });
-      if (!res.ok) throw new Error(`Super admin creation failed (${res.status})`);
-      const text = await res.text();
-      return text ? JSON.parse(text) : null;
-    },
+        body: JSON.stringify(SuperAdminSchema.parse(body)),
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['super-admin'] });
+      if (baseURL) queryClient.invalidateQueries({ queryKey: fenceKeys.superAdmin(baseURL) });
     },
   });
 }

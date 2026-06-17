@@ -45,7 +45,7 @@ export default function Avatar() {
   };
 
   const handleSignIn = () => {
-    navigate('/device-login');
+    user.signIn();
   };
 
   const handleProfile = () => {

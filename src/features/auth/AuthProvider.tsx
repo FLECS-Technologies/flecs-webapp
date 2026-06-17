@@ -12,7 +12,14 @@ import type {
   AuthProvidersAndDefaults,
   AuthProvider as AuthProviderType,
 } from '@generated/core/schemas';
-import { extractCoreProviderId } from '@features/onboarding/OnboardingGuard';
+import { getAuthProviderURL } from '@app/api/ApiProvider';
+
+export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | null {
+  const ref = data?.core;
+  if (typeof ref === 'string' && ref !== 'Default') return ref;
+  if (ref && typeof ref === 'object' && 'Provider' in ref) return ref.Provider;
+  return null;
+}
 import { setAuthToken } from '@app/api/fetch-instance';
 
 const KEYS = {
@@ -42,6 +49,7 @@ interface AuthContextValue {
   signIn: () => Promise<void>;
   signOut: () => void;
   isConfigReady: boolean;
+  fenceBaseURL: string | null;
   handleOAuthCallback: () => Promise<void>;
   clearError: () => void;
   refreshAuthState: () => Promise<void>;
@@ -83,10 +91,13 @@ function useAuthConfig() {
           `${window.location.origin}${window.location.pathname}#/oauth/callback`,
         scope: props.scope || (provider.kind === 'oauth' ? 'api:read' : 'openid email'),
         props,
+        fenceBaseURL: getAuthProviderURL(coreId),
       };
     },
     staleTime: 5 * 60_000,
     retry: 2,
+    // Poll until flecs-core registers the initial auth provider (may take a few seconds on boot)
+    refetchInterval: (query) => (query.state.data === null ? 3_000 : false),
   });
 }
 
@@ -178,6 +189,7 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
     signOut,
     handleOAuthCallback,
     isConfigReady: !!config,
+    fenceBaseURL: config?.fenceBaseURL ?? null,
     clearError: () => {},
     refreshAuthState: async () => {},
   };

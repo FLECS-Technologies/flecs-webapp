@@ -35,7 +35,7 @@ describe('Import dropzone', () => {
   it('renders as a plain button without the dropzone prop', () => {
     renderWithProviders(<Import />);
     expect(screen.queryByTestId('import-dropzone')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /import config/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /import apps/i })).toBeInTheDocument();
   });
 
   it('imports a dropped .tar archive via the imports API', async () => {

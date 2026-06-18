@@ -123,12 +123,13 @@ function AppGate({ children }: { children: React.ReactNode }) {
   }, [readyToSignIn, isOAuthCallback]);
 
   if (isOAuthCallback) return <>{children}</>;
+  // Auth state is known synchronously (localStorage) — render the app immediately.
+  // The loading/admin checks are only needed to gate unauthenticated sign-in.
+  if (isAuthenticated) return <>{children}</>;
   if (loading || readyToSignIn) return <Spinner />;
   if (needsFirstBoot) return <CreateAccountForm baseURL={fenceBaseURL!} onCreated={signIn} />;
   // Covers: provider still registering, admin probe errored, or any unknown interim state
-  if (!isAuthenticated) return <Spinner />;
-
-  return <>{children}</>;
+  return <Spinner />;
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {

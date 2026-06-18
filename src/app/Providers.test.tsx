@@ -42,14 +42,24 @@ import Providers from './Providers';
 
 describe('AppGate', () => {
   it('renders children immediately when authenticated, even while auth config loads', () => {
-    Object.assign(authState, { isAuthenticated: true, isLoading: true, isConfigReady: true, fenceBaseURL: 'http://fence' });
+    Object.assign(authState, {
+      isAuthenticated: true,
+      isLoading: true,
+      isConfigReady: true,
+      fenceBaseURL: 'http://fence',
+    });
     Object.assign(adminQuery, { data: true, isLoading: false });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.getByText('app-content')).toBeTruthy();
   });
 
   it('shows spinner while auth config loads when not authenticated', () => {
-    Object.assign(authState, { isAuthenticated: false, isLoading: true, isConfigReady: false, fenceBaseURL: null });
+    Object.assign(authState, {
+      isAuthenticated: false,
+      isLoading: true,
+      isConfigReady: false,
+      fenceBaseURL: null,
+    });
     Object.assign(adminQuery, { data: undefined, isLoading: false });
     const { container } = renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.queryByText('app-content')).toBeNull();
@@ -57,7 +67,12 @@ describe('AppGate', () => {
   });
 
   it('shows create-account form on first boot when no admin exists', () => {
-    Object.assign(authState, { isAuthenticated: false, isLoading: false, isConfigReady: true, fenceBaseURL: 'http://fence' });
+    Object.assign(authState, {
+      isAuthenticated: false,
+      isLoading: false,
+      isConfigReady: true,
+      fenceBaseURL: 'http://fence',
+    });
     Object.assign(adminQuery, { data: false, isLoading: false });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.queryByText('app-content')).toBeNull();

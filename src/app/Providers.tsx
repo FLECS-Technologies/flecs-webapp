@@ -111,7 +111,7 @@ function AppGate({ children }: { children: React.ReactNode }) {
   }, [isConfigReady, authLoading, isOAuthCallback]);
 
   const { data: adminExists, isLoading: adminLoading } = useSuperAdminExists(
-    isConfigReady && !isOAuthCallback ? (fenceBaseURL ?? undefined) : undefined,
+    !isAuthenticated && isConfigReady && !isOAuthCallback ? (fenceBaseURL ?? undefined) : undefined,
   );
 
   const loading = authLoading || (isConfigReady && adminLoading);

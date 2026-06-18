@@ -60,7 +60,9 @@ function CreateAccountForm({ baseURL, onCreated }: { baseURL: string; onCreated:
             disabled={isPending}
             className="w-full px-3 py-2 bg-dark rounded-lg border border-white/10 text-white focus:outline-none focus:border-brand"
           />
-          {fieldErrors.password && <p className="text-xs text-error mt-1">{fieldErrors.password}</p>}
+          {fieldErrors.password && (
+            <p className="text-xs text-error mt-1">{fieldErrors.password}</p>
+          )}
         </div>
         {error && (
           <p className="text-sm text-error">
@@ -86,8 +88,13 @@ const Spinner = () => (
 );
 
 function AppGate({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading: authLoading, isConfigReady, signIn, fenceBaseURL } =
-    useOAuth4WebApiAuth();
+  const {
+    isAuthenticated,
+    isLoading: authLoading,
+    isConfigReady,
+    signIn,
+    fenceBaseURL,
+  } = useOAuth4WebApiAuth();
   const queryClient = useQueryClient();
   const bootstrapped = useRef(false);
 

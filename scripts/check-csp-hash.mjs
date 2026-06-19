@@ -15,10 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const INDEX = join(ROOT, 'index.html');
-const CONFS = [
-  'docker/fs/etc/nginx/conf.d/flecs-webapp.conf',
-  'whitelabel/flecs-webapp.conf',
-];
+const CONFS = ['docker/fs/etc/nginx/conf.d/flecs-webapp.conf', 'whitelabel/flecs-webapp.conf'];
 
 const sri = (body) => 'sha256-' + createHash('sha256').update(body).digest('base64');
 
@@ -42,9 +39,7 @@ for (const rel of CONFS) {
   } catch {
     continue; // conf absent in this checkout — skip rather than fail
   }
-  const present = new Set(
-    [...text.matchAll(/'(sha256-[A-Za-z0-9+/=]+)'/g)].map((m) => m[1]),
-  );
+  const present = new Set([...text.matchAll(/'(sha256-[A-Za-z0-9+/=]+)'/g)].map((m) => m[1]));
   const missing = expected.filter((h) => !present.has(h));
   if (missing.length) problems.push({ conf: relative(ROOT, join(ROOT, rel)), missing });
 }

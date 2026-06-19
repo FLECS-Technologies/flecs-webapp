@@ -1,9 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
+import {
+  OAuth4WebApiAuthProvider,
+  useOAuth4WebApiAuth,
+  extractCoreProviderId,
+} from '@features/auth/AuthProvider';
 import { useSuperAdminExists, useCreateSuperAdmin } from '@features/auth/fence-api';
-import { postProvidersAuthFirstTimeSetupFlecsport } from '@generated/core/experimental/experimental';
+import {
+  getProvidersAuth,
+  putProvidersAuthCore,
+  postProvidersAuthFirstTimeSetupFlecsport,
+} from '@generated/core/experimental/experimental';
+import { unwrapSuccess } from '@app/api/unwrap';
+import { useQuestActions } from '@features/notifications/quests/hooks';
+import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 
 const FormSchema = z.object({
   name: z.string().min(1, 'Required'),
@@ -87,6 +98,21 @@ const Spinner = () => (
   </div>
 );
 
+const OnboardingError = ({ message, onRetry }: { message: string; onRetry: () => void }) => (
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="w-full max-w-sm flex flex-col gap-4 text-center">
+      <h4 className="text-xl font-semibold">Setup could not be completed</h4>
+      <p className="px-4 py-3 rounded-lg bg-error/10 text-error text-sm">{message}</p>
+      <button
+        onClick={onRetry}
+        className="px-4 py-2 bg-brand text-white rounded-lg font-semibold hover:bg-brand-end transition"
+      >
+        Retry
+      </button>
+    </div>
+  </div>
+);
+
 function AppGate({ children }: { children: React.ReactNode }) {
   const {
     isAuthenticated,
@@ -96,19 +122,56 @@ function AppGate({ children }: { children: React.ReactNode }) {
     fenceBaseURL,
   } = useOAuth4WebApiAuth();
   const queryClient = useQueryClient();
+  const { fetchQuest, waitForQuest } = useQuestActions();
   const bootstrapped = useRef(false);
+  const [onboardingError, setOnboardingError] = useState<string | null>(null);
 
   const isOAuthCallback = window.location.hash.includes('/oauth/callback');
 
-  // Trigger first-time provider setup if flecs-core hasn't registered Fence yet.
-  // Fire-and-forget: refetchInterval in useAuthConfig polls until the provider appears.
-  useEffect(() => {
-    if (isConfigReady || authLoading || bootstrapped.current || isOAuthCallback) return;
+  // Drive (or resume) first-boot onboarding to completion. flecs-core may be in
+  // any partial state: no provider registered yet, or a provider registered but
+  // not yet promoted to `core`. The app cannot authenticate until `core` is set,
+  // so we pick up wherever setup left off and finish it — never give up silently.
+  const ensureCoreProvider = useCallback(async () => {
+    const data = unwrapSuccess(await getProvidersAuth());
+    if (!data) throw new Error('Could not read auth providers from flecs-core');
+    if (extractCoreProviderId(data)) return; // core already configured
+
+    let providerIds = Object.keys(data.providers ?? {});
+    if (providerIds.length === 0) {
+      // Nothing registered yet — create the built-in Fence provider and wait for
+      // the import job to finish before continuing.
+      const accepted = unwrapSuccess(await postProvidersAuthFirstTimeSetupFlecsport());
+      if (!accepted) throw new Error('flecs-core did not accept first-time setup');
+      await fetchQuest(accepted.jobId);
+      const quest = await waitForQuest(accepted.jobId);
+      if (!questStateFinishedOk(quest.state)) throw new Error('Auth provider import failed');
+
+      const after = unwrapSuccess(await getProvidersAuth());
+      if (after && extractCoreProviderId(after)) return; // setup also set core
+      providerIds = Object.keys(after?.providers ?? {});
+      if (providerIds.length === 0) throw new Error('No auth provider found after setup');
+    }
+    // Promote the registered provider to `core` — the step the flow was missing.
+    await putProvidersAuthCore({ provider: providerIds[0] });
+  }, [fetchQuest, waitForQuest]);
+
+  const runOnboarding = useCallback(() => {
+    setOnboardingError(null);
     bootstrapped.current = true;
-    postProvidersAuthFirstTimeSetupFlecsport()
+    ensureCoreProvider()
       .then(() => queryClient.invalidateQueries({ queryKey: ['auth-config'] }))
-      .catch(() => {});
-  }, [isConfigReady, authLoading, isOAuthCallback]);
+      .catch((err: unknown) => {
+        bootstrapped.current = false; // allow retry
+        setOnboardingError(err instanceof Error ? err.message : String(err));
+      });
+  }, [ensureCoreProvider, queryClient]);
+
+  useEffect(() => {
+    if (isAuthenticated || isConfigReady || authLoading || bootstrapped.current || isOAuthCallback)
+      return;
+    runOnboarding();
+  }, [isAuthenticated, isConfigReady, authLoading, isOAuthCallback, runOnboarding]);
 
   const { data: adminExists, isLoading: adminLoading } = useSuperAdminExists(
     !isAuthenticated && isConfigReady && !isOAuthCallback ? (fenceBaseURL ?? undefined) : undefined,
@@ -126,9 +189,10 @@ function AppGate({ children }: { children: React.ReactNode }) {
   // Auth state is known synchronously (localStorage) — render the app immediately.
   // The loading/admin checks are only needed to gate unauthenticated sign-in.
   if (isAuthenticated) return <>{children}</>;
+  if (onboardingError) return <OnboardingError message={onboardingError} onRetry={runOnboarding} />;
   if (loading || readyToSignIn) return <Spinner />;
   if (needsFirstBoot) return <CreateAccountForm baseURL={fenceBaseURL!} onCreated={signIn} />;
-  // Covers: provider still registering, admin probe errored, or any unknown interim state
+  // Onboarding still in flight (creating/promoting provider) or any interim state
   return <Spinner />;
 }
 

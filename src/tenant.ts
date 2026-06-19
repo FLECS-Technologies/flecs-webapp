@@ -7,6 +7,10 @@ export const TenantConfigSchema = z.object({
   vendor_id: z.number().int().nonnegative().default(0),
   app_title: z.string().default('FLECS'),
   company_name: z.string().default('FLECS'),
+  // true when logo.svg is a wordmark (contains the brand name) — the sidebar
+  // shows it full-height with no separate title. false (default) = square glyph,
+  // shown small beside the app_title text.
+  logo_wordmark: z.boolean().default(false),
   features: z
     .object({
       powered_by_flecs: z.boolean().default(false),

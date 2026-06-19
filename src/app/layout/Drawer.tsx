@@ -22,10 +22,10 @@ import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useDarkMode } from '@app/theme/ThemeHandler';
+import { useTenant } from '@app/theme/TenantContext';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
 import PoweredByFLECS from './PoweredBy';
-import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
   {
@@ -74,7 +74,7 @@ export default function Sidebar() {
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { isDarkMode, setDarkMode } = useDarkMode();
-  const { app_title } = useTenant();
+  const { app_title, logo_wordmark } = useTenant();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -124,12 +124,18 @@ export default function Sidebar() {
             </button>
           ) : (
             <>
-              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                <Logo />
-                <span className="text-[15px] font-bold tracking-tight text-text-primary truncate flex-1 min-w-0">
-                  {app_title}
-                </span>
-              </div>
+              {logo_wordmark ? (
+                <div className="flex items-center flex-1 min-w-0">
+                  <Logo className="h-14 w-auto object-left" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <Logo />
+                  <span className="text-[15px] font-bold tracking-tight text-text-primary truncate flex-1 min-w-0">
+                    {app_title}
+                  </span>
+                </div>
+              )}
               <button
                 onClick={toggleCollapsed}
                 className="p-1.5 rounded-md hover:bg-surface-hover transition text-muted cursor-pointer"

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Versioned git hooks (activated via core.hooksPath — see package.json "prepare").
+# Fail the commit early if the CSP script-src hash drifts from index.html.
+node scripts/check-csp-hash.mjs || exit 1

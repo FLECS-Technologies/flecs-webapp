@@ -9,7 +9,10 @@ interface Props {
   className?: string;
 }
 
-export default function Logo({ logoColor = 'var(--color-brand)', className = 'h-6 w-auto' }: Props) {
+export default function Logo({
+  logoColor = 'var(--color-brand)',
+  className = 'h-6 w-auto',
+}: Props) {
   const [failed, setFailed] = useState(false);
   if (failed) return <FLECSLogo logoColor={logoColor} />;
   return (

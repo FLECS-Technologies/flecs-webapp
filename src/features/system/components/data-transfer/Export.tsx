@@ -96,7 +96,7 @@ const Export: React.FC<ExportProps> = (props) => {
       ) : (
         <FolderDown size={16} />
       )}
-      {exporting ? 'Downloading...' : 'Download Apps'}
+      {exporting ? 'Exporting...' : 'Export Apps'}
     </button>
   );
 };

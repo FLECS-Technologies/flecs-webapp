@@ -22,16 +22,16 @@ import { HashRouter as Router } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { loadTenant } from './tenant';
-import { appBasePath } from './base-path';
 import { TenantContext } from './app/theme/TenantContext';
+import { publicAssetPath } from './brandAssets';
 
 const tenant = await loadTenant();
 document.title = tenant.app_title;
 
-// Append /theme.css last so it overrides the Tailwind bundle in both dev and prod
+// Append theme.css last so it overrides the Tailwind bundle in both dev and prod.
 const themeLink = document.createElement('link');
 themeLink.rel = 'stylesheet';
-themeLink.href = `${appBasePath()}theme.css`;
+themeLink.href = publicAssetPath('theme.css');
 document.head.appendChild(themeLink);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

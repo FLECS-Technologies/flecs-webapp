@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { appBasePath } from './base-path';
+import { publicAssetPath } from './brandAssets';
 
 // vendor_id matches DeviceLicenseManufacturer.id from the console API.
 // 0 = FLECS default (no white-label vendor). OEM partners get their assigned integer from FLECS.
@@ -7,10 +7,11 @@ export const TenantConfigSchema = z.object({
   vendor_id: z.number().int().nonnegative().default(0),
   app_title: z.string().default('FLECS'),
   company_name: z.string().default('FLECS'),
-  // true when logo.svg is a wordmark (contains the brand name) — the sidebar
-  // shows it full-height with no separate title. false (default) = square glyph,
-  // shown small beside the app_title text.
-  logo_wordmark: z.boolean().default(false),
+  branding: z
+    .object({
+      show_app_title: z.boolean().default(true),
+    })
+    .default({ show_app_title: true }),
   features: z
     .object({
       powered_by_flecs: z.boolean().default(false),
@@ -22,7 +23,7 @@ export type TenantConfig = z.infer<typeof TenantConfigSchema>;
 
 export async function loadTenant(): Promise<TenantConfig> {
   try {
-    const res = await fetch(`${appBasePath()}config.json`);
+    const res = await fetch(publicAssetPath('config.json'));
     if (!res.ok) return TenantConfigSchema.parse({});
     const result = TenantConfigSchema.safeParse(await res.json());
     return result.success ? result.data : TenantConfigSchema.parse({});

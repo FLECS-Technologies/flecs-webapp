@@ -7,7 +7,8 @@ import { useTenant } from '@app/theme/TenantContext';
 export default function MobileBar() {
   const [isMobile, setIsMobile] = useState(false);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
-  const { app_title } = useTenant();
+  const { app_title, branding } = useTenant();
+  const showAppTitle = branding.show_app_title;
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 899px)');
@@ -29,8 +30,17 @@ export default function MobileBar() {
         >
           <MenuIcon size={22} />
         </button>
-        <Logo />
-        <span className="text-sm font-bold text-text-primary">{app_title}</span>
+        <Logo
+          alt={showAppTitle ? '' : `${app_title} logo`}
+          className={
+            showAppTitle
+              ? 'h-6 w-6 shrink-0'
+              : 'h-7 w-auto max-w-[var(--brand-logo-mobile-max-width)] shrink-0'
+          }
+          fallbackSize={showAppTitle ? 24 : 28}
+          style={showAppTitle ? undefined : { maxHeight: 'var(--brand-logo-mobile-max-height)' }}
+        />
+        {showAppTitle && <span className="text-sm font-bold text-text-primary">{app_title}</span>}
       </div>
     </header>
   );

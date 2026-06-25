@@ -2,6 +2,9 @@
   "vendor_id": 95,
   "app_title": "Example Manager",
   "company_name": "Example Brand",
+  "branding": {
+    "show_app_title": true
+  },
   "features": {
     "powered_by_flecs": true
   }

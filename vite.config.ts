@@ -3,16 +3,88 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
+import fs from 'fs';
 import tailwindcss from '@tailwindcss/vite';
+import type { Plugin, ResolvedConfig } from 'vite';
+
+const mimeTypes: Record<string, string> = {
+  '.css': 'text/css; charset=utf-8',
+  '.ico': 'image/x-icon',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml; charset=utf-8',
+  '.ttf': 'font/ttf',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+};
+
+function copyBrandFiles(srcDir: string, destDir: string) {
+  if (!fs.existsSync(srcDir)) return;
+
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.')) continue;
+    const src = path.join(srcDir, entry.name);
+    const dest = path.join(destDir, entry.name);
+
+    if (entry.isDirectory()) {
+      fs.mkdirSync(dest, { recursive: true });
+      copyBrandFiles(src, dest);
+      continue;
+    }
+
+    if (!entry.isFile()) continue;
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+  }
+}
+
+function brandOverlayPlugin(brandDir: string): Plugin {
+  let config: ResolvedConfig;
+
+  return {
+    name: 'brand-overlay',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next();
+
+        const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+        const relativePath = pathname.replace(/^\/+/, '');
+        if (!relativePath || relativePath.includes('..')) return next();
+
+        const filePath = path.join(brandDir, relativePath);
+        if (!filePath.startsWith(brandDir) || !fs.existsSync(filePath)) return next();
+
+        const stat = fs.statSync(filePath);
+        if (!stat.isFile()) return next();
+
+        const contentType = mimeTypes[path.extname(filePath).toLowerCase()];
+        if (contentType) res.setHeader('Content-Type', contentType);
+        fs.createReadStream(filePath).pipe(res);
+      });
+    },
+    writeBundle() {
+      copyBrandFiles(brandDir, config.build.outDir);
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const coreTarget = env.VITE_CORE_URL || 'https://localhost';
+  const devBrandPreview = env.VITE_DEV_BRAND_PREVIEW === 'true';
+  const brandDir = path.resolve(__dirname, 'brands/example-brand');
 
   return {
     base: '',
-    publicDir: env.VITE_MOCK_BRAND === 'true' ? 'brands/example-brand' : 'public',
-    plugins: [react(), svgr(), tailwindcss()],
+    publicDir: 'public',
+    plugins: [
+      react(),
+      svgr(),
+      tailwindcss(),
+      devBrandPreview && brandOverlayPlugin(brandDir),
+    ].filter(Boolean),
     resolve: {
       alias: {
         '@app': path.resolve(__dirname, './src/app'),

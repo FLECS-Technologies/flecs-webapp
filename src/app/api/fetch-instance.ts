@@ -10,6 +10,16 @@ export const setAuthToken = (token: string | undefined) => {
   _accessToken = token;
 };
 
+export const shouldClearAuthOnResponse = (status: number, data: unknown): boolean =>
+  status === 401 || (status === 403 && (data === '' || data === null || data === undefined));
+
+function clearStoredAuthAndReload() {
+  localStorage.removeItem('flecs_access_token');
+  localStorage.removeItem('flecs_user');
+  _accessToken = undefined;
+  window.location.href = window.location.origin + window.location.pathname;
+}
+
 export const customInstance = async <T>(url: string, options?: RequestInit): Promise<T> => {
   // Only force JSON Content-Type for string bodies. FormData/Blob need the
   // browser to set multipart/octet-stream with the correct boundary.
@@ -32,11 +42,9 @@ export const customInstance = async <T>(url: string, options?: RequestInit): Pro
       : await response.text();
 
   if (!response.ok) {
-    if (response.status === 401) {
-      localStorage.removeItem('flecs_access_token');
-      localStorage.removeItem('flecs_user');
-      _accessToken = undefined;
-      window.location.href = window.location.origin + window.location.pathname;
+    const hasStoredAuth = !!_accessToken || !!localStorage.getItem('flecs_access_token');
+    if (hasStoredAuth && shouldClearAuthOnResponse(response.status, data)) {
+      clearStoredAuthAndReload();
     }
     throw new FetchError(response.status, data, response.headers);
   }

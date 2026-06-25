@@ -10,6 +10,8 @@ import { http, HttpResponse } from 'msw';
 import { renderWithProviders } from '@test/test-utils';
 import { server } from '@test/msw-setup';
 import { ThemeHandler } from '@app/theme/ThemeHandler';
+import { TenantContext } from '@app/theme/TenantContext';
+import { TenantConfigSchema, type TenantConfig } from '../../tenant';
 
 vi.mock('@features/auth/AuthProvider', () => ({
   useOAuth4WebApiAuth: () => ({
@@ -65,11 +67,13 @@ function mockDevice(instances: unknown[]) {
   );
 }
 
-function renderDrawer() {
+function renderDrawer(tenant: TenantConfig = TenantConfigSchema.parse({})) {
   return renderWithProviders(
-    <ThemeHandler>
-      <Drawer />
-    </ThemeHandler>,
+    <TenantContext.Provider value={tenant}>
+      <ThemeHandler>
+        <Drawer />
+      </ThemeHandler>
+    </TenantContext.Provider>,
   );
 }
 
@@ -97,5 +101,25 @@ describe('Drawer editors section', () => {
     // Wait until data has rendered (installed badge appears), then assert no section
     await waitFor(() => expect(screen.getByText('Installed')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('Editors')).not.toBeInTheDocument());
+  });
+});
+
+describe('Drawer brand header', () => {
+  it('shows the app title by default', () => {
+    renderDrawer(TenantConfigSchema.parse({ app_title: 'Example Manager' }));
+
+    expect(screen.getByText('Example Manager')).toBeInTheDocument();
+  });
+
+  it('can hide the app title for wordmark logos', () => {
+    renderDrawer(
+      TenantConfigSchema.parse({
+        app_title: 'Wordmark Manager',
+        branding: { show_app_title: false },
+      }),
+    );
+
+    expect(screen.queryByText('Wordmark Manager')).not.toBeInTheDocument();
+    expect(screen.getByAltText('Wordmark Manager logo')).toBeInTheDocument();
   });
 });

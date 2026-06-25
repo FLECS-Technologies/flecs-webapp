@@ -22,10 +22,10 @@ import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
 import { useDarkMode } from '@app/theme/ThemeHandler';
-import { useTenant } from '@app/theme/TenantContext';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
 import PoweredByFLECS from './PoweredBy';
+import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
   {
@@ -74,7 +74,8 @@ export default function Sidebar() {
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
   const { isDarkMode, setDarkMode } = useDarkMode();
-  const { app_title, logo_wordmark } = useTenant();
+  const { app_title, branding } = useTenant();
+  const showAppTitle = branding.show_app_title;
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -120,22 +121,37 @@ export default function Sidebar() {
               onClick={toggleCollapsed}
               className="p-2 rounded-lg hover:bg-surface-hover transition cursor-pointer"
             >
-              <Logo />
+              <Logo
+                className="h-7 w-auto max-w-[var(--brand-logo-collapsed-max-width)] shrink-0"
+                fallbackSize={24}
+                style={{ maxHeight: 'var(--brand-logo-collapsed-max-height)' }}
+              />
             </button>
           ) : (
             <>
-              {logo_wordmark ? (
-                <div className="flex items-center flex-1 min-w-0">
-                  <Logo className="h-14 w-auto object-left" />
-                </div>
-              ) : (
-                <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                  <Logo />
+              <div
+                className={`flex items-center flex-1 min-w-0 ${showAppTitle ? 'gap-2.5' : ''}`}
+              >
+                <Logo
+                  alt={showAppTitle ? '' : `${app_title} logo`}
+                  className={
+                    showAppTitle
+                      ? 'h-6 w-6 shrink-0'
+                      : 'h-8 w-auto max-w-[var(--brand-logo-sidebar-max-width)] shrink-0'
+                  }
+                  fallbackSize={showAppTitle ? 24 : 32}
+                  style={
+                    showAppTitle
+                      ? undefined
+                      : { maxHeight: 'var(--brand-logo-sidebar-max-height)' }
+                  }
+                />
+                {showAppTitle && (
                   <span className="text-[15px] font-bold tracking-tight text-text-primary truncate flex-1 min-w-0">
                     {app_title}
                   </span>
-                </div>
-              )}
+                )}
+              </div>
               <button
                 onClick={toggleCollapsed}
                 className="p-1.5 rounded-md hover:bg-surface-hover transition text-muted cursor-pointer"

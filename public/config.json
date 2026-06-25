@@ -2,6 +2,9 @@
   "vendor_id": 0,
   "app_title": "FLECS",
   "company_name": "FLECS",
+  "branding": {
+    "show_app_title": true
+  },
   "features": {
     "powered_by_flecs": false
   }

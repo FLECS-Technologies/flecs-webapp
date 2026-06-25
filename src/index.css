@@ -7,8 +7,16 @@
    /theme.css overrides these at source-order-last so they always win. */
 :root {
   --brand-primary: #ff2e63;
-  --brand-end: #ff6b8a;
+  --brand-end: #0f766e;
+  --brand-bg-light: #f8fafc;
+  --brand-bg-dark: #071112;
   --brand-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --brand-logo-sidebar-max-width: 160px;
+  --brand-logo-sidebar-max-height: 32px;
+  --brand-logo-mobile-max-width: 152px;
+  --brand-logo-mobile-max-height: 28px;
+  --brand-logo-collapsed-max-width: 32px;
+  --brand-logo-collapsed-max-height: 28px;
 }
 
 /* ── @theme inline ── */
@@ -56,10 +64,11 @@
   :root {
     color-scheme: light;
 
-    /* Surfaces: brand hue, very high lightness, barely-there chroma */
-    --surface: oklch(from var(--brand-primary) 0.975 0.01 h);
-    --surface-raised: oklch(from var(--brand-primary) 0.995 0.005 h);
-    --surface-overlay: oklch(from var(--brand-primary) 0.96 0.015 h);
+    /* Surfaces derive from explicit light/dark background tokens.
+       Brand CI should generate and contrast-check these before Docker image build. */
+    --surface: var(--brand-bg-light);
+    --surface-raised: color-mix(in oklch, var(--brand-bg-light) 85%, white);
+    --surface-overlay: color-mix(in oklch, var(--brand-bg-light) 96%, black);
     --surface-subtle: rgba(11, 11, 24, 0.02);
     --surface-hover: rgba(11, 11, 24, 0.04);
 
@@ -73,10 +82,9 @@
   .dark {
     color-scheme: dark;
 
-    /* Surfaces: brand hue, very low lightness */
-    --surface: oklch(from var(--brand-primary) 0.1 0.02 h);
-    --surface-raised: oklch(from var(--brand-primary) 0.145 0.02 h);
-    --surface-overlay: oklch(from var(--brand-primary) 0.165 0.02 h);
+    --surface: var(--brand-bg-dark);
+    --surface-raised: color-mix(in oklch, var(--brand-bg-dark) 90%, white);
+    --surface-overlay: color-mix(in oklch, var(--brand-bg-dark) 84%, white);
     --surface-subtle: rgba(255, 255, 255, 0.02);
     --surface-hover: rgba(255, 255, 255, 0.05);
 

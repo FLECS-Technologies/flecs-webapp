@@ -9,11 +9,9 @@
   --brand-primary: #ff2e63;
   --brand-primary-light: var(--brand-primary);
   --brand-primary-dark: var(--brand-primary);
-  --brand-primary-active: var(--brand-primary-light);
   --brand-end: #0f766e;
   --brand-end-light: var(--brand-end);
   --brand-end-dark: var(--brand-end);
-  --brand-end-active: var(--brand-end-light);
   --brand-bg-light: #f8fafc;
   --brand-bg-dark: #071112;
   --brand-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -23,6 +21,16 @@
   --brand-logo-mobile-max-height: 28px;
   --brand-logo-collapsed-max-width: 32px;
   --brand-logo-collapsed-max-height: 28px;
+}
+
+:root:not(.dark) {
+  --brand-primary-active: var(--brand-primary-light);
+  --brand-end-active: var(--brand-end-light);
+}
+
+:root.dark {
+  --brand-primary-active: var(--brand-primary-dark);
+  --brand-end-active: var(--brand-end-dark);
 }
 
 /* ── @theme inline ── */
@@ -63,15 +71,10 @@
   font-display: swap;
 }
 
-/* ── Base ──
-   Both :root and .dark live in the same @layer so specificity is equal
-   and source order decides: .dark wins when the class is present. */
+/* ── Base ── */
 @layer base {
   :root {
     color-scheme: light;
-
-    --brand-primary-active: var(--brand-primary-light);
-    --brand-end-active: var(--brand-end-light);
 
     /* Surfaces derive from explicit light/dark background tokens.
        Brand CI should generate and contrast-check these before Docker image build. */
@@ -90,9 +93,6 @@
 
   .dark {
     color-scheme: dark;
-
-    --brand-primary-active: var(--brand-primary-dark);
-    --brand-end-active: var(--brand-end-dark);
 
     --surface: var(--brand-bg-dark);
     --surface-raised: color-mix(in oklch, var(--brand-bg-dark) 90%, white);

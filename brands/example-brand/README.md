@@ -8,6 +8,8 @@ The webapp expects these runtime files at the web root:
 /config.json
 /theme.css
 /logo.svg
+/logo-light.svg
+/logo-dark.svg
 /favicon.ico
 ```
 
@@ -19,7 +21,12 @@ The webapp expects these runtime files at the web root:
   "app_title": "Example Manager",
   "company_name": "Example Brand",
   "branding": {
-    "show_app_title": true
+    "show_app_title": true,
+    "logos": {
+      "default": "logo.svg",
+      "light": "logo-light.svg",
+      "dark": "logo-dark.svg"
+    }
   },
   "features": {
     "powered_by_flecs": true
@@ -31,6 +38,7 @@ The webapp expects these runtime files at the web root:
 - `app_title`: browser title and shell title when `branding.show_app_title` is enabled.
 - `company_name`: brand/company label for future copy and legal surfaces.
 - `branding.show_app_title`: set to `false` when `logo.svg` already contains the company/product name.
+- `branding.logos`: optional runtime logo paths. Missing light/dark entries fall back to `logo.svg`.
 - `features.powered_by_flecs`: shows the small powered-by badge.
 
 ## theme.css
@@ -38,6 +46,8 @@ The webapp expects these runtime files at the web root:
 ```css
 :root {
   --brand-primary: #0d9488;
+  --brand-primary-light: #0d9488;
+  --brand-primary-dark: #2dd4bf;
   --brand-bg-light: #f7faf9;
   --brand-bg-dark: #071312;
   --brand-font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;

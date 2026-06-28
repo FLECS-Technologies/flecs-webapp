@@ -7,7 +7,13 @@
    /theme.css overrides these at source-order-last so they always win. */
 :root {
   --brand-primary: #ff2e63;
+  --brand-primary-light: var(--brand-primary);
+  --brand-primary-dark: var(--brand-primary);
+  --brand-primary-active: var(--brand-primary-light);
   --brand-end: #0f766e;
+  --brand-end-light: var(--brand-end);
+  --brand-end-dark: var(--brand-end);
+  --brand-end-active: var(--brand-end-light);
   --brand-bg-light: #f8fafc;
   --brand-bg-dark: #071112;
   --brand-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -23,8 +29,8 @@
 /* Utilities reference the intermediate var directly at paint time,
    so runtime changes to --surface / --border / etc. propagate. */
 @theme inline {
-  --color-brand: var(--brand-primary);
-  --color-brand-end: var(--brand-end);
+  --color-brand: var(--brand-primary-active);
+  --color-brand-end: var(--brand-end-active);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
   --color-surface-overlay: var(--surface-overlay);
@@ -64,6 +70,9 @@
   :root {
     color-scheme: light;
 
+    --brand-primary-active: var(--brand-primary-light);
+    --brand-end-active: var(--brand-end-light);
+
     /* Surfaces derive from explicit light/dark background tokens.
        Brand CI should generate and contrast-check these before Docker image build. */
     --surface: var(--brand-bg-light);
@@ -81,6 +90,9 @@
 
   .dark {
     color-scheme: dark;
+
+    --brand-primary-active: var(--brand-primary-dark);
+    --brand-end-active: var(--brand-end-dark);
 
     --surface: var(--brand-bg-dark);
     --surface-raised: color-mix(in oklch, var(--brand-bg-dark) 90%, white);

@@ -63,6 +63,18 @@ export const useOAuth4WebApiAuth = () => {
   return ctx;
 };
 
+export function getOAuthCallbackParameters(
+  location: Pick<Location, 'search' | 'hash'> = window.location,
+): URLSearchParams {
+  const searchParams = new URLSearchParams(location.search);
+  if (searchParams.has('code') || searchParams.has('error')) return searchParams;
+
+  const queryStart = location.hash.indexOf('?');
+  if (queryStart === -1) return searchParams;
+
+  return new URLSearchParams(location.hash.slice(queryStart + 1));
+}
+
 function useAuthConfig() {
   return useQuery({
     queryKey: ['auth-config'],
@@ -140,33 +152,39 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
 
   const handleOAuthCallback = useCallback(async () => {
     if (!config) throw new Error('Auth not configured');
-    const code = new URLSearchParams(window.location.search).get('code');
+    const callbackParameters = oauth.validateAuthResponse(
+      config.authServer,
+      config.client,
+      getOAuthCallbackParameters(),
+      oauth.expectNoState,
+    );
     const codeVerifier = sessionStorage.getItem(KEYS.CODE_VERIFIER);
-    if (!code || !codeVerifier) throw new Error('Missing code or verifier');
+    if (!codeVerifier) throw new Error('Missing OAuth verifier. Please sign in again.');
 
-    const tokenPath = new URL(config.authServer.token_endpoint!).pathname;
-    const res = await fetch(tokenPath, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: config.redirectUri,
-        client_id: config.client.client_id,
-        code_verifier: codeVerifier,
-      }),
-    });
-    const result = await res.json();
+    const response = await oauth.authorizationCodeGrantRequest(
+      config.authServer,
+      config.client,
+      oauth.None(),
+      callbackParameters,
+      config.redirectUri,
+      codeVerifier,
+      {
+        [oauth.customFetch]: (url, options) =>
+          fetch(url, { ...options, credentials: 'include' }),
+      },
+    );
+    const result = await oauth.processAuthorizationCodeResponse(
+      config.authServer,
+      config.client,
+      response,
+    );
 
-    if (result.access_token) {
-      localStorage.setItem(KEYS.ACCESS_TOKEN, result.access_token);
-      localStorage.setItem(
-        KEYS.USER,
-        JSON.stringify({ sub: result.sub || 'user', access_token: result.access_token }),
-      );
-      setAuthToken(result.access_token);
-    }
+    localStorage.setItem(KEYS.ACCESS_TOKEN, result.access_token);
+    localStorage.setItem(
+      KEYS.USER,
+      JSON.stringify({ sub: 'user', access_token: result.access_token }),
+    );
+    setAuthToken(result.access_token);
 
     sessionStorage.removeItem(KEYS.CODE_VERIFIER);
     window.location.href = window.location.origin + window.location.pathname;

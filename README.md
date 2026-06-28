@@ -31,10 +31,8 @@ The dev server starts at [https://localhost:5173](https://localhost:5173).
 ## White Label Runtime
 
 The webapp supports static white-label runtime files that are injected before the
-Docker image is built. Real customer configs and assets are not stored in this
-repository; they live in the private `flecs-whitelabel` repository. This repository
-only contains `brands/example-brand/` so developers can preview and understand the
-contract without exposing customer data.
+Docker image is built. This repository
+contains `brands/example-brand/` as a reference for developers.
 
 Runtime files are served from the web root and also work when the app is mounted
 below `/ui/`:
@@ -59,17 +57,6 @@ For local developer preview, `.env.development` enables the example brand with:
 ```txt
 VITE_DEV_BRAND_PREVIEW=true
 ```
-
-For external customer white-label builds, generate the brand package in the
-private `flecs-whitelabel` repository and point Vite at the generated folder:
-
-```sh
-VITE_BRAND_DIR=/path/to/flecs-whitelabel/dist/<brand> npm run build
-docker buildx bake --var "NAMED_TAG=<tag>"
-```
-
-`VITE_BRAND_DIR` copies the full generated package into `dist` atomically, so
-`config.json`, `theme.css`, logos, and favicons stay in sync.
 
 ## Tech Stack
 

@@ -64,12 +64,18 @@ For external customer white-label builds, generate the brand package in the
 private `flecs-whitelabel` repository and point Vite at the generated folder:
 
 ```sh
-VITE_BRAND_DIR=/path/to/flecs-whitelabel/dist/<brand> npm run build
-docker buildx bake --var "NAMED_TAG=<tag>"
+make brand-packages
+make build-brand BRAND=<brand>
+make docker-brand BRAND=<brand> WHITE_LABEL_TAG=<tag>
+make orb-install-brand BRAND=<brand> WHITE_LABEL_TAG=<tag> ORB_MACHINE=flecsiscool
 ```
 
-`VITE_BRAND_DIR` copies the full generated package into `dist` atomically, so
-`config.json`, `theme.css`, logos, and favicons stay in sync.
+`build-brand` uses `VITE_BRAND_DIR` internally and copies the full generated
+package into `dist` atomically, so `config.json`, `theme.css`, logos, and
+favicons stay in sync. `docker-brand` builds and loads a local single-platform
+test image. `orb-install-brand` transfers that image into the OrbStack Linux
+machine and reruns the staging installer. `WHITELABEL_DIR` defaults to
+`../flecs-whitelabel`.
 
 ## Tech Stack
 

@@ -34,6 +34,7 @@ function copyBrandFiles(srcDir: string, destDir: string) {
     if (!entry.isFile()) continue;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
+    fs.chmodSync(dest, 0o644);
   }
 }
 
@@ -74,7 +75,11 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const coreTarget = env.VITE_CORE_URL || 'https://localhost';
   const devBrandPreview = env.VITE_DEV_BRAND_PREVIEW === 'true';
-  const brandDir = path.resolve(__dirname, 'brands/example-brand');
+  const externalBrandDir = env.VITE_BRAND_DIR?.trim();
+  const brandDir = externalBrandDir
+    ? path.resolve(process.cwd(), externalBrandDir)
+    : path.resolve(__dirname, 'brands/example-brand');
+  const brandOverlayEnabled = Boolean(externalBrandDir) || devBrandPreview;
 
   return {
     base: '',
@@ -83,7 +88,7 @@ export default defineConfig(({ mode }) => {
       react(),
       svgr(),
       tailwindcss(),
-      devBrandPreview && brandOverlayPlugin(brandDir),
+      brandOverlayEnabled && brandOverlayPlugin(brandDir),
     ].filter(Boolean),
     resolve: {
       alias: {

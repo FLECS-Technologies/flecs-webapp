@@ -60,6 +60,17 @@ For local developer preview, `.env.development` enables the example brand with:
 VITE_DEV_BRAND_PREVIEW=true
 ```
 
+For external customer white-label builds, generate the brand package in the
+private `flecs-whitelabel` repository and point Vite at the generated folder:
+
+```sh
+VITE_BRAND_DIR=/path/to/flecs-whitelabel/dist/<brand> npm run build
+docker buildx bake --var "NAMED_TAG=<tag>"
+```
+
+`VITE_BRAND_DIR` copies the full generated package into `dist` atomically, so
+`config.json`, `theme.css`, logos, and favicons stay in sync.
+
 ## Tech Stack
 
 React 19 · TypeScript · Vite 7 · Tailwind CSS v4 · TanStack Query v5 · Orval · Zustand · Sonner · Vitest · MSW · Playwright

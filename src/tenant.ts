@@ -10,8 +10,15 @@ export const TenantConfigSchema = z.object({
   branding: z
     .object({
       show_app_title: z.boolean().default(true),
+      logos: z
+        .object({
+          default: z.string().min(1).optional(),
+          light: z.string().min(1).optional(),
+          dark: z.string().min(1).optional(),
+        })
+        .default({}),
     })
-    .default({ show_app_title: true }),
+    .default({ show_app_title: true, logos: {} }),
   features: z
     .object({
       powered_by_flecs: z.boolean().default(false),

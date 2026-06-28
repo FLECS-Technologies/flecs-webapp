@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { publicAssetPath } from '../../brandAssets';
+import { useDarkMode } from '@app/theme/ThemeHandler';
+import { useTenant } from '@app/theme/TenantContext';
 import FLECSLogo from './FLECSLogo';
 
 interface Props {
@@ -18,7 +20,19 @@ export default function Logo({
   logoColor = 'var(--color-brand)',
   style,
 }: Props) {
+  const { branding } = useTenant();
+  const { isDarkMode } = useDarkMode();
+  const defaultLogo = branding.logos.default ?? 'logo.svg';
+  const modeLogo = isDarkMode ? branding.logos.dark : branding.logos.light;
+  const preferredLogo = modeLogo ?? defaultLogo;
+  const [src, setSrc] = useState(preferredLogo);
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setSrc(preferredLogo);
+    setFailed(false);
+  }, [preferredLogo]);
+
   if (failed) {
     return (
       <span className={`inline-flex items-center justify-center ${className}`} style={style}>
@@ -28,11 +42,17 @@ export default function Logo({
   }
   return (
     <img
-      src={publicAssetPath('logo.svg')}
+      src={publicAssetPath(src)}
       alt={alt}
       className={`block object-contain ${className}`}
       style={style}
-      onError={() => setFailed(true)}
+      onError={() => {
+        if (src !== defaultLogo) {
+          setSrc(defaultLogo);
+          return;
+        }
+        setFailed(true);
+      }}
     />
   );
 }

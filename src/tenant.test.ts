@@ -19,6 +19,24 @@ describe('TenantConfigSchema', () => {
 
     expect(tenant.branding.show_app_title).toBe(false);
   });
+
+  it('accepts mode-specific logo assets', () => {
+    const tenant = TenantConfigSchema.parse({
+      branding: {
+        logos: {
+          default: 'logo.svg',
+          light: 'logo-light.svg',
+          dark: 'logo-dark.svg',
+        },
+      },
+    });
+
+    expect(tenant.branding.logos).toEqual({
+      default: 'logo.svg',
+      light: 'logo-light.svg',
+      dark: 'logo-dark.svg',
+    });
+  });
 });
 
 describe('loadTenant', () => {

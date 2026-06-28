@@ -66,16 +66,42 @@ private `flecs-whitelabel` repository and point Vite at the generated folder:
 ```sh
 make brand-packages
 make build-brand BRAND=<brand>
-make docker-brand BRAND=<brand> WHITE_LABEL_TAG=<tag>
-make orb-install-brand BRAND=<brand> WHITE_LABEL_TAG=<tag> ORB_MACHINE=flecsiscool
+make docker-brand BRAND=<brand> TAG=5.3.0-local-dev
+make orb-install-brand BRAND=<brand> TAG=5.3.0-local-dev ORB_MACHINE=flecsiscool
 ```
 
 `build-brand` uses `VITE_BRAND_DIR` internally and copies the full generated
 package into `dist` atomically, so `config.json`, `theme.css`, logos, and
 favicons stay in sync. `docker-brand` builds and loads a local single-platform
-test image. `orb-install-brand` transfers that image into the OrbStack Linux
-machine and reruns the staging installer. `WHITELABEL_DIR` defaults to
-`../flecs-whitelabel`.
+test image. `orb-install-brand` is the optimized Mac/OrbStack path: it transfers
+that image into the selected OrbStack Linux machine and reruns the staging
+installer. `WHITELABEL_DIR` defaults to `../flecs-whitelabel`.
+
+To switch the same OrbStack machine back to the normal non-white-label webapp:
+
+```sh
+make orb-install-local TAG=5.3.0-local-dev ORB_MACHINE=flecsiscool
+```
+
+On a Linux host where Docker and FLECS run on the same machine, use the host
+targets instead. They skip the OrbStack image transfer and run the installer on
+the current host:
+
+```sh
+make host-install-local TAG=5.3.0-local-dev
+make host-install-brand BRAND=<brand> TAG=5.3.0-local-dev
+```
+
+Useful knobs:
+
+```txt
+TAG                Common local Docker tag. Default: 5.3.0-local-dev
+WEBAPP_TAG         Optional override for normal local images. Defaults to TAG
+WHITE_LABEL_TAG   Optional override for white-label images. Defaults to WEBAPP_TAG
+LOCAL_PLATFORM    Local Docker platform. Default: linux/arm64
+ORB_MACHINE       OrbStack Linux machine name. Default: flecsiscool
+CORE_VERSION      Core version passed to the installer. Default: develop-debug
+```
 
 ## Tech Stack
 

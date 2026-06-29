@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { extractCoreProviderId, getOAuthCallbackParameters } from './AuthProvider';
+import {
+  extractCoreProviderId,
+  getOAuthCallbackParameters,
+  hasConfiguredCoreProvider,
+  hasConfiguredDefaultProvider,
+} from './AuthProvider';
 import type { AuthProvidersAndDefaults } from '@generated/core/schemas';
 
 describe('extractCoreProviderId', () => {
@@ -15,13 +20,86 @@ describe('extractCoreProviderId', () => {
     expect(extractCoreProviderId(data)).toBe('core-provider');
   });
 
-  it('returns null when no core provider is configured yet', () => {
+  it('uses string core provider ids returned by flecs-core', () => {
+    const data = {
+      core: '000fe4ce',
+      providers: {
+        '000fe4ce': {},
+      },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(extractCoreProviderId(data)).toBe('000fe4ce');
+  });
+
+  it('falls back to the first available provider after initial setup', () => {
+    const data = {
+      core: null,
+      providers: {
+        '000fe4ce': {},
+      },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(extractCoreProviderId(data)).toBe('000fe4ce');
+  });
+
+  it('returns null when no provider is available yet', () => {
     const data = {
       core: null,
       providers: {},
     } as unknown as AuthProvidersAndDefaults;
 
     expect(extractCoreProviderId(data)).toBeNull();
+  });
+});
+
+describe('hasConfiguredCoreProvider', () => {
+  it('is true when core points at a concrete provider', () => {
+    const data = {
+      core: { Provider: '000fe4ce' },
+      providers: { '000fe4ce': {} },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(hasConfiguredCoreProvider(data)).toBe(true);
+  });
+
+  it('is true when core returns a concrete provider id string', () => {
+    const data = {
+      core: '000fe4ce',
+      providers: { '000fe4ce': {} },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(hasConfiguredCoreProvider(data)).toBe(true);
+  });
+
+  it('is false while core has not registered an auth provider yet', () => {
+    const data = {
+      core: null,
+      providers: { '000fe4ce': {} },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(hasConfiguredCoreProvider(data)).toBe(false);
+  });
+});
+
+describe('hasConfiguredDefaultProvider', () => {
+  it('is true when a default provider id is configured', () => {
+    const data = {
+      core: { Provider: '000fe4ce' },
+      default: '000fe4ce',
+      providers: { '000fe4ce': {} },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(hasConfiguredDefaultProvider(data)).toBe(true);
+  });
+
+  it('is false while the default provider is not configured', () => {
+    const data = {
+      core: { Provider: '000fe4ce' },
+      default: null,
+      providers: { '000fe4ce': {} },
+    } as unknown as AuthProvidersAndDefaults;
+
+    expect(hasConfiguredDefaultProvider(data)).toBe(false);
   });
 });
 

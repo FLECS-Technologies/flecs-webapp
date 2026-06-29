@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import Logo from '@app/layout/Logo';
+import { useTenant } from '@app/theme/TenantContext';
 
 export type StepStatus = 'pending' | 'active' | 'done';
 
@@ -11,6 +13,7 @@ export interface BootStep {
 const STUCK_THRESHOLD_MS = 8_000;
 
 export function BootScreen({ steps }: { steps: BootStep[] }) {
+  const { app_title, branding } = useTenant();
   const startTimesRef = useRef<(number | undefined)[]>(steps.map(() => undefined));
   const frozenMsRef = useRef<(number | undefined)[]>(steps.map(() => undefined));
   const stuckTimersRef = useRef<(ReturnType<typeof setTimeout> | undefined)[]>(
@@ -91,9 +94,12 @@ export function BootScreen({ steps }: { steps: BootStep[] }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <p className="text-xl font-bold tracking-tight text-text-primary">FLECS</p>
-          <p className="mt-1 text-xs tracking-wide text-muted">Initializing platform</p>
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <Logo className="h-10 w-10" fallbackSize={40} />
+          {branding.show_app_title && (
+            <p className="text-base font-semibold tracking-tight text-text-primary">{app_title}</p>
+          )}
+          <p className="text-xs tracking-wide text-muted">Initializing platform</p>
         </div>
 
         <div className="mb-5 space-y-2">

@@ -58,6 +58,13 @@ vi.mock('@generated/core/experimental/experimental', () => ({
   usePutProvidersAuthDefault: () => ({ mutate: selectDefaultProviderMutate }),
 }));
 
+// BootScreen renders the brand <Logo>, which calls useDarkMode() and so needs a
+// ThemeHandler ancestor. These tests exercise AppGate's bootstrap logic, not the
+// logo, so stub it out (same approach as BootScreen.test.tsx).
+vi.mock('@app/layout/Logo', () => ({
+  default: () => <span data-testid="logo" />,
+}));
+
 import Providers from './Providers';
 
 describe('AppGate', () => {

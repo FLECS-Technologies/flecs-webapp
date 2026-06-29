@@ -129,11 +129,15 @@ function useAuthConfig() {
     },
     staleTime: 5 * 60_000,
     retry: 2,
-    // Poll until flecs-core registers the initial auth provider (may take a few seconds on boot)
-    refetchInterval: (query) =>
-      query.state.data === null || query.state.data?.isCoreProviderReady === false
-        ? 3_000
-        : false,
+    // Adaptive backoff: check early (core often registers Fence within 1-2s),
+    // then back off toward 3s to avoid hammering on slow machines.
+    refetchInterval: (query) => {
+      if (query.state.data !== null && query.state.data?.isCoreProviderReady !== false) {
+        return false;
+      }
+      const n = query.state.dataUpdateCount;
+      return Math.min(300 * 2 ** n, 3_000);
+    },
   });
 }
 

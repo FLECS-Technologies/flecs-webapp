@@ -9,17 +9,12 @@ import {
   usePutProvidersAuthCore,
   usePutProvidersAuthDefault,
 } from '@generated/core/experimental/experimental';
+import { BootScreen, type BootStep } from '@app/components/BootScreen';
 
 const FormSchema = z.object({
   name: z.string().min(1, 'Required'),
   password: z.string().min(1, 'Required'),
 });
-
-const Spinner = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="animate-spin h-6 w-6 border-2 border-brand border-t-transparent rounded-full" />
-  </div>
-);
 
 function ErrorScreen({
   title,
@@ -232,6 +227,28 @@ function AppGate({ children }: { children: React.ReactNode }) {
     selectCoreProvider,
   ]);
 
+  const step1Done = authProviderId !== null;
+  const step2Done = isCoreProviderReady;
+  const step3Done = adminExists !== undefined;
+
+  const bootSteps: BootStep[] = [
+    {
+      label: 'Connecting to core',
+      sublabel: 'getProvidersAuth',
+      status: step1Done ? 'done' : 'active',
+    },
+    {
+      label: 'Registering auth provider',
+      sublabel: 'triggerFirstTimeSetup / selectCoreProvider',
+      status: step2Done ? 'done' : step1Done ? 'active' : 'pending',
+    },
+    {
+      label: 'Checking account status',
+      sublabel: 'GET /users/super-admin',
+      status: step3Done ? 'done' : step2Done ? 'active' : 'pending',
+    },
+  ];
+
   const adminReady = !isConfigReady || !isCoreProviderReady || adminExists !== undefined;
   const readyToSignIn =
     !authLoading &&
@@ -307,10 +324,10 @@ function AppGate({ children }: { children: React.ReactNode }) {
       />
     );
   }
-  if (!adminReady || readyToSignIn) return <Spinner />;
+  if (!adminReady || readyToSignIn) return <BootScreen steps={bootSteps} />;
   // Covers: provider registration, OAuth redirect startup, or any unknown interim state.
   // Fence owns its login and first-user setup once OAuth starts.
-  return <Spinner />;
+  return <BootScreen steps={bootSteps} />;
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {

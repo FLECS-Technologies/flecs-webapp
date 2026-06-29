@@ -6,6 +6,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { BootScreen, type BootStep } from './BootScreen';
 
+vi.mock('@app/theme/TenantContext', () => ({
+  useTenant: () => ({
+    app_title: 'FLECS',
+    branding: { show_app_title: true, logos: {} },
+  }),
+}));
+
+vi.mock('@app/layout/Logo', () => ({
+  default: () => <span data-testid="logo" />,
+}));
+
 const steps = (
   s0: BootStep['status'],
   s1: BootStep['status'],

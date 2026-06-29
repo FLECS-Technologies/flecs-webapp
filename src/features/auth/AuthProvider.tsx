@@ -12,13 +12,22 @@ import type {
   AuthProvidersAndDefaults,
   AuthProvider as AuthProviderType,
 } from '@generated/core/schemas';
-import { getAuthProviderURL } from '@app/api/ApiProvider';
 
 export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | null {
   const ref = data?.core;
   if (typeof ref === 'string' && ref !== 'Default') return ref;
   if (ref && typeof ref === 'object' && 'Provider' in ref) return ref.Provider;
-  return null;
+  const [firstProviderId] = Object.keys(data?.providers ?? {});
+  return firstProviderId ?? null;
+}
+
+export function hasConfiguredCoreProvider(data: AuthProvidersAndDefaults): boolean {
+  const ref = data?.core;
+  return !!ref && ref !== 'Default';
+}
+
+export function hasConfiguredDefaultProvider(data: AuthProvidersAndDefaults): boolean {
+  return !!data?.default;
 }
 import { setAuthToken } from '@app/api/fetch-instance';
 
@@ -46,10 +55,12 @@ interface AuthContextValue {
   isLoading: boolean;
   user: User | null;
   error: Error | null;
+  authProviderId: string | null;
   signIn: () => Promise<void>;
   signOut: () => void;
   isConfigReady: boolean;
-  fenceBaseURL: string | null;
+  isCoreProviderReady: boolean;
+  isDefaultProviderReady: boolean;
   handleOAuthCallback: () => Promise<void>;
   clearError: () => void;
   refreshAuthState: () => Promise<void>;
@@ -88,6 +99,7 @@ function useAuthConfig() {
       const props = (provider.properties || {}) as Record<string, string>;
 
       return {
+        providerId: coreId,
         authServer: {
           issuer: provider.issuer_url,
           authorization_endpoint: provider.kind === 'oauth' ? provider.authorize_url : undefined,
@@ -103,13 +115,17 @@ function useAuthConfig() {
           `${window.location.origin}${window.location.pathname}#/oauth/callback`,
         scope: props.scope || (provider.kind === 'oauth' ? 'api:read' : 'openid email'),
         props,
-        fenceBaseURL: getAuthProviderURL(coreId),
+        isCoreProviderReady: hasConfiguredCoreProvider(data),
+        isDefaultProviderReady: hasConfiguredDefaultProvider(data),
       };
     },
     staleTime: 5 * 60_000,
     retry: 2,
     // Poll until flecs-core registers the initial auth provider (may take a few seconds on boot)
-    refetchInterval: (query) => (query.state.data === null ? 3_000 : false),
+    refetchInterval: (query) =>
+      query.state.data === null || query.state.data?.isCoreProviderReady === false
+        ? 3_000
+        : false,
   });
 }
 
@@ -203,11 +219,13 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
     isLoading: configLoading,
     user: storedUser,
     error: configError as Error | null,
+    authProviderId: config?.providerId ?? null,
     signIn,
     signOut,
     handleOAuthCallback,
     isConfigReady: !!config,
-    fenceBaseURL: config?.fenceBaseURL ?? null,
+    isCoreProviderReady: config?.isCoreProviderReady ?? false,
+    isDefaultProviderReady: config?.isDefaultProviderReady ?? false,
     clearError: () => {},
     refreshAuthState: async () => {},
   };

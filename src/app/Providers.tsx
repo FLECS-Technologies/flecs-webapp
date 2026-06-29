@@ -1,18 +1,130 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { z } from 'zod';
 import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
+import { useCreateSuperAdmin, useSuperAdminExists } from '@features/auth/fence-api';
 import {
   usePostProvidersAuthFirstTimeSetupFlecsport,
   usePutProvidersAuthCore,
   usePutProvidersAuthDefault,
 } from '@generated/core/experimental/experimental';
 
+const FormSchema = z.object({
+  name: z.string().min(1, 'Required'),
+  password: z.string().min(1, 'Required'),
+});
+
 const Spinner = () => (
   <div className="flex justify-center items-center min-h-screen">
     <div className="animate-spin h-6 w-6 border-2 border-brand border-t-transparent rounded-full" />
   </div>
 );
+
+function ErrorScreen({
+  title,
+  message,
+  onRetry,
+}: {
+  title: string;
+  message: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
+      <div className="max-w-md rounded-lg border border-border bg-surface p-5 shadow-sm">
+        <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
+        <p className="mt-2 text-sm text-muted">{message}</p>
+        <button
+          className="mt-4 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-end"
+          onClick={onRetry}
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CreateAccountForm({ baseURL, onCreated }: { baseURL: string; onCreated: () => void }) {
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; password?: string }>({});
+  const { mutateAsync, isPending, error } = useCreateSuperAdmin(baseURL);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = FormSchema.safeParse({ name, password });
+    if (!result.success) {
+      const errs: { name?: string; password?: string } = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof typeof errs;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      return;
+    }
+    setFieldErrors({});
+    try {
+      await mutateAsync({ name, full_name: name, password });
+      onCreated();
+    } catch {
+      // Error state is exposed by the mutation and rendered below.
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 shadow-sm"
+      >
+        <div>
+          <h1 className="text-xl font-semibold text-text-primary">Create your account</h1>
+          <p className="mt-1 text-sm text-muted">
+            Set up the first administrator account to continue.
+          </p>
+        </div>
+        <div className="mt-5">
+          <label className="mb-1 block text-sm text-muted">Username</label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            disabled={isPending}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-text-primary outline-none transition focus:border-brand disabled:opacity-50"
+          />
+          {fieldErrors.name && <p className="mt-1 text-xs text-error">{fieldErrors.name}</p>}
+        </div>
+        <div className="mt-4">
+          <label className="mb-1 block text-sm text-muted">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isPending}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-text-primary outline-none transition focus:border-brand disabled:opacity-50"
+          />
+          {fieldErrors.password && (
+            <p className="mt-1 text-xs text-error">{fieldErrors.password}</p>
+          )}
+        </div>
+        {error && (
+          <p className="mt-4 text-sm text-error">
+            {error instanceof Error ? error.message : 'Failed to create account'}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="mt-5 w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-end disabled:opacity-50"
+        >
+          {isPending ? 'Creating account...' : 'Create account'}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 function AppGate({ children }: { children: React.ReactNode }) {
   const {
@@ -22,6 +134,7 @@ function AppGate({ children }: { children: React.ReactNode }) {
     isCoreProviderReady,
     isDefaultProviderReady,
     authProviderId,
+    fenceBaseURL,
     signIn,
   } = useOAuth4WebApiAuth();
   const queryClient = useQueryClient();
@@ -62,6 +175,16 @@ function AppGate({ children }: { children: React.ReactNode }) {
   });
 
   const isOAuthCallback = window.location.hash.includes('/oauth/callback');
+  const {
+    data: adminExists,
+    isLoading: adminLoading,
+    error: adminError,
+    refetch: refetchAdminExists,
+  } = useSuperAdminExists(
+    !isAuthenticated && isConfigReady && isCoreProviderReady && !isOAuthCallback
+      ? (fenceBaseURL ?? undefined)
+      : undefined,
+  );
 
   // Trigger first-time provider setup if flecs-core hasn't registered Fence yet.
   // Refetch polling continues until a provider appears.
@@ -109,7 +232,22 @@ function AppGate({ children }: { children: React.ReactNode }) {
     selectCoreProvider,
   ]);
 
-  const readyToSignIn = !authLoading && !isAuthenticated && isConfigReady && isCoreProviderReady;
+  const adminReady = !isConfigReady || !isCoreProviderReady || adminExists !== undefined;
+  const readyToSignIn =
+    !authLoading &&
+    !adminLoading &&
+    !isAuthenticated &&
+    isConfigReady &&
+    isCoreProviderReady &&
+    adminExists === true;
+  const needsFirstBoot =
+    !authLoading &&
+    !adminLoading &&
+    !isAuthenticated &&
+    isConfigReady &&
+    isCoreProviderReady &&
+    adminExists === false &&
+    !!fenceBaseURL;
 
   useEffect(() => {
     if (!readyToSignIn || isOAuthCallback || signInTriggered.current) return;
@@ -141,22 +279,35 @@ function AppGate({ children }: { children: React.ReactNode }) {
   if (isAuthenticated) return <>{children}</>;
   if (bootstrapError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
-        <div className="max-w-md rounded-lg border border-border bg-surface p-5 shadow-sm">
-          <h1 className="text-lg font-semibold text-text-primary">Authentication setup failed</h1>
-          <p className="mt-2 text-sm text-muted">
-            {bootstrapError.message || 'Core could not configure the auth provider.'}
-          </p>
-          <button
-            className="mt-4 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-end"
-            onClick={() => window.location.reload()}
-          >
-            Retry
-          </button>
-        </div>
-      </div>
+      <ErrorScreen
+        title="Authentication setup failed"
+        message={bootstrapError.message || 'Core could not configure the auth provider.'}
+        onRetry={() => window.location.reload()}
+      />
     );
   }
+  if (adminError) {
+    return (
+      <ErrorScreen
+        title="Account setup check failed"
+        message={adminError instanceof Error ? adminError.message : 'Fence could not be reached.'}
+        onRetry={() => refetchAdminExists()}
+      />
+    );
+  }
+  if (needsFirstBoot) {
+    return (
+      <CreateAccountForm
+        baseURL={fenceBaseURL}
+        onCreated={() => {
+          if (signInTriggered.current) return;
+          signInTriggered.current = true;
+          signIn();
+        }}
+      />
+    );
+  }
+  if (!adminReady || readyToSignIn) return <Spinner />;
   // Covers: provider registration, OAuth redirect startup, or any unknown interim state.
   // Fence owns its login and first-user setup once OAuth starts.
   return <Spinner />;

@@ -12,18 +12,24 @@ import type {
   AuthProvidersAndDefaults,
   AuthProvider as AuthProviderType,
 } from '@generated/core/schemas';
+import { getAuthProviderURL } from '@app/api/ApiProvider';
 
 export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | null {
   const ref = data?.core;
   if (typeof ref === 'string' && ref !== 'Default') return ref;
-  if (ref && typeof ref === 'object' && 'Provider' in ref) return ref.Provider;
-  const [firstProviderId] = Object.keys(data?.providers ?? {});
-  return firstProviderId ?? null;
+  if (ref && typeof ref === 'object' && 'Provider' in ref && ref.Provider !== 'Default') {
+    return ref.Provider;
+  }
+  if (ref === 'Default' && data?.default) return data.default;
+
+  const providerIds = Object.keys(data?.providers ?? {});
+  return providerIds.length === 1 ? providerIds[0] : null;
 }
 
 export function hasConfiguredCoreProvider(data: AuthProvidersAndDefaults): boolean {
   const ref = data?.core;
-  return !!ref && ref !== 'Default';
+  if (typeof ref === 'string') return ref !== 'Default' || !!data?.default;
+  return !!(ref && typeof ref === 'object' && 'Provider' in ref && ref.Provider !== 'Default');
 }
 
 export function hasConfiguredDefaultProvider(data: AuthProvidersAndDefaults): boolean {
@@ -56,6 +62,7 @@ interface AuthContextValue {
   user: User | null;
   error: Error | null;
   authProviderId: string | null;
+  fenceBaseURL: string | null;
   signIn: () => Promise<void>;
   signOut: () => void;
   isConfigReady: boolean;
@@ -115,6 +122,7 @@ function useAuthConfig() {
           `${window.location.origin}${window.location.pathname}#/oauth/callback`,
         scope: props.scope || (provider.kind === 'oauth' ? 'api:read' : 'openid email'),
         props,
+        fenceBaseURL: getAuthProviderURL(coreId),
         isCoreProviderReady: hasConfiguredCoreProvider(data),
         isDefaultProviderReady: hasConfiguredDefaultProvider(data),
       };
@@ -220,6 +228,7 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
     user: storedUser,
     error: configError as Error | null,
     authProviderId: config?.providerId ?? null,
+    fenceBaseURL: config?.fenceBaseURL ?? null,
     signIn,
     signOut,
     handleOAuthCallback,

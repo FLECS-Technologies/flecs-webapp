@@ -18,6 +18,7 @@ const authState = {
   isCoreProviderReady: false,
   isDefaultProviderReady: false,
   authProviderId: null as string | null,
+  fenceBaseURL: null as string | null,
   handleOAuthCallback: vi.fn(),
   clearError: vi.fn(),
   refreshAuthState: vi.fn(),
@@ -34,6 +35,22 @@ vi.mock('@features/auth/AuthProvider', () => ({
 const firstTimeSetupMutate = vi.fn();
 const selectCoreProviderMutate = vi.fn();
 const selectDefaultProviderMutate = vi.fn();
+const createSuperAdminMutateAsync = vi.fn();
+const adminQuery = {
+  data: undefined as boolean | undefined,
+  isLoading: false,
+  error: null as Error | null,
+  refetch: vi.fn(),
+};
+
+vi.mock('@features/auth/fence-api', () => ({
+  useSuperAdminExists: () => adminQuery,
+  useCreateSuperAdmin: () => ({
+    mutateAsync: createSuperAdminMutateAsync,
+    isPending: false,
+    error: null,
+  }),
+}));
 
 vi.mock('@generated/core/experimental/experimental', () => ({
   usePostProvidersAuthFirstTimeSetupFlecsport: () => ({ mutate: firstTimeSetupMutate }),
@@ -51,6 +68,13 @@ describe('AppGate', () => {
     firstTimeSetupMutate.mockClear();
     selectCoreProviderMutate.mockClear();
     selectDefaultProviderMutate.mockClear();
+    createSuperAdminMutateAsync.mockClear();
+    Object.assign(adminQuery, {
+      data: undefined,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
   });
 
   it('renders children immediately when authenticated, even while auth config loads', () => {
@@ -60,7 +84,10 @@ describe('AppGate', () => {
       isConfigReady: true,
       isCoreProviderReady: true,
       isDefaultProviderReady: true,
+      authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
+    Object.assign(adminQuery, { data: true, isLoading: false });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.getByText('app-content')).toBeTruthy();
   });
@@ -85,7 +112,9 @@ describe('AppGate', () => {
       isCoreProviderReady: true,
       isDefaultProviderReady: true,
       authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
+    Object.assign(adminQuery, { data: true, isLoading: false });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.queryByText('app-content')).toBeNull();
     await waitFor(() => expect(authState.signIn).toHaveBeenCalledTimes(1));
@@ -99,7 +128,9 @@ describe('AppGate', () => {
       isCoreProviderReady: true,
       isDefaultProviderReady: false,
       authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
+    Object.assign(adminQuery, { data: true, isLoading: false });
     const { rerender } = renderWithProviders(<Providers>app-content</Providers>);
     await waitFor(() => expect(authState.signIn).toHaveBeenCalledTimes(1));
     rerender(<Providers>app-content</Providers>);
@@ -114,6 +145,7 @@ describe('AppGate', () => {
       isCoreProviderReady: false,
       isDefaultProviderReady: false,
       authProviderId: null,
+      fenceBaseURL: null,
     });
     renderWithProviders(<Providers>app-content</Providers>);
     await waitFor(() => expect(firstTimeSetupMutate).toHaveBeenCalledTimes(1));
@@ -129,6 +161,7 @@ describe('AppGate', () => {
       isCoreProviderReady: false,
       isDefaultProviderReady: false,
       authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
     renderWithProviders(<Providers>app-content</Providers>);
     await waitFor(() =>
@@ -149,6 +182,7 @@ describe('AppGate', () => {
       isCoreProviderReady: false,
       isDefaultProviderReady: false,
       authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.getByText('app-content')).toBeTruthy();
@@ -166,6 +200,7 @@ describe('AppGate', () => {
       isCoreProviderReady: true,
       isDefaultProviderReady: false,
       authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
     });
     renderWithProviders(<Providers>app-content</Providers>);
     expect(screen.getByText('app-content')).toBeTruthy();
@@ -176,6 +211,23 @@ describe('AppGate', () => {
     );
     expect(firstTimeSetupMutate).not.toHaveBeenCalled();
     expect(selectCoreProviderMutate).not.toHaveBeenCalled();
+    expect(authState.signIn).not.toHaveBeenCalled();
+  });
+
+  it('shows create-account form on first boot when Fence has no admin', () => {
+    Object.assign(authState, {
+      isAuthenticated: false,
+      isLoading: false,
+      isConfigReady: true,
+      isCoreProviderReady: true,
+      isDefaultProviderReady: false,
+      authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
+    });
+    Object.assign(adminQuery, { data: false, isLoading: false });
+    renderWithProviders(<Providers>app-content</Providers>);
+    expect(screen.queryByText('app-content')).toBeNull();
+    expect(screen.getByText('Create your account')).toBeTruthy();
     expect(authState.signIn).not.toHaveBeenCalled();
   });
 });

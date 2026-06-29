@@ -1,10 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 export const SuperAdminSchema = z.object({
-  name: z.string(),
-  full_name: z.string(),
-  password: z.string(),
+  name: z.string().min(1),
+  full_name: z.string().min(1),
+  password: z.string().min(1),
 });
 
 export type SuperAdmin = z.infer<typeof SuperAdminSchema>;
@@ -25,6 +25,7 @@ export function useSuperAdminExists(baseURL: string | undefined) {
     queryKey: fenceKeys.superAdmin(baseURL ?? ''),
     enabled: !!baseURL,
     queryFn: async () => {
+      if (!baseURL) throw new Error('Fence auth provider is not configured');
       const res = await fetch(`${baseURL}/users/super-admin`);
       if (res.status === 404) return false;
       if (!res.ok) throw new Error(`Fence error (${res.status})`);
@@ -37,12 +38,14 @@ export function useSuperAdminExists(baseURL: string | undefined) {
 export function useCreateSuperAdmin(baseURL: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: SuperAdmin) =>
-      fenceFetch(`${baseURL}/users/super-admin`, {
+    mutationFn: (body: SuperAdmin) => {
+      if (!baseURL) throw new Error('Fence auth provider is not configured');
+      return fenceFetch(`${baseURL}/users/super-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(SuperAdminSchema.parse(body)),
-      }),
+      });
+    },
     onSuccess: () => {
       if (baseURL) queryClient.invalidateQueries({ queryKey: fenceKeys.superAdmin(baseURL) });
     },

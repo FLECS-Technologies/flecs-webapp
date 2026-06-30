@@ -288,7 +288,7 @@ export default function Sidebar() {
               }}
             >
               {auth.isAuthenticated ? (
-                (auth.user?.sub?.[0] ?? 'U').toUpperCase()
+                ((auth.user?.preferred_username ?? auth.user?.sub)?.[0] ?? 'U').toUpperCase()
               ) : (
                 <LogIn size={14} />
               )}
@@ -297,7 +297,9 @@ export default function Sidebar() {
               <>
                 <div className="flex-1 min-w-0 text-left">
                   <p className="text-[13px] font-semibold text-text-primary truncate">
-                    {auth.isAuthenticated ? (auth.user?.sub ?? 'User') : 'Sign in'}
+                    {auth.isAuthenticated
+                      ? (auth.user?.preferred_username ?? auth.user?.sub ?? 'User')
+                      : 'Sign in'}
                   </p>
                   <div className="flex items-center gap-1">
                     {activated ? (

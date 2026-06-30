@@ -4,7 +4,7 @@
  * flecs-core has no cookie-session path (see src/app/api/fetch-instance.ts).
  * Code verifier is in sessionStorage (one-time use, dies with tab).
  */
-import React, { createContext, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as oauth from 'oauth4webapi';
 import { getProvidersAuth } from '@generated/core/experimental/experimental';
@@ -43,8 +43,9 @@ const KEYS = {
   CODE_VERIFIER: 'flecs_code_verifier',
 } as const;
 
-// Standard OIDC claims — optional because they only populate after JWT decode
-// (which the profile page opportunistically reads; absent claims render as "—").
+// Standard OIDC claims, decoded from the access token (the profile page reads them;
+// absent claims render as "—"). `access_token` is the runtime convenience copy of the
+// raw JWT — it is never persisted separately inside the user object.
 interface User {
   sub: string;
   name?: string;
@@ -54,6 +55,25 @@ interface User {
   exp?: number;
   realm_access?: { roles?: string[] };
   resource_access?: Record<string, { roles?: string[] }>;
+}
+
+// Decode the (unverified) claims from a JWT access token. The token is the single
+// source of truth for identity, so we derive the user from it rather than persisting a
+// second copy. The signature is NOT checked here — flecs-core verifies it on every
+// request; this is only for display. Returns {} for opaque/non-JWT tokens.
+export function decodeJwtClaims(token: string): Partial<User> {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return {};
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const binary = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '='));
+    const json = decodeURIComponent(
+      Array.from(binary, (c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''),
+    );
+    return JSON.parse(json) as Partial<User>;
+  } catch {
+    return {};
+  }
 }
 
 interface AuthContextValue {
@@ -145,15 +165,22 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
   const queryClient = useQueryClient();
   const { data: config, isLoading: configLoading, error: configError } = useAuthConfig();
 
-  // Restore from localStorage — persists across tabs
+  // Restore from localStorage — persists across tabs. The token is the only thing we
+  // store; the user's claims are derived from it (no redundant second copy).
   const storedUser = useMemo((): User | null => {
     try {
       const token = localStorage.getItem(KEYS.ACCESS_TOKEN);
-      const userStr = localStorage.getItem(KEYS.USER);
-      if (token && userStr) return { ...JSON.parse(userStr), access_token: token };
-      if (token) return { sub: 'user', access_token: token };
-    } catch {}
-    return null;
+      if (!token) return null;
+      return { sub: 'user', ...decodeJwtClaims(token), access_token: token };
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Drop the legacy flecs_user key written by older builds (it duplicated the token);
+  // claims now come from the JWT itself.
+  useEffect(() => {
+    localStorage.removeItem(KEYS.USER);
   }, []);
 
   const isAuthenticated = !!storedUser?.access_token;
@@ -207,11 +234,9 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
       response,
     );
 
+    // Store only the token — the user's identity is decoded from it on read.
     localStorage.setItem(KEYS.ACCESS_TOKEN, result.access_token);
-    localStorage.setItem(
-      KEYS.USER,
-      JSON.stringify({ sub: 'user', access_token: result.access_token }),
-    );
+    localStorage.removeItem(KEYS.USER); // clear any legacy duplicate from older builds
     setAuthToken(result.access_token);
 
     sessionStorage.removeItem(KEYS.CODE_VERIFIER);

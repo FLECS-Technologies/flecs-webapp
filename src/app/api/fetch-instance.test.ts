@@ -36,9 +36,11 @@ describe('customInstance Authorization header', () => {
       removeItem: (k: string) => store.delete(k),
       clear: () => store.clear(),
     });
-    fetchMock = vi.fn().mockResolvedValue(
-      new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }),
-    );
+    fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }),
+      );
     vi.stubGlobal('fetch', fetchMock);
   });
 

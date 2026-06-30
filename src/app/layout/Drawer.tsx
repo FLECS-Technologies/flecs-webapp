@@ -129,9 +129,7 @@ export default function Sidebar() {
             </button>
           ) : (
             <>
-              <div
-                className={`flex items-center flex-1 min-w-0 ${showAppTitle ? 'gap-2.5' : ''}`}
-              >
+              <div className={`flex items-center flex-1 min-w-0 ${showAppTitle ? 'gap-2.5' : ''}`}>
                 <Logo
                   alt={showAppTitle ? '' : `${app_title} logo`}
                   className={
@@ -141,9 +139,7 @@ export default function Sidebar() {
                   }
                   fallbackSize={showAppTitle ? 24 : 32}
                   style={
-                    showAppTitle
-                      ? undefined
-                      : { maxHeight: 'var(--brand-logo-sidebar-max-height)' }
+                    showAppTitle ? undefined : { maxHeight: 'var(--brand-logo-sidebar-max-height)' }
                   }
                 />
                 {showAppTitle && (

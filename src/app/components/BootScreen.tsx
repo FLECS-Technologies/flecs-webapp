@@ -86,9 +86,7 @@ export function BootScreen({ steps }: { steps: BootStep[] }) {
   const hasActive = steps.some((s) => s.status === 'active');
   const progressPct = Math.min(
     100,
-    Math.round(
-      (doneCount / steps.length) * 100 + (hasActive ? (100 / steps.length) * 0.35 : 0),
-    ),
+    Math.round((doneCount / steps.length) * 100 + (hasActive ? (100 / steps.length) * 0.35 : 0)),
   );
 
   return (

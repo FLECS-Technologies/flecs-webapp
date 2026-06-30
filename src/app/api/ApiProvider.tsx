@@ -7,10 +7,6 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-import React, { useEffect } from 'react';
-import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
-import { setAuthToken } from '@app/api/fetch-instance';
-
 // ── URL utilities (used by auth providers + fetch instance) ──
 
 export function getBaseURL(): string {
@@ -35,16 +31,4 @@ export function getAuthProviderURL(providerId: string) {
 export function baseURL() {
   if (import.meta.env.DEV) return '/api/v2';
   return '../api/v2';
-}
-
-// ── Auth token sync — keeps orval's fetch instance authenticated ──
-
-export function AuthTokenSync({ children }: { children: React.ReactNode }) {
-  const auth = useOAuth4WebApiAuth();
-
-  useEffect(() => {
-    setAuthToken(auth.user?.access_token);
-  }, [auth.user?.access_token]);
-
-  return <>{children}</>;
 }

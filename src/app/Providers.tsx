@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { OAuth4WebApiAuthProvider, useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
+import {
+  OAuth4WebApiAuthProvider,
+  useOAuth4WebApiAuth,
+  getOAuthCallbackParameters,
+} from '@features/auth/AuthProvider';
 import { useCreateSuperAdmin, useSuperAdminExists } from '@features/auth/fence-api';
 import {
   usePostProvidersAuthFirstTimeSetupFlecsport,
@@ -131,13 +135,16 @@ function AppGate({ children }: { children: React.ReactNode }) {
     authProviderId,
     fenceBaseURL,
     signIn,
+    handleOAuthCallback,
   } = useOAuth4WebApiAuth();
   const queryClient = useQueryClient();
   const setupTriggered = useRef(false);
   const coreProviderTriggered = useRef(false);
   const defaultProviderTriggered = useRef(false);
   const signInTriggered = useRef(false);
+  const oauthCallbackTriggered = useRef(false);
   const [bootstrapError, setBootstrapError] = useState<Error | null>(null);
+  const [signInError, setSignInError] = useState<Error | null>(null);
   const { mutate: triggerFirstTimeSetup } = usePostProvidersAuthFirstTimeSetupFlecsport({
     mutation: {
       onSuccess: () => {
@@ -169,7 +176,16 @@ function AppGate({ children }: { children: React.ReactNode }) {
     },
   });
 
-  const isOAuthCallback = window.location.hash.includes('/oauth/callback');
+  // A sign-in can come back two ways:
+  //  - to the dedicated #/oauth/callback hash route (handled by the OAuthCallback page), or
+  //  - to the app root with ?code= in the query, because OAuth forbids a fragment in
+  //    redirect_uri, so the provider drops #/oauth/callback and the SPA lands on #/.
+  // Detect both so the code is always exchanged and the bootstrap/sign-in effects below
+  // stay suppressed until it is (otherwise they would re-trigger sign-in and loop).
+  const onOAuthCallbackRoute = window.location.hash.includes('/oauth/callback');
+  const oauthResponse = getOAuthCallbackParameters();
+  const hasPendingOAuthResponse = oauthResponse.has('code') || oauthResponse.has('error');
+  const isOAuthCallback = onOAuthCallbackRoute || hasPendingOAuthResponse;
   const {
     data: adminExists,
     isLoading: adminLoading,
@@ -180,6 +196,20 @@ function AppGate({ children }: { children: React.ReactNode }) {
       ? (fenceBaseURL ?? undefined)
       : undefined,
   );
+
+  // Exchange an authorization code that came back to the app root. The dedicated
+  // #/oauth/callback route is handled by the OAuthCallback page instead, so skip it here.
+  useEffect(() => {
+    if (onOAuthCallbackRoute || !hasPendingOAuthResponse || !isConfigReady) return;
+    if (oauthCallbackTriggered.current) return;
+    oauthCallbackTriggered.current = true;
+    handleOAuthCallback().catch((error) => {
+      // Drop the spent code from the URL so a refresh can't replay it, then surface the
+      // failure instead of looping back into another sign-in attempt.
+      window.history.replaceState({}, '', window.location.origin + window.location.pathname);
+      setSignInError(error instanceof Error ? error : new Error('Sign in failed'));
+    });
+  }, [onOAuthCallbackRoute, hasPendingOAuthResponse, isConfigReady, handleOAuthCallback]);
 
   // Trigger first-time provider setup if flecs-core hasn't registered Fence yet.
   // Refetch polling continues until a provider appears.
@@ -291,7 +321,19 @@ function AppGate({ children }: { children: React.ReactNode }) {
     selectDefaultProvider,
   ]);
 
-  if (isOAuthCallback) return <>{children}</>;
+  // Dedicated callback route: the OAuthCallback page owns the exchange.
+  if (onOAuthCallbackRoute) return <>{children}</>;
+  if (signInError) {
+    return (
+      <ErrorScreen
+        title="Sign in failed"
+        message={signInError.message || 'The sign-in could not be completed.'}
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
+  // Code came back to the app root — hold on the boot screen while it is exchanged.
+  if (hasPendingOAuthResponse) return <BootScreen steps={bootSteps} />;
   // Auth state is known synchronously (localStorage) — render the app immediately.
   if (isAuthenticated) return <>{children}</>;
   if (bootstrapError) {

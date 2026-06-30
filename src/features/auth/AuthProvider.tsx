@@ -224,8 +224,16 @@ export function OAuth4WebApiAuthProvider({ children }: { children: React.ReactNo
       config.redirectUri,
       codeVerifier,
       {
-        [oauth.customFetch]: (url, options) =>
-          fetch(url, { ...options, credentials: 'include' }),
+        // flecs-core's auth endpoints are same-origin in production and reached
+        // through the Vite proxy in dev. The provider's token_endpoint is an absolute
+        // URL, so hitting it directly is cross-origin in dev and fails CORS. Route the
+        // request through the current origin by path — mirroring the pre-oauth4webapi
+        // behavior that worked (token request went to `new URL(token_url).pathname`).
+        [oauth.customFetch]: (url, options) => {
+          const target = new URL(url);
+          const sameOrigin = window.location.origin + target.pathname + target.search;
+          return fetch(sameOrigin, { ...options, credentials: 'include' });
+        },
       },
     );
     const result = await oauth.processAuthorizationCodeResponse(

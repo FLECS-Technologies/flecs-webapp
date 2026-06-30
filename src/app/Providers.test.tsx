@@ -27,9 +27,13 @@ const authState = {
 
 const initialAuthState = { ...authState };
 
+// Mutable holder so individual tests can simulate a returning ?code= / ?error=.
+const oauthResponseParams = { current: new URLSearchParams() };
+
 vi.mock('@features/auth/AuthProvider', () => ({
   OAuth4WebApiAuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useOAuth4WebApiAuth: () => authState,
+  getOAuthCallbackParameters: () => oauthResponseParams.current,
 }));
 
 const firstTimeSetupMutate = vi.fn();
@@ -71,6 +75,8 @@ describe('AppGate', () => {
   beforeEach(() => {
     Object.assign(authState, initialAuthState);
     window.location.hash = '';
+    oauthResponseParams.current = new URLSearchParams();
+    authState.handleOAuthCallback = vi.fn().mockResolvedValue(undefined);
     authState.signIn.mockClear();
     firstTimeSetupMutate.mockClear();
     selectCoreProviderMutate.mockClear();
@@ -218,6 +224,29 @@ describe('AppGate', () => {
     );
     expect(firstTimeSetupMutate).not.toHaveBeenCalled();
     expect(selectCoreProviderMutate).not.toHaveBeenCalled();
+    expect(authState.signIn).not.toHaveBeenCalled();
+  });
+
+  it('exchanges an authorization code that returns to the app root (no #/oauth/callback)', async () => {
+    // The provider drops the redirect_uri fragment, so the code lands at /?code=...#/
+    // rather than on the dedicated callback route. AppGate must still complete sign-in.
+    oauthResponseParams.current = new URLSearchParams('code=root-code');
+    authState.handleOAuthCallback = vi.fn().mockReturnValue(new Promise(() => {}));
+    Object.assign(authState, {
+      isAuthenticated: false,
+      isLoading: false,
+      isConfigReady: true,
+      isCoreProviderReady: true,
+      isDefaultProviderReady: true,
+      authProviderId: '000fe4ce',
+      fenceBaseURL: 'https://fence',
+    });
+    Object.assign(adminQuery, { data: true, isLoading: false });
+    renderWithProviders(<Providers>app-content</Providers>);
+
+    await waitFor(() => expect(authState.handleOAuthCallback).toHaveBeenCalledTimes(1));
+    // Must not render the app (would fire token-less 403s) and must not re-trigger sign-in.
+    expect(screen.queryByText('app-content')).toBeNull();
     expect(authState.signIn).not.toHaveBeenCalled();
   });
 

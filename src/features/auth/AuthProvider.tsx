@@ -15,11 +15,10 @@ import type {
 import { getAuthProviderURL } from '@app/api/ApiProvider';
 
 export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | null {
+  // `core` is a bare reference: a concrete provider id, the literal 'Default' (meaning
+  // "use the configured default provider"), or null/absent before initial setup.
   const ref = data?.core;
   if (typeof ref === 'string' && ref !== 'Default') return ref;
-  if (ref && typeof ref === 'object' && 'Provider' in ref && ref.Provider !== 'Default') {
-    return ref.Provider;
-  }
   if (ref === 'Default' && data?.default) return data.default;
 
   const providerIds = Object.keys(data?.providers ?? {});
@@ -29,7 +28,7 @@ export function extractCoreProviderId(data: AuthProvidersAndDefaults): string | 
 export function hasConfiguredCoreProvider(data: AuthProvidersAndDefaults): boolean {
   const ref = data?.core;
   if (typeof ref === 'string') return ref !== 'Default' || !!data?.default;
-  return !!(ref && typeof ref === 'object' && 'Provider' in ref && ref.Provider !== 'Default');
+  return false;
 }
 
 export function hasConfiguredDefaultProvider(data: AuthProvidersAndDefaults): boolean {

@@ -114,7 +114,7 @@ export function BootScreen({ steps }: { steps: BootStep[] }) {
 
             return (
               <div
-                key={i}
+                key={step.label}
                 className={[
                   'flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-300',
                   step.status === 'done' && 'bg-success/10',

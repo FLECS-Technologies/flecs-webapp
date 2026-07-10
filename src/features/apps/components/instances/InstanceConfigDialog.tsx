@@ -57,7 +57,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div
-        className="bg-surface-raised rounded-2xl overflow-hidden flex shadow-2xl border border-border w-full max-w-3xl"
+        className="bg-surface-raised rounded-2xl overflow-hidden flex shadow-2xl border border-border w-full max-w-4xl"
         style={{ height: '70vh', maxHeight: 640 }}
       >
         {/* Sidebar */}
@@ -71,7 +71,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
             {versionSection && (
               <button
                 onClick={() => setActiveSection('version')}
-                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === 'version' ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
+                className={`flex items-center gap-3 w-52 mx-1 px-3 py-3 rounded-lg text-sm transition ${activeSection === 'version' ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
               >
                 <GitBranch size={16} /> Version
               </button>
@@ -80,7 +80,7 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
               <button
                 key={key}
                 onClick={() => setActiveSection(key)}
-                className={`flex items-center gap-2 w-full mx-1 px-3 py-2 rounded-lg text-sm transition ${activeSection === key ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
+                className={`flex items-center gap-3 w-52 mx-1 px-3 py-3 rounded-lg text-sm transition ${activeSection === key ? 'bg-surface-hover font-medium' : 'hover:bg-surface-hover'}`}
               >
                 <Icon size={16} /> {label}
               </button>

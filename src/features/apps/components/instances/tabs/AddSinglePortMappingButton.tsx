@@ -1,6 +1,6 @@
 import React from 'react';
 import { TransportProtocol } from '@generated/core/schemas';
-import { Circle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface AddSinglePortMappingButtonProps {
   onAdd: (protocol: TransportProtocol) => void;
@@ -17,7 +17,7 @@ const AddSinglePortMappingButton: React.FC<AddSinglePortMappingButtonProps> = ({
       onClick={() => onAdd(defaultProtocol)}
       className="px-4 py-2 text-accent rounded-lg font-semibold hover:bg-accent/10 transition inline-flex items-center gap-2"
     >
-      <Circle size={18} /> Add Port Mapping
+      <ArrowRight size={18} /> Add Port Mapping
     </button>
   );
 };

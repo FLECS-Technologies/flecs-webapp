@@ -13,9 +13,8 @@ export default defineConfig({
       clean: ['./generated/core'],
       override: {
         mutator: { path: './src/app/api/fetch-instance.ts', name: 'customInstance' },
-        query: { useQuery: true, useMutation: true },
       },
-      mock: { type: 'msw' },
+      mock: { generators: [{ type: 'msw' }] },
     },
   },
   marketplace: {
@@ -30,7 +29,6 @@ export default defineConfig({
       clean: ['./generated/console'],
       override: {
         mutator: { path: './src/app/api/console-fetch-instance.ts', name: 'customInstance' },
-        query: { useQuery: true, useMutation: true },
       },
     },
   },

@@ -9,27 +9,20 @@ import {
   getProvidersAuthCore,
   getProvidersAuthDefault,
 } from '@generated/core/experimental/experimental';
-import type { ProviderReference } from '@generated/core/schemas';
 import { unwrapSuccess } from '@app/api/unwrap';
 
 interface ExportProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-const resolveProviderRef = (ref: ProviderReference | null | undefined): string | undefined => {
-  if (!ref) return undefined;
-  if (typeof ref === 'string') return ref === 'Default' ? undefined : ref;
-  if (typeof ref === 'object' && 'Provider' in ref) return ref.Provider;
-  return undefined;
-};
+// GET /providers/auth/core returns the core ref as a bare string: 'Default' (meaning
+// "use the configured default provider") or a concrete provider id.
 const getAuthCoreProvider = async (): Promise<string | undefined> => {
   try {
-    const coreProvider = await getProvidersAuthCore();
-    const coreRef = coreProvider.data as ProviderReference | undefined;
-    if (coreRef === 'Default') {
+    const { data } = await getProvidersAuthCore();
+    if (data === 'Default') {
       await getProvidersAuthDefault();
       return undefined;
-    } else {
-      return resolveProviderRef(coreRef);
     }
+    return typeof data === 'string' ? data : undefined;
   } catch {
     return undefined;
   }

@@ -130,7 +130,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange })
         <h6 className="text-base font-semibold">Port Mappings</h6>
         <HelpButton url={instancedeviceconfig} />
       </div>
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         <AddSinglePortMappingButton
           onAdd={() =>
             setPorts((prev) => [

@@ -38,16 +38,16 @@ describe('PortsConfigTab — row identity', () => {
     fireEvent.click(addButton);
 
     // Fill row 0: host 8080 → container 80.
-    let hostInputs = screen.getAllByPlaceholderText(/host port/i);
-    let containerInputs = screen.getAllByPlaceholderText(/container port/i);
+    let hostInputs = screen.getAllByLabelText(/host port/i);
+    let containerInputs = screen.getAllByLabelText(/container port/i);
     expect(hostInputs).toHaveLength(1);
     fireEvent.change(hostInputs[0], { target: { value: '8080' } });
     fireEvent.change(containerInputs[0], { target: { value: '80' } });
 
     // Add second row.
     fireEvent.click(addButton);
-    hostInputs = screen.getAllByPlaceholderText(/host port/i);
-    containerInputs = screen.getAllByPlaceholderText(/container port/i);
+    hostInputs = screen.getAllByLabelText(/host port/i);
+    containerInputs = screen.getAllByLabelText(/container port/i);
     expect(hostInputs).toHaveLength(2);
     fireEvent.change(hostInputs[1], { target: { value: '9090' } });
     fireEvent.change(containerInputs[1], { target: { value: '90' } });
@@ -59,11 +59,11 @@ describe('PortsConfigTab — row identity', () => {
     // Regression assertion: one row remains with row 1's values (9090/90),
     // not row 0's (8080/80).
     await waitFor(() => {
-      const remaining = screen.getAllByPlaceholderText(/host port/i);
+      const remaining = screen.getAllByLabelText(/host port/i);
       expect(remaining).toHaveLength(1);
       expect((remaining[0] as HTMLInputElement).value).toBe('9090');
     });
-    const containerAfter = screen.getAllByPlaceholderText(/container port/i);
+    const containerAfter = screen.getAllByLabelText(/container port/i);
     expect((containerAfter[0] as HTMLInputElement).value).toBe('90');
   });
 });

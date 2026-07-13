@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';
 import { useGetQuests } from '@generated/core/quests/quests';
-import { QuestState } from '@generated/core/schemas';
+import { AppStatus, QuestState } from '@generated/core/schemas';
 import type { Quest } from '@generated/core/schemas';
 import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';
@@ -28,12 +28,6 @@ function getAppsWithUpdates(apps: EnrichedApp[]) {
   });
 }
 
-/** Parse "Install io.linuxserver.mariadb-11.4.4" → { name, version } */
-function parseInstallQuest(desc: string) {
-  const m = desc.match(/^Install\s+(\S+)-(\S+)$/);
-  return m ? { name: m[1], version: m[2] } : null;
-}
-
 export default function InstalledApps() {
   const { appList, isLoading: appListLoading, isError: appListError } = useAppList();
   const { data: pingData, isLoading: pingLoading } = useGetSystemPing({
@@ -52,7 +46,14 @@ export default function InstalledApps() {
   const sideloadInputRef = useRef<HTMLInputElement>(null);
   const installedApps = (appList ?? []).filter((app: EnrichedApp) => app?.status === 'installed');
 
-  // Derive phantom "installing" entries from active install quests
+  // Derive "installing" entries from the /apps list itself. The daemon lists an
+  // in-progress install with desired='installed' and a transient status ("not
+  // installed" → "manifest downloaded" → … → "installed"); combineAppList has
+  // already enriched it with the correct appKey/title/avatar. We only need to
+  // confirm the install is active and surface its progress %, which comes from
+  // the matching "Install <name>-<version>" quest. The quest is matched by exact
+  // string (composed from the known appKey) rather than parsed — app and version
+  // names can both contain hyphens, so splitting the description is ambiguous.
   const installingApps = useMemo(() => {
     const quests = unwrapSuccess(questsData) ?? ([] as Quest[]);
     const activeInstalls = quests.filter(
@@ -60,24 +61,28 @@ export default function InstalledApps() {
         (q.state === QuestState.ongoing || q.state === QuestState.pending) &&
         q.description?.startsWith('Install '),
     );
-    const installedNames = new Set(installedApps.map((a: EnrichedApp) => a.appKey?.name));
-    return activeInstalls
-      .map((q) => {
-        const parsed = parseInstallQuest(q.description);
-        if (!parsed || installedNames.has(parsed.name)) return null;
-        const progress = q.progress;
+    return (appList ?? [])
+      .filter(
+        (app: EnrichedApp) =>
+          app.desired === AppStatus.installed && app.status !== AppStatus.installed,
+      )
+      .map((app: EnrichedApp) => {
+        const quest = activeInstalls.find(
+          (q) => q.description === `Install ${app.appKey.name}-${app.appKey.version}`,
+        );
+        if (!quest) return null;
+        const progress = quest.progress;
         const pct = progress?.total
           ? Math.round((progress.current / progress.total) * 100)
           : undefined;
         return {
-          appKey: { name: parsed.name, version: parsed.version },
-          status: 'installing',
-          title: parsed.name.split('.').pop(),
-          _quest: { description: q.description, progress: pct, state: q.state },
+          ...app,
+          status: 'installing' as const,
+          _quest: { description: quest.description, progress: pct, state: quest.state },
         };
       })
       .filter(Boolean);
-  }, [questsData, installedApps]);
+  }, [appList, questsData]);
 
   const allApps = useMemo(() => {
     const combined = [...installedApps, ...installingApps] as EnrichedApp[];

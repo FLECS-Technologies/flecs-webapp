@@ -7,6 +7,9 @@ import {
 } from '@generated/core/flecsport/flecsport';
 import type { ExportId } from '@generated/core/schemas';
 
+// Export tarballs can be large; allow up to 10 min to transfer before aborting.
+const DOWNLOAD_TIMEOUT_MS = 10 * 60_000;
+
 export default function ExportList() {
   const { data: exportsResponse, isLoading: loading, isError, refetch } = useGetExports();
   const { mutateAsync: deleteExport } = useDeleteExportsExportId();
@@ -18,7 +21,11 @@ export default function ExportList() {
   const handleDownload = async (exportId: string) => {
     setDownloading(exportId);
     try {
-      const response = await getExportsExportId(exportId);
+      // Exports can be large; the shared customInstance default caps requests at
+      // 15s, which aborts big downloads. Give this blob fetch a generous cap.
+      const response = await getExportsExportId(exportId, {
+        signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
+      });
       const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

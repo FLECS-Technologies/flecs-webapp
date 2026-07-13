@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { publicAssetPath } from './brandAssets';
+import { themingAssetPath } from './brandAssets';
 
-describe('publicAssetPath', () => {
-  it('resolves brand assets against the runtime base path', () => {
-    expect(publicAssetPath('config.json')).toBe('/config.json');
+describe('themingAssetPath', () => {
+  it('resolves white-label assets under theming/ against the runtime base path', () => {
+    expect(themingAssetPath('config.json')).toBe('/theming/config.json');
   });
 });

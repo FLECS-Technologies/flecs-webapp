@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <title>FLECS</title>
     <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" href="/favicon.ico" />
+    <!-- The favicon is a white-label file served from theming/; it's linked at
+         runtime in main.tsx (against the mount prefix), not statically here. -->
     <!-- Synchronous theme init: applies .dark before first paint to prevent FOUC -->
     <script>
       (function () {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicAssetPath } from './brandAssets';
+import { themingAssetPath } from './brandAssets';
 
 // vendor_id matches DeviceLicenseManufacturer.id from the console API.
 // 0 = FLECS default (no white-label vendor). OEM partners get their assigned integer from FLECS.
@@ -30,7 +30,7 @@ export type TenantConfig = z.infer<typeof TenantConfigSchema>;
 
 export async function loadTenant(): Promise<TenantConfig> {
   try {
-    const res = await fetch(publicAssetPath('config.json'));
+    const res = await fetch(themingAssetPath('config.json'));
     if (!res.ok) return TenantConfigSchema.parse({});
     const result = TenantConfigSchema.safeParse(await res.json());
     return result.success ? result.data : TenantConfigSchema.parse({});

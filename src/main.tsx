@@ -23,15 +23,23 @@ import App from './App';
 import './index.css';
 import { loadTenant } from './tenant';
 import { TenantContext } from './app/theme/TenantContext';
-import { publicAssetPath } from './brandAssets';
+import { themingAssetPath } from './brandAssets';
 
 const tenant = await loadTenant();
 document.title = tenant.app_title;
 
+// The favicon is a white-label file under theming/, so it's linked at runtime
+// (against the mount prefix) rather than statically in index.html, where a
+// root-absolute /favicon.ico would miss both the proxy prefix and theming/.
+const iconLink = document.createElement('link');
+iconLink.rel = 'icon';
+iconLink.href = themingAssetPath('favicon.ico');
+document.head.appendChild(iconLink);
+
 // Append theme.css last so it overrides the Tailwind bundle in both dev and prod.
 const themeLink = document.createElement('link');
 themeLink.rel = 'stylesheet';
-themeLink.href = publicAssetPath('theme.css');
+themeLink.href = themingAssetPath('theme.css');
 document.head.appendChild(themeLink);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

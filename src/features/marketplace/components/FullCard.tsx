@@ -31,6 +31,9 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
   const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
   const systemInfo = infoResponse?.data;
   const installed = app.status === 'installed';
+  // Bridge: install quest succeeded but /apps hasn't reported 'installed' yet. Update/uninstall
+  // logic below stays keyed off the real `installed` so it can't misfire on stale version data.
+  const installedDisplay = installed || !!app.justInstalled;
   const versions: AppVersion[] = app.versions ?? [];
   const [selectedVersion, setSelectedVersion] = useState<AppVersion>(
     versions[0] ?? { version: '', installed: false },
@@ -74,7 +77,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
 
           {/* Status badges */}
           <div className="flex items-center justify-center gap-3 text-xs">
-            {installed && !updateAvailable && (
+            {installedDisplay && !updateAvailable && (
               <span className="flex items-center gap-1 text-success font-medium">
                 <CheckCircle2 size={13} /> Installed
               </span>
@@ -124,17 +127,19 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
             </div>
           )}
 
-          {!installed && (
+          {!installedDisplay && (
             <InstallButton
               app={app}
               version={selectedVersion}
               disabled={!installable || blackListed}
               showSelectedVersion
               fullWidth
+              installing={app.installing}
+              installingProgress={app.installingProgress}
             />
           )}
 
-          {installed && (
+          {installedDisplay && (
             <div className="flex flex-wrap gap-2">
               {app.instances?.[0] && <EditorButtons instance={app.instances[0]} />}
               {selectedNotInstalled && (

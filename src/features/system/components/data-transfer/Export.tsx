@@ -13,6 +13,9 @@ import { unwrapSuccess } from '@app/api/unwrap';
 
 interface ExportProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
+// Export tarballs can be large; allow up to 10 min to transfer before aborting.
+const DOWNLOAD_TIMEOUT_MS = 10 * 60_000;
+
 // GET /providers/auth/core returns the core ref as a bare string: 'Default' (meaning
 // "use the configured default provider") or a concrete provider id.
 const getAuthCoreProvider = async (): Promise<string | undefined> => {
@@ -59,7 +62,11 @@ const Export: React.FC<ExportProps> = (props) => {
         throw new Error(result.detail || 'Export quest failed');
       const exportId = result.result;
       if (!exportId || typeof exportId !== 'string') throw new Error('Invalid export ID');
-      const exportDownload = await getExportsExportId(exportId);
+      // Exports can be large; override the shared 15s customInstance timeout so
+      // big downloads are not aborted mid-transfer.
+      const exportDownload = await getExportsExportId(exportId, {
+        signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
+      });
       const blob = unwrapSuccess(exportDownload);
       if (!blob) throw new Error('Could not download export file');
       const url = window.URL.createObjectURL(blob);

@@ -1,6 +1,8 @@
 import { createPortal } from 'react-dom';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { X, Usb, Network, Cable, Variable, ExternalLink, GitBranch } from 'lucide-react';
+import { getErrorMessage } from '@app/api/fetch-error';
 import UsbConfigTab from './tabs/UsbConfigTab';
 import NetworkConfigTab from './tabs/NetworkConfigTab';
 import PortsConfigTab from './tabs/PortsConfigTab';
@@ -41,15 +43,26 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   );
   const [hasChanges, setHasChanges] = useState(false);
 
-  const handleClose = async () => {
-    if (hasChanges) {
-      try {
-        await postInstancesInstanceIdStop(instanceId);
-        await postInstancesInstanceIdStart(instanceId);
-      } catch {}
-    }
+  const handleClose = () => {
+    const needsRestart = hasChanges;
     setHasChanges(false);
+    // Close immediately. The restart (stop → start) is an instance reboot that can
+    // take several seconds; awaiting it before onClose() left the dialog open and
+    // unresponsive (the X also runs handleClose, so it appeared frozen) until the
+    // instance came back. Run it in the background and report the outcome via toast.
     onClose();
+    if (needsRestart) {
+      void (async () => {
+        const toastId = toast.loading(`Restarting ${instanceName}…`);
+        try {
+          await postInstancesInstanceIdStop(instanceId);
+          await postInstancesInstanceIdStart(instanceId);
+          toast.success(`${instanceName} restarted`, { id: toastId });
+        } catch (error) {
+          toast.error(getErrorMessage(error), { id: toastId });
+        }
+      })();
+    }
   };
 
   if (!open) return null;

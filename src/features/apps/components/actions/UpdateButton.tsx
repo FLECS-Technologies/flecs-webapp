@@ -31,7 +31,7 @@ export default function UpdateButton({
   return (
     <React.Fragment>
       <button
-        className={`px-4 py-2 bg-accent text-white rounded-lg font-semibold hover:bg-accent/80 transition inline-flex items-center gap-2 ${fullWidth ? 'w-full justify-center' : ''}`}
+        className={`bg-accent text-white font-semibold hover:bg-accent/80 transition inline-flex items-center gap-2 ${fullWidth ? 'px-4 py-3 rounded-xl text-base w-full justify-center' : 'px-4 py-2 rounded-lg'}`}
         onClick={() => setUpdateAppOpen(true)}
         data-testid="update-app-button"
         disabled={state.updating}

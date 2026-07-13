@@ -11,8 +11,10 @@ import {
   sortByName,
 } from '@stores/marketplace-filters';
 import { useGetSystemInfo } from '@generated/core/system/system';
+import { useGetQuests } from '@generated/core/quests/quests';
 import type { Product } from '@generated/console/schemas';
 import { AppStatus } from '@generated/core/schemas';
+import { deriveInstallingApps, deriveRecentlyInstalledNames } from '@features/apps/installing';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/Card';
@@ -62,6 +64,10 @@ export default function Marketplace() {
   const { data: infoResponse, isPending: isInfoPending } = useGetSystemInfo({
     query: { staleTime: 60_000 },
   });
+  // Read from the shared /quests cache (polling is driven by JobsRail) to reconstruct
+  // which apps are installing — so a card shows "Installing" even after the user
+  // navigates away and back, changes filters, or pages past it and returns.
+  const { data: questsData } = useGetQuests();
   const arch = infoResponse?.data?.arch;
   const isLoading = isAppListLoading || isInfoPending;
   const {
@@ -123,6 +129,23 @@ export default function Marketplace() {
 
   const categories = useMemo(() => getUniqueCategories(baseFiltered), [baseFiltered]);
 
+  // Reverse-domain name → install progress % (undefined when unknown) for apps mid-install.
+  // Keyed by app name because a marketplace card represents the product, not a single version.
+  const installingByName = useMemo(() => {
+    const map = new Map<string, number | undefined>();
+    for (const app of deriveInstallingApps(appList, questsData)) {
+      map.set(app.appKey.name, app._quest.progress);
+    }
+    return map;
+  }, [appList, questsData]);
+
+  // Apps whose install quest already succeeded but whose /apps status is still catching up —
+  // treated as installed so the card goes "Installing" → "Installed" without a "Install Now" flash.
+  const recentlyInstalled = useMemo(
+    () => deriveRecentlyInstalledNames(appList, questsData),
+    [appList, questsData],
+  );
+
   const totalApps = products?.length ?? 0;
   const hiddenCount = filterParams.hiddenCategories?.length ?? 0;
   const activeFilterCount =
@@ -146,11 +169,15 @@ export default function Marketplace() {
   const productCards = paginatedProducts.map((app: Product) => {
     const rdName = getReverseDomainName(app);
     const matchedApp = appList?.find((o) => o?.appKey?.name === rdName);
+    const installing = installingByName.has(rdName ?? '');
     return (
       <Card
         key={app.id ?? rdName}
         app={rdName}
         appKey={{ name: rdName ?? '', version: matchedApp?.appKey?.version ?? '' }}
+        installing={installing}
+        installingProgress={installingByName.get(rdName ?? '')}
+        justInstalled={recentlyInstalled.has(rdName ?? '')}
         avatar={getAppIcon(app)}
         title={app.name}
         author={getAuthor(app)}

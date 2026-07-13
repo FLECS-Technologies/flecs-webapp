@@ -4,8 +4,6 @@ import { toast } from 'sonner';
 import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';
 import { useGetQuests } from '@generated/core/quests/quests';
-import { AppStatus, QuestState } from '@generated/core/schemas';
-import type { Quest } from '@generated/core/schemas';
 import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';
 import RowSkeleton from '@features/apps/components/RowSkeleton';
@@ -15,7 +13,7 @@ import InstallationStepper from '@features/apps/components/installation/Installa
 import Import from '@features/system/components/data-transfer/Import';
 import Export from '@features/system/components/data-transfer/Export';
 import type { EnrichedApp, AppVersion } from '@features/apps/types';
-import { unwrapSuccess } from '@app/api/unwrap';
+import { deriveInstallingApps } from '@features/apps/installing';
 const getLatestVersion = (versions: AppVersion[]) => versions?.[0];
 const createVersions = (v: AppVersion[], _installed?: string[]) => v;
 
@@ -46,43 +44,12 @@ export default function InstalledApps() {
   const sideloadInputRef = useRef<HTMLInputElement>(null);
   const installedApps = (appList ?? []).filter((app: EnrichedApp) => app?.status === 'installed');
 
-  // Derive "installing" entries from the /apps list itself. The daemon lists an
-  // in-progress install with desired='installed' and a transient status ("not
-  // installed" → "manifest downloaded" → … → "installed"); combineAppList has
-  // already enriched it with the correct appKey/title/avatar. We only need to
-  // confirm the install is active and surface its progress %, which comes from
-  // the matching "Install <name>-<version>" quest. The quest is matched by exact
-  // string (composed from the known appKey) rather than parsed — app and version
-  // names can both contain hyphens, so splitting the description is ambiguous.
-  const installingApps = useMemo(() => {
-    const quests = unwrapSuccess(questsData) ?? ([] as Quest[]);
-    const activeInstalls = quests.filter(
-      (q) =>
-        (q.state === QuestState.ongoing || q.state === QuestState.pending) &&
-        q.description?.startsWith('Install '),
-    );
-    return (appList ?? [])
-      .filter(
-        (app: EnrichedApp) =>
-          app.desired === AppStatus.installed && app.status !== AppStatus.installed,
-      )
-      .map((app: EnrichedApp) => {
-        const quest = activeInstalls.find(
-          (q) => q.description === `Install ${app.appKey.name}-${app.appKey.version}`,
-        );
-        if (!quest) return null;
-        const progress = quest.progress;
-        const pct = progress?.total
-          ? Math.round((progress.current / progress.total) * 100)
-          : undefined;
-        return {
-          ...app,
-          status: 'installing' as const,
-          _quest: { description: quest.description, progress: pct, state: quest.state },
-        };
-      })
-      .filter(Boolean);
-  }, [appList, questsData]);
+  // Derive "installing" entries from the durable /apps + /quests caches (shared with
+  // the Marketplace cards so both surfaces reconstruct the state after any remount).
+  const installingApps = useMemo(
+    () => deriveInstallingApps(appList, questsData),
+    [appList, questsData],
+  );
 
   const allApps = useMemo(() => {
     const combined = [...installedApps, ...installingApps] as EnrichedApp[];

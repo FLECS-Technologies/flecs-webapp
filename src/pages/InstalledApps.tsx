@@ -201,6 +201,11 @@ export default function InstalledApps() {
           </button>
         </div>
         <Import dropzone />
+        {installedApps.length > 0 && (
+          <div className="flex items-center">
+            <Export disabled={installedApps.length === 0} />
+          </div>
+        )}
       </div>
 
       {updateCount > 0 && (
@@ -231,12 +236,6 @@ export default function InstalledApps() {
         </div>
       ) : (
         <InstalledAppsTable apps={allApps} />
-      )}
-
-      {installedApps.length > 0 && (
-        <div className="flex justify-end mt-4">
-          <Export disabled={installedApps.length === 0} />
-        </div>
       )}
 
       <ContentDialog

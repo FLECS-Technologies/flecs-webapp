@@ -5,8 +5,9 @@ import type { ProductCategory } from '@generated/console/schemas';
 import type { AppKey, AppInstance, AppStatus } from '@generated/core/schemas';
 import { useGetSystemInfo } from '@generated/core/system/system';
 import FullCard from './FullCard';
-import { Check, AlertTriangle } from 'lucide-react';
+import { Check, AlertTriangle, RefreshCw } from 'lucide-react';
 import InstallButton from '@features/apps/components/actions/InstallButton';
+import UpdateButton from '@features/apps/components/actions/UpdateButton';
 import { isArchCompatible } from '@features/marketplace/api/product-service';
 
 export interface MarketplaceCardProps {
@@ -43,6 +44,9 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
   const [latestVersion] = useState<AppVersion>(
     versionsArray[0] ?? { version: '', installed: false },
   );
+  // An update is available when the app is installed but the newest published
+  // version (versions are sorted newest-first) isn't among the installed ones.
+  const updateAvailable = installed && versionsArray.length > 0 && !versionsArray[0]?.installed;
   const installable = isArchCompatible(props.requirement, systemInfo?.arch);
   const [fullCardOpen, setFullCardOpen] = useState(false);
   const plainDescription = (props.short_description || '')
@@ -75,15 +79,24 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
             {plainDescription || 'No description available'}
           </p>
           <div className="flex-1 min-h-4" />
-          <span className={`text-xs font-semibold mt-4 ${isFree ? 'text-success' : 'text-muted'}`}>
-            {isFree ? 'Free' : `$${props.price}`}
-          </span>
+          <div className="flex items-center gap-2 mt-4">
+            <span className={`text-xs font-semibold ${isFree ? 'text-success' : 'text-muted'}`}>
+              {isFree ? 'Free' : `$${props.price}`}
+            </span>
+            {updateAvailable && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-accent">
+                <RefreshCw size={11} /> Update
+              </span>
+            )}
+          </div>
         </div>
         <div
           onClick={(e) => e.stopPropagation()}
           className="px-5 py-4 bg-surface-subtle border-t border-border"
         >
-          {installed ? (
+          {updateAvailable ? (
+            <UpdateButton app={props} to={latestVersion} showSelectedVersion fullWidth />
+          ) : installed ? (
             <button
               className="w-full px-4 py-3 border border-success text-success rounded-xl font-semibold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2"
               onClick={() => setFullCardOpen(true)}

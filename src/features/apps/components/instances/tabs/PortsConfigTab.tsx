@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import SinglePortMapping from './SinglePortMapping';
 import PortRangeMapping from './PortRangeMapping';
@@ -14,6 +15,7 @@ import {
 import {
   useGetInstancesInstanceIdConfigPorts,
   usePutInstancesInstanceIdConfigPortsTransportProtocol,
+  getGetInstancesInstanceIdConfigPortsQueryKey,
 } from '@generated/core/instances/instances';
 import HelpButton from '@app/layout/HelpButton';
 import { instancedeviceconfig } from '@app/layout/helplinks';
@@ -35,6 +37,7 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange })
   const [ports, setPorts] = useState<PortWithProtocol[]>([]);
   const [initialized, setInitialized] = useState(false);
   const [save, setSave] = useState(false);
+  const queryClient = useQueryClient();
   const { data: portsResponse, isLoading } = useGetInstancesInstanceIdConfigPorts(instanceId);
   const { mutateAsync: putPorts } = usePutInstancesInstanceIdConfigPortsTransportProtocol();
 
@@ -100,10 +103,18 @@ const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange })
     try {
       const tcp = ports.filter((p) => p.protocol === TransportProtocol.tcp).map((p) => p.port);
       const udp = ports.filter((p) => p.protocol === TransportProtocol.udp).map((p) => p.port);
-      if (tcp.length > 0)
-        await putPorts({ instanceId, transportProtocol: TransportProtocol.tcp, data: tcp });
-      if (udp.length > 0)
-        await putPorts({ instanceId, transportProtocol: TransportProtocol.udp, data: udp });
+      // Always PUT both protocols. The endpoint replaces the full set for a
+      // protocol, and an empty array clears it. A `length > 0` guard would skip
+      // the request when the last port of a protocol is deleted, so the deletion
+      // never reached the server and the removed port reappeared on reload.
+      await putPorts({ instanceId, transportProtocol: TransportProtocol.tcp, data: tcp });
+      await putPorts({ instanceId, transportProtocol: TransportProtocol.udp, data: udp });
+      // The PUT mutation doesn't touch the ports GET cache, so without this the
+      // 30s global staleTime keeps serving the pre-save snapshot when the tab is
+      // reopened. Invalidate so a reopen re-reads fresh server state.
+      await queryClient.invalidateQueries({
+        queryKey: getGetInstancesInstanceIdConfigPortsQueryKey(instanceId),
+      });
       onChange(true);
       toast.success('Port mappings saved!');
     } catch (error) {

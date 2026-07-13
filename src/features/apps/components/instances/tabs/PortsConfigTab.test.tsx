@@ -21,6 +21,9 @@ vi.mock('@generated/core/instances/instances', () => {
       isLoading: false,
     }),
     usePutInstancesInstanceIdConfigPortsTransportProtocol: () => ({ mutateAsync: vi.fn() }),
+    getGetInstancesInstanceIdConfigPortsQueryKey: (instanceId: string) => [
+      `/instances/${instanceId}/config/ports`,
+    ],
   };
 });
 

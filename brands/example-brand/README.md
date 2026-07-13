@@ -2,16 +2,24 @@
 
 This folder is a developer preview of the white-label runtime contract.
 
-The webapp expects these runtime files at the web root:
+The webapp expects these runtime files under the `theming/` subtree, served
+relative to the (possibly proxied) mount root:
 
 ```txt
-/config.json
-/theme.css
-/logo.svg
-/logo-light.svg
-/logo-dark.svg
-/favicon.ico
+/theming/config.json
+/theming/theme.css
+/theming/logo.svg
+/theming/logo-light.svg
+/theming/logo-dark.svg
+/theming/favicon.ico
+/theming/font.ttf
 ```
+
+The whole `theming/` directory is the brand overlay: the white-label build drops
+these files in as a single unit, keeping them out of the Vite/PWA files at the
+SPA root. Reference other brand files from within `config.json`/`theme.css` by
+bare relative name (e.g. `logo.svg`, `font.ttf`), never a root-absolute
+`/logo.svg`, which would miss both the proxy prefix and the `theming/` subtree.
 
 ## config.json
 

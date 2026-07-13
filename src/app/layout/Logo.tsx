@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { publicAssetPath } from '../../brandAssets';
+import { themingAssetPath } from '../../brandAssets';
 import { useDarkMode } from '@app/theme/ThemeHandler';
 import { useTenant } from '@app/theme/TenantContext';
 import FLECSLogo from './FLECSLogo';
@@ -42,7 +42,7 @@ export default function Logo({
   }
   return (
     <img
-      src={publicAssetPath(src)}
+      src={themingAssetPath(src)}
       alt={alt}
       className={`block object-contain ${className}`}
       style={style}

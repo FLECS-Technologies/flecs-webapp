@@ -22,6 +22,9 @@ function copyBrandFiles(srcDir: string, destDir: string) {
 
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
     if (entry.name.startsWith('.')) continue;
+    // README.md documents the brand-package contract for developers; it is not a
+    // runtime asset, so keep it out of the shipped theming/ overlay.
+    if (entry.name.toLowerCase() === 'readme.md') continue;
     const src = path.join(srcDir, entry.name);
     const dest = path.join(destDir, entry.name);
 
@@ -47,11 +50,16 @@ function brandOverlayPlugin(brandDir: string): Plugin {
       config = resolvedConfig;
     },
     configureServer(server) {
+      // Mirror the built layout in dev: brand files are served under /theming/,
+      // stripping that prefix to resolve them within brandDir.
+      const urlPrefix = '/theming/';
       server.middlewares.use((req, res, next) => {
         if (!req.url) return next();
 
         const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-        const relativePath = pathname.replace(/^\/+/, '');
+        const idx = pathname.indexOf(urlPrefix);
+        if (idx === -1) return next();
+        const relativePath = pathname.slice(idx + urlPrefix.length);
         if (!relativePath || relativePath.includes('..')) return next();
 
         const filePath = path.join(brandDir, relativePath);
@@ -66,7 +74,7 @@ function brandOverlayPlugin(brandDir: string): Plugin {
       });
     },
     writeBundle() {
-      copyBrandFiles(brandDir, config.build.outDir);
+      copyBrandFiles(brandDir, path.join(config.build.outDir, 'theming'));
     },
   };
 }

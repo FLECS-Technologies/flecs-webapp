@@ -48,8 +48,13 @@ function ErrorScreen({
 function CreateAccountForm({ baseURL, onCreated }: { baseURL: string; onCreated: () => void }) {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; password?: string }>({});
   const { mutateAsync, isPending, error } = useCreateSuperAdmin(baseURL);
+
+  // Live match state drives the confirm field's colour and the submit button.
+  const confirmTouched = confirmPassword.length > 0;
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +113,39 @@ function CreateAccountForm({ baseURL, onCreated }: { baseURL: string; onCreated:
             <p className="mt-1 text-xs text-error">{fieldErrors.password}</p>
           )}
         </div>
+        <div className="relative mt-4">
+          <label className="mb-1 block text-sm text-muted">Confirm password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isPending}
+            aria-invalid={confirmTouched && !passwordsMatch}
+            aria-describedby={
+              confirmTouched && !passwordsMatch ? 'confirm-password-error' : undefined
+            }
+            className={`w-full rounded-md border bg-background px-3 py-2 text-text-primary outline-none transition disabled:opacity-50 ${
+              !confirmTouched
+                ? 'border-border focus:border-brand'
+                : passwordsMatch
+                  ? 'border-success focus:border-success'
+                  : 'border-error focus:border-error'
+            }`}
+          />
+          {confirmTouched && !passwordsMatch && (
+            <div
+              id="confirm-password-error"
+              role="alert"
+              className="absolute left-3 top-full z-20 mt-1.5 whitespace-nowrap rounded-md border border-error bg-surface-raised px-2.5 py-1 text-xs font-medium text-error shadow-md"
+            >
+              <span
+                aria-hidden="true"
+                className="absolute -top-1 left-3 h-2 w-2 rotate-45 border-l border-t border-error bg-surface-raised"
+              />
+              Passwords don&apos;t match
+            </div>
+          )}
+        </div>
         {error && (
           <p className="mt-4 text-sm text-error">
             {error instanceof Error ? error.message : 'Failed to create account'}
@@ -115,8 +153,8 @@ function CreateAccountForm({ baseURL, onCreated }: { baseURL: string; onCreated:
         )}
         <button
           type="submit"
-          disabled={isPending}
-          className="mt-5 w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-end disabled:opacity-50"
+          disabled={isPending || !passwordsMatch}
+          className="mt-5 w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-end disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? 'Creating account...' : 'Create account'}
         </button>

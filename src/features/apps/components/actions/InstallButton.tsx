@@ -13,12 +13,11 @@ interface InstallButtonProps {
   showSelectedVersion?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
-  /** Server-derived install-in-progress flag (from the /apps + /quests caches). Unlike the
-   *  local `state.installing` — which only reflects an install started in this component's
-   *  lifetime — this survives unmount/remount (route switch, pagination, filtering), so the
-   *  button keeps showing "Installing" after the user navigates away and back. */
+  /** Server-derived install-in-progress flag (from /apps: desired='installed', status not yet
+   *  'installed'). Unlike the local `state.installing` — which only reflects an install started
+   *  in this component's lifetime — this survives unmount/remount (route switch, pagination,
+   *  filtering), so the button keeps showing "Installing" after the user navigates away and back. */
   installing?: boolean;
-  installingProgress?: number;
 }
 
 export default function InstallButton({
@@ -29,7 +28,6 @@ export default function InstallButton({
   disabled,
   fullWidth,
   installing: installingProp = false,
-  installingProgress,
 }: InstallButtonProps): React.ReactElement {
   const [state, setState] = useState<{ installing: boolean; currentQuest: Quest | null }>({
     installing: false,
@@ -37,9 +35,6 @@ export default function InstallButton({
   });
   const [installAppOpen, setInstallAppOpen] = useState<boolean>(false);
   const isInstalling = state.installing || installingProp;
-  const installingText =
-    state.currentQuest?.description ??
-    (installingProgress != null ? `Installing ${installingProgress}%` : 'Installing');
   return (
     <React.Fragment>
       <button
@@ -54,7 +49,7 @@ export default function InstallButton({
           <Download size={18} />
         )}
         {isInstalling ? (
-          <MarqueeText text={installingText} />
+          <MarqueeText text={state.currentQuest?.description || 'Installing'} />
         ) : (
           `Install Now${showSelectedVersion ? ` ${typeof version === 'string' ? version : version?.version}` : ''}`
         )}

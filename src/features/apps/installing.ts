@@ -11,6 +11,24 @@ export type InstallingApp = EnrichedApp & {
 };
 
 /**
+ * True when /apps reports an install in progress: the daemon wants the app installed
+ * (desired='installed') but its status hasn't reached 'installed' yet.
+ *
+ * This is the single source of truth for the Marketplace card's Installing/Installed state.
+ * Both derive from the same /apps snapshot, so they can never briefly disagree (which is what
+ * made the button flash back to "Install Now" between "Installing" and "Installed"). It stays
+ * true for the whole install and survives view switches because /apps is a durable cache.
+ *
+ * Caveat: an install that fails while the daemon still wants it installed keeps this true —
+ * the daemon's own retry/reconcile state, surfaced as "Installing" until it settles.
+ */
+export function isAppInstalling(
+  app: Pick<EnrichedApp, 'desired' | 'status'> | undefined,
+): boolean {
+  return app?.desired === AppStatus.installed && app?.status !== AppStatus.installed;
+}
+
+/**
  * Derive the apps currently installing from the durable /apps + /quests caches.
  *
  * The daemon lists an in-progress install with desired='installed' and a transient
@@ -22,9 +40,9 @@ export type InstallingApp = EnrichedApp & {
  * rather than parsed — app and version names can both contain hyphens, so splitting the
  * description is ambiguous.
  *
- * Both the Installed Apps table and the Marketplace cards read from this so the
- * "Installing" state survives unmount/remount (route switch, pagination, filtering)
- * instead of relying on a component's transient local state.
+ * The Installed Apps table reads from this to render its "Installing… X%" rows. (Marketplace
+ * cards derive their simpler Installing/Installed state straight from /apps desired vs status —
+ * see Marketplace.tsx — so the two never disagree mid-install.)
  */
 export function deriveInstallingApps(
   appList: EnrichedApp[] | undefined,
@@ -37,7 +55,7 @@ export function deriveInstallingApps(
       q.description?.startsWith('Install '),
   );
   return (appList ?? [])
-    .filter((app) => app.desired === AppStatus.installed && app.status !== AppStatus.installed)
+    .filter((app) => isAppInstalling(app))
     .map((app): InstallingApp | null => {
       const quest = activeInstalls.find(
         (q) => q.description === `Install ${app.appKey.name}-${app.appKey.version}`,
@@ -57,33 +75,24 @@ export function deriveInstallingApps(
 }
 
 /**
- * App names whose "Install <name>-<version>" quest has finished successfully but whose /apps
- * `status` hasn't caught up to 'installed' yet.
+ * Descriptions of ongoing/pending "Install <name>-<version>" quests.
  *
- * /quests polls every ~2s while /apps polls every 10s, so the fast cache drops the active
- * install quest (deriveInstallingApps stops reporting it) several seconds before the slow
- * cache reports 'installed'. In that window a card would otherwise fall back to "Install Now"
- * between "Installing" and "Installed". Treating a succeeded install quest as installed bridges
- * that gap; once /apps reports 'installed' the guard below drops the app and the durable status
- * takes over. A failed quest is deliberately excluded — it must fall back so the user can retry.
+ * The daemon briefly drops an app from /apps while (re)installing — it removes the entry and
+ * re-adds it, so there are windows where the app is absent entirely. During those windows
+ * isAppInstalling can't see the install (there's no /apps entry) and a card would flash
+ * "Install Now". A matching active install quest bridges the gap. Only ongoing/pending quests
+ * count, so the succeeded duplicates that accumulate across reinstalls never trigger it.
+ *
+ * Consulted only when the app is missing from /apps — when it's present, /apps stays
+ * authoritative, so a stale/duplicate quest can't affect an app the daemon already tracks.
  */
-export function deriveRecentlyInstalledNames(
-  appList: EnrichedApp[] | undefined,
-  questsData: getQuestsResponse | undefined,
-): Set<string> {
+export function activeInstallQuestDescriptions(questsData: getQuestsResponse | undefined): string[] {
   const quests = unwrapSuccess(questsData) ?? ([] as Quest[]);
-  const succeededInstalls = quests.filter(
-    (q) =>
-      (q.state === QuestState.success || q.state === QuestState.skipped) &&
-      q.description?.startsWith('Install '),
-  );
-  const names = new Set<string>();
-  for (const app of appList ?? []) {
-    if (app.desired !== AppStatus.installed || app.status === AppStatus.installed) continue;
-    const done = succeededInstalls.some(
-      (q) => q.description === `Install ${app.appKey.name}-${app.appKey.version}`,
-    );
-    if (done) names.add(app.appKey.name);
-  }
-  return names;
+  return quests
+    .filter(
+      (q) =>
+        (q.state === QuestState.ongoing || q.state === QuestState.pending) &&
+        q.description?.startsWith('Install '),
+    )
+    .map((q) => q.description);
 }

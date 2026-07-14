@@ -15,7 +15,12 @@ const questsResponse = (quests: Quest[]): getQuestsResponse => ({
   headers: new Headers(),
 });
 
-const app = (name: string, version: string, desired: AppStatus, status: AppStatus): EnrichedApp => ({
+const app = (
+  name: string,
+  version: string,
+  desired: AppStatus,
+  status: AppStatus,
+): EnrichedApp => ({
   appKey: { name, version },
   desired,
   status,
@@ -98,11 +103,31 @@ describe('deriveInstallingApps is robust to duplicate/leftover quests', () => {
 describe('activeInstallQuestDescriptions', () => {
   it('returns only ongoing/pending install quests, ignoring succeeded/failed duplicates', () => {
     const quests = questsResponse([
-      { id: 1, description: 'Install org.eclipse-basys.aas-server-1.4.0', state: QuestState.failed },
-      { id: 2, description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1', state: QuestState.success },
-      { id: 3, description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1', state: QuestState.success },
-      { id: 4, description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1', state: QuestState.ongoing },
-      { id: 5, description: 'Uninstall io.anyviz.cloudadapter-flecs-2.1.3.1', state: QuestState.ongoing },
+      {
+        id: 1,
+        description: 'Install org.eclipse-basys.aas-server-1.4.0',
+        state: QuestState.failed,
+      },
+      {
+        id: 2,
+        description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1',
+        state: QuestState.success,
+      },
+      {
+        id: 3,
+        description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1',
+        state: QuestState.success,
+      },
+      {
+        id: 4,
+        description: 'Install io.anyviz.cloudadapter-flecs-2.1.3.1',
+        state: QuestState.ongoing,
+      },
+      {
+        id: 5,
+        description: 'Uninstall io.anyviz.cloudadapter-flecs-2.1.3.1',
+        state: QuestState.ongoing,
+      },
     ]);
     expect(activeInstallQuestDescriptions(quests)).toEqual([
       'Install io.anyviz.cloudadapter-flecs-2.1.3.1',

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useLayoutEffect, type CSSProperties } from
 import { toast } from 'sonner';
 import ReactDOM from 'react-dom';
 import {
-  ExternalLink,
+  LayersPlus,
   MoreHorizontal,
   Play,
   Plus,
@@ -22,8 +22,10 @@ import UpdateButton from '@features/apps/components/actions/UpdateButton';
 import ContentDialog from '@app/components/ContentDialog';
 import ConfirmDialog from '@app/components/ConfirmDialog';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
+import { useGetManifestsAppNameVersion } from '@generated/core/manifests/manifests';
 import InstanceInfo from './instances/InstanceInfo';
 import InstanceConfigDialog, { type SectionKey } from './instances/InstanceConfigDialog';
+import InstanceNameDialog from './InstanceNameDialog';
 import { VersionSelector } from '@app/components/VersionSelector';
 import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
@@ -32,6 +34,7 @@ import { getErrorMessage } from '@app/api/fetch-error';
 
 import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import {
+  useDeleteInstancesInstanceId,
   postInstancesCreate,
   postInstancesInstanceIdStart,
   postInstancesInstanceIdStop,
@@ -40,14 +43,28 @@ import type { JobMeta } from '@generated/core/schemas';
 
 interface InstalledAppRowProps {
   app: EnrichedApp;
+  instance?: AppInstance;
 }
 
-export default function InstalledAppRow({ app }: InstalledAppRowProps) {
+export default function InstalledAppRow({ app, instance }: InstalledAppRowProps) {
   const qc = useQueryClient();
   const { waitForQuest } = useQuestActions();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
+  const { mutateAsync: deleteInstance } = useDeleteInstancesInstanceId();
+  const { data: manifestResponse, isPending: manifestPending } = useGetManifestsAppNameVersion(
+    app.appKey.name,
+    app.appKey.version,
+    {
+      query: { staleTime: 300_000 },
+    },
+  );
+  const manifest = unwrapSuccess(manifestResponse);
   const isInstalling = app.status === 'installing';
-  const instance: AppInstance | undefined = (app.instances ?? [])[0];
+  const canDuplicateApp = manifest?.multiInstance === true;
+  const instanceCount = app.instances?.length ?? 0;
+  const isInstanceScopedApp = Boolean(instance && (canDuplicateApp || instanceCount > 1));
+  const isLastInstanceOfApp = isInstanceScopedApp && instanceCount <= 1;
+  const canShowAppUninstall = !instance || (!manifestPending && !isInstanceScopedApp);
   const isRunning = instance?.status === 'running';
   const isStopped = instance?.status === 'stopped';
   const hasEditors = (instance?.editors?.length ?? 0) > 0;
@@ -81,6 +98,8 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const [settingsSection, setSettingsSection] = useState<SectionKey | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   const [confirmUninstall, setConfirmUninstall] = useState(false);
+  const [confirmDeleteInstance, setConfirmDeleteInstance] = useState(false);
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -144,12 +163,15 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
     }
   };
 
-  const handleCreateAndStart = async () => {
+  const handleCreateAndStart = async (instanceName?: string) => {
     setBusy(true);
     setMenuAnchor(false);
     try {
+      const trimmedInstanceName =
+        typeof instanceName === 'string' ? instanceName.trim() : undefined;
       const createQuest = await postInstancesCreate({
         appKey: { name: app.appKey.name, version: app.appKey.version },
+        ...(trimmedInstanceName ? { instanceName: trimmedInstanceName } : {}),
       });
       const createJobId = unwrapSuccess(createQuest)?.jobId;
       if (!createJobId) throw new Error('No jobId in create response');
@@ -170,12 +192,63 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
     }
   };
 
-  const selectedVersionNotInstalled = !app.installedVersions?.includes(selectedVersion.version);
+  const handleUninstallApp = async () => {
+    setBusy(true);
+    try {
+      const r = await deleteApp({
+        app: app.appKey.name,
+        params: { version: app.appKey.version },
+      });
+      const jobId = unwrapSuccess(r)?.jobId;
+      if (jobId) {
+        const result = await waitForQuest(jobId);
+        if (questStateFinishedOk(result.state)) toast.success(`${app.title} uninstalled`);
+        else toast.error(`Failed to uninstall ${app.title}`);
+      }
+      qc.invalidateQueries();
+    } catch (err: unknown) {
+      toast.error(`Failed to uninstall ${app.title}`, { description: getErrorMessage(err) });
+    } finally {
+      setBusy(false);
+    }
+  };
 
+  const handleDeleteInstance = async () => {
+    if (!instance) return;
+    setBusy(true);
+    try {
+      const r = await deleteInstance({ instanceId: instance.instanceId });
+      const jobId = unwrapSuccess(r)?.jobId;
+      if (jobId) {
+        const result = await waitForQuest(jobId);
+        if (questStateFinishedOk(result.state)) {
+          toast.success(`${instance.instanceName || app.title} deleted`);
+        } else {
+          toast.error(`Failed to delete ${instance.instanceName || app.title}`);
+        }
+      }
+      qc.invalidateQueries();
+    } catch (err: unknown) {
+      toast.error(`Failed to delete ${instance.instanceName || app.title}`, {
+        description: getErrorMessage(err),
+      });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const selectedVersionNotInstalled = !app.installedVersions?.includes(selectedVersion.version);
+  const instanceName = instance?.instanceName.trim();
+  const instanceDisplayName =
+    isInstanceScopedApp && instance ? instanceName || `Instance ${instance.instanceId}` : undefined;
+  const instanceActionName = instanceDisplayName || instance?.instanceId;
+  const rowActionLabel = instance
+    ? `${app.title} ${instanceActionName} actions`
+    : `${app.title} actions`;
   return (
     <>
       <div className="flex items-center gap-4 px-5 py-3 hover:bg-surface-hover transition">
-        {/* Avatar — image from marketplace, generic package icon for sideloaded apps */}
+        {/* Avatar - image from marketplace, generic package icon for sideloaded apps */}
         <div className="w-12 h-12 rounded-lg bg-surface-hover flex items-center justify-center text-muted border border-border overflow-hidden shrink-0">
           {app.avatar ? (
             <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" />
@@ -186,7 +259,12 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
         {/* Identity */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold truncate">{app.title}</span>
+            <span className="text-sm truncate">
+              <span className="font-bold">{app.title}</span>
+              {instanceDisplayName && (
+                <span className="font-normal text-text-primary"> ({instanceDisplayName})</span>
+              )}
+            </span>
             {updateAvailable && (
               <span
                 className="px-2 py-0.5 rounded-full bg-accent/20 text-accent text-[0.65rem] font-semibold cursor-pointer inline-flex items-center gap-1"
@@ -232,7 +310,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
         <div className="relative">
           <button
             ref={btnRef}
-            aria-label={`${app.title} actions`}
+            aria-label={rowActionLabel}
             className="p-1.5 rounded-lg hover:bg-surface-hover transition text-muted cursor-pointer"
             onClick={() => setMenuAnchor(!menuAnchor)}
             disabled={busy}
@@ -246,10 +324,24 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                 style={menuStyle}
                 className="w-48 rounded-xl bg-surface-raised border border-border shadow-xl z-[9999] py-1"
               >
+                {canDuplicateApp && (
+                  <>
+                    <button
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium hover:bg-surface-hover transition"
+                      onClick={() => {
+                        setMenuAnchor(false);
+                        setDuplicateOpen(true);
+                      }}
+                    >
+                      <LayersPlus size={16} /> Duplicate app
+                    </button>
+                    <hr className="border-border my-1" />
+                  </>
+                )}
                 {!instance && (
                   <button
                     className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
-                    onClick={handleCreateAndStart}
+                    onClick={() => handleCreateAndStart()}
                   >
                     <Plus size={16} /> Create & Start
                   </button>
@@ -291,7 +383,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                       setSettingsOpen(true);
                     }}
                   >
-                    <Settings size={16} /> Settings
+                    <Settings size={16} /> Configure
                   </button>
                 )}
                 {instance && (
@@ -316,16 +408,32 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                     <BookOpen size={16} /> Documentation
                   </button>
                 )}
-                <hr className="border-border my-1" />
-                <button
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-surface-hover transition cursor-pointer"
-                  onClick={() => {
-                    setMenuAnchor(false);
-                    setConfirmUninstall(true);
-                  }}
-                >
-                  <Trash2 size={16} /> Uninstall
-                </button>
+                {(isInstanceScopedApp || canShowAppUninstall) && (
+                  <hr className="border-border my-1" />
+                )}
+                {isInstanceScopedApp && instance && (
+                  <button
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-surface-hover transition cursor-pointer"
+                    onClick={() => {
+                      setMenuAnchor(false);
+                      setConfirmDeleteInstance(true);
+                    }}
+                  >
+                    <Trash2 size={16} />
+                    {isLastInstanceOfApp ? 'Uninstall app' : 'Delete instance'}
+                  </button>
+                )}
+                {canShowAppUninstall && (
+                  <button
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-surface-hover transition cursor-pointer"
+                    onClick={() => {
+                      setMenuAnchor(false);
+                      setConfirmUninstall(true);
+                    }}
+                  >
+                    <Trash2 size={16} /> Uninstall app
+                  </button>
+                )}
               </div>,
               document.body,
             )}
@@ -370,35 +478,41 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           />
         </>
       )}
+      <InstanceNameDialog
+        app={app}
+        open={duplicateOpen}
+        setOpen={setDuplicateOpen}
+        busy={busy}
+        onSubmit={handleCreateAndStart}
+      />
       <ConfirmDialog
         title={`Uninstall ${app.title}?`}
         open={confirmUninstall}
         setOpen={setConfirmUninstall}
-        confirmLabel="Uninstall"
+        confirmLabel="Uninstall app"
         confirmDestructive
-        onConfirm={async () => {
-          setBusy(true);
-          try {
-            const r = await deleteApp({
-              app: app.appKey.name,
-              params: { version: app.appKey.version },
-            });
-            const jobId = unwrapSuccess(r)?.jobId;
-            if (jobId) {
-              const result = await waitForQuest(jobId);
-              if (questStateFinishedOk(result.state)) toast.success(`${app.title} uninstalled`);
-              else toast.error(`Failed to uninstall ${app.title}`);
-            }
-            qc.invalidateQueries();
-          } catch (err: unknown) {
-            toast.error(`Failed to uninstall ${app.title}`, { description: getErrorMessage(err) });
-          } finally {
-            setBusy(false);
-          }
-        }}
+        onConfirm={handleUninstallApp}
       >
         This will remove {app.title} and all its data from your device.
       </ConfirmDialog>
+      {instance && (
+        <ConfirmDialog
+          title={
+            isLastInstanceOfApp
+              ? `Uninstall ${app.title}?`
+              : `Delete ${instance.instanceName || app.title} instance?`
+          }
+          open={confirmDeleteInstance}
+          setOpen={setConfirmDeleteInstance}
+          confirmLabel={isLastInstanceOfApp ? 'Uninstall app' : 'Delete instance'}
+          confirmDestructive
+          onConfirm={isLastInstanceOfApp ? handleUninstallApp : handleDeleteInstance}
+        >
+          {isLastInstanceOfApp
+            ? `This is the only ${app.title} instance. The app and its data will be removed from your device.`
+            : `This will remove only this instance and its data. Other ${app.title} instances remain installed.`}
+        </ConfirmDialog>
+      )}
     </>
   );
 }

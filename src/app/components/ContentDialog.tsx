@@ -6,9 +6,17 @@ interface ContentDialogProps {
   setOpen: (open: boolean) => void;
   actions?: React.ReactNode;
   children?: React.ReactNode;
+  panelClassName?: string;
 }
 
-function ContentDialog({ title, open, setOpen, actions, children }: ContentDialogProps) {
+function ContentDialog({
+  title,
+  open,
+  setOpen,
+  actions,
+  children,
+  panelClassName,
+}: ContentDialogProps) {
   if (!open) return null;
 
   return createPortal(
@@ -17,7 +25,10 @@ function ContentDialog({ title, open, setOpen, actions, children }: ContentDialo
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border"
+        className={
+          panelClassName ??
+          'bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border'
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-border">

@@ -22,9 +22,7 @@ export type InstallingApp = EnrichedApp & {
  * Caveat: an install that fails while the daemon still wants it installed keeps this true —
  * the daemon's own retry/reconcile state, surfaced as "Installing" until it settles.
  */
-export function isAppInstalling(
-  app: Pick<EnrichedApp, 'desired' | 'status'> | undefined,
-): boolean {
+export function isAppInstalling(app: Pick<EnrichedApp, 'desired' | 'status'> | undefined): boolean {
   return app?.desired === AppStatus.installed && app?.status !== AppStatus.installed;
 }
 
@@ -86,7 +84,9 @@ export function deriveInstallingApps(
  * Consulted only when the app is missing from /apps — when it's present, /apps stays
  * authoritative, so a stale/duplicate quest can't affect an app the daemon already tracks.
  */
-export function activeInstallQuestDescriptions(questsData: getQuestsResponse | undefined): string[] {
+export function activeInstallQuestDescriptions(
+  questsData: getQuestsResponse | undefined,
+): string[] {
   const quests = unwrapSuccess(questsData) ?? ([] as Quest[]);
   return quests
     .filter(

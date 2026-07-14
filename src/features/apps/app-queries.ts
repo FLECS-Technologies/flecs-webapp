@@ -1,5 +1,5 @@
 /**
- * App list — uses TanStack useQueries with combine to merge 3 generated API calls.
+ * App list - uses TanStack useQueries with combine to merge generated API calls.
  * Zero custom hooks. Pure TanStack standardization.
  */
 import { useQueries } from '@tanstack/react-query';
@@ -49,7 +49,7 @@ function combineAppList(
   const instances: AppInstance[] = unwrapSuccess(iRes.data) ?? [];
 
   // Enrich device apps with marketplace metadata + instances.
-  // Sideloaded apps have no marketplace match — fall back to the app's own reverse-domain name.
+  // Sideloaded apps have no marketplace match - fall back to the app's own reverse-domain name.
   const appList: EnrichedApp[] = apps
     .filter((a) => a.appKey.name)
     .map((app) => {

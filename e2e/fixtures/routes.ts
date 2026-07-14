@@ -71,6 +71,14 @@ export async function mockHappyPath(page: Page): Promise<void> {
     route.fulfill({ json: [fixtures.instance()], status: 200 }),
   );
 
+  // Manifests
+  await page.route('**/api/v2/manifests', (route) =>
+    route.fulfill({ json: [fixtures.manifest()], status: 200 }),
+  );
+  await page.route('**/api/v2/manifests/*/*', (route) =>
+    route.fulfill({ json: fixtures.manifest(), status: 200 }),
+  );
+
   // Quests
   await page.route('**/api/v2/quests', (route) => route.fulfill({ json: [], status: 200 }));
 

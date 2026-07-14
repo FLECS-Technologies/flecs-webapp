@@ -15,6 +15,8 @@ import {
   type getQuestsIdResponse,
   type GetQuestsIdQueryError,
 } from '@generated/core/quests/quests';
+import { getGetAppsQueryKey } from '@generated/core/apps/apps';
+import { getGetInstancesQueryKey } from '@generated/core/instances/instances';
 import { QueryObserver, useQueryClient } from '@tanstack/react-query';
 import { useQuestStore, addQuest, getQuest } from '@stores/quests';
 import { unwrapSuccess } from '@app/api/unwrap';
@@ -26,6 +28,7 @@ const isFinished = (q: Quest) =>
 
 /** Live quest polling with auto-toast on completion */
 export function useQuestPolling() {
+  const qc = useQueryClient();
   const hasActive = useQuestStore((s) => s.mainQuestIds.length > 0);
   const { data } = useGetQuests({ query: { refetchInterval: hasActive ? 2000 : 10_000 } });
   const prevStates = useRef<Map<number, string>>(new Map());
@@ -33,11 +36,18 @@ export function useQuestPolling() {
   useEffect(() => {
     if (!data?.data) return;
     const quests = data.data as Quest[];
+    // A job appearing or finishing means the app/instance lists it touched have changed. Refetch
+    // them at the quest cadence (~2s) instead of waiting for their own slower poll — this is what
+    // makes a finished install flip a marketplace card to "Installed" promptly (≤~2s) rather than
+    // up to 10s later, and it works regardless of which view/tab started the install.
+    let appStateSettled = false;
     quests.forEach((q) => {
       const prev = prevStates.current.get(q.id);
       addQuest(q);
+      const justFinished = !!prev && !isFinished({ state: prev } as Quest) && isFinished(q);
+      if (prev === undefined || justFinished) appStateSettled = true;
       // Auto-toast when quest transitions to finished
-      if (prev && !isFinished({ state: prev } as Quest) && isFinished(q)) {
+      if (justFinished) {
         if (q.state === QuestState.success || q.state === QuestState.skipped) {
           toast.success(q.description || 'Job completed');
         } else if (q.state === QuestState.failed) {
@@ -47,7 +57,11 @@ export function useQuestPolling() {
       prevStates.current.set(q.id, q.state);
     });
     useQuestStore.getState().setMainQuestIds(quests.map((q) => q.id));
-  }, [data]);
+    if (appStateSettled) {
+      qc.invalidateQueries({ queryKey: getGetAppsQueryKey() });
+      qc.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
+    }
+  }, [data, qc]);
 }
 
 /** Imperative quest actions for install/update flows */

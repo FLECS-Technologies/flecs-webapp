@@ -14,7 +14,7 @@ import { useGetSystemInfo } from '@generated/core/system/system';
 import { useGetQuests } from '@generated/core/quests/quests';
 import type { Product } from '@generated/console/schemas';
 import { AppStatus } from '@generated/core/schemas';
-import { deriveInstallingApps, deriveRecentlyInstalledNames } from '@features/apps/installing';
+import { isAppInstalling, activeInstallQuestDescriptions } from '@features/apps/installing';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/Card';
@@ -64,9 +64,9 @@ export default function Marketplace() {
   const { data: infoResponse, isPending: isInfoPending } = useGetSystemInfo({
     query: { staleTime: 60_000 },
   });
-  // Read from the shared /quests cache (polling is driven by JobsRail) to reconstruct
-  // which apps are installing — so a card shows "Installing" even after the user
-  // navigates away and back, changes filters, or pages past it and returns.
+  // Quests carry the live install progress %. This is display-only — it enriches the
+  // "Installing" label but never decides Installing vs Installed (that's isAppInstalling
+  // from /apps), so a missing/stale quest just means no % shown, never a wrong state.
   const { data: questsData } = useGetQuests();
   const arch = infoResponse?.data?.arch;
   const isLoading = isAppListLoading || isInfoPending;
@@ -129,21 +129,11 @@ export default function Marketplace() {
 
   const categories = useMemo(() => getUniqueCategories(baseFiltered), [baseFiltered]);
 
-  // Reverse-domain name → install progress % (undefined when unknown) for apps mid-install.
-  // Keyed by app name because a marketplace card represents the product, not a single version.
-  const installingByName = useMemo(() => {
-    const map = new Map<string, number | undefined>();
-    for (const app of deriveInstallingApps(appList, questsData)) {
-      map.set(app.appKey.name, app._quest.progress);
-    }
-    return map;
-  }, [appList, questsData]);
-
-  // Apps whose install quest already succeeded but whose /apps status is still catching up —
-  // treated as installed so the card goes "Installing" → "Installed" without a "Install Now" flash.
-  const recentlyInstalled = useMemo(
-    () => deriveRecentlyInstalledNames(appList, questsData),
-    [appList, questsData],
+  // Active install quest descriptions — used only to bridge the windows where the daemon has
+  // dropped the app from /apps mid-(re)install, so the card doesn't flash "Install Now".
+  const activeInstallDescriptions = useMemo(
+    () => activeInstallQuestDescriptions(questsData),
+    [questsData],
   );
 
   const totalApps = products?.length ?? 0;
@@ -169,15 +159,19 @@ export default function Marketplace() {
   const productCards = paginatedProducts.map((app: Product) => {
     const rdName = getReverseDomainName(app);
     const matchedApp = appList?.find((o) => o?.appKey?.name === rdName);
-    const installing = installingByName.has(rdName ?? '');
+    // While the app is in /apps, that is the single source for Installing vs Installed (they
+    // derive from the same snapshot, so they can't disagree). The daemon briefly removes the app
+    // from /apps mid-(re)install, though; during that gap fall back to an active install quest so
+    // the card stays "Installing" instead of flashing "Install Now".
+    const installing = matchedApp
+      ? isAppInstalling(matchedApp)
+      : activeInstallDescriptions.some((d) => d.startsWith(`Install ${rdName}-`));
     return (
       <Card
         key={app.id ?? rdName}
         app={rdName}
         appKey={{ name: rdName ?? '', version: matchedApp?.appKey?.version ?? '' }}
         installing={installing}
-        installingProgress={installingByName.get(rdName ?? '')}
-        justInstalled={recentlyInstalled.has(rdName ?? '')}
         avatar={getAppIcon(app)}
         title={app.name}
         author={getAuthor(app)}

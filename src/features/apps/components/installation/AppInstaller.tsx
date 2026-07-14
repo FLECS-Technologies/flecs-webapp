@@ -11,6 +11,7 @@ import {
   usePostAppsInstall,
   useDeleteAppsApp,
   usePostAppsSideload,
+  getGetAppsQueryKey,
 } from '@generated/core/apps/apps';
 import {
   usePostInstancesCreate,
@@ -18,6 +19,7 @@ import {
   usePatchInstancesInstanceId,
 } from '@generated/core/instances/instances';
 import { useGetDeviceLicenseActivationStatus } from '@generated/core/device/device';
+import { getGetQuestsQueryKey } from '@generated/core/quests/quests';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
@@ -108,6 +110,11 @@ export default function AppInstaller({
 
         setMessage('Installing app...');
         const r = await installApp({ data: { appKey } });
+        // Surface the in-progress install immediately instead of waiting up to 10s for the next
+        // poll: refetch /apps (so cards show "Installing" right away and survive a view switch)
+        // and /quests (so the shared quest poll goes active and the progress % appears promptly).
+        qc.invalidateQueries({ queryKey: getGetAppsQueryKey() });
+        qc.invalidateQueries({ queryKey: getGetQuestsQueryKey() });
         await questStep(getJobId(r));
 
         setMessage('Creating instance...');

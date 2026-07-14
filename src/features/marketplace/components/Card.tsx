@@ -34,20 +34,15 @@ export interface MarketplaceCardProps {
   purchasable?: boolean;
   documentationUrl?: string;
   instances?: AppInstance[];
-  /** Server-derived: this app is currently installing (from the /apps + /quests caches). */
+  /** Server-derived from /apps (desired='installed' but status not yet 'installed'). Survives
+   *  unmount/remount, so the card keeps showing "Installing" across view switches. */
   installing?: boolean;
-  installingProgress?: number;
-  /** Install quest succeeded but /apps status hasn't caught up — show "Installed" already. */
-  justInstalled?: boolean;
 }
 
 export default function MarketplaceCard(props: MarketplaceCardProps) {
   const { data: infoResponse } = useGetSystemInfo({ query: { staleTime: 60_000 } });
   const systemInfo = infoResponse?.data;
   const installed = props.status === 'installed';
-  // During the bridge window (install quest succeeded, /apps not yet 'installed') show the app
-  // as installed; update logic stays keyed off the real status so it can't misfire on stale data.
-  const installedDisplay = installed || !!props.justInstalled;
   const versionsArray = props.versions ?? [];
   const [latestVersion] = useState<AppVersion>(
     versionsArray[0] ?? { version: '', installed: false },
@@ -104,7 +99,7 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
         >
           {updateAvailable ? (
             <UpdateButton app={props} to={latestVersion} showSelectedVersion fullWidth />
-          ) : installedDisplay ? (
+          ) : installed ? (
             <button
               className="w-full px-4 py-3 border border-success text-success rounded-xl font-semibold text-base hover:bg-success/5 transition inline-flex items-center justify-center gap-2"
               onClick={() => setFullCardOpen(true)}
@@ -125,7 +120,6 @@ export default function MarketplaceCard(props: MarketplaceCardProps) {
               disabled={false}
               fullWidth
               installing={props.installing}
-              installingProgress={props.installingProgress}
             />
           )}
         </div>

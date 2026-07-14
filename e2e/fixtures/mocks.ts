@@ -7,6 +7,7 @@
 import type {
   InstalledApp,
   AppInstance,
+  AppManifest,
   AppStatus,
   SystemInfo,
   Quest,
@@ -16,7 +17,7 @@ import type {
 import type { Product } from '@generated/console/schemas';
 
 export const fixtures = {
-  // Core API returns SystemInfo as the raw body — customInstance wraps it into { data, status, headers }.
+  // Core API returns SystemInfo as the raw body - customInstance wraps it into { data, status, headers }.
   systemInfo: (override: Partial<SystemInfo> = {}): SystemInfo => ({
     arch: 'arm64',
     platform: 'Distroless',
@@ -44,7 +45,16 @@ export const fixtures = {
     ...override,
   }),
 
-  // Minimal WooCommerce Product shape — orval generates this from console OpenAPI.
+  manifest: (override: Partial<AppManifest> = {}): AppManifest => ({
+    _schemaVersion: '3.0.0',
+    app: 'tech.flecs.fence',
+    version: '0.3.0-rc.3',
+    image: 'flecs/fence:smoke',
+    multiInstance: false,
+    ...override,
+  }),
+
+  // Minimal WooCommerce Product shape - orval generates this from console OpenAPI.
   product: (override: Partial<Product> = {}): Product => ({
     id: 1,
     name: 'Test App',

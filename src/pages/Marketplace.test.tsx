@@ -1,5 +1,5 @@
 /**
- * Marketplace — integration test.
+ * Marketplace - integration test.
  * MSW returns generated mock products. Verify the page renders them.
  */
 import { describe, it, expect } from 'vitest';

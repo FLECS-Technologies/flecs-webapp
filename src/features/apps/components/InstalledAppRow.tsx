@@ -202,7 +202,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
           <div className="flex items-center gap-1 text-xs text-muted">
             {app.author && <span className="truncate">{app.author}</span>}
             {app.author && <span>-</span>}
-            <span className="font-mono truncate">v{app.appKey?.version}</span>
+            <span className="font-mono truncate">{app.appKey?.version}</span>
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
             {isInstalling ? (
@@ -361,7 +361,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                   )}
                   {!selectedVersionNotInstalled && (
                     <p className="text-sm text-muted mt-4 text-center">
-                      v{selectedVersion?.version} is already installed.
+                      {selectedVersion?.version} is already installed.
                     </p>
                   )}
                 </div>

@@ -20,7 +20,7 @@ export default function InstanceNameDialog({
 }: InstanceNameDialogProps) {
   const [instanceName, setInstanceName] = useState('');
   const trimmedName = instanceName.trim();
-  const previewName = trimmedName || 'Unnamed instance';
+  const previewName = trimmedName || 'Instance abcd1234';
   const actionLabel = trimmedName ? `Create "${trimmedName}"` : 'Skip name';
 
   const submit = async () => {

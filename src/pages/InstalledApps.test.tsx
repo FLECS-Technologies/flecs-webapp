@@ -262,7 +262,7 @@ describe('Installed Apps', () => {
     expect(
       screen.getByText(/cannot be changed after the instance is created/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Unnamed instance/)).toBeInTheDocument();
+    expect(screen.getByText(/Instance abcd1234/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /^skip name$/i }));
 
     await waitFor(() =>

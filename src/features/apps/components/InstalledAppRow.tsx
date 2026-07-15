@@ -23,7 +23,7 @@ import ContentDialog from '@app/components/ContentDialog';
 import ConfirmDialog from '@app/components/ConfirmDialog';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
 import InstanceInfo from './instances/InstanceInfo';
-import InstanceConfigDialog from './instances/InstanceConfigDialog';
+import InstanceConfigDialog, { type SectionKey } from './instances/InstanceConfigDialog';
 import { VersionSelector } from '@app/components/VersionSelector';
 import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
@@ -78,6 +78,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsSection, setSettingsSection] = useState<SectionKey | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   const [confirmUninstall, setConfirmUninstall] = useState(false);
 
@@ -189,7 +190,10 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             {updateAvailable && (
               <span
                 className="px-2 py-0.5 rounded-full bg-accent/20 text-accent text-[0.65rem] font-semibold cursor-pointer inline-flex items-center gap-1"
-                onClick={() => setSettingsOpen(true)}
+                onClick={() => {
+                  setSettingsSection('version');
+                  setSettingsOpen(true);
+                }}
               >
                 <RefreshCw size={10} /> Update
               </span>
@@ -283,6 +287,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
                     className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-surface-hover transition"
                     onClick={() => {
                       setMenuAnchor(false);
+                      setSettingsSection(undefined);
                       setSettingsOpen(true);
                     }}
                   >
@@ -339,6 +344,7 @@ export default function InstalledAppRow({ app }: InstalledAppRowProps) {
             instanceId={instance.instanceId}
             instanceName={instance.instanceName}
             open={settingsOpen}
+            initialSection={settingsSection}
             onClose={() => setSettingsOpen(false)}
             versionSection={
               versionsArray.length > 0 ? (

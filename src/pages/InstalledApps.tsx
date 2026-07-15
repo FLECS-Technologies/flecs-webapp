@@ -161,9 +161,7 @@ export default function InstalledApps() {
           </div>
           <div className="flex-1">
             <span className="text-sm font-bold block">Deploy Your Own App</span>
-            <span className="text-xs text-muted">
-              Drop a manifest here or click to sideload.
-            </span>
+            <span className="text-xs text-muted">Drop a manifest here or click to sideload.</span>
           </div>
           <button
             className="px-4 py-1.5 border border-brand text-brand rounded-lg text-sm font-semibold hover:bg-brand/10 transition whitespace-nowrap inline-flex items-center gap-1"

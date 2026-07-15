@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { X, Usb, Network, Cable, Variable, ExternalLink, GitBranch } from 'lucide-react';
 import { getErrorMessage } from '@app/api/fetch-error';
@@ -19,6 +19,7 @@ interface InstanceConfigDialogProps {
   open: boolean;
   onClose: () => void;
   versionSection?: React.ReactNode;
+  initialSection?: SectionKey;
 }
 
 const sections = [
@@ -29,7 +30,7 @@ const sections = [
   { key: 'editors', label: 'Editors', icon: ExternalLink },
 ] as const;
 
-type SectionKey = (typeof sections)[number]['key'] | 'version';
+export type SectionKey = (typeof sections)[number]['key'] | 'version';
 
 const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   instanceId,
@@ -37,11 +38,19 @@ const InstanceConfigDialog: React.FC<InstanceConfigDialogProps> = ({
   open,
   onClose,
   versionSection,
+  initialSection,
 }) => {
-  const [activeSection, setActiveSection] = useState<SectionKey>(
-    versionSection ? 'version' : 'usb',
-  );
+  const defaultSection: SectionKey = versionSection ? 'version' : 'usb';
+  const [activeSection, setActiveSection] = useState<SectionKey>(initialSection ?? defaultSection);
   const [hasChanges, setHasChanges] = useState(false);
+
+  // The dialog stays mounted while closed, so activeSection would otherwise
+  // retain the last-visited tab. Reset to the requested section each time it
+  // opens so e.g. "Update" always lands on the Version tab.
+  useEffect(() => {
+    if (open) setActiveSection(initialSection ?? defaultSection);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialSection]);
 
   const handleClose = () => {
     const needsRestart = hasChanges;

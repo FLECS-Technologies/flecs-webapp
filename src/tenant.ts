@@ -24,6 +24,11 @@ export const TenantConfigSchema = z.object({
       powered_by_flecs: z.boolean().default(false),
     })
     .default({ powered_by_flecs: false }),
+  links: z
+    .object({
+      docs: z.httpUrl().default('https://docs.flecs.tech/'),
+    })
+    .default({ docs: 'https://docs.flecs.tech/' }),
 });
 
 export type TenantConfig = z.infer<typeof TenantConfigSchema>;

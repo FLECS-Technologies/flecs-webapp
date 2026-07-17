@@ -37,6 +37,16 @@ describe('TenantConfigSchema', () => {
       dark: 'logo-dark.svg',
     });
   });
+
+  it('accepts a tenant-specific documentation link', () => {
+    const tenant = TenantConfigSchema.parse({ links: { docs: 'https://docs.example.com/' } });
+
+    expect(tenant.links.docs).toBe('https://docs.example.com/');
+  });
+
+  it('rejects unsafe documentation protocols', () => {
+    expect(() => TenantConfigSchema.parse({ links: { docs: 'javascript:alert(1)' } })).toThrow();
+  });
 });
 
 describe('loadTenant', () => {

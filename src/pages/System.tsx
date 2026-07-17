@@ -7,6 +7,7 @@ import { useTenant } from '@app/theme/TenantContext';
 import Import from '@features/system/components/data-transfer/Import';
 import Export from '@features/system/components/data-transfer/Export';
 import ExportList from '@features/system/components/ExportList';
+import SbomDialog from '@features/system/components/SbomDialog';
 import SystemOverview, {
   SystemCard,
   SystemHeader,
@@ -38,6 +39,7 @@ function formatTimestamp(value?: string | number | Date) {
 
 export default function System() {
   const { app_title: appTitle, links } = useTenant();
+  const [sbomOpen, setSbomOpen] = React.useState(false);
   const [exportOpen, setExportOpen] = React.useState(false);
   const [importOpen, setImportOpen] = React.useState(false);
   const { data: infoResponse, isPending: infoPending } = useGetSystemInfo({
@@ -91,6 +93,7 @@ export default function System() {
         distribution={info?.distro?.name}
         distributionVersion={info?.distro?.version}
         kernelVersion={info?.kernel?.version}
+        onExportSbom={() => setSbomOpen(true)}
       />
 
       <SystemCard title="Backup & migration">
@@ -155,6 +158,12 @@ export default function System() {
         </a>
       </footer>
 
+      <SbomDialog
+        open={sbomOpen}
+        coreVersion={version?.core}
+        appTitle={appTitle}
+        onClose={() => setSbomOpen(false)}
+      />
       <ContentDialog
         open={exportOpen}
         setOpen={setExportOpen}

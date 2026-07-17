@@ -32,12 +32,14 @@ import { getErrorMessage } from '@app/api/fetch-error';
 interface ImportProps extends React.ComponentProps<'button'> {
   /** Render as a drag-and-drop zone (dashed container) instead of a bare button. */
   dropzone?: boolean;
+  buttonText?: string;
+  onImportStarted?: () => void;
 }
 
 export default function Import(props: ImportProps) {
   const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
-  const { dropzone, ...buttonProps } = props;
+  const { dropzone, buttonText = 'Import Apps', onImportStarted, ...buttonProps } = props;
   const [importing, setImporting] = React.useState(false);
 
   const handleFileUpload = (file: string | File) => {
@@ -63,6 +65,7 @@ export default function Import(props: ImportProps) {
       const onboardingQuest = await postDeviceOnboarding(jsonData);
       const onboardingData = unwrapSuccess(onboardingQuest);
       if (!onboardingData) throw new Error('Onboarding request failed');
+      onImportStarted?.();
       await fetchQuest(onboardingData.jobId);
       const result = await waitForQuest(onboardingData.jobId);
 
@@ -84,6 +87,7 @@ export default function Import(props: ImportProps) {
       const importQuest = await postImports({ file });
       const importData = unwrapSuccess(importQuest);
       if (!importData) throw new Error('Import request failed');
+      onImportStarted?.();
       await fetchQuest(importData.jobId);
       const result = await waitForQuest(importData.jobId);
 
@@ -109,7 +113,7 @@ export default function Import(props: ImportProps) {
     <FileOpen
       {...buttonProps}
       data-testid="import-apps-button"
-      buttonText="Import Apps"
+      buttonText={buttonText}
       buttonIcon={<FolderUp size={16} />}
       accept=".tar.gz, .tar, .json"
       onConfirm={handleFileUpload}
@@ -127,7 +131,7 @@ export default function Import(props: ImportProps) {
       {...dropProps}
       className={`px-5 rounded-xl border border-dashed flex items-center gap-4 hover:border-brand hover:bg-brand/3 transition ${isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
     >
-      <div className="w-9 h-9 rounded-lg bg-surface-hover flex items-center justify-center text-muted shrink-0">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
         <FolderUp size={18} />
       </div>
       {button}

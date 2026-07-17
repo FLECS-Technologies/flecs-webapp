@@ -39,10 +39,12 @@ describe('Import dropzone', () => {
   });
 
   it('imports a dropped .tar archive via the imports API', async () => {
-    renderWithProviders(<Import dropzone />);
+    const onImportStarted = vi.fn();
+    renderWithProviders(<Import dropzone onImportStarted={onImportStarted} />);
     const tar = new File(['x'], 'backup.tar', { type: 'application/x-tar' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [tar] } });
     await waitFor(() => expect(postImports).toHaveBeenCalledWith({ file: tar }));
+    expect(onImportStarted).toHaveBeenCalledOnce();
   });
 
   it('imports a dropped .json config via the onboarding API', async () => {
@@ -54,12 +56,14 @@ describe('Import dropzone', () => {
   });
 
   it('rejects an unsupported file type without any API call', async () => {
-    renderWithProviders(<Import dropzone />);
+    const onImportStarted = vi.fn();
+    renderWithProviders(<Import dropzone onImportStarted={onImportStarted} />);
     const png = new File(['x'], 'image.png', { type: 'image/png' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [png] } });
     await waitFor(() => {
       expect(postImports).not.toHaveBeenCalled();
       expect(postDeviceOnboarding).not.toHaveBeenCalled();
     });
+    expect(onImportStarted).not.toHaveBeenCalled();
   });
 });

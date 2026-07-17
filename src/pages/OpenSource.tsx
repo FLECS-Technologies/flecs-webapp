@@ -48,11 +48,13 @@ export default function OpenSource() {
   }, []);
 
   return (
-    <>
-      <h4 className="text-2xl font-semibold">Open Source</h4>
-      <p aria-label="licenses" className="whitespace-pre-wrap text-left p-8">
-        {content}
-      </p>
-    </>
+    <main className="min-h-screen bg-surface px-5 py-10 sm:px-8">
+      <article className="mx-auto max-w-[80ch]">
+        <h1 className="mb-8 text-2xl font-semibold tracking-tight">Open-source licenses</h1>
+        <pre className="whitespace-pre-wrap break-words font-mono text-[0.8rem] leading-6 text-text-primary">
+          {content || 'Loading licenses...'}
+        </pre>
+      </article>
+    </main>
   );
 }

@@ -42,7 +42,8 @@ describe('Smoke: page rendering', () => {
     const OpenSource = (await import('@pages/OpenSource')).default;
     renderWithProviders(<OpenSource />);
     await waitFor(() => {
-      expect(document.body.textContent).toContain('Open');
+      expect(document.querySelector('pre')?.textContent).not.toBe('');
     });
+    expect(document.querySelectorAll('main')).toHaveLength(1);
   });
 });

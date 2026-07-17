@@ -20,6 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Toaster } from 'sonner';
+import { useLocation } from 'react-router-dom';
 import Frame from '@app/layout/Frame';
 import { UIRoutes } from './pages/ui-routes';
 import { ThemeHandler } from './app/theme/ThemeHandler';
@@ -49,6 +50,12 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
+function RoutedContent() {
+  const { pathname } = useLocation();
+  const routes = <UIRoutes />;
+  return pathname === '/open-source' ? routes : <Frame>{routes}</Frame>;
+}
+
 export default function App() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -68,9 +75,7 @@ export default function App() {
             }}
           />
           <Providers>
-            <Frame>
-              <UIRoutes />
-            </Frame>
+            <RoutedContent />
           </Providers>
         </ThemeHandler>
         <ReactQueryDevtools initialIsOpen={false} />

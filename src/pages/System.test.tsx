@@ -35,6 +35,18 @@ describe('System page', () => {
     });
   });
 
+  it('opens an accessible SBOM export dialog', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<System />, { route: '/system' });
+    await user.click(await screen.findByRole('button', { name: 'Export' }));
+    expect(screen.getByRole('dialog', { name: 'Export software bill of materials' })).toBeTruthy();
+    expect(screen.getByText('SPDX')).toBeTruthy();
+    expect(screen.getByText('CycloneDX')).toBeTruthy();
+    expect(screen.getByRole('checkbox', { name: /Core/ })).toBeTruthy();
+    expect(screen.getByRole('checkbox', { name: /Web app/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Export 4 files' })).toBeTruthy();
+  });
+
   it('groups migration actions and export history', async () => {
     renderWithProviders(<System />, { route: '/system' });
     await waitFor(() => {

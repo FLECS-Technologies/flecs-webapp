@@ -173,6 +173,7 @@ interface SystemOverviewProps {
   distribution?: string;
   distributionVersion?: string;
   kernelVersion?: string;
+  onExportSbom: () => void;
 }
 
 export default function SystemOverview(props: SystemOverviewProps) {
@@ -247,6 +248,19 @@ export default function SystemOverview(props: SystemOverviewProps) {
             <DetailRow label="API">{props.apiVersion ?? 'N/A'}</DetailRow>
             <DetailRow label="Web app">{import.meta.env.VITE_APP_VERSION ?? 'N/A'}</DetailRow>
           </dl>
+          <div className="flex items-center justify-between gap-4 border-t border-border px-5 py-3">
+            <div>
+              <p className="text-[0.8rem] font-medium">Bill of materials</p>
+              <p className="text-[0.7rem] text-muted">For compliance and security audits</p>
+            </div>
+            <button
+              type="button"
+              className="cursor-pointer rounded-md border border-brand bg-surface-raised px-3 py-1.5 text-xs font-medium text-brand transition hover:bg-brand/10"
+              onClick={props.onExportSbom}
+            >
+              Export
+            </button>
+          </div>
         </SystemCard>
       </div>
 

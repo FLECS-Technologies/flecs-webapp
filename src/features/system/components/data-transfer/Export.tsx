@@ -1,9 +1,10 @@
 import React, { ButtonHTMLAttributes } from 'react';
 import { toast } from 'sonner';
 import { FolderDown } from 'lucide-react';
-import { useAppList } from '@features/apps/app-queries';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
+import { useGetApps } from '@generated/core/apps/apps';
+import { useGetInstances } from '@generated/core/instances/instances';
 import { postExports, getExportsExportId } from '@generated/core/flecsport/flecsport';
 import {
   getProvidersAuthCore,
@@ -11,7 +12,10 @@ import {
 } from '@generated/core/experimental/experimental';
 import { unwrapSuccess } from '@app/api/unwrap';
 
-interface ExportProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+interface ExportProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+  buttonText?: string;
+  onExportStarted?: () => void;
+}
 
 // Export tarballs can be large; allow up to 10 min to transfer before aborting.
 const DOWNLOAD_TIMEOUT_MS = 10 * 60_000;
@@ -32,21 +36,34 @@ const getAuthCoreProvider = async (): Promise<string | undefined> => {
 };
 
 const Export: React.FC<ExportProps> = (props) => {
-  const { ...buttonProps } = props;
-  const { appList } = useAppList();
+  const {
+    buttonText = 'Export Apps',
+    onExportStarted,
+    className,
+    disabled,
+    ...buttonProps
+  } = props;
+  const { data: appsResponse, isPending: appsPending, isError: appsError } = useGetApps();
+  const {
+    data: instancesResponse,
+    isPending: instancesPending,
+    isError: instancesError,
+  } = useGetInstances();
   const { fetchQuest, waitForQuest } = useQuestActions();
   const [exporting, setExporting] = React.useState(false);
+  const loading = appsPending || instancesPending;
 
   const exportApps = async () => {
     setExporting(true);
     try {
-      const apps = (appList || []).map((app) => ({
+      if (appsError || instancesError) throw new Error('Could not load the device app setup');
+      const apps = (unwrapSuccess(appsResponse) ?? []).map((app) => ({
         name: app.appKey.name,
         version: app.appKey.version,
       }));
-      const instances = (appList || [])
-        .map((app) => (app.instances ?? []).map((i) => i.instanceId))
-        .flat();
+      const instances = (unwrapSuccess(instancesResponse) ?? []).map(
+        (instance) => instance.instanceId,
+      );
       const authProviderInstanceId = await getAuthCoreProvider();
       if (authProviderInstanceId) {
         const filtered = instances.filter((id) => id !== authProviderInstanceId);
@@ -57,6 +74,7 @@ const Export: React.FC<ExportProps> = (props) => {
       const exportData = unwrapSuccess(exportQuest);
       if (!exportData) throw new Error('Export request failed');
       await fetchQuest(exportData.jobId);
+      onExportStarted?.();
       const result = await waitForQuest(exportData.jobId);
       if (!questStateFinishedOk(result.state))
         throw new Error(result.detail || 'Export quest failed');
@@ -77,6 +95,7 @@ const Export: React.FC<ExportProps> = (props) => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+      toast.success('Device backup downloaded');
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'Export failed');
     } finally {
@@ -86,17 +105,20 @@ const Export: React.FC<ExportProps> = (props) => {
 
   return (
     <button
-      className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 text-sm disabled:opacity-50"
-      onClick={exportApps}
-      disabled={exporting}
       {...buttonProps}
+      className={
+        className ??
+        'inline-flex items-center gap-2 rounded-lg border border-brand px-4 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10 disabled:opacity-50'
+      }
+      onClick={exportApps}
+      disabled={exporting || loading || disabled}
     >
       {exporting ? (
         <div className="animate-spin h-4 w-4 border-2 border-brand border-t-transparent rounded-full" />
       ) : (
         <FolderDown size={16} />
       )}
-      {exporting ? 'Exporting...' : 'Export Apps'}
+      {loading ? 'Loading setup...' : exporting ? 'Creating backup...' : buttonText}
     </button>
   );
 };

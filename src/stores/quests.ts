@@ -10,6 +10,15 @@ export function addQuest(quest: Quest): void {
   questsMap.set(quest.id, quest);
 }
 
+/** Store a quest and make its live status immediately visible in the Jobs Rail. */
+export function showQuest(quest: Quest): void {
+  addQuest(quest);
+  const store = useQuestStore.getState();
+  if (!store.mainQuestIds.includes(quest.id)) {
+    store.setMainQuestIds([...store.mainQuestIds, quest.id]);
+  }
+}
+
 export function getQuest(id: number): Quest | undefined {
   return questsMap.get(id);
 }

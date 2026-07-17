@@ -23,7 +23,7 @@ test.describe('@smoke TC01-TC03 — app boot', () => {
 
   test('TC02 — system page reachable', async ({ page }) => {
     await page.goto('/#/system');
-    await expect(page.getByRole('heading', { name: /system/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'System', exact: true })).toBeVisible();
   });
 
   test('TC03 — marketplace page reachable', async ({ page }) => {

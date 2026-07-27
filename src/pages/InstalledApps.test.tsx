@@ -150,6 +150,16 @@ describe('Installed Apps', () => {
     });
   });
 
+  it('centralizes import and export on the System page', async () => {
+    renderWithProviders(<InstalledApps />, { route: '/' });
+
+    const transferLink = await screen.findByRole('link', { name: /backup.*migration/i });
+    expect(transferLink).toHaveAttribute('href', '/system?section=backup-migration');
+    expect(screen.queryByRole('button', { name: /import apps/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /export apps/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Deploy Your Own App')).toBeInTheDocument();
+  });
+
   it('shows the skeleton while loading, never the "not ready" flash, then the data', async () => {
     // Regression: ping/app-list are in-flight on first render. The page must show
     // the skeleton - not "FLECS services are not ready" - so a reload goes straight

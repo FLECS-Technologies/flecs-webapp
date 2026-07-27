@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useEffect, useId, useRef } from 'react';
 
 interface ContentDialogProps {
   title: string;
@@ -17,22 +18,54 @@ function ContentDialog({
   children,
   panelClassName,
 }: ContentDialogProps) {
+  const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const setOpenRef = useRef(setOpen);
+
+  useEffect(() => {
+    setOpenRef.current = setOpen;
+  }, [setOpen]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpenRef.current(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      previouslyFocused?.focus();
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={() => setOpen(false)}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={`Close ${title}`}
+        className="absolute inset-0 cursor-default bg-black/60"
+        onClick={() => setOpen(false)}
+      />
       <div
-        className={
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className={`relative z-10 ${
           panelClassName ??
           'bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border'
-        }
-        onClick={(e) => e.stopPropagation()}
+        }`}
       >
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-lg font-semibold">{title}</h3>
+          <h3 id={titleId} className="text-lg font-semibold">
+            {title}
+          </h3>
         </div>
         <div className="flex-1 overflow-auto px-6 py-4 border-b border-border">
           {children ?? <p className="text-sm text-muted">No content to display.</p>}

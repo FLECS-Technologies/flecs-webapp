@@ -1,15 +1,27 @@
-import { FileText } from 'lucide-react';
+import { useState } from 'react';
+import { FileText, FolderDown } from 'lucide-react';
 import Export from '@features/system/components/data-transfer/Export';
 import Import from '@features/system/components/data-transfer/Import';
 import { Link } from 'react-router-dom';
+import { useTenant } from '@app/theme/TenantContext';
 
 export default function QuickActions() {
+  const { app_title: appTitle } = useTenant();
+  const [exportOpen, setExportOpen] = useState(false);
+
   return (
     <div className="rounded-xl bg-surface-raised p-6 border border-border">
       <h6 className="text-base font-semibold mb-4">Quick Actions</h6>
       <div className="flex items-center gap-4 flex-wrap">
         <span title="Export apps from this device">
-          <Export />
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-brand px-4 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10"
+            onClick={() => setExportOpen(true)}
+          >
+            <FolderDown size={16} />
+            Export Apps
+          </button>
         </span>
         <span title="Import apps from a backup file">
           <Import />
@@ -21,6 +33,7 @@ export default function QuickActions() {
           <FileText size={16} /> Open Source
         </Link>
       </div>
+      <Export open={exportOpen} setOpen={setExportOpen} appTitle={appTitle} />
     </div>
   );
 }

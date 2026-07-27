@@ -1,6 +1,6 @@
 import React from 'react';
-import { Archive, Check, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Archive, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { unwrapSuccess } from '@app/api/unwrap';
 import ContentDialog from '@app/components/ContentDialog';
 import { useTenant } from '@app/theme/TenantContext';
@@ -39,6 +39,8 @@ function formatTimestamp(value?: string | number | Date) {
 
 export default function System() {
   const { app_title: appTitle, links } = useTenant();
+  const { search } = useLocation();
+  const backupMigrationRef = React.useRef<HTMLElement>(null);
   const [sbomOpen, setSbomOpen] = React.useState(false);
   const [exportOpen, setExportOpen] = React.useState(false);
   const [importOpen, setImportOpen] = React.useState(false);
@@ -63,6 +65,29 @@ export default function System() {
   const license = licenseResponse?.data;
   const renewedAt = formatTimestamp(license?.sessionId?.timestamp);
   const initialLoading = infoPending || versionPending || activationPending || licensePending;
+
+  React.useEffect(() => {
+    if (initialLoading) return;
+    if (new URLSearchParams(search).get('section') !== 'backup-migration') return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const section = backupMigrationRef.current;
+      if (!section) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      section.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      section.focus({ preventScroll: true });
+      if (!reduceMotion) {
+        section.animate?.(
+          [
+            { boxShadow: '0 0 0 2px color-mix(in srgb, var(--color-brand) 45%, transparent)' },
+            { boxShadow: '0 0 0 0 transparent' },
+          ],
+          { duration: 1_200, easing: 'ease-out' },
+        );
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [initialLoading, search]);
 
   if (initialLoading) {
     return (
@@ -96,7 +121,14 @@ export default function System() {
         onExportSbom={() => setSbomOpen(true)}
       />
 
-      <SystemCard title="Backup & migration">
+      <SystemCard
+        ref={backupMigrationRef}
+        id="backup-migration"
+        headingId="backup-migration-heading"
+        title="Backup & migration"
+        tabIndex={-1}
+        className="scroll-mt-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+      >
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
             <p className="text-[0.82rem] font-medium">Export this device</p>
@@ -164,59 +196,7 @@ export default function System() {
         appTitle={appTitle}
         onClose={() => setSbomOpen(false)}
       />
-      <ContentDialog
-        open={exportOpen}
-        setOpen={setExportOpen}
-        title="Create a device backup"
-        panelClassName="bg-surface-raised rounded-2xl max-w-lg w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
-        actions={
-          <>
-            <button
-              type="button"
-              className="inline-flex h-9 items-center rounded-lg border border-border px-4 py-2 text-xs font-medium transition hover:bg-surface-hover"
-              onClick={() => setExportOpen(false)}
-            >
-              Cancel
-            </button>
-            <Export
-              buttonText="Create backup"
-              onExportStarted={() => setExportOpen(false)}
-              className="!inline-flex !h-9 !items-center !gap-2 !whitespace-nowrap !rounded-lg !border-brand !bg-brand !px-4 !py-2 !text-xs !font-semibold !text-white hover:!bg-brand-end"
-            />
-          </>
-        }
-      >
-        <div className="space-y-4 p-1">
-          <div className="flex gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/5 text-brand">
-              <Archive size={16} />
-            </span>
-            <div>
-              <p className="text-sm font-medium">Back up your app setup</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted">
-                Download one portable archive that can restore this device or move its setup to
-                another {appTitle} device.
-              </p>
-            </div>
-          </div>
-          <div className="rounded-lg border border-border px-4 py-3">
-            <p className="text-xs font-medium">Included in this backup</p>
-            <ul className="mt-2 space-y-1.5 text-xs text-muted">
-              <li className="flex items-center gap-2">
-                <Check size={12} className="text-success" />
-                Installed apps
-              </li>
-              <li className="flex items-center gap-2">
-                <Check size={12} className="text-success" />
-                Instance configuration
-              </li>
-            </ul>
-          </div>
-          <p className="text-xs leading-relaxed text-muted">
-            Sign-in services are excluded so each device keeps its own authentication setup.
-          </p>
-        </div>
-      </ContentDialog>
+      <Export open={exportOpen} setOpen={setExportOpen} appTitle={appTitle} />
       <ContentDialog
         open={importOpen}
         setOpen={setImportOpen}

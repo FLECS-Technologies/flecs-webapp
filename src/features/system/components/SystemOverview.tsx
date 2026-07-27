@@ -3,26 +3,39 @@ import { Check, Copy, Cpu, Globe2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
 
-export function SystemCard({
-  title,
-  children,
-  className = '',
-}: {
+interface SystemCardProps {
   title: string;
   children: React.ReactNode;
   className?: string;
-}) {
+  id?: string;
+  headingId?: string;
+  tabIndex?: number;
+}
+
+export const SystemCard = React.forwardRef<HTMLElement, SystemCardProps>(function SystemCard(
+  { title, children, className = '', id, headingId, tabIndex },
+  ref,
+) {
+  const generatedHeadingId = React.useId();
+  const resolvedHeadingId = headingId ?? generatedHeadingId;
+
   return (
     <section
+      ref={ref}
+      id={id}
+      tabIndex={tabIndex}
+      aria-labelledby={resolvedHeadingId}
       className={`overflow-hidden rounded-xl border border-border bg-surface-raised shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className}`}
     >
       <header className="flex min-h-14 items-center border-b border-border px-5">
-        <h2 className="text-sm font-semibold tracking-[-0.01em]">{title}</h2>
+        <h2 id={resolvedHeadingId} className="text-sm font-semibold tracking-[-0.01em]">
+          {title}
+        </h2>
       </header>
       {children}
     </section>
   );
-}
+});
 
 export function SystemHeader({ appTitle }: { appTitle: string }) {
   return (

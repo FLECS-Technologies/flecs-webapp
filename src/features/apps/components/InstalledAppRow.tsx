@@ -60,7 +60,8 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   );
   const manifest = unwrapSuccess(manifestResponse);
   const isInstalling = app.status === 'installing';
-  const canDuplicateApp = manifest?.multiInstance === true;
+  const canDuplicateApp =
+    manifest !== undefined && 'multiInstance' in manifest && manifest.multiInstance === true;
   const instanceCount = app.instances?.length ?? 0;
   const isInstanceScopedApp = Boolean(instance && (canDuplicateApp || instanceCount > 1));
   const isLastInstanceOfApp = isInstanceScopedApp && instanceCount <= 1;

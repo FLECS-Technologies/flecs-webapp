@@ -11,7 +11,7 @@ type InstalledAppListRow =
   | { kind: 'instance'; app: EnrichedApp; instance: AppInstance };
 
 function createInstalledAppRows(apps: EnrichedApp[]): InstalledAppListRow[] {
-  return apps.flatMap((app) => {
+  return apps.flatMap<InstalledAppListRow>((app) => {
     const instances = app.instances ?? [];
     if (instances.length === 0) return [{ kind: 'app', app }];
     return instances.map((instance) => ({ kind: 'instance', app, instance }));

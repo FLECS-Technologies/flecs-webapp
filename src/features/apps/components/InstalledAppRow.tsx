@@ -13,11 +13,10 @@ import {
   Trash2,
   BookOpen,
   RefreshCw,
-  Package,
 } from 'lucide-react';
 import type { EnrichedApp, AppVersion } from '@features/apps/types';
 import type { AppInstance } from '@generated/core/schemas';
-import AppStatusDot from './AppStatusDot';
+import InstalledAppIdentity from './InstalledAppIdentity';
 import UpdateButton from '@features/apps/components/actions/UpdateButton';
 import ContentDialog from '@app/components/ContentDialog';
 import ConfirmDialog from '@app/components/ConfirmDialog';
@@ -116,10 +115,7 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   // above the button when there isn't room below, and cap its height as a
   // safety net so a long menu near a screen edge never gets clipped.
   useLayoutEffect(() => {
-    if (!menuAnchor) {
-      setMenuStyle({ visibility: 'hidden' });
-      return;
-    }
+    if (!menuAnchor) return;
     const btn = btnRef.current;
     const menu = menuRef.current;
     if (!btn || !menu) return;
@@ -249,25 +245,16 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   return (
     <>
       <div className="flex items-center gap-4 px-5 py-3 hover:bg-surface-hover transition">
-        {/* Avatar - image from marketplace, generic package icon for sideloaded apps */}
-        <div className="w-12 h-12 rounded-lg bg-surface-hover flex items-center justify-center text-muted border border-border overflow-hidden shrink-0">
-          {app.avatar ? (
-            <img src={app.avatar} alt={app.title} className="w-full h-full object-cover" />
-          ) : (
-            <Package size={22} />
-          )}
-        </div>
-        {/* Identity */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm truncate">
-              <span className="font-bold">{app.title}</span>
-              {instanceDisplayName && (
-                <span className="font-normal text-text-primary"> ({instanceDisplayName})</span>
-              )}
-            </span>
-            {updateAvailable && (
-              <span
+        <InstalledAppIdentity
+          app={app}
+          instance={instance}
+          instanceDisplayName={instanceDisplayName}
+          statusLabel={statusLabel}
+          isInstalling={isInstalling}
+          badge={
+            updateAvailable ? (
+              <button
+                type="button"
                 className="px-2 py-0.5 rounded-full bg-accent/20 text-accent text-[0.65rem] font-semibold cursor-pointer inline-flex items-center gap-1"
                 onClick={() => {
                   setSettingsSection('version');
@@ -275,27 +262,10 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
                 }}
               >
                 <RefreshCw size={10} /> Update
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1 text-xs text-muted">
-            {app.author && <span className="truncate">{app.author}</span>}
-            {app.author && <span>-</span>}
-            <span className="font-mono truncate">{app.appKey?.version}</span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            {isInstalling ? (
-              <div className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-            ) : (
-              <AppStatusDot status={instance?.status ?? 'stopped'} size={8} />
-            )}
-            <span
-              className={`text-xs font-medium ${isInstalling ? 'text-brand' : isRunning ? 'text-success' : 'text-muted'}`}
-            >
-              {statusLabel}
-            </span>
-          </div>
-        </div>
+              </button>
+            ) : undefined
+          }
+        />
         {/* Open button */}
         {hasEditors && (
           <button

@@ -1,10 +1,13 @@
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Archive, Check, FolderDown, Search } from 'lucide-react';
+import { Archive, FolderDown, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import ContentDialog from '@app/components/ContentDialog';
 import { getErrorMessage } from '@app/api/fetch-error';
 import { unwrapSuccess } from '@app/api/unwrap';
+import { useTenant } from '@app/theme/TenantContext';
+import { enrichInstalledApps } from '@features/apps/app-queries';
+import InstalledAppIdentity from '@features/apps/components/InstalledAppIdentity';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import { useGetApps } from '@generated/core/apps/apps';
@@ -15,7 +18,9 @@ import {
   usePostExports,
 } from '@generated/core/flecsport/flecsport';
 import { useGetProvidersAuth } from '@generated/core/experimental/experimental';
-import type { AppKey, ExportRequest } from '@generated/core/schemas';
+import { useGetApiV2ProductsApps } from '@generated/console/products/products';
+import type { AppInstance, AppKey, ExportRequest } from '@generated/core/schemas';
+import type { GetApiV2ProductsAppsParams } from '@generated/console/schemas';
 
 interface ExportProps {
   open: boolean;
@@ -24,124 +29,170 @@ interface ExportProps {
 }
 
 const appKeyId = (appKey: AppKey) => `${appKey.name}\u0000${appKey.version}`;
+const instanceLabel = (instance: AppInstance) =>
+  instance.instanceName.trim() || `Instance ${instance.instanceId}`;
 
 export default function Export({ open, setOpen, appTitle }: ExportProps) {
   const queryClient = useQueryClient();
+  const { vendor_id } = useTenant();
   const { fetchQuest, waitForQuest } = useQuestActions();
-  const [selectedAppIds, setSelectedAppIds] = React.useState<Set<string> | null>(null);
+  const [selectedInstanceIds, setSelectedInstanceIds] = React.useState<Set<string> | null>(null);
   const [search, setSearch] = React.useState('');
   const [waitingForQuest, setWaitingForQuest] = React.useState(false);
   const selectAllRef = React.useRef<HTMLInputElement>(null);
+  const marketplaceParams: GetApiV2ProductsAppsParams | undefined =
+    vendor_id > 0 ? { store_id: vendor_id } : undefined;
 
   const appsQuery = useGetApps({ query: { enabled: open } });
   const instancesQuery = useGetInstances(undefined, { query: { enabled: open } });
   const authQuery = useGetProvidersAuth({ query: { enabled: open, retry: false } });
+  const productsQuery = useGetApiV2ProductsApps(marketplaceParams, {
+    query: { enabled: open, staleTime: 300_000 },
+  });
   const createExport = usePostExports();
 
-  const installedApps = React.useMemo(() => {
-    const uniqueApps = new Map<string, AppKey>();
-    for (const app of unwrapSuccess(appsQuery.data) ?? []) {
-      if (app.status === 'installed') uniqueApps.set(appKeyId(app.appKey), app.appKey);
+  const apps = React.useMemo(() => unwrapSuccess(appsQuery.data) ?? [], [appsQuery.data]);
+  const instances = React.useMemo(
+    () => unwrapSuccess(instancesQuery.data) ?? [],
+    [instancesQuery.data],
+  );
+  const products = React.useMemo(
+    () => unwrapSuccess(productsQuery.data)?.data?.products ?? [],
+    [productsQuery.data],
+  );
+  const installedApps = React.useMemo(
+    () =>
+      enrichInstalledApps(products, apps, instances)
+        .filter((app) => app.status === 'installed')
+        .sort((left, right) => {
+          const leftTitle = left.title ?? left.appKey.name;
+          const rightTitle = right.title ?? right.appKey.name;
+          const titleOrder = leftTitle.localeCompare(rightTitle, undefined, {
+            sensitivity: 'base',
+          });
+          return (
+            titleOrder ||
+            left.appKey.version.localeCompare(right.appKey.version, undefined, { numeric: true })
+          );
+        }),
+    [apps, instances, products],
+  );
+
+  const auth = unwrapSuccess(authQuery.data);
+  const authProviderId =
+    auth?.core === 'Default'
+      ? auth.default
+      : auth?.core && auth.core !== 'Default'
+        ? auth.core
+        : null;
+  const instanceRows = React.useMemo(
+    () =>
+      installedApps.flatMap((app) =>
+        instances
+          .filter(
+            (instance) =>
+              appKeyId(instance.appKey) === appKeyId(app.appKey) &&
+              instance.instanceId !== authProviderId,
+          )
+          .sort((left, right) => {
+            const nameOrder = instanceLabel(left).localeCompare(instanceLabel(right), undefined, {
+              sensitivity: 'base',
+            });
+            return nameOrder || left.instanceId.localeCompare(right.instanceId);
+          })
+          .map((instance) => ({ app, instance })),
+      ),
+    [authProviderId, installedApps, instances],
+  );
+  const instanceIds = React.useMemo(
+    () => instanceRows.map(({ instance }) => instance.instanceId),
+    [instanceRows],
+  );
+  const instanceCountsByApp = React.useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const { app } of instanceRows) {
+      const appId = appKeyId(app.appKey);
+      counts.set(appId, (counts.get(appId) ?? 0) + 1);
     }
-    return [...uniqueApps.values()].sort((left, right) => {
-      const nameOrder = left.name.localeCompare(right.name, undefined, { sensitivity: 'base' });
-      return nameOrder || left.version.localeCompare(right.version, undefined, { numeric: true });
-    });
-  }, [appsQuery.data]);
-
-  const installedAppIds = React.useMemo(
-    () => installedApps.map((appKey) => appKeyId(appKey)),
-    [installedApps],
+    return counts;
+  }, [instanceRows]);
+  const effectiveSelectedInstanceIds = React.useMemo(
+    () => selectedInstanceIds ?? new Set(instanceIds),
+    [instanceIds, selectedInstanceIds],
   );
-
-  const effectiveSelectedAppIds = React.useMemo(
-    () => selectedAppIds ?? new Set(installedAppIds),
-    [installedAppIds, selectedAppIds],
+  const selectedInstanceCount = effectiveSelectedInstanceIds.size;
+  const selectedAppCount = React.useMemo(
+    () =>
+      new Set(
+        instanceRows
+          .filter(({ instance }) => effectiveSelectedInstanceIds.has(instance.instanceId))
+          .map(({ app }) => appKeyId(app.appKey)),
+      ).size,
+    [effectiveSelectedInstanceIds, instanceRows],
   );
-  const selectedCount = effectiveSelectedAppIds.size;
-  const allSelected = installedApps.length > 0 && selectedCount === installedApps.length;
-  const partlySelected = selectedCount > 0 && !allSelected;
+  const allSelected = instanceRows.length > 0 && selectedInstanceCount === instanceRows.length;
+  const partlySelected = selectedInstanceCount > 0 && !allSelected;
 
   React.useEffect(() => {
     if (selectAllRef.current) selectAllRef.current.indeterminate = partlySelected;
   }, [partlySelected]);
 
-  const visibleApps = React.useMemo(() => {
+  const visibleInstanceRows = React.useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
-    if (!query) return installedApps;
-    return installedApps.filter(
-      (appKey) =>
-        appKey.name.toLocaleLowerCase().includes(query) ||
-        appKey.version.toLocaleLowerCase().includes(query),
+    if (!query) return instanceRows;
+    return instanceRows.filter(({ app, instance }) =>
+      [
+        app.title,
+        app.author,
+        app.appKey.name,
+        app.appKey.version,
+        instanceLabel(instance),
+        instance.instanceId,
+      ].some((value) => value?.toLocaleLowerCase().includes(query)),
     );
-  }, [installedApps, search]);
+  }, [instanceRows, search]);
 
-  const instances = React.useMemo(
-    () => unwrapSuccess(instancesQuery.data) ?? [],
-    [instancesQuery.data],
-  );
-  const instanceCounts = React.useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const instance of instances) {
-      const key = appKeyId(instance.appKey);
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    return counts;
-  }, [instances]);
-
-  const loading = appsQuery.isPending || instancesQuery.isPending || authQuery.isPending;
+  const loading =
+    appsQuery.isPending ||
+    instancesQuery.isPending ||
+    authQuery.isPending ||
+    productsQuery.isPending;
   const loadError = appsQuery.isError || instancesQuery.isError;
   const exporting = createExport.isPending || waitingForQuest;
 
-  const toggleApp = (appKey: AppKey) => {
-    const key = appKeyId(appKey);
-    setSelectedAppIds((current) => {
-      const next = new Set(current ?? installedAppIds);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+  const toggleInstance = (instance: AppInstance) => {
+    setSelectedInstanceIds((current) => {
+      const next = new Set(current ?? instanceIds);
+      if (next.has(instance.instanceId)) next.delete(instance.instanceId);
+      else next.add(instance.instanceId);
       return next;
     });
   };
 
   const toggleAll = () => {
-    setSelectedAppIds(allSelected ? new Set() : new Set(installedAppIds));
+    setSelectedInstanceIds(allSelected ? new Set() : new Set(instanceIds));
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
-      setSelectedAppIds(null);
+      setSelectedInstanceIds(null);
       setSearch('');
     }
     setOpen(nextOpen);
   };
 
   const handleExport = async () => {
-    if (!effectiveSelectedAppIds.size || loading || loadError) return;
+    if (!selectedInstanceCount || loading || loadError) return;
 
-    const selectedApps = installedApps.filter((appKey) =>
-      effectiveSelectedAppIds.has(appKeyId(appKey)),
-    );
-    const selectedIds = new Set(selectedApps.map((appKey) => appKeyId(appKey)));
-    const auth = unwrapSuccess(authQuery.data);
-    const authProviderId =
-      auth?.core === 'Default'
-        ? auth.default
-        : auth?.core && auth.core !== 'Default'
-          ? auth.core
-          : null;
-    const selectedInstanceIds = [
-      ...new Set(
-        instances
-          .filter(
-            (instance) =>
-              selectedIds.has(appKeyId(instance.appKey)) && instance.instanceId !== authProviderId,
-          )
-          .map((instance) => instance.instanceId),
-      ),
-    ];
+    const selectedInstances = instanceRows
+      .map(({ instance }) => instance)
+      .filter((instance) => effectiveSelectedInstanceIds.has(instance.instanceId));
+    const selectedAppIds = new Set(selectedInstances.map((instance) => appKeyId(instance.appKey)));
     const request: ExportRequest = {
-      apps: selectedApps,
-      instances: selectedInstanceIds,
+      apps: installedApps
+        .filter((app) => selectedAppIds.has(appKeyId(app.appKey)))
+        .map((app) => app.appKey),
+      instances: selectedInstances.map((instance) => instance.instanceId),
     };
 
     setWaitingForQuest(true);
@@ -173,26 +224,24 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
       anchor.click();
       anchor.remove();
       window.URL.revokeObjectURL(url);
-      toast.success('App export downloaded');
+      toast.success('Backup downloaded');
       void queryClient.invalidateQueries({ queryKey: getGetExportsQueryKey() });
     } catch (error: unknown) {
-      toast.error('Export failed', { description: getErrorMessage(error) });
+      toast.error('Backup failed', { description: getErrorMessage(error) });
     } finally {
       setWaitingForQuest(false);
     }
   };
 
   const exportButtonText =
-    selectedCount === 0
-      ? 'Select at least one app'
-      : `Export ${selectedCount} app${selectedCount === 1 ? '' : 's'}`;
+    selectedInstanceCount === 0 ? 'Select at least one instance' : 'Create backup';
 
   return (
     <ContentDialog
       open={open}
       setOpen={handleOpenChange}
       title="Create backup"
-      panelClassName="bg-surface-raised rounded-2xl max-w-2xl w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
+      panelClassName="bg-surface-raised rounded-2xl max-w-3xl w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
       actions={
         <>
           <button
@@ -205,7 +254,7 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
           <button
             type="button"
             className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg border border-brand bg-brand px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-end disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={loading || loadError || selectedCount === 0 || exporting}
+            disabled={loading || loadError || selectedInstanceCount === 0 || exporting}
             onClick={handleExport}
           >
             {exporting ? (
@@ -213,7 +262,7 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
             ) : (
               <FolderDown size={15} />
             )}
-            {exporting ? 'Creating export...' : exportButtonText}
+            {exporting ? 'Creating backup...' : exportButtonText}
           </button>
         </>
       }
@@ -224,9 +273,9 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
             <Archive size={16} />
           </span>
           <div>
-            <p className="text-sm font-medium">Choose apps for this export</p>
+            <p className="text-sm font-medium">Choose instances</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Include every installed app or create a smaller archive with only the apps you need.
+              Required app packages are included automatically with the instances you select.
             </p>
           </div>
         </div>
@@ -250,32 +299,32 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
         ) : loading ? (
           <div
             role="status"
-            aria-label="Loading installed apps"
-            className="flex min-h-40 items-center justify-center rounded-lg border border-border"
+            aria-label="Loading installed app instances"
+            className="flex min-h-40 items-center justify-center rounded-xl border border-border"
           >
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
           </div>
-        ) : installedApps.length === 0 ? (
-          <div className="rounded-lg border border-border px-4 py-8 text-center">
-            <p className="text-sm font-medium">No installed apps available to export.</p>
+        ) : instanceRows.length === 0 ? (
+          <div className="rounded-xl border border-border px-4 py-8 text-center">
+            <p className="text-sm font-medium">No app instances available to back up.</p>
             <p className="mt-1 text-xs text-muted">
               You can still restore an existing {appTitle} archive from the System page.
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <div className="space-y-3 border-b border-border bg-surface-overlay px-4 py-3">
+          <div className="overflow-hidden rounded-xl border border-border">
+            <div className="space-y-3 border-b border-border bg-surface-overlay px-5 py-3">
               <label className="relative block">
                 <Search
                   size={14}
                   className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                 />
-                <span className="sr-only">Search installed apps</span>
+                <span className="sr-only">Search app instances</span>
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Search apps"
+                  placeholder="Search instances"
                   className="h-9 w-full rounded-md border border-border bg-surface-raised pl-9 pr-3 text-xs outline-none transition placeholder:text-muted focus:border-brand focus:ring-2 focus:ring-brand/15"
                 />
               </label>
@@ -285,52 +334,46 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
                   type="checkbox"
                   checked={allSelected}
                   onChange={toggleAll}
-                  aria-label="Select all apps"
+                  aria-label="Select all instances"
                   className="h-4 w-4 accent-brand"
                 />
-                <span className="flex-1">Select all apps</span>
+                <span className="flex-1">Select all instances</span>
                 <span className="font-normal text-muted">
-                  {selectedCount} of {installedApps.length} apps selected
+                  {selectedAppCount} app{selectedAppCount === 1 ? '' : 's'} and{' '}
+                  {selectedInstanceCount} instance{selectedInstanceCount === 1 ? '' : 's'} selected
                 </span>
               </label>
             </div>
-            <div className="max-h-64 overflow-y-auto">
-              {visibleApps.length === 0 ? (
+            <div className="max-h-[25rem] overflow-y-auto">
+              {visibleInstanceRows.length === 0 ? (
                 <p className="px-4 py-8 text-center text-xs text-muted">
-                  No apps match “{search.trim()}”.
+                  No instances match “{search.trim()}”.
                 </p>
               ) : (
-                <ul
-                  className="divide-y divide-border"
-                  aria-label="Installed apps available to export"
-                >
-                  {visibleApps.map((appKey) => {
-                    const key = appKeyId(appKey);
-                    const count = instanceCounts.get(key) ?? 0;
+                <ul className="divide-y divide-border" aria-label="App instances to back up">
+                  {visibleInstanceRows.map(({ app, instance }) => {
+                    const title = app.title ?? app.appKey.name;
+                    const label = instanceLabel(instance);
                     return (
-                      <li key={key}>
-                        <label className="flex cursor-pointer items-center gap-3 px-4 py-3 transition hover:bg-surface-hover">
+                      <li key={instance.instanceId}>
+                        <label className="flex cursor-pointer items-center gap-4 px-5 py-3 transition hover:bg-surface-hover">
                           <input
                             type="checkbox"
-                            checked={effectiveSelectedAppIds.has(key)}
-                            onChange={() => toggleApp(appKey)}
-                            aria-label={`${appKey.name} ${appKey.version}`}
+                            checked={effectiveSelectedInstanceIds.has(instance.instanceId)}
+                            onChange={() => toggleInstance(instance)}
+                            aria-label={`Include ${title} ${label} instance`}
                             className="h-4 w-4 shrink-0 accent-brand"
                           />
-                          <span className="min-w-0 flex-1">
-                            <span
-                              className="block truncate text-xs font-medium"
-                              title={appKey.name}
-                            >
-                              {appKey.name}
-                            </span>
-                            <span className="mt-0.5 block font-mono text-[0.7rem] text-muted">
-                              {appKey.version}
-                            </span>
-                          </span>
-                          <span className="shrink-0 text-[0.7rem] text-muted">
-                            {count} instance{count === 1 ? '' : 's'}
-                          </span>
+                          <InstalledAppIdentity
+                            app={app}
+                            instance={instance}
+                            instanceDisplayName={
+                              (instanceCountsByApp.get(appKeyId(app.appKey)) ?? 0) > 1
+                                ? label
+                                : undefined
+                            }
+                            showStatus={false}
+                          />
                         </label>
                       </li>
                     );
@@ -341,21 +384,8 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
           </div>
         )}
 
-        <div className="rounded-lg border border-border px-4 py-3">
-          <p className="text-xs font-medium">Included for each selected app</p>
-          <ul className="mt-2 space-y-1.5 text-xs text-muted">
-            <li className="flex items-center gap-2">
-              <Check size={12} className="text-success" />
-              Installed app package
-            </li>
-            <li className="flex items-center gap-2">
-              <Check size={12} className="text-success" />
-              Instance configuration
-            </li>
-          </ul>
-        </div>
         <p className="text-xs leading-relaxed text-muted">
-          Sign-in services are excluded so each device keeps its own authentication setup.
+          Authentication providers are excluded so each device keeps its own sign-in setup.
         </p>
       </div>
     </ContentDialog>

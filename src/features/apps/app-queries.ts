@@ -31,6 +31,48 @@ import { decodeHtmlEntities } from '@app/html-utils';
 import { unwrapSuccess } from '@app/api/unwrap';
 import type { EnrichedApp } from '@features/apps/types';
 
+export function enrichInstalledApps(
+  products: Product[],
+  apps: InstalledApp[],
+  instances: AppInstance[],
+): EnrichedApp[] {
+  return apps
+    .filter((app) => app.appKey.name)
+    .map((app) => {
+      const marketplaceApp = products.find(
+        (product) => app.appKey.name === getReverseDomainName(product),
+      );
+      const installedVersions = apps
+        .filter((candidate) => candidate.appKey.name === app.appKey.name)
+        .map((candidate) => candidate.appKey.version);
+
+      return {
+        ...app,
+        title: marketplaceApp ? decodeHtmlEntities(marketplaceApp.name) : app.appKey.name,
+        author: marketplaceApp ? getAuthor(marketplaceApp) : 'Sideloaded',
+        ...(marketplaceApp && {
+          avatar: getAppIcon(marketplaceApp),
+          relatedLinks: getCustomLinks(marketplaceApp),
+          price: getPrice(marketplaceApp),
+          permalink: getPermalink(marketplaceApp),
+          purchasable: getPurchasable(marketplaceApp),
+          documentationUrl: getDocumentationUrl(marketplaceApp),
+        }),
+        instances: instances.filter(
+          (instance) =>
+            instance.appKey.name === app.appKey.name &&
+            instance.appKey.version === app.appKey.version,
+        ),
+        installedVersions,
+        versions:
+          (marketplaceApp ? getVersions(marketplaceApp) : [])?.map((version: string) => ({
+            version,
+            installed: installedVersions.includes(version),
+          })) ?? [],
+      };
+    });
+}
+
 function combineAppList(
   results: [
     UseQueryResult<getApiV2ProductsAppsResponse>,
@@ -48,38 +90,9 @@ function combineAppList(
   const apps: InstalledApp[] = unwrapSuccess(aRes.data) ?? [];
   const instances: AppInstance[] = unwrapSuccess(iRes.data) ?? [];
 
-  // Enrich device apps with marketplace metadata + instances.
-  // Sideloaded apps have no marketplace match - fall back to the app's own reverse-domain name.
-  const appList: EnrichedApp[] = apps
-    .filter((a) => a.appKey.name)
-    .map((app) => {
-      const mp = products.find((p) => app.appKey.name === getReverseDomainName(p));
-      const installedVersions = apps
-        .filter((a2) => a2.appKey.name === app.appKey.name)
-        .map((a2) => a2.appKey.version);
-      return {
-        ...app,
-        title: mp ? decodeHtmlEntities(mp.name) : app.appKey.name,
-        author: mp ? getAuthor(mp) : 'Sideloaded',
-        ...(mp && {
-          avatar: getAppIcon(mp),
-          relatedLinks: getCustomLinks(mp),
-          price: getPrice(mp),
-          permalink: getPermalink(mp),
-          purchasable: getPurchasable(mp),
-          documentationUrl: getDocumentationUrl(mp),
-        }),
-        instances: instances.filter(
-          (i) => i.appKey.name === app.appKey.name && i.appKey.version === app.appKey.version,
-        ),
-        installedVersions,
-        versions:
-          (mp ? getVersions(mp) : [])?.map((v: string) => ({
-            version: v,
-            installed: installedVersions.includes(v),
-          })) ?? [],
-      };
-    });
+  // Keep enrichment as a pure mapper so every installed-app surface shares
+  // the same title, icon, author, version, and instance model.
+  const appList = enrichInstalledApps(products, apps, instances);
 
   return { appList, products, isLoading, isError };
 }

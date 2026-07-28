@@ -104,9 +104,9 @@ describe('System page', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Create backup' }));
     expect(screen.getByRole('dialog', { name: 'Create backup' })).toBeTruthy();
-    expect(screen.getByText('Choose apps for this export')).toBeTruthy();
-    expect(await screen.findByText('2 of 2 apps selected')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Export 2 apps' })).toBeTruthy();
+    expect(screen.getByText('Choose instances')).toBeTruthy();
+    expect(await screen.findByText('No app instances available to back up.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Select at least one instance' })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     await user.click(screen.getByRole('button', { name: 'Restore backup' }));

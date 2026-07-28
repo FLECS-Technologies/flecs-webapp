@@ -1,5 +1,5 @@
 /**
- * TC22 - App backup management lives on System and exports only selected apps.
+ * TC22 - App backup management lives on System and exports only selected instances.
  */
 import { test, expect } from '@playwright/test';
 import type { ExportRequest } from '@generated/core/schemas';
@@ -7,7 +7,7 @@ import { stubAuth, mockHappyPath } from '../fixtures/routes';
 import { fixtures } from '../fixtures/mocks';
 
 test.describe('@smoke TC22 - selective app export', () => {
-  test('navigates from Installed Apps and sends only selected app keys and instances', async ({
+  test('shows familiar instance rows and includes required app packages automatically', async ({
     page,
   }) => {
     await stubAuth(page);
@@ -31,8 +31,15 @@ test.describe('@smoke TC22 - selective app export', () => {
         json: [
           fixtures.instance({
             instanceId: '11111111',
-            instanceName: 'node-red',
+            instanceName: 'production',
             appKey: firstAppKey,
+          }),
+          fixtures.instance({
+            instanceId: '11111112',
+            instanceName: 'staging',
+            appKey: firstAppKey,
+            status: 'stopped',
+            desired: 'stopped',
           }),
           fixtures.instance({
             instanceId: '22222222',
@@ -40,6 +47,29 @@ test.describe('@smoke TC22 - selective app export', () => {
             appKey: secondAppKey,
           }),
         ],
+        status: 200,
+      }),
+    );
+    await page.route('**/api/v2/products/apps', (route) =>
+      route.fulfill({
+        json: {
+          statusCode: 200,
+          statusText: 'OK',
+          data: {
+            products: [
+              fixtures.product({
+                id: 1,
+                name: 'Node-RED',
+                attributes: [{ id: 1, name: 'reverse-domain-name', options: [firstAppKey.name] }],
+              }),
+              fixtures.product({
+                id: 2,
+                name: 'Dashboard',
+                attributes: [{ id: 2, name: 'reverse-domain-name', options: [secondAppKey.name] }],
+              }),
+            ],
+          },
+        },
         status: 200,
       }),
     );
@@ -80,19 +110,26 @@ test.describe('@smoke TC22 - selective app export', () => {
 
     await page.getByRole('button', { name: 'Create backup' }).click();
     await expect(page.getByRole('dialog', { name: 'Create backup' })).toBeVisible();
-    await expect(page.getByRole('checkbox', { name: /select all apps/i })).toBeChecked();
-    await expect(page.getByText('2 of 2 apps selected')).toBeVisible();
+    await expect(page.getByRole('checkbox', { name: 'Select all instances' })).toBeChecked();
+    await expect(page.getByText('2 apps and 3 instances selected')).toBeVisible();
+    await expect(page.getByText('Node-RED (production)')).toBeVisible();
+    await expect(page.getByText('Node-RED (staging)')).toBeVisible();
+    await expect(page.getByText('Dashboard (dashboard)')).toHaveCount(0);
+
+    await page.getByRole('checkbox', { name: 'Include Node-RED production instance' }).uncheck();
+    await page.getByRole('checkbox', { name: 'Include Dashboard dashboard instance' }).uncheck();
+    await expect(page.getByText('1 app and 1 instance selected')).toBeVisible();
 
     await page
-      .getByRole('checkbox', { name: `${secondAppKey.name} ${secondAppKey.version}` })
-      .uncheck();
-    await page.getByRole('button', { name: 'Export 1 app' }).click();
+      .getByRole('dialog', { name: 'Create backup' })
+      .getByRole('button', { name: 'Create backup', exact: true })
+      .click();
 
     await expect
       .poll(() => exportRequest)
       .toEqual({
         apps: [firstAppKey],
-        instances: ['11111111'],
+        instances: ['11111112'],
       });
   });
 });

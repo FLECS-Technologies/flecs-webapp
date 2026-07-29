@@ -25,6 +25,7 @@ import { useDarkMode } from '@app/theme/ThemeHandler';
 import { unwrapSuccess } from '@app/api/unwrap';
 import Logo from './Logo';
 import PoweredByFLECS from './PoweredBy';
+import SidebarBadgeSkeleton from './SidebarBadgeSkeleton';
 import { useTenant } from '@app/theme/TenantContext';
 
 const NAV = [
@@ -69,7 +70,7 @@ export default function Sidebar() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
   const toggleCollapsed = useUIStore((s) => s.toggleSidebarCollapsed);
-  const { appList, products } = useAppList();
+  const { appList, products, isLoading: appNavigationLoading } = useAppList();
   const auth = useOAuth4WebApiAuth();
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
@@ -191,7 +192,9 @@ export default function Sidebar() {
                           {label}
                         </span>
                       )}
-                      {!isCol && badge ? (
+                      {!isCol && badgeKey && appNavigationLoading ? (
+                        <SidebarBadgeSkeleton label={label} active={active} />
+                      ) : !isCol && badge ? (
                         <span
                           className={`text-[11px] font-medium tabular-nums rounded-md px-1.5 py-0.5 ${active ? 'bg-brand/15 text-brand' : 'bg-surface-hover text-muted'}`}
                         >

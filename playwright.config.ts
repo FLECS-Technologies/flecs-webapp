@@ -31,6 +31,11 @@ export default defineConfig({
       testDir: 'e2e/smoke',
       use: { baseURL: 'http://localhost:5173' },
     },
+    ...(['chromium', 'firefox', 'webkit'] as const).map((browserName) => ({
+      name: `brand-${browserName}`,
+      testDir: 'e2e/cross-browser',
+      use: { baseURL: 'http://localhost:5173', browserName },
+    })),
     // Tier 3 — production nginx image + built bundle. Catches security-header
     // regressions (WSTG CONF-12/14) that the dev tier cannot observe because
     // Vite does not set response headers. Opt-in via PW_SMOKE_PROD=true.

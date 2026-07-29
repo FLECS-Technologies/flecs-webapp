@@ -22,10 +22,10 @@ export default function Logo({
 }: Props) {
   const { branding } = useTenant();
   const { isDarkMode } = useDarkMode();
-  const defaultLogo = branding.logos.default ?? 'logo.svg';
+  const defaultLogo = branding.logos.default;
   const modeLogo = isDarkMode ? branding.logos.dark : branding.logos.light;
   const preferredLogo = modeLogo ?? defaultLogo;
-  const [src, setSrc] = useState(preferredLogo);
+  const [src, setSrc] = useState<string | undefined>(preferredLogo);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -33,9 +33,14 @@ export default function Logo({
     setFailed(false);
   }, [preferredLogo]);
 
-  if (failed) {
+  if (!src || failed) {
     return (
-      <span className={`inline-flex items-center justify-center ${className}`} style={style}>
+      <span
+        role={alt ? 'img' : undefined}
+        aria-label={alt || undefined}
+        className={`inline-flex items-center justify-center ${className}`}
+        style={style}
+      >
         <FLECSLogo logoColor={logoColor} size={fallbackSize} />
       </span>
     );
@@ -47,7 +52,7 @@ export default function Logo({
       className={`block object-contain ${className}`}
       style={style}
       onError={() => {
-        if (src !== defaultLogo) {
+        if (defaultLogo && src !== defaultLogo) {
           setSrc(defaultLogo);
           return;
         }

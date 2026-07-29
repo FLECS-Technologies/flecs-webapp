@@ -1,11 +1,10 @@
-import React from 'react';
-import { Trash2, ArrowRight, Save, Server, Container } from 'lucide-react';
-import TransportProtocolSelector from './TransportProtocolSelector';
-import {
+import { ArrowRight, Container, Server, Trash2 } from 'lucide-react';
+import type {
   InstancePortMappingRange,
   InstancePortMappingSingle,
   TransportProtocol,
 } from '@generated/core/schemas';
+import TransportProtocolSelector from './TransportProtocolSelector';
 
 interface SinglePortMappingProps {
   port: InstancePortMappingSingle;
@@ -16,84 +15,67 @@ interface SinglePortMappingProps {
     field: keyof InstancePortMappingSingle | keyof InstancePortMappingRange,
     value: number | { start?: number; end?: number },
   ) => void;
-  sx?: object;
-  handleDeletePort: (index: number) => void;
-  handleSavePort: (protocol: string, index: number) => void;
-  handleProtocolChange: (index: number, protocol: TransportProtocol) => void;
+  onDelete: (index: number) => void;
+  onProtocolChange: (index: number, protocol: TransportProtocol) => void;
 }
 
-const SinglePortMapping: React.FC<SinglePortMappingProps> = ({
+const numericValue = (value: string) => (value === '' ? 0 : Number(value));
+
+const SinglePortMapping = ({
   port,
   protocol,
   index,
   onChange,
-  handleDeletePort,
-  handleSavePort,
-  handleProtocolChange,
-}) => {
-  const [changes, setChanges] = React.useState(false);
-  return (
-    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-surface-raised border border-border gap-2">
-      <span className="inline-flex items-center justify-center w-6 h-6">
-        <ArrowRight size={18} />
+  onDelete,
+  onProtocolChange,
+}: SinglePortMappingProps) => (
+  <div className="grid grid-cols-[1fr_24px_1fr_92px_36px] items-end gap-2 rounded-xl border border-border bg-surface-raised p-3">
+    <label className="min-w-0">
+      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted">
+        <Server size={14} /> Host port
       </span>
-      <div className="flex items-center gap-1 w-46">
-        <span title="Host" className="inline-flex items-center text-muted">
-          <Server size={16} />
-        </span>
-        <input
-          className="flex-1 min-w-0 px-3 py-2 bg-surface rounded-lg border border-border text-text-primary text-sm focus:outline-none focus:border-brand"
-          placeholder="Port"
-          aria-label="Host port"
-          value={port.host_port}
-          onChange={(e) => {
-            setChanges(true);
-            onChange(index, 'host_port', parseInt(e.target.value, 10) || 0);
-          }}
-        />
-      </div>
-      <div className="flex items-center gap-1 w-46">
-        <span title="Container" className="inline-flex items-center text-muted">
-          <Container size={16} />
-        </span>
-        <input
-          className="flex-1 min-w-0 px-3 py-2 bg-surface rounded-lg border border-border text-text-primary text-sm focus:outline-none focus:border-brand"
-          placeholder="Port"
-          aria-label="Container port"
-          value={port.container_port}
-          onChange={(e) => {
-            setChanges(true);
-            onChange(index, 'container_port', parseInt(e.target.value, 10) || 0);
-          }}
-        />
-      </div>
+      <input
+        type="number"
+        min={1}
+        max={65535}
+        aria-label="Host port"
+        value={port.host_port || ''}
+        onChange={(event) => onChange(index, 'host_port', numericValue(event.target.value))}
+        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15"
+      />
+    </label>
+    <ArrowRight size={16} className="mb-2.5 text-muted" aria-hidden="true" />
+    <label className="min-w-0">
+      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted">
+        <Container size={14} /> Container port
+      </span>
+      <input
+        type="number"
+        min={1}
+        max={65535}
+        aria-label="Container port"
+        value={port.container_port || ''}
+        onChange={(event) => onChange(index, 'container_port', numericValue(event.target.value))}
+        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15"
+      />
+    </label>
+    <div>
+      <span className="mb-1.5 block text-xs font-medium text-muted">Protocol</span>
       <TransportProtocolSelector
         value={protocol}
-        onChange={(p) => {
-          handleProtocolChange(index, p);
-          setChanges(true);
-        }}
+        onChange={(value) => onProtocolChange(index, value)}
       />
-      <button
-        title="Delete Port Mapping"
-        className="p-1.5 rounded-lg hover:bg-surface-hover transition ml-auto"
-        onClick={() => handleDeletePort(index)}
-      >
-        <Trash2 size={18} />
-      </button>
-      <button
-        title="Save Port Mapping"
-        aria-label="Save Port Mapping"
-        className="p-1.5 rounded-lg hover:bg-surface-hover transition disabled:opacity-30"
-        disabled={!changes}
-        onClick={() => {
-          handleSavePort(protocol as TransportProtocol, index);
-          setChanges(false);
-        }}
-      >
-        <Save size={18} />
-      </button>
     </div>
-  );
-};
+    <button
+      type="button"
+      title="Delete port mapping"
+      aria-label="Delete port mapping"
+      onClick={() => onDelete(index)}
+      className="mb-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-error/10 hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+    >
+      <Trash2 size={16} />
+    </button>
+  </div>
+);
+
 export default SinglePortMapping;

@@ -8,54 +8,56 @@ import MarqueeText from '@app/components/MarqueeText';
 
 interface UpdateButtonProps {
   app: EnrichedApp;
-  from?: AppVersion;
   to: AppVersion;
-  onInstallComplete?: (success: boolean, message: string, error?: string) => void;
   showSelectedVersion?: boolean;
   fullWidth?: boolean;
+  fromVersion?: string;
+  operation?: 'update' | 'downgrade';
 }
 
 export default function UpdateButton({
   app,
-  from,
   to,
-  onInstallComplete,
   showSelectedVersion = false,
   fullWidth,
+  fromVersion,
+  operation = 'update',
 }: UpdateButtonProps): React.ReactElement {
   const [state, setState] = useState<{ updating: boolean; currentQuest: Quest | null }>({
     updating: false,
     currentQuest: null,
   });
   const [updateAppOpen, setUpdateAppOpen] = useState<boolean>(false);
+  const action = operation === 'downgrade' ? 'Downgrade' : 'Update';
   return (
     <React.Fragment>
       <button
-        className={`bg-accent text-white font-semibold hover:bg-accent/80 transition inline-flex items-center gap-2 ${fullWidth ? 'px-4 py-3 rounded-xl text-base w-full justify-center' : 'px-4 py-2 rounded-lg'}`}
+        className={`inline-flex cursor-pointer items-center gap-2 bg-accent font-semibold text-white transition hover:bg-accent/80 disabled:cursor-not-allowed disabled:opacity-50 ${fullWidth ? 'w-full justify-center rounded-xl px-4 py-3 text-base' : 'rounded-lg px-4 py-2'}`}
         onClick={() => setUpdateAppOpen(true)}
         data-testid="update-app-button"
         disabled={state.updating}
       >
         {state.updating ? (
-          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
         ) : (
           <RefreshCw size={18} />
         )}
         {state.updating ? (
-          <MarqueeText text={state.currentQuest?.description || 'Updating'} />
+          <MarqueeText text={state.currentQuest?.description || `${action} in progress`} />
         ) : (
-          `Update${showSelectedVersion ? ` to ${to.version}` : ''}`
+          `${action}${showSelectedVersion ? ` to ${to.version}` : ''}`
         )}
       </button>
       <ContentDialog
         open={updateAppOpen}
         setOpen={setUpdateAppOpen}
-        title={`Update ${app.title} to ${to.version}`}
+        title={`${action} ${app.title} to ${to.version}`}
       >
         <InstallationStepper
           app={app}
           version={to.version}
           update={true}
+          fromVersion={fromVersion}
           onStateChange={(s: InstallerState) =>
             setState({
               updating: s.installing || (s.updating ?? false),

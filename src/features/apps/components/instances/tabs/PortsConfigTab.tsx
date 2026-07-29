@@ -1,206 +1,146 @@
-import React, { useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import SinglePortMapping from './SinglePortMapping';
-import PortRangeMapping from './PortRangeMapping';
-import AddSinglePortMappingButton from './AddSinglePortMappingButton';
-import AddPortRangeMappingButton from './AddPortRangeMappingButton';
+import { Plus } from 'lucide-react';
 import {
-  InstancePortMapping,
-  InstancePortMappingRange,
-  InstancePortMappingSingle,
-  InstancePorts,
   TransportProtocol,
+  type InstancePortMappingRange,
+  type InstancePortMappingSingle,
 } from '@generated/core/schemas';
-import {
-  useGetInstancesInstanceIdConfigPorts,
-  usePutInstancesInstanceIdConfigPortsTransportProtocol,
-  getGetInstancesInstanceIdConfigPortsQueryKey,
-} from '@generated/core/instances/instances';
 import HelpButton from '@app/layout/HelpButton';
 import { instancedeviceconfig } from '@app/layout/helplinks';
-import { getErrorMessage } from '@app/api/fetch-error';
+import type { PortDraft } from '../useInstanceConfigDraft';
+import PortRangeMapping from './PortRangeMapping';
+import SinglePortMapping from './SinglePortMapping';
 
 interface PortsConfigTabProps {
-  instanceId: string;
-  onChange: (hasChanges: boolean) => void;
-}
-// Client-side row identity — stable across edits so React reconciliation keeps input focus
-// on the correct row even after additions/deletions. Not sent to the server.
-interface PortWithProtocol {
-  protocol: TransportProtocol;
-  port: InstancePortMappingSingle | InstancePortMappingRange;
-  _rowId: string;
+  rows: PortDraft[];
+  onChange: (update: (rows: PortDraft[]) => PortDraft[]) => void;
 }
 
-const PortsConfigTab: React.FC<PortsConfigTabProps> = ({ instanceId, onChange }) => {
-  const [ports, setPorts] = useState<PortWithProtocol[]>([]);
-  const [initialized, setInitialized] = useState(false);
-  const [save, setSave] = useState(false);
-  const queryClient = useQueryClient();
-  const { data: portsResponse, isLoading } = useGetInstancesInstanceIdConfigPorts(instanceId);
-  const { mutateAsync: putPorts } = usePutInstancesInstanceIdConfigPortsTransportProtocol();
+type PortField = keyof InstancePortMappingSingle | keyof InstancePortMappingRange;
 
-  useEffect(() => {
-    if (portsResponse?.data && !initialized) {
-      const portData = portsResponse.data as InstancePorts;
-      setPorts([
-        ...portData.tcp.map(
-          (port: InstancePortMapping): PortWithProtocol => ({
-            protocol: TransportProtocol.tcp,
-            port,
-            _rowId: crypto.randomUUID(),
-          }),
-        ),
-        ...portData.udp.map(
-          (port: InstancePortMapping): PortWithProtocol => ({
-            protocol: TransportProtocol.udp,
-            port,
-            _rowId: crypto.randomUUID(),
-          }),
-        ),
-      ]);
-      setInitialized(true);
-    }
-  }, [portsResponse, initialized]);
-  useEffect(() => {
-    if (save) {
-      handleSave();
-      setSave(false);
-    }
-  }, [save]);
+const PortsConfigTab = ({ rows, onChange }: PortsConfigTabProps) => {
+  const addSingle = () =>
+    onChange((current) => [
+      ...current,
+      {
+        protocol: TransportProtocol.tcp,
+        port: { host_port: 0, container_port: 0 },
+        _rowId: crypto.randomUUID(),
+      },
+    ]);
 
-  const handlePortChange = (
+  const addRange = () =>
+    onChange((current) => [
+      ...current,
+      {
+        protocol: TransportProtocol.tcp,
+        port: {
+          host_ports: { start: 0, end: 0 },
+          container_ports: { start: 0, end: 0 },
+        },
+        _rowId: crypto.randomUUID(),
+      },
+    ]);
+
+  const updatePort = (
     index: number,
-    field: keyof InstancePortMappingSingle | keyof InstancePortMappingRange,
+    field: PortField,
     value: number | { start?: number; end?: number },
-  ) => {
-    setPorts((prev) => {
-      const u = [...prev];
-      const p = u[index];
-      if ('host_port' in p.port) {
-        p.port = { ...p.port, [field]: value } as InstancePortMappingSingle;
-      } else if ('host_ports' in p.port) {
-        p.port = {
-          ...p.port,
-          [field]: {
-            ...(field in p.port ? (p.port[field as keyof InstancePortMappingRange] as object) : {}),
-            ...(value as object),
+  ) =>
+    onChange((current) =>
+      current.map((row, currentIndex) => {
+        if (currentIndex !== index) return row;
+        if ('host_port' in row.port) {
+          return {
+            ...row,
+            port: { ...row.port, [field]: value } as InstancePortMappingSingle,
+          };
+        }
+        const rangeField = field as 'host_ports' | 'container_ports';
+        return {
+          ...row,
+          port: {
+            ...row.port,
+            [rangeField]: { ...row.port[rangeField], ...(value as object) },
           },
-        } as InstancePortMappingRange;
-      }
-      return u;
-    });
-  };
-  const handleProtocolChange = (index: number, protocol: TransportProtocol) => {
-    setPorts((prev) => {
-      const u = [...prev];
-      u[index].protocol = protocol;
-      return u;
-    });
-  };
-  const handleSave = async () => {
-    try {
-      const tcp = ports.filter((p) => p.protocol === TransportProtocol.tcp).map((p) => p.port);
-      const udp = ports.filter((p) => p.protocol === TransportProtocol.udp).map((p) => p.port);
-      // Always PUT both protocols. The endpoint replaces the full set for a
-      // protocol, and an empty array clears it. A `length > 0` guard would skip
-      // the request when the last port of a protocol is deleted, so the deletion
-      // never reached the server and the removed port reappeared on reload.
-      await putPorts({ instanceId, transportProtocol: TransportProtocol.tcp, data: tcp });
-      await putPorts({ instanceId, transportProtocol: TransportProtocol.udp, data: udp });
-      // The PUT mutation doesn't touch the ports GET cache, so without this the
-      // 30s global staleTime keeps serving the pre-save snapshot when the tab is
-      // reopened. Invalidate so a reopen re-reads fresh server state.
-      await queryClient.invalidateQueries({
-        queryKey: getGetInstancesInstanceIdConfigPortsQueryKey(instanceId),
-      });
-      onChange(true);
-      toast.success('Port mappings saved!');
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    }
-  };
-  const handleDeletePort = (index: number) => {
-    setPorts((prev) => {
-      const u = [...prev];
-      u.splice(index, 1);
-      return u;
-    });
-    setSave(true);
-  };
-
-  if (isLoading)
-    return (
-      <div className="animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full" />
+        };
+      }),
     );
+
+  const updateProtocol = (index: number, protocol: TransportProtocol) =>
+    onChange((current) =>
+      current.map((row, currentIndex) => (currentIndex === index ? { ...row, protocol } : row)),
+    );
+
+  const deletePort = (index: number) =>
+    onChange((current) => current.filter((_, currentIndex) => currentIndex !== index));
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <h6 className="text-base font-semibold">Port Mappings</h6>
-        <HelpButton url={instancedeviceconfig} />
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1">
+          <p className="text-sm font-medium">Mappings</p>
+          <HelpButton url={instancedeviceconfig} />
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            title="Add a one-to-one port mapping"
+            onClick={addSingle}
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10"
+          >
+            <Plus size={15} /> Add port
+          </button>
+          <button
+            type="button"
+            title="Add a range of ports"
+            onClick={addRange}
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10"
+          >
+            <Plus size={15} /> Add range
+          </button>
+        </div>
       </div>
-      <div className="flex flex-wrap gap-2 mb-4">
-        <AddSinglePortMappingButton
-          onAdd={() =>
-            setPorts((prev) => [
-              ...prev,
-              {
-                protocol: TransportProtocol.tcp,
-                port: { host_port: 0, container_port: 0 } as InstancePortMappingSingle,
-                _rowId: crypto.randomUUID(),
-              },
-            ])
-          }
-          defaultProtocol={TransportProtocol.tcp}
-        />
-        <AddPortRangeMappingButton
-          onAdd={() =>
-            setPorts((prev) => [
-              ...prev,
-              {
-                protocol: TransportProtocol.tcp,
-                port: {
-                  host_ports: { start: 0, end: 0 },
-                  container_ports: { start: 0, end: 0 },
-                } as InstancePortMappingRange,
-                _rowId: crypto.randomUUID(),
-              },
-            ])
-          }
-          defaultProtocol={TransportProtocol.tcp}
-        />
-      </div>
-      <div>
-        {ports.length === 0 && <p className="text-sm text-muted">No ports configured.</p>}
-        {ports.map((p, index) =>
-          'host_port' in p.port ? (
-            <SinglePortMapping
-              key={p._rowId}
-              port={p.port as InstancePortMappingSingle}
-              protocol={p.protocol}
-              index={index}
-              onChange={handlePortChange}
-              handleDeletePort={handleDeletePort}
-              handleSavePort={handleSave}
-              handleProtocolChange={handleProtocolChange}
-            />
-          ) : (
-            <PortRangeMapping
-              key={p._rowId}
-              port={p.port as InstancePortMappingRange}
-              protocol={p.protocol}
-              index={index}
-              onChange={handlePortChange}
-              handleDeletePort={handleDeletePort}
-              handleSavePort={handleSave}
-              handleProtocolChange={handleProtocolChange}
-            />
-          ),
-        )}
-      </div>
+      {rows.length === 0 ? (
+        <div className="flex min-h-48 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface-subtle px-6 text-center">
+          <p className="text-sm font-medium">No port mappings</p>
+          <p className="mt-1 text-xs text-muted">Add a port to make this instance reachable.</p>
+          <button
+            type="button"
+            onClick={addSingle}
+            className="mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10"
+          >
+            <Plus size={16} /> Add port
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {rows.map((row, index) =>
+            'host_port' in row.port ? (
+              <SinglePortMapping
+                key={row._rowId}
+                port={row.port}
+                protocol={row.protocol}
+                index={index}
+                onChange={updatePort}
+                onDelete={deletePort}
+                onProtocolChange={updateProtocol}
+              />
+            ) : (
+              <PortRangeMapping
+                key={row._rowId}
+                port={row.port}
+                protocol={row.protocol}
+                index={index}
+                onChange={updatePort}
+                onDelete={deletePort}
+                onProtocolChange={updateProtocol}
+              />
+            ),
+          )}
+        </div>
+      )}
     </div>
   );
 };
+
 export default PortsConfigTab;

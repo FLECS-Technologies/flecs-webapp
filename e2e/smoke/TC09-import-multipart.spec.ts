@@ -24,8 +24,8 @@ test.describe('@smoke TC09 — import uses multipart content-type', () => {
       }),
     );
 
-    await page.goto('/');
-    await page.getByRole('button', { name: /import apps/i }).click();
+    await page.goto('/#/system');
+    await page.getByRole('button', { name: 'Restore backup' }).click();
 
     await page.setInputFiles('input[type="file"][accept*=".tar"]', {
       name: 'export.tar',

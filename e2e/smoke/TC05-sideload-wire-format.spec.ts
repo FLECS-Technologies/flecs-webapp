@@ -25,10 +25,7 @@ test.describe('@smoke TC05 — sideload wire format', () => {
 
     // InstalledApps is the root route (see ui-routes.tsx).
     await page.goto('/');
-    await page
-      .getByRole('button', { name: /upload manifest/i })
-      .first()
-      .click();
+    await page.getByTestId('sideload-dropzone').click();
 
     const manifestText = JSON.stringify({
       $schema:

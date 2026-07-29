@@ -1,70 +1,56 @@
-import { useState, useRef, useEffect } from 'react';
-import { Sparkles, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import type { AppVersion } from '@features/apps/types';
 
 interface VersionSelectorProps {
   availableVersions: AppVersion[];
   selectedVersion: AppVersion | undefined;
   setSelectedVersion: (v: AppVersion) => void;
+  currentVersion?: string;
+  label?: string;
 }
 
 export function VersionSelector({
   availableVersions,
   selectedVersion,
   setSelectedVersion,
+  currentVersion,
+  label = 'Version',
 }: VersionSelectorProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const hasUpdate = availableVersions.length > 0 && !availableVersions[0]?.installed;
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
   if (!availableVersions.length) return null;
 
   return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-3 py-2.5 bg-surface rounded-lg border border-border text-text-primary text-sm hover:border-border-strong transition cursor-pointer"
+    <div className="relative">
+      <select
+        aria-label={label}
+        value={selectedVersion?.version ?? ''}
+        onChange={(event) => {
+          const version = availableVersions.find((item) => item.version === event.target.value);
+          if (version) setSelectedVersion(version);
+        }}
+        className="w-full cursor-pointer appearance-none rounded-lg border border-border bg-surface py-2.5 pl-3 pr-9 text-sm font-medium text-text-primary outline-none transition hover:border-border-strong focus:border-brand focus:ring-2 focus:ring-brand/15"
       >
-        <span>{selectedVersion?.version || 'Select version'}</span>
-        <div className="flex items-center gap-1.5">
-          {selectedVersion?.installed && (
-            <span className="text-[11px] text-muted px-1.5 py-0.5 rounded bg-surface-hover">
-              installed
-            </span>
-          )}
-          {hasUpdate && <Sparkles size={13} className="text-brand" />}
-          <ChevronDown
-            size={15}
-            className={`text-muted transition-transform ${open ? 'rotate-180' : ''}`}
-          />
-        </div>
-      </button>
-      {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg bg-surface-raised border border-border shadow-xl max-h-60 overflow-auto">
-          {availableVersions.map((v) => (
-            <button
-              key={v.version}
-              onClick={() => {
-                setSelectedVersion(v);
-                setOpen(false);
-              }}
-              className={`w-full flex items-center justify-between px-3 py-2 text-sm transition cursor-pointer ${v.version === selectedVersion?.version ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'}`}
-            >
-              <span>{v.version}</span>
-              {v.installed && <span className="text-[11px] text-muted">installed</span>}
-            </button>
-          ))}
-        </div>
-      )}
+        {availableVersions.map((version, index) => {
+          const detail =
+            version.version === currentVersion
+              ? 'Current'
+              : index === 0
+                ? 'Latest'
+                : version.installed
+                  ? 'Downloaded'
+                  : undefined;
+          return (
+            <option key={version.version} value={version.version}>
+              {version.version}
+              {detail ? ` (${detail})` : ''}
+            </option>
+          );
+        })}
+      </select>
+      <ChevronDown
+        aria-hidden="true"
+        size={15}
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted"
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ interface InstallationStepperProps {
   version?: string;
   sideload?: boolean;
   update?: boolean;
+  fromVersion?: string;
   onStateChange?: (state: InstallerState) => void;
 }
 
@@ -16,6 +17,7 @@ export default function InstallationStepper({
   version,
   sideload,
   update,
+  fromVersion,
   onStateChange,
 }: InstallationStepperProps) {
   const mode = sideload ? 'sideload' : update ? 'update' : 'install';
@@ -25,7 +27,9 @@ export default function InstallationStepper({
       app={app}
       manifest={manifest}
       version={version || app?.appKey?.version}
-      fromVersion={update ? app?.installedVersions?.[0] : undefined}
+      fromVersion={
+        update ? (fromVersion ?? app?.appKey.version ?? app?.installedVersions?.[0]) : undefined
+      }
       onStateChange={onStateChange}
     />
   );

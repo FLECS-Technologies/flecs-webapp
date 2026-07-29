@@ -35,10 +35,9 @@ export interface NetworkState {
 }
 interface NetworkConfigTabProps {
   instanceId: string;
-  onChange: (hasChanges: boolean) => void;
 }
 
-const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChange }) => {
+const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId }) => {
   const queryClient = useQueryClient();
   const { data: networkAdaptersResponse, isLoading: loadingAdapters } =
     useGetSystemNetworkAdapters();
@@ -88,11 +87,11 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChang
       });
   }, [networkAdaptersResponse, deploymentNetworksResponse, instanceNetworksResponse]);
 
-  const invalidateAll = () => {
+  const invalidateAll = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: [`/instances/${instanceId}/config/networks`] });
     queryClient.invalidateQueries({ queryKey: [`/deployments/default/networks`] });
     queryClient.invalidateQueries({ queryKey: [`/system/network/adapters`] });
-  };
+  }, [instanceId, queryClient]);
 
   const handleNetworkActivationChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>, id: string, name: string) => {
@@ -128,7 +127,15 @@ const NetworkConfigTab: React.FC<NetworkConfigTabProps> = ({ instanceId, onChang
         toast.error('Failed to save Network config!');
       }
     },
-    [networks, instanceId],
+    [
+      connectNetwork,
+      createDeploymentNetwork,
+      disconnectNetwork,
+      instanceId,
+      invalidateAll,
+      networks,
+      reserveIp,
+    ],
   );
 
   if (loading)

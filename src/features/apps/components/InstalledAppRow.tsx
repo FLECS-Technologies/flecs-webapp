@@ -15,18 +15,17 @@ import {
   RefreshCw,
   Package,
 } from 'lucide-react';
-import type { EnrichedApp, AppVersion } from '@features/apps/types';
+import type { EnrichedApp } from '@features/apps/types';
 import type { AppInstance } from '@generated/core/schemas';
 import AppStatusDot from './AppStatusDot';
-import UpdateButton from '@features/apps/components/actions/UpdateButton';
 import ContentDialog from '@app/components/ContentDialog';
 import ConfirmDialog from '@app/components/ConfirmDialog';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
 import { useGetManifestsAppNameVersion } from '@generated/core/manifests/manifests';
 import InstanceInfo from './instances/InstanceInfo';
 import InstanceConfigDialog, { type SectionKey } from './instances/InstanceConfigDialog';
+import VersionConfigTab from './instances/tabs/VersionConfigTab';
 import InstanceNameDialog from './InstanceNameDialog';
-import { VersionSelector } from '@app/components/VersionSelector';
 import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { unwrapSuccess } from '@app/api/unwrap';
@@ -60,7 +59,8 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   );
   const manifest = unwrapSuccess(manifestResponse);
   const isInstalling = app.status === 'installing';
-  const canDuplicateApp = manifest?.multiInstance === true;
+  const canDuplicateApp =
+    manifest && 'multiInstance' in manifest ? manifest.multiInstance === true : false;
   const instanceCount = app.instances?.length ?? 0;
   const isInstanceScopedApp = Boolean(instance && (canDuplicateApp || instanceCount > 1));
   const isLastInstanceOfApp = isInstanceScopedApp && instanceCount <= 1;
@@ -76,9 +76,6 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
     latestVersion &&
     app.installedVersions &&
     !app.installedVersions.includes(latestVersion.version);
-  const [selectedVersion, setSelectedVersion] = useState<AppVersion>(
-    latestVersion ?? { version: app.appKey?.version ?? '', installed: true },
-  );
   const questProgress = app._quest?.progress;
   const statusLabel = isInstalling
     ? `Installing${questProgress != null ? `... ${questProgress}%` : ''}`
@@ -115,10 +112,7 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   // above the button when there isn't room below, and cap its height as a
   // safety net so a long menu near a screen edge never gets clipped.
   useLayoutEffect(() => {
-    if (!menuAnchor) {
-      setMenuStyle({ visibility: 'hidden' });
-      return;
-    }
+    if (!menuAnchor) return;
     const btn = btnRef.current;
     const menu = menuRef.current;
     if (!btn || !menu) return;
@@ -237,7 +231,6 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
     }
   };
 
-  const selectedVersionNotInstalled = !app.installedVersions?.includes(selectedVersion.version);
   const instanceName = instance?.instanceName.trim();
   const instanceDisplayName =
     isInstanceScopedApp && instance ? instanceName || `Instance ${instance.instanceId}` : undefined;
@@ -266,15 +259,16 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
               )}
             </span>
             {updateAvailable && (
-              <span
-                className="px-2 py-0.5 rounded-full bg-accent/20 text-accent text-[0.65rem] font-semibold cursor-pointer inline-flex items-center gap-1"
+              <button
+                type="button"
+                className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 text-[0.65rem] font-semibold text-accent"
                 onClick={() => {
                   setSettingsSection('version');
                   setSettingsOpen(true);
                 }}
               >
                 <RefreshCw size={10} /> Update
-              </span>
+              </button>
             )}
           </div>
           <div className="flex items-center gap-1 text-xs text-muted">
@@ -448,34 +442,25 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
           >
             <InstanceInfo instance={instance} />
           </ContentDialog>
-          <InstanceConfigDialog
-            instanceId={instance.instanceId}
-            instanceName={instance.instanceName}
-            open={settingsOpen}
-            initialSection={settingsSection}
-            onClose={() => setSettingsOpen(false)}
-            versionSection={
-              versionsArray.length > 0 ? (
-                <div>
-                  <VersionSelector
-                    availableVersions={versionsArray}
-                    selectedVersion={selectedVersion}
-                    setSelectedVersion={setSelectedVersion}
+          {settingsOpen && (
+            <InstanceConfigDialog
+              key={`${instance.instanceId}-${settingsSection ?? 'settings'}`}
+              instanceId={instance.instanceId}
+              instanceName={instance.instanceName}
+              instanceIsRunning={isRunning}
+              initialSection={settingsSection}
+              onClose={() => setSettingsOpen(false)}
+              versionSection={
+                versionsArray.length > 0 ? (
+                  <VersionConfigTab
+                    app={app}
+                    currentVersion={instance.appKey.version}
+                    versions={versionsArray}
                   />
-                  {selectedVersionNotInstalled && (
-                    <div className="mt-4">
-                      <UpdateButton app={app} to={selectedVersion} showSelectedVersion fullWidth />
-                    </div>
-                  )}
-                  {!selectedVersionNotInstalled && (
-                    <p className="text-sm text-muted mt-4 text-center">
-                      {selectedVersion?.version} is already installed.
-                    </p>
-                  )}
-                </div>
-              ) : undefined
-            }
-          />
+                ) : undefined
+              }
+            />
+          )}
         </>
       )}
       <InstanceNameDialog

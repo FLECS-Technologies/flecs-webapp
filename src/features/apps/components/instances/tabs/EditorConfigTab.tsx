@@ -5,10 +5,9 @@ import EditorConfigCard from './EditorConfigCard';
 
 interface EditorConfigTabProps {
   instanceId: string;
-  onChange: (hasChanges: boolean) => void;
 }
 
-const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId, onChange }) => {
+const EditorConfigTab: React.FC<EditorConfigTabProps> = ({ instanceId }) => {
   const { data: editorsResponse, isLoading } = useGetInstancesInstanceIdConfigEditors(instanceId);
   const editors: InstanceEditor[] = (editorsResponse?.data as InstanceEditor[]) ?? [];
 

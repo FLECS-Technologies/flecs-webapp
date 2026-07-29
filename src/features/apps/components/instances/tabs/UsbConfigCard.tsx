@@ -1,44 +1,46 @@
-import React from 'react';
-import { X, CheckCircle2, Usb } from 'lucide-react';
-import { UsbDevice } from './UsbConfigTab';
+import { Usb } from 'lucide-react';
+import type { UsbDraft } from '../useInstanceConfigDraft';
 
 interface UsbConfigCardProps {
-  device: UsbDevice;
-  onEnable: (port: string, enabled: boolean) => void;
+  device: UsbDraft;
+  onToggle: (port: string) => void;
 }
 
-const UsbConfigCard: React.FC<UsbConfigCardProps> = ({ device, onEnable }) => {
-  return (
-    <div className="flex items-center w-full p-4 mb-2 rounded-xl bg-surface-raised border border-border">
-      <span
-        title={`USB device ${device.name} ${device.enabled ? 'enabled in app' : 'disabled in app'}`}
-      >
-        <Usb
-          style={{ marginRight: 16 }}
-          color={device.enabled ? 'var(--color-success)' : 'var(--color-error)'}
-          size={24}
-        />
-      </span>
-      <div className="flex-1 mr-2">
-        <p className="text-sm font-medium">{device.port}</p>
-        <p className="text-xs text-muted">Port</p>
+const UsbConfigCard = ({ device, onToggle }: UsbConfigCardProps) => (
+  <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-raised px-4 py-3">
+    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-subtle text-muted">
+      <Usb size={18} aria-hidden="true" />
+    </span>
+    <div className="min-w-0 flex-1">
+      <div className="flex items-center gap-2">
+        <p className="truncate text-sm font-medium">{device.name}</p>
+        {!device.device_connected && (
+          <span className="rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-medium text-warning">
+            Disconnected
+          </span>
+        )}
       </div>
-      <div className="flex-1 mr-2">
-        <p className="text-sm font-medium">{device.name}</p>
-        <p className="text-xs text-muted">Name</p>
-      </div>
-      <div className="flex-1 mr-2">
-        <p className="text-sm font-medium">{device.vendor}</p>
-        <p className="text-xs text-muted">Vendor</p>
-      </div>
-      <button
-        className={`px-4 py-2 rounded-lg font-semibold transition inline-flex items-center gap-2 shrink-0 ${device.enabled ? 'text-error hover:bg-error/10' : 'text-success hover:bg-success/10'}`}
-        onClick={() => onEnable(device.port, device.enabled)}
-      >
-        {device.enabled ? <X size={18} /> : <CheckCircle2 size={18} />}{' '}
-        {device.enabled ? 'Disable' : 'Enable'}
-      </button>
+      <p className="truncate text-xs text-muted">
+        {device.vendor} · Port {device.port}
+      </p>
     </div>
-  );
-};
+    <button
+      type="button"
+      role="switch"
+      aria-checked={device.enabled}
+      aria-label={`${device.name} access`}
+      onClick={() => onToggle(device.port)}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-all hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised ${
+        device.enabled ? 'bg-brand' : 'bg-border-strong'
+      }`}
+    >
+      <span
+        className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform ${
+          device.enabled ? 'translate-x-5' : 'translate-x-0'
+        }`}
+      />
+    </button>
+  </div>
+);
+
 export default UsbConfigCard;

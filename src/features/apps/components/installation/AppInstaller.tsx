@@ -1,8 +1,8 @@
 /**
- * App Installer — ONE component for install, update, and sideload.
+ * App Installer - one component for install, update, and sideload.
  * Uses generated orval mutations + quest polling. Zero wrapper hooks.
  *
- * Flow: check activation → mutation → waitForQuest → create instance → start
+ * Flow: check activation, mutate, wait for the quest, then continue.
  */
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -60,7 +60,7 @@ export default function AppInstaller({
   const abortRef = useRef<AbortController | null>(null);
   const qc = useQueryClient();
 
-  // Generated hooks — zero wrappers
+  // Generated hooks with no wrapper layer
   const { mutateAsync: installApp } = usePostAppsInstall();
   const { mutateAsync: sideloadApp } = usePostAppsSideload();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
@@ -69,7 +69,7 @@ export default function AppInstaller({
   const { mutateAsync: startInstance } = usePostInstancesInstanceIdStart();
   const { waitForQuest } = useQuestActions();
 
-  // Activation check — generated hook
+  // Activation check from the generated hook
   const { data: licData } = useGetDeviceLicenseActivationStatus({ query: { staleTime: 60_000 } });
   const activated = unwrapSuccess(licData)?.isValid ?? false;
 
@@ -80,16 +80,19 @@ export default function AppInstaller({
   // finishes (see waitForQuest cleanup path). abortRef stays wired so a
   // future explicit Cancel button can trigger it + DELETE /quests/{id}.
 
-  const questStep = async (jobId: number) => {
-    onStateChange?.({ installing: true });
-    const result = await waitForQuest(jobId, abortRef.current?.signal);
-    if (!questStateFinishedOk(result.state)) {
-      throw new Error(result.result || result.detail || result.description || 'Quest failed');
-    }
-    return result;
-  };
+  const questStep = useCallback(
+    async (jobId: number) => {
+      onStateChange?.({ installing: true });
+      const result = await waitForQuest(jobId, abortRef.current?.signal);
+      if (!questStateFinishedOk(result.state)) {
+        throw new Error(result.result || result.detail || result.description || 'Quest failed');
+      }
+      return result;
+    },
+    [onStateChange, waitForQuest],
+  );
 
-  /** Extract jobId from an orval mutation response. Backends return JobMeta on 202. */
+  /** Extract jobId from an Orval mutation response. Backends return JobMeta on 202. */
   function getJobId<T extends { status: number; data: unknown }>(response: T): number {
     const data = unwrapSuccess(response);
     if (!isJobMeta(data)) throw new Error('No jobId in response');
@@ -136,10 +139,13 @@ export default function AppInstaller({
           throw new Error('Missing app, target version, or source version for update');
         }
         const appName = app.appKey.name;
+        const targetAlreadyInstalled = app.installedVersions?.includes(version) ?? false;
 
-        setMessage('Installing new version...');
-        const r = await installApp({ data: { appKey: { name: appName, version } } });
-        await questStep(getJobId(r));
+        if (!targetAlreadyInstalled) {
+          setMessage('Downloading selected version...');
+          const r = await installApp({ data: { appKey: { name: appName, version } } });
+          await questStep(getJobId(r));
+        }
 
         // Parallelize instance migrations. Cap enforces a defensive bound
         // against runaway manifests (WSTG-BUSL-07); 100 covers any realistic
@@ -165,9 +171,11 @@ export default function AppInstaller({
           );
         }
 
-        setMessage('Removing old version...');
-        const dr = await deleteApp({ app: appName, params: { version: fromVersion } });
-        await questStep(getJobId(dr));
+        if (fromVersion !== version) {
+          setMessage('Removing previous version...');
+          const dr = await deleteApp({ app: appName, params: { version: fromVersion } });
+          await questStep(getJobId(dr));
+        }
       }
 
       setPhase('success');
@@ -175,7 +183,7 @@ export default function AppInstaller({
         mode === 'install'
           ? 'App installed!'
           : mode === 'update'
-            ? 'App updated!'
+            ? 'Version changed!'
             : 'App sideloaded!',
       );
       qc.invalidateQueries();
@@ -195,12 +203,15 @@ export default function AppInstaller({
     patchInstance,
     createInstance,
     startInstance,
+    questStep,
     qc,
   ]);
 
   // Auto-advance past activation when device is activated
   useEffect(() => {
-    if (activated && phase === 'activation') runInstall();
+    if (!activated || phase !== 'activation') return;
+    const timeout = window.setTimeout(() => void runInstall(), 0);
+    return () => window.clearTimeout(timeout);
   }, [activated, phase, runInstall]);
 
   // Phase: Activation check

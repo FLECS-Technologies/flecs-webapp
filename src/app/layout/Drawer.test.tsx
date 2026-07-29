@@ -120,6 +120,6 @@ describe('Drawer brand header', () => {
     );
 
     expect(screen.queryByText('Wordmark Manager')).not.toBeInTheDocument();
-    expect(screen.getByAltText('Wordmark Manager logo')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Wordmark Manager logo' })).toBeInTheDocument();
   });
 });

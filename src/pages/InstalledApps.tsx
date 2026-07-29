@@ -16,6 +16,7 @@ import EmptyApps from '@features/apps/components/EmptyApps';
 import InstalledAppsTable from '../features/apps/components/InstalledAppsTable';
 import RowSkeleton from '@features/apps/components/RowSkeleton';
 import ContentDialog from '@app/components/ContentDialog';
+import PageHeader from '@app/components/PageHeader';
 import { useFileDrop } from '@app/components/useFileDrop';
 import InstallationStepper from '@features/apps/components/installation/InstallationStepper';
 import type { EnrichedApp, AppVersion } from '@features/apps/types';
@@ -146,14 +147,10 @@ export default function InstalledApps() {
         onChange={handleSideloadFile}
       />
 
-      <div className="mb-6">
-        <span className="text-xs uppercase tracking-wider text-muted font-semibold">APPS</span>
-        <h4 className="text-2xl font-extrabold">Installed Apps</h4>
-        <p className="text-base text-muted mt-1">
-          {installedApps.length} app{installedApps.length !== 1 ? 's' : ''} active on this device.
-          {installingApps.length > 0 && ` ${installingApps.length} installing.`}
-        </p>
-      </div>
+      <PageHeader
+        title="Installed Apps"
+        description="Manage apps and instances running on this device."
+      />
 
       <div className="mb-5 flex flex-col gap-4 lg:flex-row">
         <div

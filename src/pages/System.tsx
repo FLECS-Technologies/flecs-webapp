@@ -91,7 +91,7 @@ export default function System() {
 
   if (initialLoading) {
     return (
-      <div className="w-full pb-16 pt-3 sm:pt-5 lg:pt-7">
+      <div className="w-full pb-16">
         <SystemHeader appTitle={appTitle} />
         <SystemSkeleton />
       </div>
@@ -99,7 +99,7 @@ export default function System() {
   }
 
   return (
-    <div className="w-full pb-16 pt-3 sm:pt-5 lg:pt-7">
+    <div className="w-full pb-16">
       <SystemHeader appTitle={appTitle} />
       <SystemOverview
         appTitle={appTitle}

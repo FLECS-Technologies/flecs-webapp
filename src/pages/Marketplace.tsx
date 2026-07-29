@@ -15,6 +15,7 @@ import { useGetQuests } from '@generated/core/quests/quests';
 import type { Product } from '@generated/console/schemas';
 import { AppStatus } from '@generated/core/schemas';
 import { isAppInstalling, activeInstallQuestDescriptions } from '@features/apps/installing';
+import PageHeader from '@app/components/PageHeader';
 import MarketplaceGrid from '@features/marketplace/components/MarketplaceGrid';
 import MarketplaceEmpty from '@features/marketplace/components/MarketplaceEmpty';
 import Card from '@features/marketplace/components/Card';
@@ -136,7 +137,6 @@ export default function Marketplace() {
     [questsData],
   );
 
-  const totalApps = products?.length ?? 0;
   const hiddenCount = filterParams.hiddenCategories?.length ?? 0;
   const activeFilterCount =
     (hiddenCount > 0 ? 1 : 0) + (filterParams.compatible ? 1 : 0) + (filterParams.freeOnly ? 1 : 0);
@@ -202,11 +202,10 @@ export default function Marketplace() {
 
   return (
     <div>
-      {/* Hero header */}
-      <div className="mb-8">
-        <h4 className="text-2xl font-extrabold tracking-tight">Marketplace</h4>
-        <p className="text-base text-muted mt-1">{totalApps || '...'} apps to extend your device</p>
-      </div>
+      <PageHeader
+        title="Marketplace"
+        description="Discover and install apps that extend your device."
+      />
 
       {/* Search bar */}
       <div className="flex items-center px-5 py-3 rounded-xl border border-border mb-6 transition focus-within:border-brand">

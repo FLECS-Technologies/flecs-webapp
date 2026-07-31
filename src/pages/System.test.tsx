@@ -63,7 +63,7 @@ describe('System page', () => {
   it('shows FLECS component versions', async () => {
     renderWithProviders(<System />, { route: '/system' });
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'FLECS' })).toBeTruthy();
+      expect(screen.getByRole('heading', { name: 'FLECS Version' })).toBeTruthy();
       expect(screen.getByText('Web app')).toBeTruthy();
     });
   });
@@ -71,7 +71,7 @@ describe('System page', () => {
   it('opens an accessible SBOM export dialog', async () => {
     const user = userEvent.setup();
     renderWithProviders(<System />, { route: '/system' });
-    await user.click(await screen.findByRole('button', { name: 'Export' }));
+    await user.click(await screen.findByRole('button', { name: 'Export SBOM' }));
     expect(screen.getByRole('dialog', { name: 'Export software bill of materials' })).toBeTruthy();
     expect(screen.getByText('SPDX')).toBeTruthy();
     expect(screen.getByText('CycloneDX')).toBeTruthy();
@@ -84,9 +84,9 @@ describe('System page', () => {
     renderWithProviders(<System />, { route: '/system' });
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Backup & migration' })).toBeTruthy();
-      expect(screen.getByText('Export this device')).toBeTruthy();
-      expect(screen.getByText('Import to this device')).toBeTruthy();
-      expect(screen.getByText('Recent exports')).toBeTruthy();
+      expect(screen.getByText('Create a backup')).toBeTruthy();
+      expect(screen.getByText('Restore from a backup')).toBeTruthy();
+      expect(screen.getByText('Recent backups')).toBeTruthy();
       const openSourceLink = screen.getByRole('link', { name: /Open-source licenses/ });
       expect(openSourceLink).toHaveAttribute('target', '_blank');
       expect(openSourceLink).toHaveAttribute('href', '/open-source');
@@ -104,14 +104,14 @@ describe('System page', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Create backup' }));
     expect(screen.getByRole('dialog', { name: 'Create backup' })).toBeTruthy();
-    expect(screen.getByText('Choose instances')).toBeTruthy();
-    expect(await screen.findByText('No app instances available to back up.')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Select at least one instance' })).toBeDisabled();
+    expect(screen.getByText('Choose apps')).toBeTruthy();
+    expect(await screen.findByText('No apps available to back up.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Select at least one app' })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     await user.click(screen.getByRole('button', { name: 'Restore backup' }));
-    expect(screen.getByText('Restore from a backup')).toBeTruthy();
+    expect(screen.getByRole('dialog', { name: 'Restore from a backup' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Drop a backup here or browse' })).toBeTruthy();
-    expect(screen.getByText(/Restoring may replace configuration/)).toBeTruthy();
+    expect(screen.getByText(/may replace configuration for apps that already exist/)).toBeTruthy();
   });
 });

@@ -60,21 +60,21 @@ export default function ExportList() {
   if (isError || error)
     return (
       <p className="bg-surface-overlay px-5 py-7 text-center text-xs text-error">
-        {error || 'Failed to load exports'}
+        {error || 'Failed to load backups'}
       </p>
     );
   if (!exports.length)
     return (
       <div className="bg-surface-overlay px-5 py-7 text-center">
-        <p className="text-[0.82rem] font-medium">No exports yet</p>
+        <p className="text-[0.82rem] font-medium">No backups yet</p>
         <p className="mx-auto mt-1 max-w-sm text-xs text-muted">
-          Your first export will appear here, ready to download or import on another device.
+          Your first backup will appear here, ready to download or restore on another device.
         </p>
       </div>
     );
 
   return (
-    <ul className="divide-y divide-border bg-surface-overlay" aria-label="Recent exports">
+    <ul className="divide-y divide-border bg-surface-overlay" aria-label="Recent backups">
       {exports.map((exportId) => (
         <li key={exportId} className="flex items-center gap-3 px-5 py-3.5">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-surface-raised text-muted">
@@ -86,7 +86,7 @@ export default function ExportList() {
           <span className="flex shrink-0 items-center gap-1">
             <button
               className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface-raised px-2.5 py-1.5 text-xs font-medium transition hover:border-border-strong hover:bg-surface-hover disabled:opacity-50"
-              aria-label={`Download export ${exportId}`}
+              aria-label={`Download backup ${exportId}`}
               onClick={() => handleDownload(exportId)}
               disabled={deleting === exportId}
             >
@@ -99,7 +99,7 @@ export default function ExportList() {
             </button>
             <button
               className="grid h-8 w-8 place-items-center rounded-md text-muted transition hover:bg-error/10 hover:text-error disabled:opacity-50"
-              aria-label={`Delete export ${exportId}`}
+              aria-label={`Delete backup ${exportId}`}
               onClick={() => handleDelete(exportId)}
               disabled={downloading === exportId}
             >

@@ -110,15 +110,15 @@ test.describe('@smoke TC22 - selective app export', () => {
 
     await page.getByRole('button', { name: 'Create backup' }).click();
     await expect(page.getByRole('dialog', { name: 'Create backup' })).toBeVisible();
-    await expect(page.getByRole('checkbox', { name: 'Select all instances' })).toBeChecked();
-    await expect(page.getByText('2 apps and 3 instances selected')).toBeVisible();
+    await expect(page.getByRole('checkbox', { name: 'Select all apps' })).toBeChecked();
+    await expect(page.getByText('3 apps selected')).toBeVisible();
     await expect(page.getByText('Node-RED (production)')).toBeVisible();
     await expect(page.getByText('Node-RED (staging)')).toBeVisible();
     await expect(page.getByText('Dashboard (dashboard)')).toHaveCount(0);
 
-    await page.getByRole('checkbox', { name: 'Include Node-RED production instance' }).uncheck();
-    await page.getByRole('checkbox', { name: 'Include Dashboard dashboard instance' }).uncheck();
-    await expect(page.getByText('1 app and 1 instance selected')).toBeVisible();
+    await page.getByRole('checkbox', { name: 'Include Node-RED production' }).uncheck();
+    await page.getByRole('checkbox', { name: 'Include Dashboard dashboard' }).uncheck();
+    await expect(page.getByText('1 app selected')).toBeVisible();
 
     await page
       .getByRole('dialog', { name: 'Create backup' })

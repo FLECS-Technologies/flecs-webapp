@@ -3,7 +3,7 @@ import { defineConfig } from 'orval';
 export default defineConfig({
   core: {
     input: {
-      target: 'https://codeberg.org/flecs-tech/flecs-core/raw/branch/main/api/openapi.yaml',
+      target: 'https://git.flecs.tech/flecs/flecs-core/raw/branch/main/api/openapi.yaml',
     },
     output: {
       target: './generated/core',
@@ -19,7 +19,7 @@ export default defineConfig({
   },
   marketplace: {
     input: {
-      target: 'https://codeberg.org/flecs-tech/console-api/raw/branch/main/api/openapi.yaml',
+      target: 'https://git.flecs.tech/flecs/console-api/raw/branch/main/api/openapi.yaml',
     },
     output: {
       target: './generated/console',

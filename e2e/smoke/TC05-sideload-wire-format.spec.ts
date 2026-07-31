@@ -23,12 +23,12 @@ test.describe('@smoke TC05 — sideload wire format', () => {
       }),
     );
 
-    // InstalledApps is the root route (see ui-routes.tsx).
+    // InstalledApps is the root route (see ui-routes.tsx). The redesigned page
+    // exposes sideload through the "Deploy Your Own App" card. Its hidden .json
+    // input is always in the DOM, and selecting a file kicks off the sideload
+    // flow (InstallationStepper auto-runs once the device reads as activated).
     await page.goto('/');
-    await page
-      .getByRole('button', { name: /upload manifest/i })
-      .first()
-      .click();
+    await page.getByTestId('sideload-dropzone').click();
 
     const manifestText = JSON.stringify({
       $schema:

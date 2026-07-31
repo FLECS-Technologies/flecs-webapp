@@ -1,5 +1,5 @@
 import React from 'react';
-import { Archive, ChevronRight } from 'lucide-react';
+import { ArrowRight, Archive, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { unwrapSuccess } from '@app/api/unwrap';
 import ContentDialog from '@app/components/ContentDialog';
@@ -131,9 +131,10 @@ export default function System() {
       >
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-[0.82rem] font-medium">Export this device</p>
+            <p className="text-[0.82rem] font-medium">Create a backup</p>
             <p className="mt-0.5 text-xs text-muted">
-              Bundle installed apps and their configurations into an archive.
+              Bundle installed apps and their configuration into an archive to keep or move to
+              another device.
             </p>
           </div>
           <button
@@ -146,9 +147,9 @@ export default function System() {
         </div>
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-[0.82rem] font-medium">Import to this device</p>
+            <p className="text-[0.82rem] font-medium">Restore from a backup</p>
             <p className="mt-0.5 text-xs text-muted">
-              Restore apps and configurations from an export archive.
+              Restore apps and configuration from a backup archive.
             </p>
           </div>
           <button
@@ -161,7 +162,7 @@ export default function System() {
         </div>
         <div className="flex items-center gap-2 border-b border-border bg-surface-overlay px-5 py-2.5 text-[0.67rem] font-semibold uppercase tracking-[0.08em] text-muted">
           <Archive size={13} />
-          Recent exports
+          Recent backups
         </div>
         <ExportList />
       </SystemCard>
@@ -174,7 +175,16 @@ export default function System() {
           className="group inline-flex items-center gap-1 transition-colors hover:text-brand"
         >
           Open-source licenses
-          <ChevronRight size={12} className="transition group-hover:translate-x-0.5" />
+          <span className="relative h-3 w-3 shrink-0">
+            <ChevronRight
+              size={12}
+              className="absolute inset-0 transition-all duration-200 ease-out group-hover:scale-75 group-hover:opacity-0"
+            />
+            <ArrowRight
+              size={12}
+              className="absolute inset-0 scale-75 opacity-0 transition-all duration-200 ease-out group-hover:scale-100 group-hover:opacity-100"
+            />
+          </span>
         </Link>
         <span className="text-border-strong" aria-hidden="true">
           ·
@@ -186,7 +196,16 @@ export default function System() {
           className="group inline-flex items-center gap-1 transition-colors hover:text-brand"
         >
           Docs
-          <ChevronRight size={12} className="transition group-hover:translate-x-0.5" />
+          <span className="relative h-3 w-3 shrink-0">
+            <ChevronRight
+              size={12}
+              className="absolute inset-0 transition-all duration-200 ease-out group-hover:scale-75 group-hover:opacity-0"
+            />
+            <ArrowRight
+              size={12}
+              className="absolute inset-0 scale-75 opacity-0 transition-all duration-200 ease-out group-hover:scale-100 group-hover:opacity-100"
+            />
+          </span>
         </a>
       </footer>
 
@@ -207,7 +226,8 @@ export default function System() {
           <div>
             <p className="text-sm font-medium">Choose a {appTitle} backup file</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Upload a device archive to restore its apps and instance configuration here.
+              Upload a backup archive to restore its apps and their configuration. This may replace
+              configuration for apps that already exist on this device.
             </p>
           </div>
           <div className="[&_[data-testid=import-dropzone]]:min-h-32 [&_[data-testid=import-dropzone]]:cursor-pointer [&_[data-testid=import-dropzone]]:justify-center [&_[data-testid=import-dropzone]]:py-8 [&_[data-testid=import-dropzone]]:text-center">
@@ -219,9 +239,6 @@ export default function System() {
           </div>
           <p className="text-xs text-muted">
             Accepts .tar, .tar.gz, and {appTitle} onboarding .json files.
-          </p>
-          <p className="rounded-lg border border-warning/30 bg-warning/5 px-3.5 py-3 text-xs text-muted">
-            Restoring may replace configuration for apps that already exist on this device.
           </p>
         </div>
       </ContentDialog>

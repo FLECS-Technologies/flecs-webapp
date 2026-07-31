@@ -121,15 +121,6 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
     [instanceIds, selectedInstanceIds],
   );
   const selectedInstanceCount = effectiveSelectedInstanceIds.size;
-  const selectedAppCount = React.useMemo(
-    () =>
-      new Set(
-        instanceRows
-          .filter(({ instance }) => effectiveSelectedInstanceIds.has(instance.instanceId))
-          .map(({ app }) => appKeyId(app.appKey)),
-      ).size,
-    [effectiveSelectedInstanceIds, instanceRows],
-  );
   const allSelected = instanceRows.length > 0 && selectedInstanceCount === instanceRows.length;
   const partlySelected = selectedInstanceCount > 0 && !allSelected;
 
@@ -234,7 +225,7 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
   };
 
   const exportButtonText =
-    selectedInstanceCount === 0 ? 'Select at least one instance' : 'Create backup';
+    selectedInstanceCount === 0 ? 'Select at least one app' : 'Create backup';
 
   return (
     <ContentDialog
@@ -273,9 +264,9 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
             <Archive size={16} />
           </span>
           <div>
-            <p className="text-sm font-medium">Choose instances</p>
+            <p className="text-sm font-medium">Choose apps</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Required app packages are included automatically with the instances you select.
+              Everything each app needs to run is bundled in automatically.
             </p>
           </div>
         </div>
@@ -299,16 +290,16 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
         ) : loading ? (
           <div
             role="status"
-            aria-label="Loading installed app instances"
+            aria-label="Loading apps"
             className="flex min-h-40 items-center justify-center rounded-xl border border-border"
           >
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
           </div>
         ) : instanceRows.length === 0 ? (
           <div className="rounded-xl border border-border px-4 py-8 text-center">
-            <p className="text-sm font-medium">No app instances available to back up.</p>
+            <p className="text-sm font-medium">No apps available to back up.</p>
             <p className="mt-1 text-xs text-muted">
-              You can still restore an existing {appTitle} archive from the System page.
+              You can still restore an existing {appTitle} backup from the System page.
             </p>
           </div>
         ) : (
@@ -319,12 +310,12 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
                   size={14}
                   className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                 />
-                <span className="sr-only">Search app instances</span>
+                <span className="sr-only">Search apps</span>
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Search instances"
+                  placeholder="Search apps"
                   className="h-9 w-full rounded-md border border-border bg-surface-raised pl-9 pr-3 text-xs outline-none transition placeholder:text-muted focus:border-brand focus:ring-2 focus:ring-brand/15"
                 />
               </label>
@@ -334,23 +325,22 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
                   type="checkbox"
                   checked={allSelected}
                   onChange={toggleAll}
-                  aria-label="Select all instances"
+                  aria-label="Select all apps"
                   className="h-4 w-4 accent-brand"
                 />
-                <span className="flex-1">Select all instances</span>
+                <span className="flex-1">Select all apps</span>
                 <span className="font-normal text-muted">
-                  {selectedAppCount} app{selectedAppCount === 1 ? '' : 's'} and{' '}
-                  {selectedInstanceCount} instance{selectedInstanceCount === 1 ? '' : 's'} selected
+                  {selectedInstanceCount} app{selectedInstanceCount === 1 ? '' : 's'} selected
                 </span>
               </label>
             </div>
             <div className="max-h-[25rem] overflow-y-auto">
               {visibleInstanceRows.length === 0 ? (
                 <p className="px-4 py-8 text-center text-xs text-muted">
-                  No instances match “{search.trim()}”.
+                  No apps match “{search.trim()}”.
                 </p>
               ) : (
-                <ul className="divide-y divide-border" aria-label="App instances to back up">
+                <ul className="divide-y divide-border" aria-label="Apps to back up">
                   {visibleInstanceRows.map(({ app, instance }) => {
                     const title = app.title ?? app.appKey.name;
                     const label = instanceLabel(instance);
@@ -361,7 +351,7 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
                             type="checkbox"
                             checked={effectiveSelectedInstanceIds.has(instance.instanceId)}
                             onChange={() => toggleInstance(instance)}
-                            aria-label={`Include ${title} ${label} instance`}
+                            aria-label={`Include ${title} ${label}`}
                             className="h-4 w-4 shrink-0 accent-brand"
                           />
                           <InstalledAppIdentity
@@ -383,10 +373,6 @@ export default function Export({ open, setOpen, appTitle }: ExportProps) {
             </div>
           </div>
         )}
-
-        <p className="text-xs leading-relaxed text-muted">
-          Authentication providers are excluded so each device keeps its own sign-in setup.
-        </p>
       </div>
     </ContentDialog>
   );

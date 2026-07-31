@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, Copy, Cpu, Globe2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import PageHeader from '@app/components/PageHeader';
 import DeviceActivation from '@features/auth/components/DeviceActivation';
 import redDeerMascot from '@assets/images/mascot-red-deer.svg?url';
 
@@ -40,17 +41,10 @@ export const SystemCard = React.forwardRef<HTMLElement, SystemCardProps>(functio
 
 export function SystemHeader({ appTitle }: { appTitle: string }) {
   return (
-    <header className="mb-7">
-      <div className="mb-5 flex items-center gap-2 text-xs text-muted">
-        <span>Device</span>
-        <span className="text-border-strong">/</span>
-        <span className="font-medium text-text-primary">System</span>
-      </div>
-      <h1 className="text-2xl font-semibold tracking-[-0.03em]">System</h1>
-      <p className="mt-1.5 text-sm text-muted">
-        Device management and configuration for this {appTitle} instance.
-      </p>
-    </header>
+    <PageHeader
+      title="System"
+      description={`Device management and configuration for this ${appTitle} instance.`}
+    />
   );
 }
 

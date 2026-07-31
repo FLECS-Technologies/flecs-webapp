@@ -24,10 +24,9 @@ test.describe('@smoke TC09 — import uses multipart content-type', () => {
       }),
     );
 
-    // Import now lives on the System page under "Backup & migration", behind
-    // the "Restore backup" dialog (see System.tsx).
-    await page.goto('/');
-    await page.getByRole('link', { name: /backup.*migration/i }).click();
+    // Import lives on the System page's Backup & migration section, behind the
+    // "Restore backup" dialog (see System.tsx).
+    await page.goto('/#/system');
     await page.getByRole('button', { name: 'Restore backup' }).click();
 
     await page.setInputFiles('input[type="file"][accept*=".tar"]', {

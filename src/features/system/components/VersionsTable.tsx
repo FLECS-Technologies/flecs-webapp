@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import type { GetSystemVersion200, SystemDistro, SystemKernel } from '@generated/core/schemas';
-import sbomHref from '@assets/sbom.json?url';
+import sbomHref from '@assets/sbom.spdx.json?url';
 
 interface VersionsTableProps {
   coreVersion?: GetSystemVersion200;

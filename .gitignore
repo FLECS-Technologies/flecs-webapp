@@ -3,7 +3,8 @@ dist
 coverage
 out
 src/assets/third-party-licenses.txt
-src/assets/sbom.json
+src/assets/sbom.spdx.json
+src/assets/sbom.cyclonedx.json
 generated/
 test-results/
 

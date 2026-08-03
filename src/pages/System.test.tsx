@@ -2,7 +2,7 @@
  * System page - integration test.
  * MSW returns mock system info + license status. Verify rendering.
  */
-import { beforeEach, describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect, onTestFinished, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -78,6 +78,36 @@ describe('System page', () => {
     expect(screen.getByRole('checkbox', { name: /Core/ })).toBeTruthy();
     expect(screen.getByRole('checkbox', { name: /Web app/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Export 4 files' })).toBeTruthy();
+  });
+
+  it('exports the web app CycloneDX SBOM', async () => {
+    const user = userEvent.setup();
+
+    // Downloads go through a synthetic <a download>, and jsdom implements no
+    // navigation, so record the click instead of letting it warn.
+    const downloads: string[] = [];
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      downloads.push(this.download);
+    });
+    onTestFinished(() => clickSpy.mockRestore());
+
+    renderWithProviders(<System />, { route: '/system' });
+    await user.click(await screen.findByRole('button', { name: 'Export SBOM' }));
+
+    await user.click(screen.getByRole('checkbox', { name: /Core/ }));
+    await user.click(screen.getByRole('checkbox', { name: /SPDX/ }));
+    expect(screen.getByRole('checkbox', { name: /CycloneDX/ })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Export 1 file' }));
+
+    await waitFor(() => expect(downloads).toEqual(['webapp.sbom.cyclonedx.json']));
+    // The dialog closes only after every selected file reached the browser.
+    expect(screen.queryByRole('dialog', { name: 'Export software bill of materials' })).toBeNull();
   });
 
   it('groups migration actions and export history', async () => {

@@ -17,6 +17,57 @@ const mimeTypes: Record<string, string> = {
   '.woff2': 'font/woff2',
 };
 
+// The SBOMs ship at two URLs: content-hashed under /assets/ via the `?url`
+// imports (immutable, used by the in-app download links), and unhashed at the SPA
+// root so /sbom.<format>.json stays stable for external tooling. Copies rather
+// than a redirect, because the mount prefix is variable and the image has no
+// entrypoint to emit a hash-aware rule. ~60 KB per format.
+const sbomFilenames = ['sbom.spdx.json', 'sbom.cyclonedx.json'];
+
+function sbomRootCopyPlugin(sbomDir: string): Plugin {
+  let config: ResolvedConfig;
+
+  return {
+    name: 'sbom-root-copy',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
+    configureServer(server) {
+      // Mirror the built layout in dev. Matched on basename, like nginx does, so
+      // the stable paths also resolve under a proxy prefix.
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next();
+
+        const url = new URL(req.url, 'http://localhost');
+
+        // Vite serves the same files as ES modules for the `?url` imports, from
+        // /src/assets/ and with a query (?import&url). Answering those with raw
+        // JSON fails strict module MIME checking and blanks the page, so leave
+        // them to Vite's transform.
+        if (url.search) return next();
+
+        const pathname = decodeURIComponent(url.pathname);
+        if (pathname.includes('/src/')) return next();
+
+        const filename = pathname.slice(pathname.lastIndexOf('/') + 1);
+        if (!sbomFilenames.includes(filename)) return next();
+
+        const filePath = path.join(sbomDir, filename);
+        if (!fs.existsSync(filePath)) return next();
+
+        res.setHeader('Content-Type', mimeTypes['.json']);
+        fs.createReadStream(filePath).pipe(res);
+      });
+    },
+    // Not `publicDir`: the sources stay in src/assets/ so the hashed copies exist.
+    writeBundle() {
+      for (const filename of sbomFilenames) {
+        fs.copyFileSync(path.join(sbomDir, filename), path.join(config.build.outDir, filename));
+      }
+    },
+  };
+}
+
 function copyBrandFiles(srcDir: string, destDir: string) {
   if (!fs.existsSync(srcDir)) return;
 
@@ -96,6 +147,7 @@ export default defineConfig(({ mode }) => {
       react(),
       svgr(),
       tailwindcss(),
+      sbomRootCopyPlugin(path.resolve(__dirname, './src/assets')),
       brandOverlayEnabled && brandOverlayPlugin(brandDir),
     ].filter(Boolean),
     resolve: {

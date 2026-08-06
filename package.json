@@ -86,6 +86,8 @@
     "test:e2e:brand": "playwright test --project=brand-chromium --project=brand-firefox --project=brand-webkit",
     "test:e2e:smoke": "playwright test --project smoke-dev",
     "test:e2e:smoke-prod": "PW_SMOKE_PROD=true playwright test --project smoke-prod",
+    "pretypecheck": "npm run generate",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit",
     "lint": "eslint . && npm run lint:casts && npm run lint:csp",
     "lint:casts": "node scripts/check-casts.mjs",
     "lint:csp": "node scripts/check-csp-hash.mjs",

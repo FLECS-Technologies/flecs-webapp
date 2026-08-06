@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
 import fs from 'fs';
+import { execSync, type ExecSyncOptionsWithStringEncoding } from 'child_process';
 import tailwindcss from '@tailwindcss/vite';
 import type { Plugin, ResolvedConfig } from 'vite';
 
@@ -130,8 +131,60 @@ function brandOverlayPlugin(brandDir: string): Plugin {
   };
 }
 
+function gitInfo(): { sha: string; dirty: boolean; changes: string } {
+  try {
+    const opts: ExecSyncOptionsWithStringEncoding = {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    };
+    const sha = execSync('git rev-parse --short HEAD', opts).trim();
+    // Build outputs (generated/, dist/, src/assets/sbom.*) are gitignored, so the
+    // prebuild steps do not dirty a clean checkout.
+    const changes = execSync('git status --porcelain', opts).trim();
+    return { sha, dirty: changes.length > 0, changes };
+  } catch {
+    // Not a git checkout (e.g. a source tarball); fall back to a stable marker.
+    return { sha: 'unknown', dirty: false, changes: '' };
+  }
+}
+
+// The webapp version baked into the bundle (surfaced via VITE_APP_VERSION).
+// package.json is the single source of truth for the released version + codename.
+//   release build (RELEASE set) -> the codename version verbatim, e.g. "5.3.0-red-deer"
+//   any other build            -> "<base>-next-dev-<git-sha>[-dirty]", e.g. "5.3.0-next-dev-0b6950c"
+function resolveAppVersion(): string {
+  const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')) as {
+    version: string;
+  };
+  const fullVersion = pkg.version;
+  const isRelease = process.env.RELEASE === '1' || process.env.RELEASE === 'true';
+  const { sha, dirty, changes } = gitInfo();
+
+  // A release bundle carries no git sha, so the version alone has to identify the
+  // source. Only stamp it when the checkout provably matches a commit.
+  if (isRelease) {
+    if (sha === 'unknown') {
+      throw new Error(
+        `Refusing to build release ${fullVersion}: not a git checkout, so the working ` +
+          `tree cannot be verified. Build from a git clone, or use "npm run build".`,
+      );
+    }
+    if (dirty) {
+      throw new Error(
+        `Refusing to build release ${fullVersion} from a dirty working tree:\n${changes}\n` +
+          `Commit or stash these changes, or use "npm run build".`,
+      );
+    }
+    return fullVersion;
+  }
+
+  const base = /^\d+\.\d+\.\d+/.exec(fullVersion)?.[0] ?? fullVersion;
+  return `${base}-next-dev-${sha}${dirty ? '-dirty' : ''}`;
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const appVersion = resolveAppVersion();
   const coreTarget = env.VITE_CORE_URL || 'https://localhost';
   const devBrandPreview = env.VITE_DEV_BRAND_PREVIEW === 'true';
   const externalBrandDir = env.VITE_BRAND_DIR?.trim();
@@ -191,6 +244,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       global: 'globalThis',
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion),
     },
     test: {
       environment: 'jsdom',

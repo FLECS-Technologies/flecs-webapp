@@ -17,6 +17,10 @@ dev-build: ci
 build: ci
 	@npm run build
 
+.PHONY: release-build
+release-build: ci
+	@npm run build:release
+
 special_%:
 	@./special/$*.sh
 

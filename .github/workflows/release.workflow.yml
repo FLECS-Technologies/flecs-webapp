@@ -10,6 +10,6 @@ jobs:
     uses: ./.github/workflows/build-and-push.yml
     with:
       submodules: recursive
-      make_target: build
+      make_target: release-build
       named_tag: latest
     secrets: inherit

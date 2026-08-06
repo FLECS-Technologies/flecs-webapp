@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Archive, ChevronRight } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { unwrapSuccess } from '@app/api/unwrap';
 import ContentDialog from '@app/components/ContentDialog';
 import { useTenant } from '@app/theme/TenantContext';

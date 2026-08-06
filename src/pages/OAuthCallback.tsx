@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 import RowSkeleton from '@features/apps/components/RowSkeleton';

@@ -4,6 +4,14 @@ export default defineConfig({
   core: {
     input: {
       target: 'https://git.flecs.tech/flecs/flecs-core/raw/branch/main/api/openapi.yaml',
+      parserOptions: {
+        externalRefs: {
+          allow: [
+            'https://raw.githubusercontent.com/FLECS-Technologies/app-manifest/refs/heads/3.1.0/manifest.schema.json',
+            'https://raw.githubusercontent.com/FLECS-Technologies/flecs-public/main/schema/dos.schema.json',
+          ],
+        },
+      },
     },
     output: {
       target: './generated/core',

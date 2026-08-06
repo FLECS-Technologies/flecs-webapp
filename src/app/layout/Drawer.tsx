@@ -14,7 +14,7 @@ import {
   ExternalLink,
   MoreHorizontal,
 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { useUIStore } from '@stores/ui';
 import { useAppList } from '@features/apps/app-queries';
 import { flattenEditors } from '@features/apps/editor-nav';

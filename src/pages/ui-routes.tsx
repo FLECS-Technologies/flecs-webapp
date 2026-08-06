@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRoutes } from 'react-router-dom';
+import { useRoutes } from 'react-router';
 import InstalledApps from './InstalledApps';
 import Marketplace from './Marketplace';
 import System from './System';

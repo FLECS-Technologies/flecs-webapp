@@ -17,7 +17,7 @@
  */
 import { LogIn, User } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useOAuth4WebApiAuth } from '@features/auth/AuthProvider';
 
 export default function Avatar() {

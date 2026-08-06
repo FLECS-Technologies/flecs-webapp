@@ -7,7 +7,7 @@ import {
   PackagePlus,
   RefreshCw,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { useAppList } from '@features/apps/app-queries';
 import { useGetSystemPing } from '@generated/core/system/system';

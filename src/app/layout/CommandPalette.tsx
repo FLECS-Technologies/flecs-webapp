@@ -11,7 +11,7 @@ import { createPortal } from 'react-dom';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Search, LayoutGrid, Store, Settings, FileText, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 interface CommandItem {
   id: string;

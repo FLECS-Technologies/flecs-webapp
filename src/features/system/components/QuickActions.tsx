@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FileText, FolderDown } from 'lucide-react';
 import Export from '@features/system/components/data-transfer/Export';
 import Import from '@features/system/components/data-transfer/Import';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useTenant } from '@app/theme/TenantContext';
 
 export default function QuickActions() {

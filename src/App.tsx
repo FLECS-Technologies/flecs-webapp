@@ -20,7 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Toaster } from 'sonner';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import Frame from '@app/layout/Frame';
 import { UIRoutes } from './pages/ui-routes';
 import { ThemeHandler } from './app/theme/ThemeHandler';

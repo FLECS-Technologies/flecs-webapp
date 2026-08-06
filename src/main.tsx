@@ -18,7 +18,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { HashRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router';
 import App from './App';
 import './index.css';
 import { loadTenant } from './tenant';

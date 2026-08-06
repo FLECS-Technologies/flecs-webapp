@@ -25,8 +25,8 @@ vi.mock('@features/auth/AuthProvider', () => ({
 }));
 
 const { navigate, toastError } = vi.hoisted(() => ({ navigate: vi.fn(), toastError: vi.fn() }));
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('react-router-dom')>()),
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-router')>()),
   useNavigate: () => navigate,
 }));
 vi.mock('sonner', () => ({ toast: { error: toastError } }));

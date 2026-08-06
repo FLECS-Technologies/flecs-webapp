@@ -166,47 +166,32 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 
 interface ReleaseInfo {
   semver: string;
-  codenameKey: string;
-  codename: string;
   build?: string;
 }
 
 /**
- * Split a build string like "5.3.0-red-deer-85332f2" into its release identity:
- * semver, a human codename ("Red Deer") plus its key ("red-deer"), and the short
- * commit that trails it. Returns null when there's nothing to show.
+ * Split the webapp version into what the hero shows. A release build is a bare
+ * "5.3.0"; every other build carries a trailer, "5.3.0-next-dev-<sha>[-dirty]"
+ * (resolveAppVersion in vite.config.ts). Returns null when there's nothing to show.
  */
 function parseRelease(version?: string): ReleaseInfo | null {
   if (!version) return null;
   const [semver, ...rest] = version.split('-');
-  if (rest.length === 0) return { semver, codenameKey: '', codename: '' };
-
-  const last = rest[rest.length - 1];
-  const build = /^[0-9a-f]{7,}$/i.test(last) ? last : undefined;
-  const words = build ? rest.slice(0, -1) : rest;
-  return {
-    semver,
-    codenameKey: words.join('-'),
-    codename: words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-    build,
-  };
+  return { semver, build: rest.length > 0 ? rest.join('-') : undefined };
 }
 
 /**
- * Each FLECS release carries a mascot for its year. Keyed by codename so a future
- * release just adds its own entry (and drops its artwork in @assets/images).
+ * The release line this webapp belongs to. The version string carries only semver,
+ * so the codename and its mascot are declared here and updated at each release
+ * (drop the new artwork in @assets/images).
  */
-const RELEASE_MASCOTS: Record<string, { src: string; year: string }> = {
-  'red-deer': { src: redDeerMascot, year: '2026' },
+const RELEASE = {
+  codename: 'Red Deer',
+  mascot: redDeerMascot,
 };
 
-function ReleaseHero({ appTitle, coreVersion }: { appTitle: string; coreVersion?: string }) {
-  const release = parseRelease(coreVersion ?? import.meta.env.VITE_APP_VERSION);
-  const mascot = release?.codenameKey ? RELEASE_MASCOTS[release.codenameKey] : undefined;
-  // Codename is the hero when there is one; otherwise fall back to the raw version
-  // (never the card title, which already reads "appTitle" right above this).
-  const heading = release?.codename || release?.semver || coreVersion || appTitle;
-  const hasCodename = Boolean(release?.codename);
+function ReleaseHero() {
+  const release = parseRelease(import.meta.env.VITE_APP_VERSION);
 
   return (
     <div className="group relative overflow-hidden border-b border-border">
@@ -217,36 +202,30 @@ function ReleaseHero({ appTitle, coreVersion }: { appTitle: string; coreVersion?
       />
       <div className="relative flex items-center justify-between gap-4 px-5 py-6">
         <div className="min-w-0">
-          <h3
-            className={`truncate text-2xl font-semibold leading-none tracking-[-0.02em] ${
-              hasCodename ? 'text-brand' : ''
-            }`}
-          >
-            {heading}
+          <h3 className="truncate text-2xl font-semibold leading-none tracking-[-0.02em] text-brand">
+            {RELEASE.codename}
           </h3>
-          {hasCodename && (
+          {release && (
             <p className="mt-2.5 truncate font-mono text-[0.8rem]">
-              <span className="text-text-primary">{release?.semver}</span>
-              {release?.build && <span className="text-muted"> · build {release.build}</span>}
+              <span className="text-text-primary">{release.semver}</span>
+              {release.build && <span className="text-muted"> · build {release.build}</span>}
             </p>
           )}
         </div>
-        {mascot && (
-          <div className="relative shrink-0">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 -m-3 rounded-full bg-brand/10 blur-xl"
-            />
-            <img
-              src={mascot.src}
-              alt={`${release?.codename} release mascot`}
-              width={112}
-              height={112}
-              draggable={false}
-              className="relative h-24 w-24 select-none drop-shadow-sm motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 sm:h-28 sm:w-28"
-            />
-          </div>
-        )}
+        <div className="relative shrink-0">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -m-3 rounded-full bg-brand/10 blur-xl"
+          />
+          <img
+            src={RELEASE.mascot}
+            alt={`${RELEASE.codename} release mascot`}
+            width={112}
+            height={112}
+            draggable={false}
+            className="relative h-24 w-24 select-none drop-shadow-sm motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 sm:h-28 sm:w-28"
+          />
+        </div>
       </div>
     </div>
   );
@@ -334,7 +313,7 @@ export default function SystemOverview(props: SystemOverviewProps) {
         </SystemCard>
 
         <SystemCard title={`${props.appTitle} Version`} className="flex flex-col">
-          <ReleaseHero appTitle={props.appTitle} coreVersion={props.coreVersion} />
+          <ReleaseHero />
           <dl className="flex-1 px-5 py-1">
             <DetailRow label="Core">{props.coreVersion ?? 'N/A'}</DetailRow>
             <DetailRow label="API">{props.apiVersion ?? 'N/A'}</DetailRow>

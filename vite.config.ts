@@ -149,8 +149,8 @@ function gitInfo(): { sha: string; dirty: boolean; changes: string } {
 }
 
 // The webapp version baked into the bundle (surfaced via VITE_APP_VERSION).
-// package.json is the single source of truth for the released version + codename.
-//   release build (RELEASE set) -> the codename version verbatim, e.g. "5.3.0-red-deer"
+// package.json is the single source of truth for the released version.
+//   release build (RELEASE set) -> the package.json version verbatim, e.g. "5.3.0"
 //   any other build            -> "<base>-next-dev-<git-sha>[-dirty]", e.g. "5.3.0-next-dev-0b6950c"
 function resolveAppVersion(): string {
   const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')) as {

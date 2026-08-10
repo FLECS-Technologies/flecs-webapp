@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Archive, ChevronRight } from 'lucide-react';
+import { ArrowRight, Archive, ChevronRight, ExternalLink } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { unwrapSuccess } from '@app/api/unwrap';
 import ContentDialog from '@app/components/ContentDialog';
@@ -65,6 +65,10 @@ export default function System() {
   const license = licenseResponse?.data;
   const renewedAt = formatTimestamp(license?.sessionId?.timestamp);
   const initialLoading = infoPending || versionPending || activationPending || licensePending;
+  const onboardingDocsUrl = new URL(
+    'flecs-marketplace/device-onboarding-service-d-o-s/',
+    links.docs,
+  ).href;
 
   React.useEffect(() => {
     if (initialLoading) return;
@@ -147,9 +151,9 @@ export default function System() {
         </div>
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-[0.82rem] font-medium">Restore from a backup</p>
+            <p className="text-[0.82rem] font-medium">Import apps</p>
             <p className="mt-0.5 text-xs text-muted">
-              Restore apps and configuration from a backup archive.
+              Use a D-O-S onboarding file or restore apps and configuration from a backup archive.
             </p>
           </div>
           <button
@@ -157,7 +161,7 @@ export default function System() {
             className="shrink-0 cursor-pointer rounded-md border border-brand bg-surface-raised px-3 py-1.5 text-xs font-medium text-brand transition hover:bg-brand/10"
             onClick={() => setImportOpen(true)}
           >
-            Restore backup
+            Import apps
           </button>
         </div>
         <div className="flex items-center gap-2 border-b border-border bg-surface-overlay px-5 py-2.5 text-[0.67rem] font-semibold uppercase tracking-[0.08em] text-muted">
@@ -219,27 +223,36 @@ export default function System() {
       <ContentDialog
         open={importOpen}
         setOpen={setImportOpen}
-        title="Restore from a backup"
+        title="Import apps"
         panelClassName="bg-surface-raised rounded-2xl max-w-lg w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
       >
         <div className="space-y-4 p-1">
           <div>
-            <p className="text-sm font-medium">Choose a {appTitle} backup file</p>
+            <p className="text-sm font-medium">Choose an onboarding or backup file</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Upload a backup archive to restore its apps and their configuration. This may replace
-              configuration for apps that already exist on this device.
+              Upload the apps.json created by the Device Onboarding Service (D-O-S), or a .tar or
+              .tar.gz backup to restore apps and configuration.
             </p>
           </div>
           <div className="[&_[data-testid=import-dropzone]]:min-h-32 [&_[data-testid=import-dropzone]]:cursor-pointer [&_[data-testid=import-dropzone]]:justify-center [&_[data-testid=import-dropzone]]:py-8 [&_[data-testid=import-dropzone]]:text-center">
             <Import
               dropzone
-              buttonText="Drop a backup here or browse"
+              buttonText="Drop apps.json or a backup here"
               onImportStarted={() => setImportOpen(false)}
             />
           </div>
-          <p className="text-xs text-muted">
-            Accepts .tar, .tar.gz, and {appTitle} onboarding .json files.
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+            <span>Accepts apps.json, .tar, and .tar.gz files.</span>
+            <a
+              href={onboardingDocsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-medium text-brand hover:underline"
+            >
+              How to create apps.json
+              <ExternalLink size={12} />
+            </a>
+          </div>
         </div>
       </ContentDialog>
     </div>

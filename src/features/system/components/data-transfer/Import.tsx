@@ -24,8 +24,8 @@ import { useFileDrop } from '@app/components/useFileDrop';
 
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { questStateFinishedOk } from '@features/notifications/quests/QuestItem';
-import { postDeviceOnboarding } from '@generated/core/device/device';
-import { postImports } from '@generated/core/flecsport/flecsport';
+import { usePostDeviceOnboarding } from '@generated/core/device/device';
+import { usePostImports } from '@generated/core/flecsport/flecsport';
 import { unwrapSuccess } from '@app/api/unwrap';
 import { getErrorMessage } from '@app/api/fetch-error';
 
@@ -39,8 +39,11 @@ interface ImportProps extends React.ComponentProps<'button'> {
 export default function Import(props: ImportProps) {
   const qc = useQueryClient();
   const { fetchQuest, waitForQuest } = useQuestActions();
+  const onboardingMutation = usePostDeviceOnboarding();
+  const backupMutation = usePostImports();
+  const dropzoneInputRef = React.useRef<HTMLInputElement>(null);
   const { dropzone, buttonText = 'Import Apps', onImportStarted, ...buttonProps } = props;
-  const [importing, setImporting] = React.useState(false);
+  const importing = onboardingMutation.isPending || backupMutation.isPending;
 
   const handleFileUpload = (file: string | File) => {
     // wholeFile=true on <FileOpen /> guarantees File, not string; narrow for TS.
@@ -56,13 +59,11 @@ export default function Import(props: ImportProps) {
   };
 
   const handleJsonFile = async (file: File) => {
-    setImporting(true);
-
     try {
       const fileContent = await file.text();
       const jsonData = JSON.parse(fileContent);
 
-      const onboardingQuest = await postDeviceOnboarding(jsonData);
+      const onboardingQuest = await onboardingMutation.mutateAsync({ data: jsonData });
       const onboardingData = unwrapSuccess(onboardingQuest);
       if (!onboardingData) throw new Error('Onboarding request failed');
       onImportStarted?.();
@@ -75,16 +76,13 @@ export default function Import(props: ImportProps) {
     } catch (error: unknown) {
       toast.error('Import failed', { description: getErrorMessage(error) });
     } finally {
-      setImporting(false);
       qc.invalidateQueries();
     }
   };
 
   const handleTarFile = async (file: File) => {
-    setImporting(true);
-
     try {
-      const importQuest = await postImports({ file });
+      const importQuest = await backupMutation.mutateAsync({ data: { file } });
       const importData = unwrapSuccess(importQuest);
       if (!importData) throw new Error('Import request failed');
       onImportStarted?.();
@@ -97,7 +95,6 @@ export default function Import(props: ImportProps) {
     } catch (error: unknown) {
       toast.error('Import failed', { description: getErrorMessage(error) });
     } finally {
-      setImporting(false);
       qc.invalidateQueries();
     }
   };
@@ -126,15 +123,39 @@ export default function Import(props: ImportProps) {
   if (!dropzone) return button;
 
   return (
-    <div
-      data-testid="import-dropzone"
-      {...dropProps}
-      className={`px-5 rounded-xl border border-dashed flex items-center gap-4 hover:border-brand hover:bg-brand/3 transition ${isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
-    >
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
-        <FolderUp size={18} />
+    <>
+      <input
+        ref={dropzoneInputRef}
+        data-testid="fileInput"
+        type="file"
+        accept=".tar.gz, .tar, .json"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          event.target.value = '';
+          if (file) handleFileUpload(file);
+        }}
+      />
+      <div
+        data-testid="import-dropzone"
+        role="button"
+        tabIndex={0}
+        aria-label={buttonText}
+        onClick={() => dropzoneInputRef.current?.click()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            dropzoneInputRef.current?.click();
+          }
+        }}
+        {...dropProps}
+        className={`px-5 rounded-xl border border-dashed flex cursor-pointer items-center gap-4 hover:border-brand hover:bg-brand/3 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${isDragOver ? 'border-brand bg-brand/3' : 'border-border'}`}
+      >
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+          <FolderUp size={18} />
+        </div>
+        <span className="text-sm font-semibold text-brand">{buttonText}</span>
       </div>
-      {button}
-    </div>
+    </>
   );
 }

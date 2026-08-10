@@ -236,7 +236,7 @@ export default function InstalledApps() {
       >
         <div className="p-2">
           <p className="text-sm text-muted mb-5">
-            Sideload a private or custom Docker app by uploading its manifest.
+            Install one private or custom Docker app from its manifest.json.
           </p>
           <div
             data-testid="sideload-dialog-dropzone"
@@ -258,7 +258,7 @@ export default function InstalledApps() {
               style={{ opacity: 0.4, marginBottom: 8, display: 'inline-block' }}
             />
             <span className="text-sm font-bold block mb-1">
-              Drop your manifest here or click to browse
+              Drop manifest.json here or choose a file
             </span>
             <span className="text-xs text-muted">Accepts .json (max 1 MiB)</span>
           </div>
@@ -266,6 +266,25 @@ export default function InstalledApps() {
             The manifest defines the app name, version, Docker image, ports, and other
             configuration.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-4 text-xs text-muted">
+            <span>Have an apps.json from D-O-S?</span>
+            <Link
+              to="/system?section=backup-migration"
+              className="group inline-flex items-center gap-1 font-medium text-brand hover:underline"
+            >
+              Import an onboarding file
+              <span className="relative h-3 w-3 shrink-0">
+                <ChevronRight
+                  size={12}
+                  className="absolute inset-0 transition-all duration-200 ease-out group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0"
+                />
+                <ArrowRight
+                  size={12}
+                  className="absolute inset-0 scale-75 opacity-0 transition-all duration-200 ease-out group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100"
+                />
+              </span>
+            </Link>
+          </div>
         </div>
       </ContentDialog>
 

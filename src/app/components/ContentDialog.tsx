@@ -33,10 +33,10 @@ function OpenContentDialog({
       className="m-auto w-[min(896px,94vw)] max-w-none overflow-visible bg-transparent p-0 text-text-primary backdrop:bg-black/60"
     >
       <div
-        className={
+        className={`mx-auto ${
           panelClassName ??
           'bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border'
-        }
+        }`}
       >
         <div className="border-b border-border px-6 py-4">
           <h3 id={titleId} className="text-lg font-semibold">

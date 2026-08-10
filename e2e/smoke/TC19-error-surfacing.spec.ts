@@ -20,9 +20,9 @@ test.describe('@smoke TC19 — error toast shows server reason', () => {
     );
 
     // Import lives on the System page's Backup & migration section, behind the
-    // "Restore backup" dialog (see System.tsx).
+    // "Import apps" dialog (see System.tsx).
     await page.goto('/#/system');
-    await page.getByRole('button', { name: 'Restore backup' }).click();
+    await page.getByRole('button', { name: 'Import apps' }).click();
     await page.setInputFiles('input[type="file"][accept*=".tar"]', {
       name: 'bad.tar',
       mimeType: 'application/x-tar',

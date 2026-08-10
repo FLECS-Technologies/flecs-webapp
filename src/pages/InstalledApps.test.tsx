@@ -151,6 +151,7 @@ describe('Installed Apps', () => {
   });
 
   it('centralizes import and export on the System page', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<InstalledApps />, { route: '/' });
 
     const transferLink = await screen.findByRole('link', { name: /backup.*migration/i });
@@ -158,6 +159,15 @@ describe('Installed Apps', () => {
     expect(screen.queryByRole('button', { name: /import apps/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /export apps/i })).not.toBeInTheDocument();
     expect(screen.getByText('Deploy Your Own App')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('sideload-dropzone'));
+    expect(
+      screen.getByText('Install one private or custom Docker app from its manifest.json.'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Import an onboarding file' })).toHaveAttribute(
+      'href',
+      '/system?section=backup-migration',
+    );
   });
 
   it('shows the skeleton while loading, never the "not ready" flash, then the data', async () => {

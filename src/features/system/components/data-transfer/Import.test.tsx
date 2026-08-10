@@ -5,7 +5,13 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@test/test-utils';
+
+const apiMocks = vi.hoisted(() => ({
+  restoreBackup: vi.fn(),
+  startOnboarding: vi.fn(),
+}));
 
 vi.mock('@features/notifications/quests/hooks', () => ({
   useQuestActions: () => ({
@@ -17,18 +23,18 @@ vi.mock('@features/notifications/quests/QuestItem', () => ({
   questStateFinishedOk: () => true,
 }));
 vi.mock('@generated/core/flecsport/flecsport', () => ({
-  postImports: vi.fn().mockResolvedValue({ status: 202, data: { jobId: 1 } }),
+  usePostImports: () => ({ mutateAsync: apiMocks.restoreBackup, isPending: false }),
 }));
 vi.mock('@generated/core/device/device', () => ({
-  postDeviceOnboarding: vi.fn().mockResolvedValue({ status: 202, data: { jobId: 2 } }),
+  usePostDeviceOnboarding: () => ({ mutateAsync: apiMocks.startOnboarding, isPending: false }),
 }));
 
 import Import from './Import';
-import { postImports } from '@generated/core/flecsport/flecsport';
-import { postDeviceOnboarding } from '@generated/core/device/device';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  apiMocks.restoreBackup.mockResolvedValue({ status: 202, data: { jobId: 1 } });
+  apiMocks.startOnboarding.mockResolvedValue({ status: 202, data: { jobId: 2 } });
 });
 
 describe('Import dropzone', () => {
@@ -43,16 +49,31 @@ describe('Import dropzone', () => {
     renderWithProviders(<Import dropzone onImportStarted={onImportStarted} />);
     const tar = new File(['x'], 'backup.tar', { type: 'application/x-tar' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [tar] } });
-    await waitFor(() => expect(postImports).toHaveBeenCalledWith({ file: tar }));
+    await waitFor(() =>
+      expect(apiMocks.restoreBackup).toHaveBeenCalledWith({ data: { file: tar } }),
+    );
     expect(onImportStarted).toHaveBeenCalledOnce();
   });
 
-  it('imports a dropped .json config via the onboarding API', async () => {
+  it('opens the file picker from the entire dropzone', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Import dropzone buttonText="Choose import file" />);
+    const input = screen.getByTestId('fileInput');
+    const click = vi.spyOn(input, 'click');
+
+    await user.click(screen.getByTestId('import-dropzone'));
+
+    expect(click).toHaveBeenCalledOnce();
+  });
+
+  it('imports a dropped apps.json via the onboarding API', async () => {
     renderWithProviders(<Import dropzone />);
-    const json = new File(['{"apps":[]}'], 'config.json', { type: 'application/json' });
+    const json = new File(['{"apps":[]}'], 'apps.json', { type: 'application/json' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [json] } });
-    await waitFor(() => expect(postDeviceOnboarding).toHaveBeenCalledWith({ apps: [] }));
-    expect(postImports).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(apiMocks.startOnboarding).toHaveBeenCalledWith({ data: { apps: [] } }),
+    );
+    expect(apiMocks.restoreBackup).not.toHaveBeenCalled();
   });
 
   it('rejects an unsupported file type without any API call', async () => {
@@ -61,8 +82,8 @@ describe('Import dropzone', () => {
     const png = new File(['x'], 'image.png', { type: 'image/png' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [png] } });
     await waitFor(() => {
-      expect(postImports).not.toHaveBeenCalled();
-      expect(postDeviceOnboarding).not.toHaveBeenCalled();
+      expect(apiMocks.restoreBackup).not.toHaveBeenCalled();
+      expect(apiMocks.startOnboarding).not.toHaveBeenCalled();
     });
     expect(onImportStarted).not.toHaveBeenCalled();
   });

@@ -115,7 +115,7 @@ describe('System page', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Backup & migration' })).toBeTruthy();
       expect(screen.getByText('Create a backup')).toBeTruthy();
-      expect(screen.getByText('Restore from a backup')).toBeTruthy();
+      expect(screen.getAllByText('Import apps')).toHaveLength(2);
       expect(screen.getByText('Recent backups')).toBeTruthy();
       const openSourceLink = screen.getByRole('link', { name: /Open-source licenses/ });
       expect(openSourceLink).toHaveAttribute('target', '_blank');
@@ -128,7 +128,7 @@ describe('System page', () => {
     });
   });
 
-  it('opens focused backup and restore dialogs', async () => {
+  it('opens focused backup and import dialogs', async () => {
     const user = userEvent.setup();
     renderWithProviders(<System />, { route: '/system' });
 
@@ -139,9 +139,14 @@ describe('System page', () => {
     expect(screen.getByRole('button', { name: 'Select at least one app' })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    await user.click(screen.getByRole('button', { name: 'Restore backup' }));
-    expect(screen.getByRole('dialog', { name: 'Restore from a backup' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Drop a backup here or browse' })).toBeTruthy();
-    expect(screen.getByText(/may replace configuration for apps that already exist/)).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Import apps' }));
+    const importDialog = screen.getByRole('dialog', { name: 'Import apps' });
+    expect(importDialog).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Drop apps.json or a backup here' })).toBeTruthy();
+    expect(screen.getByText(/Device Onboarding Service \(D-O-S\)/)).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'How to create apps.json' })).toHaveAttribute(
+      'href',
+      'https://docs.flecs.tech/flecs-marketplace/device-onboarding-service-d-o-s/',
+    );
   });
 });

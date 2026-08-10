@@ -33,6 +33,7 @@ export interface MarketplaceCardProps {
   price?: string;
   purchasable?: boolean;
   documentationUrl?: string;
+  termsOfUseUrl?: string;
   instances?: AppInstance[];
   /** Server-derived from /apps (desired='installed' but status not yet 'installed'). Survives
    *  unmount/remount, so the card keeps showing "Installing" across view switches. */

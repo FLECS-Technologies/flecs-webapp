@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import {
   LayersPlus,
   MoreHorizontal,
+  PencilLine,
   Play,
   Plus,
   Square,
@@ -30,10 +31,14 @@ import { createUrl } from '@features/apps/components/actions/EditorButton';
 import { useQuestActions } from '@features/notifications/quests/hooks';
 import { unwrapSuccess } from '@app/api/unwrap';
 import { getErrorMessage } from '@app/api/fetch-error';
+import { positionAnchoredPopup, type PopupPlacement } from '@app/anchored-popup';
 
 import { isFinishedOk as questStateFinishedOk } from '@features/notifications/quests/QuestItem';
 import {
+  getGetInstancesInstanceIdQueryKey,
+  getGetInstancesQueryKey,
   useDeleteInstancesInstanceId,
+  usePutInstancesInstanceIdName,
   postInstancesCreate,
   postInstancesInstanceIdStart,
   postInstancesInstanceIdStop,
@@ -50,6 +55,7 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   const { waitForQuest } = useQuestActions();
   const { mutateAsync: deleteApp } = useDeleteAppsApp();
   const { mutateAsync: deleteInstance } = useDeleteInstancesInstanceId();
+  const { mutateAsync: renameInstance, isPending: renamePending } = usePutInstancesInstanceIdName();
   const { data: manifestResponse, isPending: manifestPending } = useGetManifestsAppNameVersion(
     app.appKey.name,
     app.appKey.version,
@@ -90,6 +96,8 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   const [menuStyle, setMenuStyle] = useState<CSSProperties>({ visibility: 'hidden' });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuPlacementRef = useRef<PopupPlacement | undefined>(undefined);
+  const menuTopRef = useRef<number | undefined>(undefined);
   const [infoOpen, setInfoOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsSection, setSettingsSection] = useState<SectionKey | undefined>(undefined);
@@ -97,6 +105,8 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
   const [confirmUninstall, setConfirmUninstall] = useState(false);
   const [confirmDeleteInstance, setConfirmDeleteInstance] = useState(false);
   const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [renameError, setRenameError] = useState<string>();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -108,6 +118,18 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  useEffect(() => {
+    if (!menuAnchor) return;
+    const handler = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      setMenuAnchor(false);
+      btnRef.current?.focus();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [menuAnchor]);
+
   // Position the portal menu so it stays fully within the viewport: flip it
   // above the button when there isn't room below, and cap its height as a
   // safety net so a long menu near a screen edge never gets clipped.
@@ -116,18 +138,22 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
     const btn = btnRef.current;
     const menu = menuRef.current;
     if (!btn || !menu) return;
-    const rect = btn.getBoundingClientRect();
-    const margin = 8;
-    const spaceBelow = window.innerHeight - rect.bottom - margin;
-    const spaceAbove = rect.top - margin;
-    const openUp = menu.offsetHeight > spaceBelow && spaceAbove > spaceBelow;
-    setMenuStyle({
-      position: 'fixed',
-      right: window.innerWidth - rect.right,
-      maxHeight: Math.max(openUp ? spaceAbove : spaceBelow, 0),
-      overflowY: 'auto',
-      ...(openUp ? { bottom: window.innerHeight - rect.top + 4 } : { top: rect.bottom + 4 }),
+    const positioned = positionAnchoredPopup({
+      anchor: btn.getBoundingClientRect(),
+      popupHeight: menu.scrollHeight,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      placement: menuPlacementRef.current,
+      top: menuTopRef.current,
     });
+    menuPlacementRef.current = positioned.placement;
+    menuTopRef.current = positioned.style.top as number;
+    setMenuStyle(positioned.style);
+  }, [menuAnchor]);
+
+  useLayoutEffect(() => {
+    if (!menuAnchor) return;
+    menuRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus();
   }, [menuAnchor]);
 
   /** Extract jobId from a 202 response (mutator throws on non-2xx, so data is always success variant) */
@@ -231,6 +257,28 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
     }
   };
 
+  const handleRenameInstance = async (name?: string) => {
+    if (!instance || !name) return false;
+    setRenameError(undefined);
+    try {
+      await renameInstance({
+        instanceId: instance.instanceId,
+        data: { name },
+      });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: getGetInstancesQueryKey() }),
+        qc.invalidateQueries({
+          queryKey: getGetInstancesInstanceIdQueryKey(instance.instanceId),
+        }),
+      ]);
+      toast.success(`Name updated to "${name}"`);
+      return true;
+    } catch (error) {
+      setRenameError(getErrorMessage(error));
+      return false;
+    }
+  };
+
   const instanceName = instance?.instanceName.trim();
   const instanceDisplayName =
     isInstanceScopedApp && instance ? instanceName || `Instance ${instance.instanceId}` : undefined;
@@ -254,9 +302,9 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
           <div className="flex items-center gap-2">
             <span className="text-sm truncate">
               <span className="font-bold">{app.title}</span>
-              {instanceDisplayName && (
+              {instanceDisplayName ? (
                 <span className="font-normal text-text-primary"> ({instanceDisplayName})</span>
-              )}
+              ) : null}
             </span>
             {updateAvailable && (
               <button
@@ -305,8 +353,17 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
           <button
             ref={btnRef}
             aria-label={rowActionLabel}
+            aria-haspopup="dialog"
+            aria-expanded={menuAnchor}
             className="p-1.5 rounded-lg hover:bg-surface-hover transition text-muted cursor-pointer"
-            onClick={() => setMenuAnchor(!menuAnchor)}
+            onClick={() => {
+              if (!menuAnchor) {
+                menuPlacementRef.current = undefined;
+                menuTopRef.current = undefined;
+                setMenuStyle({ visibility: 'hidden' });
+              }
+              setMenuAnchor(!menuAnchor);
+            }}
             disabled={busy}
           >
             <MoreHorizontal size={18} />
@@ -316,12 +373,24 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
               <div
                 ref={menuRef}
                 style={menuStyle}
+                role="dialog"
+                aria-label={rowActionLabel}
                 className="w-48 rounded-xl bg-surface-raised border border-border shadow-xl z-[9999] py-1"
               >
-                {canDuplicateApp && (
+                {canDuplicateApp && instance && (
                   <>
                     <button
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium hover:bg-surface-hover transition"
+                      className="flex w-full items-center gap-2 px-3 py-2 text-sm font-medium transition hover:bg-surface-hover"
+                      onClick={() => {
+                        setMenuAnchor(false);
+                        setRenameError(undefined);
+                        setRenameOpen(true);
+                      }}
+                    >
+                      <PencilLine size={16} /> Edit name
+                    </button>
+                    <button
+                      className="flex w-full items-center gap-2 px-3 py-2 text-sm font-medium transition hover:bg-surface-hover"
                       onClick={() => {
                         setMenuAnchor(false);
                         setDuplicateOpen(true);
@@ -331,6 +400,17 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
                     </button>
                     <hr className="border-border my-1" />
                   </>
+                )}
+                {canDuplicateApp && !instance && (
+                  <button
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm font-medium transition hover:bg-surface-hover"
+                    onClick={() => {
+                      setMenuAnchor(false);
+                      setDuplicateOpen(true);
+                    }}
+                  >
+                    <LayersPlus size={16} /> Duplicate app
+                  </button>
                 )}
                 {!instance && (
                   <button
@@ -459,6 +539,18 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
                   />
                 ) : undefined
               }
+            />
+          )}
+          {canDuplicateApp && (
+            <InstanceNameDialog
+              app={app}
+              open={renameOpen}
+              setOpen={setRenameOpen}
+              busy={renamePending}
+              error={renameError}
+              initialName={instance.instanceName}
+              mode="rename"
+              onSubmit={handleRenameInstance}
             />
           )}
         </>

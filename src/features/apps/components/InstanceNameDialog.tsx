@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Package } from 'lucide-react';
+import { AlertCircle, PencilLine, Package } from 'lucide-react';
 import ContentDialog from '@app/components/ContentDialog';
 import type { EnrichedApp } from '@features/apps/types';
 
@@ -8,31 +8,55 @@ interface InstanceNameDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   busy?: boolean;
-  onSubmit: (instanceName?: string) => void | Promise<void>;
+  error?: string;
+  initialName?: string;
+  mode?: 'create' | 'rename';
+  onSubmit: (instanceName?: string) => boolean | void | Promise<boolean | void>;
 }
 
-export default function InstanceNameDialog({
+export default function InstanceNameDialog({ open, ...props }: InstanceNameDialogProps) {
+  if (!open) return null;
+  return <OpenInstanceNameDialog {...props} />;
+}
+
+type OpenInstanceNameDialogProps = Omit<InstanceNameDialogProps, 'open'>;
+
+function OpenInstanceNameDialog({
   app,
-  open,
   setOpen,
   busy,
+  error,
+  initialName = '',
+  mode = 'create',
   onSubmit,
-}: InstanceNameDialogProps) {
-  const [instanceName, setInstanceName] = useState('');
+}: OpenInstanceNameDialogProps) {
+  const [instanceName, setInstanceName] = useState(initialName);
+  const isRename = mode === 'rename';
   const trimmedName = instanceName.trim();
-  const previewName = trimmedName || 'Instance abcd1234';
-  const actionLabel = trimmedName ? `Create "${trimmedName}"` : 'Skip name';
+  const currentName = initialName.trim();
+  const previewName = trimmedName || (isRename ? currentName : 'Instance abcd1234');
+  const unchanged = isRename && trimmedName === currentName;
+  const disabled = busy || (isRename && (!trimmedName || unchanged));
+  const actionLabel = isRename
+    ? busy
+      ? 'Saving...'
+      : 'Save name'
+    : trimmedName
+      ? `Create "${trimmedName}"`
+      : 'Skip name';
 
   const submit = async () => {
-    await onSubmit(trimmedName);
+    if (disabled) return;
+    const shouldClose = await onSubmit(trimmedName);
+    if (shouldClose === false) return;
     setOpen(false);
-    setInstanceName('');
+    setInstanceName(initialName);
   };
 
   return (
     <ContentDialog
-      title="Name this instance"
-      open={open}
+      title={isRename ? 'Edit name' : 'Name this instance'}
+      open
       setOpen={setOpen}
       panelClassName="bg-surface-raised rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-border overflow-hidden"
       actions={
@@ -47,7 +71,7 @@ export default function InstanceNameDialog({
           <button
             className="max-w-64 px-4 py-2 border border-brand bg-brand text-white rounded-lg font-semibold hover:bg-brand/90 transition text-sm disabled:opacity-40 disabled:cursor-not-allowed truncate"
             onClick={submit}
-            disabled={busy}
+            disabled={disabled}
             title={actionLabel}
           >
             {actionLabel}
@@ -57,7 +81,9 @@ export default function InstanceNameDialog({
     >
       <div className="space-y-5">
         <p className="text-sm text-muted">
-          A name helps you tell this copy apart when you run the same app more than once.
+          {isRename
+            ? 'Choose a clear name so you can recognize this copy of the app.'
+            : 'A name helps you tell this copy apart when you run the same app more than once.'}
         </p>
 
         <div>
@@ -66,7 +92,7 @@ export default function InstanceNameDialog({
               htmlFor={`instance-name-${app.appKey.name}-${app.appKey.version}`}
               className="text-sm font-semibold text-text-primary"
             >
-              Instance name
+              {isRename ? 'Name' : 'Instance name'}
             </label>
           </div>
           <input
@@ -74,19 +100,38 @@ export default function InstanceNameDialog({
             value={instanceName}
             onChange={(event) => setInstanceName(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key === 'Enter') void submit();
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                void submit();
+              }
             }}
             placeholder="main-controller"
             autoComplete="off"
             spellCheck={false}
-            className="mt-2 h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm font-mono outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            onFocus={(event) => {
+              if (isRename) event.currentTarget.select();
+            }}
+            aria-invalid={Boolean(error)}
+            className="mt-2 h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm font-mono outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 aria-invalid:border-error aria-invalid:focus:ring-error/20"
           />
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-muted">
-          <Lock size={14} className="shrink-0" />
-          <span>Names cannot be changed after the instance is created.</span>
-        </div>
+        {!isRename && (
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <PencilLine size={14} className="shrink-0" />
+            <span>You can change this name later from the installed app list.</span>
+          </div>
+        )}
+
+        {error && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-error/30 bg-error/10 px-3 py-2.5 text-sm text-error"
+          >
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
         <div className="rounded-xl border border-border bg-surface/40 p-3">
           <div className="mb-2 text-[0.65rem] font-semibold uppercase tracking-wider text-muted">

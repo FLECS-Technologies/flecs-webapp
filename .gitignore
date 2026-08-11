@@ -7,6 +7,7 @@ src/assets/sbom.spdx.json
 src/assets/sbom.cyclonedx.json
 generated/
 test-results/
+playwright.local.config.ts
 
 # macOS Finder metadata
 .DS_Store

@@ -10,6 +10,7 @@ import type {
 // schema uses `name`. Accept both shapes so callers can pass generated `Product` directly.
 
 interface WCMetaItem {
+  id?: number;
   key?: string;
   name?: string;
   value?: string | string[] | Record<string, string> | ProductMetadataValue;

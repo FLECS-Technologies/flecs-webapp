@@ -1,35 +1,36 @@
-import React, { Fragment, useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useId, useState, type ReactNode } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 interface CollapsableRowProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function CollapsableRow({ title, children }: CollapsableRowProps) {
   const [open, setOpen] = useState(false);
+  const contentId = useId();
+
   return (
-    <Fragment>
-      <tr>
-        <td data-testid="expand-cell" className="border-b-0 py-2 px-4">
-          <button
-            data-testid="expand-button"
-            aria-label="expand row"
-            className="p-1 rounded-lg hover:bg-surface-hover transition mr-2 inline-flex"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
-          {title}
-        </td>
-      </tr>
+    <div>
+      <button
+        type="button"
+        aria-controls={contentId}
+        aria-expanded={open}
+        className="group flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm font-medium text-text-primary transition hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/30"
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span>{title}</span>
+        <ChevronDown
+          size={16}
+          aria-hidden="true"
+          className={`shrink-0 text-muted transition-transform duration-150 group-hover:text-text-primary motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
       {open && (
-        <tr>
-          <td data-testid="instances-cell" className="p-0" colSpan={6}>
-            {children}
-          </td>
-        </tr>
+        <div id={contentId} className="border-t border-border bg-surface-raised">
+          {children}
+        </div>
       )}
-    </Fragment>
+    </div>
   );
 }

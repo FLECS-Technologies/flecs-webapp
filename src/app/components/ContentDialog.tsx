@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from 'react';
+import { X } from 'lucide-react';
 
 interface ContentDialogProps {
   title: string;
@@ -7,6 +8,8 @@ interface ContentDialogProps {
   actions?: React.ReactNode;
   children?: React.ReactNode;
   panelClassName?: string;
+  contentClassName?: string;
+  headerCloseButton?: boolean;
 }
 
 type OpenContentDialogProps = Omit<ContentDialogProps, 'open'>;
@@ -17,6 +20,8 @@ function OpenContentDialog({
   actions,
   children,
   panelClassName,
+  contentClassName,
+  headerCloseButton = false,
 }: OpenContentDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -38,12 +43,24 @@ function OpenContentDialog({
           'bg-surface-raised rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border'
         }
       >
-        <div className="border-b border-border px-6 py-4">
+        <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
           <h3 id={titleId} className="text-lg font-semibold">
             {title}
           </h3>
+          {headerCloseButton && (
+            <button
+              type="button"
+              aria-label="Close dialog"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-surface-hover hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30"
+              onClick={() => setOpen(false)}
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
-        <div className="flex-1 overflow-auto border-b border-border px-6 py-4">
+        <div
+          className={contentClassName ?? 'flex-1 overflow-auto border-b border-border px-6 py-4'}
+        >
           {children ?? <p className="text-sm text-muted">No content to display.</p>}
         </div>
         <div className="flex justify-end gap-2 px-6 py-3">

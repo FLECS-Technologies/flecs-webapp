@@ -19,15 +19,17 @@ test.describe('@smoke TC19 — error toast shows server reason', () => {
       }),
     );
 
-    // Import lives on the System page's Backup & migration section, behind the
-    // "Import apps" dialog (see System.tsx).
+    // Restore lives on the System page's Backup & migration section.
     await page.goto('/#/system');
-    await page.getByRole('button', { name: 'Import apps' }).click();
-    await page.setInputFiles('input[type="file"][accept*=".tar"]', {
-      name: 'bad.tar',
-      mimeType: 'application/x-tar',
-      buffer: Buffer.from('bad-bytes'),
-    });
+    await page.getByRole('button', { name: 'Restore backup' }).click();
+    await page
+      .getByRole('dialog', { name: 'Restore backup' })
+      .locator('input[type="file"]')
+      .setInputFiles({
+        name: 'bad.tar',
+        mimeType: 'application/x-tar',
+        buffer: Buffer.from('bad-bytes'),
+      });
 
     // The UI should surface the backend reason, not the raw "HTTP 400" message.
     await expect(page.getByText('Corrupt tar archive: unexpected EOF')).toBeVisible();

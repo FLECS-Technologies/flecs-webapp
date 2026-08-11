@@ -24,7 +24,7 @@ export default function QuickActions() {
           </button>
         </span>
         <span title="Import apps from a backup file">
-          <Import />
+          <Import mode="restore" />
         </span>
         <Link
           to="/open-source"

@@ -39,14 +39,14 @@ beforeEach(() => {
 
 describe('Import dropzone', () => {
   it('renders as a plain button without the dropzone prop', () => {
-    renderWithProviders(<Import />);
+    renderWithProviders(<Import mode="restore" />);
     expect(screen.queryByTestId('import-dropzone')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /import apps/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /restore backup/i })).toBeInTheDocument();
   });
 
   it('imports a dropped .tar archive via the imports API', async () => {
     const onImportStarted = vi.fn();
-    renderWithProviders(<Import dropzone onImportStarted={onImportStarted} />);
+    renderWithProviders(<Import dropzone mode="restore" onImportStarted={onImportStarted} />);
     const tar = new File(['x'], 'backup.tar', { type: 'application/x-tar' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [tar] } });
     await waitFor(() =>
@@ -57,7 +57,7 @@ describe('Import dropzone', () => {
 
   it('opens the file picker from the entire dropzone', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Import dropzone buttonText="Choose import file" />);
+    renderWithProviders(<Import dropzone mode="onboard" buttonText="Choose import file" />);
     const input = screen.getByTestId('fileInput');
     const click = vi.spyOn(input, 'click');
 
@@ -67,7 +67,7 @@ describe('Import dropzone', () => {
   });
 
   it('imports a dropped apps.json via the onboarding API', async () => {
-    renderWithProviders(<Import dropzone />);
+    renderWithProviders(<Import dropzone mode="onboard" />);
     const json = new File(['{"apps":[]}'], 'apps.json', { type: 'application/json' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [json] } });
     await waitFor(() =>
@@ -76,9 +76,29 @@ describe('Import dropzone', () => {
     expect(apiMocks.restoreBackup).not.toHaveBeenCalled();
   });
 
+  it('keeps onboarding files out of the restore API', async () => {
+    renderWithProviders(<Import dropzone mode="restore" />);
+    const json = new File(['{"apps":[]}'], 'apps.json', { type: 'application/json' });
+    fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [json] } });
+    await waitFor(() => {
+      expect(apiMocks.restoreBackup).not.toHaveBeenCalled();
+      expect(apiMocks.startOnboarding).not.toHaveBeenCalled();
+    });
+  });
+
+  it('keeps backup archives out of the onboarding API', async () => {
+    renderWithProviders(<Import dropzone mode="onboard" />);
+    const tar = new File(['x'], 'backup.tar', { type: 'application/x-tar' });
+    fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [tar] } });
+    await waitFor(() => {
+      expect(apiMocks.restoreBackup).not.toHaveBeenCalled();
+      expect(apiMocks.startOnboarding).not.toHaveBeenCalled();
+    });
+  });
+
   it('rejects an unsupported file type without any API call', async () => {
     const onImportStarted = vi.fn();
-    renderWithProviders(<Import dropzone onImportStarted={onImportStarted} />);
+    renderWithProviders(<Import dropzone mode="restore" onImportStarted={onImportStarted} />);
     const png = new File(['x'], 'image.png', { type: 'image/png' });
     fireEvent.drop(screen.getByTestId('import-dropzone'), { dataTransfer: { files: [png] } });
     await waitFor(() => {

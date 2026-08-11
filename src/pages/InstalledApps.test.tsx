@@ -164,7 +164,7 @@ describe('Installed Apps', () => {
     expect(
       screen.getByText('Install one private or custom Docker app from its manifest.json.'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Import an onboarding file' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Onboard device' })).toHaveAttribute(
       'href',
       '/system?section=backup-migration',
     );

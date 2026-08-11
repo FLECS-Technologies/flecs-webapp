@@ -184,7 +184,7 @@ export default function InstalledApps() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-semibold">Backup &amp; migration</span>
-            <span className="mt-0.5 block text-xs text-muted">Import or export apps.</span>
+            <span className="mt-0.5 block text-xs text-muted">Back up, restore, or onboard.</span>
           </span>
           <span className="relative h-[18px] w-[18px] shrink-0 text-muted transition-colors group-hover:text-brand group-focus-visible:text-brand">
             <ChevronRight
@@ -272,7 +272,7 @@ export default function InstalledApps() {
               to="/system?section=backup-migration"
               className="group inline-flex items-center gap-1 font-medium text-brand hover:underline"
             >
-              Import an onboarding file
+              Onboard device
               <span className="relative h-3 w-3 shrink-0">
                 <ChevronRight
                   size={12}

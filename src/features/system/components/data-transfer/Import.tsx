@@ -34,6 +34,7 @@ interface ImportProps extends React.ComponentProps<'button'> {
   dropzone?: boolean;
   buttonText?: string;
   onImportStarted?: () => void;
+  mode: 'restore' | 'onboard';
 }
 
 export default function Import(props: ImportProps) {
@@ -42,19 +43,25 @@ export default function Import(props: ImportProps) {
   const onboardingMutation = usePostDeviceOnboarding();
   const backupMutation = usePostImports();
   const dropzoneInputRef = React.useRef<HTMLInputElement>(null);
-  const { dropzone, buttonText = 'Import Apps', onImportStarted, ...buttonProps } = props;
+  const { dropzone, mode, onImportStarted, ...buttonProps } = props;
+  const buttonText = props.buttonText ?? (mode === 'restore' ? 'Restore backup' : 'Onboard device');
+  const accept = mode === 'restore' ? '.tar.gz, .tar' : '.json';
   const importing = onboardingMutation.isPending || backupMutation.isPending;
 
   const handleFileUpload = (file: string | File) => {
     // wholeFile=true on <FileOpen /> guarantees File, not string; narrow for TS.
     if (typeof file === 'string' || !file) return;
     const fileName = file.name.toLowerCase();
-    if (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar')) {
+    if (mode === 'restore' && (fileName.endsWith('.tar.gz') || fileName.endsWith('.tar'))) {
       handleTarFile(file);
-    } else if (fileName.endsWith('.json')) {
+    } else if (mode === 'onboard' && fileName.endsWith('.json')) {
       handleJsonFile(file);
     } else {
-      toast.error('Unsupported file type. Please upload a .tar, .tar.gz or .json file.');
+      const message =
+        mode === 'restore'
+          ? 'Please upload a .tar or .tar.gz backup.'
+          : 'Please upload an apps.json file.';
+      toast.error('Unsupported file type', { description: message });
     }
   };
 
@@ -72,9 +79,9 @@ export default function Import(props: ImportProps) {
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
 
-      toast.success('Importing finished successfully');
+      toast.success('Device onboarding finished successfully');
     } catch (error: unknown) {
-      toast.error('Import failed', { description: getErrorMessage(error) });
+      toast.error('Onboarding failed', { description: getErrorMessage(error) });
     } finally {
       qc.invalidateQueries();
     }
@@ -91,9 +98,9 @@ export default function Import(props: ImportProps) {
 
       if (!questStateFinishedOk(result.state)) throw new Error(result.description);
 
-      toast.success('Importing finished successfully');
+      toast.success('Backup restored successfully');
     } catch (error: unknown) {
-      toast.error('Import failed', { description: getErrorMessage(error) });
+      toast.error('Restore failed', { description: getErrorMessage(error) });
     } finally {
       qc.invalidateQueries();
     }
@@ -112,7 +119,7 @@ export default function Import(props: ImportProps) {
       data-testid="import-apps-button"
       buttonText={buttonText}
       buttonIcon={<FolderUp size={16} />}
-      accept=".tar.gz, .tar, .json"
+      accept={accept}
       onConfirm={handleFileUpload}
       loading={importing}
       wholeFile={true}
@@ -128,7 +135,7 @@ export default function Import(props: ImportProps) {
         ref={dropzoneInputRef}
         data-testid="fileInput"
         type="file"
-        accept=".tar.gz, .tar, .json"
+        accept={accept}
         className="hidden"
         onChange={(event) => {
           const file = event.target.files?.[0];

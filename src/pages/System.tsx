@@ -43,7 +43,8 @@ export default function System() {
   const backupMigrationRef = React.useRef<HTMLElement>(null);
   const [sbomOpen, setSbomOpen] = React.useState(false);
   const [exportOpen, setExportOpen] = React.useState(false);
-  const [importOpen, setImportOpen] = React.useState(false);
+  const [restoreOpen, setRestoreOpen] = React.useState(false);
+  const [onboardingOpen, setOnboardingOpen] = React.useState(false);
   const { data: infoResponse, isPending: infoPending } = useGetSystemInfo({
     query: { staleTime: 60_000 },
   });
@@ -135,7 +136,7 @@ export default function System() {
       >
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-[0.82rem] font-medium">Create a backup</p>
+            <p className="text-[0.82rem] font-medium">Create backup</p>
             <p className="mt-0.5 text-xs text-muted">
               Bundle installed apps and their configuration into an archive to keep or move to
               another device.
@@ -151,17 +152,32 @@ export default function System() {
         </div>
         <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-[0.82rem] font-medium">Import apps</p>
+            <p className="text-[0.82rem] font-medium">Restore backup</p>
             <p className="mt-0.5 text-xs text-muted">
-              Use a D-O-S onboarding file or restore apps and configuration from a backup archive.
+              Restore apps and configuration from a .tar or .tar.gz backup archive.
             </p>
           </div>
           <button
             type="button"
             className="shrink-0 cursor-pointer rounded-md border border-brand bg-surface-raised px-3 py-1.5 text-xs font-medium text-brand transition hover:bg-brand/10"
-            onClick={() => setImportOpen(true)}
+            onClick={() => setRestoreOpen(true)}
           >
-            Import apps
+            Restore backup
+          </button>
+        </div>
+        <div className="flex flex-col items-start justify-between gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center">
+          <div>
+            <p className="text-[0.82rem] font-medium">Onboard device</p>
+            <p className="mt-0.5 text-xs text-muted">
+              Apply the app selection from a D-O-S apps.json file to this device.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="shrink-0 cursor-pointer rounded-md border border-brand bg-surface-raised px-3 py-1.5 text-xs font-medium text-brand transition hover:bg-brand/10"
+            onClick={() => setOnboardingOpen(true)}
+          >
+            Onboard device
           </button>
         </div>
         <div className="flex items-center gap-2 border-b border-border bg-surface-overlay px-5 py-2.5 text-[0.67rem] font-semibold uppercase tracking-[0.08em] text-muted">
@@ -221,28 +237,52 @@ export default function System() {
       />
       <Export open={exportOpen} setOpen={setExportOpen} appTitle={appTitle} />
       <ContentDialog
-        open={importOpen}
-        setOpen={setImportOpen}
-        title="Import apps"
+        open={restoreOpen}
+        setOpen={setRestoreOpen}
+        title="Restore backup"
         panelClassName="bg-surface-raised rounded-2xl max-w-lg w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
       >
         <div className="space-y-4 p-1">
           <div>
-            <p className="text-sm font-medium">Choose an onboarding or backup file</p>
+            <p className="text-sm font-medium">Choose a backup archive</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Upload the apps.json created by the Device Onboarding Service (D-O-S), or a .tar or
-              .tar.gz backup to restore apps and configuration.
+              Restore apps and configuration from a backup created by FLECS.
             </p>
           </div>
           <div className="[&_[data-testid=import-dropzone]]:min-h-32 [&_[data-testid=import-dropzone]]:cursor-pointer [&_[data-testid=import-dropzone]]:justify-center [&_[data-testid=import-dropzone]]:py-8 [&_[data-testid=import-dropzone]]:text-center">
             <Import
               dropzone
-              buttonText="Drop apps.json or a backup here"
-              onImportStarted={() => setImportOpen(false)}
+              mode="restore"
+              buttonText="Drop a backup here"
+              onImportStarted={() => setRestoreOpen(false)}
+            />
+          </div>
+          <p className="text-xs text-muted">Accepts .tar and .tar.gz files.</p>
+        </div>
+      </ContentDialog>
+      <ContentDialog
+        open={onboardingOpen}
+        setOpen={setOnboardingOpen}
+        title="Onboard device"
+        panelClassName="bg-surface-raised rounded-2xl max-w-lg w-[calc(100%-2rem)] max-h-[90vh] flex flex-col shadow-2xl border border-border"
+      >
+        <div className="space-y-4 p-1">
+          <div>
+            <p className="text-sm font-medium">Choose an apps.json file</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">
+              Upload the apps.json created by the Device Onboarding Service (D-O-S).
+            </p>
+          </div>
+          <div className="[&_[data-testid=import-dropzone]]:min-h-32 [&_[data-testid=import-dropzone]]:cursor-pointer [&_[data-testid=import-dropzone]]:justify-center [&_[data-testid=import-dropzone]]:py-8 [&_[data-testid=import-dropzone]]:text-center">
+            <Import
+              dropzone
+              mode="onboard"
+              buttonText="Drop apps.json here"
+              onImportStarted={() => setOnboardingOpen(false)}
             />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-            <span>Accepts apps.json, .tar, and .tar.gz files.</span>
+            <span>Accepts apps.json files.</span>
             <a
               href={onboardingDocsUrl}
               target="_blank"

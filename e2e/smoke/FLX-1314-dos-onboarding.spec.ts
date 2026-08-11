@@ -18,17 +18,15 @@ test.describe('@smoke FLX-1314 - D-O-S onboarding', () => {
     await expect(sideloadDialog).toContainText(
       'Install one private or custom Docker app from its manifest.json.',
     );
-    const onboardingLink = sideloadDialog.getByRole('link', {
-      name: 'Import an onboarding file',
-    });
+    const onboardingLink = sideloadDialog.getByRole('link', { name: 'Onboard device' });
     await expect(onboardingLink).toHaveAttribute('href', '#/system?section=backup-migration');
     await onboardingLink.click();
 
     await expect(page).toHaveURL(/#\/system\?section=backup-migration$/);
     await expect(page.getByRole('region', { name: 'Backup & migration' })).toBeFocused();
-    await expect(page.getByRole('dialog', { name: 'Import apps' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Import apps' }).click();
-    const importDialog = page.getByRole('dialog', { name: 'Import apps' });
+    await expect(page.getByRole('dialog', { name: 'Onboard device' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Onboard device' }).click();
+    const importDialog = page.getByRole('dialog', { name: 'Onboard device' });
     const panelBox = await importDialog.locator(':scope > div').boundingBox();
     const viewport = page.viewportSize();
     expect(panelBox).not.toBeNull();
@@ -36,11 +34,8 @@ test.describe('@smoke FLX-1314 - D-O-S onboarding', () => {
     if (!panelBox || !viewport) throw new Error('Could not measure the import dialog');
     expect(Math.abs(panelBox.x + panelBox.width / 2 - viewport.width / 2)).toBeLessThan(2);
     await expect(importDialog).toContainText('Device Onboarding Service (D-O-S)');
-    await expect(importDialog).toContainText('.tar or .tar.gz backup');
-    await expect(importDialog.locator('input[type="file"]')).toHaveAttribute(
-      'accept',
-      '.tar.gz, .tar, .json',
-    );
+    await expect(importDialog).not.toContainText('.tar or .tar.gz backup');
+    await expect(importDialog.locator('input[type="file"]')).toHaveAttribute('accept', '.json');
     await expect(
       importDialog.getByRole('link', { name: 'How to create apps.json' }),
     ).toHaveAttribute('target', '_blank');
@@ -55,9 +50,9 @@ test.describe('@smoke FLX-1314 - D-O-S onboarding', () => {
 
     await page.goto('/');
     await page.getByTestId('sideload-dropzone').click();
-    await page.getByRole('link', { name: 'Import an onboarding file' }).click();
-    await page.getByRole('button', { name: 'Import apps' }).click();
-    const importDialog = page.getByRole('dialog', { name: 'Import apps' });
+    await page.getByRole('link', { name: 'Onboard device' }).click();
+    await page.getByRole('button', { name: 'Onboard device' }).click();
+    const importDialog = page.getByRole('dialog', { name: 'Onboard device' });
     await importDialog.locator('input[type="file"]').setInputFiles({
       name: 'apps.json',
       mimeType: 'application/json',

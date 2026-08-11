@@ -24,12 +24,16 @@ test.describe('@smoke TC09 — import uses multipart content-type', () => {
       }),
     );
 
-    // Import lives on the System page's Backup & migration section, behind the
-    // "Import apps" dialog (see System.tsx).
+    // Restore lives on the System page's Backup & migration section.
     await page.goto('/#/system');
-    await page.getByRole('button', { name: 'Import apps' }).click();
+    await page.getByRole('button', { name: 'Restore backup' }).click();
 
-    await page.setInputFiles('input[type="file"][accept*=".tar"]', {
+    const restoreDialog = page.getByRole('dialog', { name: 'Restore backup' });
+    await expect(restoreDialog.locator('input[type="file"]')).toHaveAttribute(
+      'accept',
+      '.tar.gz, .tar',
+    );
+    await restoreDialog.locator('input[type="file"]').setInputFiles({
       name: 'export.tar',
       mimeType: 'application/x-tar',
       buffer: Buffer.from('fake-tar-bytes'),

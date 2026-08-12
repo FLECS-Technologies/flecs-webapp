@@ -71,6 +71,21 @@
   font-display: swap;
 }
 
+@keyframes log-refresh-success {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) rotate(-10deg);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.12) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
 /* ── Base ── */
 @layer base {
   :root {

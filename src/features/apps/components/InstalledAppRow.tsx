@@ -18,7 +18,6 @@ import {
 import type { EnrichedApp } from '@features/apps/types';
 import type { AppInstance } from '@generated/core/schemas';
 import AppStatusDot from './AppStatusDot';
-import ContentDialog from '@app/components/ContentDialog';
 import ConfirmDialog from '@app/components/ConfirmDialog';
 import { useDeleteAppsApp } from '@generated/core/apps/apps';
 import { useGetManifestsAppNameVersion } from '@generated/core/manifests/manifests';
@@ -435,13 +434,7 @@ export default function InstalledAppRow({ app, instance }: InstalledAppRowProps)
       </div>
       {instance && (
         <>
-          <ContentDialog
-            title={`Info: ${instance.instanceName}`}
-            open={infoOpen}
-            setOpen={setInfoOpen}
-          >
-            <InstanceInfo instance={instance} />
-          </ContentDialog>
+          {infoOpen && <InstanceInfo instance={instance} open setOpen={setInfoOpen} />}
           {settingsOpen && (
             <InstanceConfigDialog
               key={`${instance.instanceId}-${settingsSection ?? 'settings'}`}

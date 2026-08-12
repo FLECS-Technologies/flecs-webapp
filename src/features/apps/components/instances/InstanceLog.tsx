@@ -1,50 +1,27 @@
-import React from 'react';
-import { RefreshCw } from 'lucide-react';
-import { getInstancesInstanceIdLogs } from '@generated/core/instances/instances';
-import type { AppInstance } from '@generated/core/schemas';
-import { unwrapSuccess } from '@app/api/unwrap';
-
 interface InstanceLogProps {
-  instance: AppInstance;
+  text: string;
+  loading: boolean;
+  error?: string;
 }
 
-export default function InstanceLog({ instance }: InstanceLogProps) {
-  const executedRef = React.useRef(false);
-  const [loadingLog, setLoadingLog] = React.useState(false);
-  const [logText, setLogText] = React.useState('No log available...');
-
-  React.useEffect(() => {
-    if (executedRef.current) return;
-    fetchLog();
-    executedRef.current = true;
-  }, []);
-
-  const fetchLog = async () => {
-    setLoadingLog(true);
-    getInstancesInstanceIdLogs(instance.instanceId)
-      .then((response) => {
-        const logs = unwrapSuccess(response);
-        setLogText(logs?.stdout || logs?.stderr || 'No log available...');
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setLoadingLog(false));
-  };
-
+export default function InstanceLog({ text, loading, error }: InstanceLogProps) {
   return (
-    <div data-testid="log-editor">
-      <button
-        className="px-4 py-2 border border-brand text-brand rounded-lg font-semibold hover:bg-brand/10 transition inline-flex items-center gap-2 mb-2 mr-2"
-        data-testid="refresh-button"
-        disabled={loadingLog}
-        onClick={() => {
-          executedRef.current = false;
-          fetchLog();
-        }}
+    <div className="flex h-full min-h-0 flex-col gap-3" data-testid="log-editor">
+      {error && (
+        <div
+          role="alert"
+          className="rounded-lg border border-error/25 bg-error/5 px-3 py-2 text-sm text-error"
+        >
+          {error}
+        </div>
+      )}
+      <pre
+        role="log"
+        aria-busy={loading}
+        aria-live="polite"
+        className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words rounded-xl border border-border bg-surface p-4 font-mono text-sm leading-relaxed text-text-primary [scrollbar-gutter:stable]"
       >
-        <RefreshCw size={16} /> Refresh
-      </button>
-      <pre className="font-mono text-sm whitespace-pre-wrap break-all p-4 bg-surface-raised rounded-lg border border-border max-h-[400px] overflow-auto">
-        {logText}
+        {loading && !text ? 'Loading log...' : text}
       </pre>
     </div>
   );

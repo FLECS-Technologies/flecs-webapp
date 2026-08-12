@@ -114,8 +114,9 @@ describe('System page', () => {
     renderWithProviders(<System />, { route: '/system' });
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Backup & migration' })).toBeTruthy();
-      expect(screen.getByText('Create a backup')).toBeTruthy();
-      expect(screen.getByText('Restore from a backup')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Create backup' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Restore backup' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Onboard device' })).toBeTruthy();
       expect(screen.getByText('Recent backups')).toBeTruthy();
       const openSourceLink = screen.getByRole('link', { name: /Open-source licenses/ });
       expect(openSourceLink).toHaveAttribute('target', '_blank');
@@ -128,7 +129,7 @@ describe('System page', () => {
     });
   });
 
-  it('opens focused backup and restore dialogs', async () => {
+  it('opens focused backup, restore, and onboarding dialogs', async () => {
     const user = userEvent.setup();
     renderWithProviders(<System />, { route: '/system' });
 
@@ -140,8 +141,24 @@ describe('System page', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     await user.click(screen.getByRole('button', { name: 'Restore backup' }));
-    expect(screen.getByRole('dialog', { name: 'Restore from a backup' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Drop a backup here or browse' })).toBeTruthy();
-    expect(screen.getByText(/may replace configuration for apps that already exist/)).toBeTruthy();
+    const restoreDialog = screen.getByRole('dialog', { name: 'Restore backup' });
+    expect(restoreDialog).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Drop a backup here' })).toBeTruthy();
+    expect(restoreDialog.querySelector('input[type="file"]')).toHaveAttribute(
+      'accept',
+      '.tar.gz, .tar',
+    );
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+
+    await user.click(screen.getByRole('button', { name: 'Onboard device' }));
+    const onboardingDialog = screen.getByRole('dialog', { name: 'Onboard device' });
+    expect(onboardingDialog).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Drop apps.json here' })).toBeTruthy();
+    expect(onboardingDialog.querySelector('input[type="file"]')).toHaveAttribute('accept', '.json');
+    expect(screen.getByText(/Device Onboarding Service \(D-O-S\)/)).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'How to create apps.json' })).toHaveAttribute(
+      'href',
+      'https://docs.flecs.tech/flecs-marketplace/device-onboarding-service-d-o-s/',
+    );
   });
 });

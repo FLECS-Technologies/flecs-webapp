@@ -26,13 +26,16 @@ import {
   getPurchasable,
   getCustomLinks,
   getDocumentationUrl,
+  type WCProduct,
 } from '@features/marketplace/api/product-service';
 import { decodeHtmlEntities } from '@app/html-utils';
 import { unwrapSuccess } from '@app/api/unwrap';
 import type { EnrichedApp } from '@features/apps/types';
 
+export type MarketplaceProduct = WCProduct & { name: string };
+
 export function enrichInstalledApps(
-  products: Product[],
+  products: MarketplaceProduct[],
   apps: InstalledApp[],
   instances: AppInstance[],
 ): EnrichedApp[] {

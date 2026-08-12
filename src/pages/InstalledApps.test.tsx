@@ -84,6 +84,7 @@ function mockInstalledApps(overrides?: {
   onStart?: (instanceId: string) => void;
   onDeleteApp?: (app: string) => void;
   onDeleteInstance?: (instanceId: string) => void;
+  onRenameInstance?: (instanceId: string, body: unknown) => void;
 }) {
   const manifests = [MULTI_MANIFEST, SINGLE_MANIFEST];
   server.use(
@@ -127,6 +128,11 @@ function mockInstalledApps(overrides?: {
     http.delete('*/instances/:instanceId', ({ params }) => {
       overrides?.onDeleteInstance?.(String(params.instanceId));
       return HttpResponse.json({ jobId: 202 }, { status: 202 });
+    }),
+    http.put('*/instances/:instanceId/name', async ({ params, request }) => {
+      const body = await request.json();
+      overrides?.onRenameInstance?.(String(params.instanceId), body);
+      return new HttpResponse(null, { status: 200 });
     }),
   );
 }
@@ -220,6 +226,7 @@ describe('Installed Apps', () => {
     const actionButtons = await screen.findAllByRole('button', { name: /actions/i });
     await userEvent.click(actionButtons[0]);
 
+    expect(screen.getByRole('button', { name: /edit name/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /duplicate app/i })).toBeInTheDocument();
   });
 
@@ -235,6 +242,7 @@ describe('Installed Apps', () => {
     const actionButtons = await screen.findAllByRole('button', { name: /actions/i });
     await userEvent.click(actionButtons[0]);
 
+    expect(screen.queryByRole('button', { name: /edit name/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /duplicate app/i })).not.toBeInTheDocument();
   });
 
@@ -270,7 +278,7 @@ describe('Installed Apps', () => {
     await userEvent.click(actionButtons[0]);
     await userEvent.click(screen.getByRole('button', { name: /duplicate app/i }));
     expect(
-      screen.getByText(/cannot be changed after the instance is created/i),
+      screen.getByText(/change this name later from the installed app list/i),
     ).toBeInTheDocument();
     expect(screen.getByText(/Instance abcd1234/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /^skip name$/i }));
@@ -280,6 +288,58 @@ describe('Installed Apps', () => {
         appKey: { name: 'tech.flecs.node-red', version: '1.0.0' },
       }),
     );
+  });
+
+  it('renames an instance with the standardized name request', async () => {
+    const onRenameInstance = vi.fn();
+    mockInstalledApps({ onRenameInstance });
+    renderWithProviders(<InstalledApps />, { route: '/' });
+
+    await findInstalledRowTitle('tech.flecs.node-red', 'production');
+    await userEvent.click(screen.getByRole('button', { name: /production actions/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /edit name/i }));
+
+    const dialog = screen.getByRole('dialog', { name: /edit name/i });
+    const nameInput = screen.getByLabelText('Name', { exact: true });
+    const saveButton = screen.getByRole('button', { name: /save name/i });
+    expect(nameInput).toHaveValue('production');
+    expect(saveButton).toBeDisabled();
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, '  production floor  ');
+    expect(dialog).toHaveTextContent('tech.flecs.node-red (production floor)');
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(onRenameInstance).toHaveBeenCalledWith('abc12345', {
+        name: 'production floor',
+      }),
+    );
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+  });
+
+  it('keeps the rename dialog focused when the device rejects the name', async () => {
+    mockInstalledApps();
+    server.use(
+      http.put('*/instances/:instanceId/name', () =>
+        HttpResponse.json(
+          { additionalInfo: 'That instance name is already in use' },
+          { status: 500 },
+        ),
+      ),
+    );
+    renderWithProviders(<InstalledApps />, { route: '/' });
+
+    await findInstalledRowTitle('tech.flecs.node-red', 'production');
+    await userEvent.click(screen.getByRole('button', { name: /production actions/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /edit name/i }));
+    await userEvent.clear(screen.getByLabelText('Name', { exact: true }));
+    await userEvent.type(screen.getByLabelText('Name', { exact: true }), 'production floor');
+    await userEvent.click(screen.getByRole('button', { name: /save name/i }));
+
+    expect(await screen.findByText('That instance name is already in use')).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: /edit name/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Name', { exact: true })).toHaveValue('production floor');
   });
 
   it('deletes the row instance instead of uninstalling the whole multi-instance app', async () => {

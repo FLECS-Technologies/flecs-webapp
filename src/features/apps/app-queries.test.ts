@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AppInstance, InstalledApp } from '@generated/core/schemas';
-import type { Product } from '@generated/console/schemas';
-import { enrichInstalledApps } from './app-queries';
+import { enrichInstalledApps, type MarketplaceProduct } from './app-queries';
 
 describe('enrichInstalledApps', () => {
   it('shares marketplace identity and exact-version instances across installed-app surfaces', () => {
@@ -28,7 +27,7 @@ describe('enrichInstalledApps', () => {
       desired: 'running',
       editors: [],
     };
-    const product: Product = {
+    const product: MarketplaceProduct = {
       id: 1,
       name: 'Node-RED',
       short_description: '',

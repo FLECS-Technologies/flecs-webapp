@@ -36,6 +36,7 @@ import {
   getPrice,
   getPurchasable,
   getDocumentationUrl,
+  getTermsOfUseUrl,
   getDescription,
 } from '@features/marketplace/api/product-service';
 
@@ -195,6 +196,7 @@ export default function Marketplace() {
         price={getPrice(app)}
         purchasable={getPurchasable(app)}
         documentationUrl={getDocumentationUrl(app)}
+        termsOfUseUrl={getTermsOfUseUrl(app)}
         instances={matchedApp?.instances}
       />
     );

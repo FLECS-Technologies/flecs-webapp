@@ -8,6 +8,7 @@ import {
   Star,
   BookOpen,
   ExternalLink,
+  FileText,
   AlertTriangle,
 } from 'lucide-react';
 import { useGetSystemInfo } from '@generated/core/system/system';
@@ -175,7 +176,7 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
           </div>
 
           {/* Links */}
-          {(app.documentationUrl || app.permalink) && (
+          {(app.documentationUrl || app.termsOfUseUrl || app.permalink) && (
             <div className="px-6 pb-5 flex gap-2">
               {app.documentationUrl && (
                 <a
@@ -185,6 +186,16 @@ export default function FullCard({ app, open, onClose }: FullCardProps) {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition"
                 >
                   <BookOpen size={13} /> Docs
+                </a>
+              )}
+              {app.termsOfUseUrl && (
+                <a
+                  href={app.termsOfUseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted font-medium hover:bg-surface-hover hover:text-text-primary transition"
+                >
+                  <FileText size={13} /> Terms of use
                 </a>
               )}
               {app.permalink && (

@@ -62,6 +62,16 @@ export const getDocumentationUrl = (app: WCProduct): string | undefined => {
   const val = meta(app, '_documentation_url');
   return typeof val === 'string' ? val : undefined;
 };
+export const getTermsOfUseUrl = (app: WCProduct): string | undefined => {
+  const val = meta(app, '_flecs_license_url');
+  if (typeof val !== 'string' || !val.trim()) return undefined;
+  try {
+    const url = new URL(val);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+};
 export const getShortDescription = (app: WCProduct) =>
   sanitizeHtml(decodeHtmlEntities(app?.short_description || ''));
 export const getDescription = (app: WCProduct) =>
